@@ -24,7 +24,7 @@ export default {
 	grid-area: playBar;
 
 	border-radius: 5px;
-	background-color: aqua;
+	background-color: #333;;
 }
 
 </style>

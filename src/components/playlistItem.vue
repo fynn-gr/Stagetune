@@ -39,6 +39,7 @@ export default {
 
 	&.selected {
 		border-color: rgb(0, 127, 212);
+		background-color: rgb(51, 51, 51);
 	}
 
 	&.playing {

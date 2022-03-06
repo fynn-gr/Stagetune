@@ -25,7 +25,7 @@ export default {
 	width: 100vw;
 	height: 30px;
 
-	background-color: blueviolet;
+	background-color: #111;
 }
 
 </style>
