@@ -19,6 +19,8 @@ export default {
 
 <style scoped lang="scss">
 
+@use '../../../pureUI/scss/index.scss' as p;
+
 .playListItem{
     -webkit-user-select: none;
     box-sizing: border-box;
@@ -29,7 +31,7 @@ export default {
     background-color: transparent;
 
     &:hover {
-        background-color: #555;
+        background-color: p.$hover;
     }
 }
 

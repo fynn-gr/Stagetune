@@ -33,6 +33,19 @@
 		</div>
 		<div class="playList">
 			<playlist-item />
+			<playlist-item />
+			<playlist-item />
+			<playListAnotation />
+			<playlist-item />
+			<playlist-item />
+			<playlist-item />
+			<playlist-item />
+		</div>
+		<div class="properties">
+			<p>Meters (stereo)
+			<br>Details
+			<br>
+			</p>
 		</div>
 	</div>
 </template>
@@ -41,16 +54,18 @@
 
 
 <script>
-import playlistItem  from "./components/playlistItem.vue";
-import trackListItem from "./components/trackListItem.vue";
-import playBar 		 from "./components/playBar.vue";
-import topBar 		 from "./components/topBar.vue";
+import playlistItem      from "./components/playlistItem.vue";
+import playListAnotation from "./components/playListAnotation";
+import trackListItem     from "./components/trackListItem.vue";
+import playBar 		     from "./components/playBar.vue";
+import topBar 		     from "./components/topBar.vue";
 
 
 export default {
 	name: "App",
 	components: {
 		playlistItem,
+		playListAnotation,
 		trackListItem,
 		topBar,
 		playBar
@@ -64,9 +79,13 @@ export default {
 <style lang="scss">
 
 @use '../pureUI/scss/index.scss' as p;
+@font-face {
+	font-family: OpenSans-reg;
+	src: url("../public/OpenSans-Regular.ttf");
+}
 
 * {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: "OpenSans-reg", Times, serif;
 }
 
 #app {
@@ -78,15 +97,16 @@ export default {
 }
 
 .windowBody {
-	grid-template-columns: 300px 1fr;
+	grid-template-columns: 300px 1fr 250px;
 	grid-template-rows: 50px 70px 1fr;
-	grid-template-areas:'sideBar topBar'
-						'sideBar playBar'
-						'sideBar playList';
+	grid-template-areas:'sideBar topBar topBar'
+						'sideBar playBar playBar'
+						'sideBar playList properties';
 }
 
 .sideBar {
 	grid-area: sideBar;
+	height: calc(100vh - 50px);
 	padding-top: 50px;
 
 	.trackList {
@@ -106,7 +126,16 @@ export default {
 
 .playList {
 	grid-area: playList;
+	overflow-x: hidden;
+	overflow-y: scroll;
+
+	background-color: rgb(29, 29, 29);
 	padding: 5px;
+}
+
+.properties {
+	grid-area: properties;
+	background-color: p.$areaBG4;
 }
 
 .trafficLightDrag {

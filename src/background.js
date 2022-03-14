@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import {Howl, Howler} from 'howler';
 const path = require('path')
 const fs = require('fs')
 //const utils = require('./utils')
@@ -39,7 +40,10 @@ const menuTemplate = [
   {
     label: 'Playlist',
     submenu: [
-      { label: 'open' }
+      { label: 'New Playlist', accelerator: 'Command+N' },
+      { label: 'Open', accelerator: 'Command+O'},
+      { label: 'Save', accelerator: 'Command+S' },
+      { label: 'Save as', accelerator: 'Command+Shift+S' },
     ]
   },
   //view
@@ -62,11 +66,10 @@ const menuTemplate = [
     label: 'Window',
     submenu: [
       { role: 'minimize' },
-      { role: 'zoom' },
       { type: 'separator' },
       { role: 'front' },
       { type: 'separator' },
-      { role: 'window' }
+      { role: 'window' },
     ]
   },
 ]
