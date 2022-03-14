@@ -1,9 +1,76 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+const path = require('path')
+const fs = require('fs')
+//const utils = require('./utils')
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const LOG = console.log
+const os = process.platform
+const settings = {
+  "paths": [
+      "/Volumes/T7/Files extern/Alte Schule/Messias/Messias Musik",
+      "/Volumes/T7/Files extern/Alte Schule/Memes"
+  ],
+  "lastPlaylist": "/Volumes/T7/Files extern/Alte Schule/Messias/Messias Musik/MessiasPlaylist.json",
+  "loop": false
+}
+var playlistPath = settings.lastPlaylist
+const menuTemplate = [
+  //app menu
+  {
+    label: app.getName(),
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideOthers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  },
+  //playlist
+  {
+    label: 'Playlist',
+    submenu: [
+      { label: 'open' }
+    ]
+  },
+  //view
+  {
+    label: 'View',
+    submenu: [
+      { role: 'reload' },
+      { role: 'forceReload' },
+      { role: 'toggleDevTools' },
+      { type: 'separator' },
+      { role: 'resetZoom' },
+      { role: 'zoomIn' },
+      { role: 'zoomOut' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  },
+  //window
+  {
+    label: 'Window',
+    submenu: [
+      { role: 'minimize' },
+      { role: 'zoom' },
+      { type: 'separator' },
+      { role: 'front' },
+      { type: 'separator' },
+      { role: 'window' }
+    ]
+  },
+]
+const menu = Menu.buildFromTemplate(menuTemplate)
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -11,14 +78,12 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 async function createWindow() {
-  // Create the browser window.
   const win = new BrowserWindow({
     width: 1280,
     height: 720,
     titleBarStyle: 'hidden',
-
+    trafficLightPosition: { x: 20, y: 20 },
     webPreferences: {
-      
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -26,13 +91,12 @@ async function createWindow() {
     }
   })
 
+  //load  html or dev server page
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
     //if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
-    // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
 }
@@ -45,14 +109,10 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+//init finished
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
@@ -62,6 +122,9 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+
+  //utils.getFiles(settings.paths)
+  Menu.setApplicationMenu(menu)
   createWindow()
 })
 

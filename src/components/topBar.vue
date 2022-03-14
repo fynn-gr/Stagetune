@@ -21,11 +21,6 @@ export default {
 
 .topBar {
 	-webkit-app-region: drag;
-
-	width: 100vw;
-	height: 30px;
-
-	background-color: #111;
 }
 
 </style>

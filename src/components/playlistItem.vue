@@ -1,5 +1,5 @@
 <template>
-	<div class="playlistItem">
+	<div class="playlistItem playing">
 		<h1>Title</h1>
 		<h2>path of the Track</h2>
 	</div>
@@ -26,6 +26,8 @@ export default {
 
 <style scoped lang="scss">
 
+@use '../style.scss' as s;
+
 .playlistItem {
 	height: 50px;
 	margin-bottom: 5px;
@@ -38,18 +40,18 @@ export default {
 	border-radius: 5px;
 
 	&.selected {
-		border-color: rgb(0, 127, 212);
+		border-color: s.$accent;
 		background-color: rgb(51, 51, 51);
 	}
 
 	&.playing {
-		background-color: rgb(8, 44, 65);
-		border-color: rgb(8, 44, 65);
+		background-color: s.$accentDark;
+		border-color: s.$accentDark;
 	}
 
 	&.playing.selected {
-		background-color: rgb(8, 44, 65);
-		border-color: rgb(0, 127, 212);
+		background-color: s.$accentDark;
+		border-color: s.$accent;
 	}
 
 	h1 {
