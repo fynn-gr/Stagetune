@@ -1,7 +1,18 @@
 <template>
 	<div class="playlistItem">
-		<h1>Händel - Der Messias 3 - Der Chor Loop</h1>
-		<h2>Alte Schule > Messias</h2>
+		<p class="title">Händel - Der Messias 3 - Der Chor Loop</p>
+		<p class="location">Alte Schule > Messias</p>
+		<p class="length">2:38</p>
+		<div class="volume">
+			<p class="label">V</p>
+			<input type="range"/>
+			<p class="label"></p>
+		</div>
+		<div class="balance">
+			<p class="label">L</p>
+			<input type="range"/>
+			<p class="label">R</p>
+		</div>
 	</div>
 </template>
 
@@ -30,9 +41,15 @@ export default {
 
 .playlistItem {
 	box-sizing: border-box;
-	height: 80px;
+	height: 60px;
 	margin-bottom: 5px;
-	padding: 10px;
+
+	display: grid;
+	grid-template-columns: 60% 10% 30%;
+	grid-template-rows: 50% 10% 40%;
+	grid-template-areas: 	'title    length volume '
+							'title    length balance'
+							'location length balance ';
 
 	background-color: #333;
 	border-style: none;
@@ -54,22 +71,52 @@ export default {
 		background-color: #dd0000;
 	}
 
-	h1 {
-		height: 34px;
+	.title {
+		grid-area: title;
+		padding: 5px 0px 0px 10px;
 		text-overflow: clip;
 		overflow: hidden;
 
-		font-size: 30px;
+		font-size: 2rem;
 		color: white;
 	}
 
-	h2 {
-		height: 17px;
+	.location {
+		grid-area: location;
+		padding: 0px 0px 5px 10px;
 		text-overflow: clip;
 		overflow: hidden;
 
-		font-size: 15px;
+		font-size: 1.2rem;
 		color: white;
+	}
+
+	.length {
+		grid-area: length;
+		text-align: center;
+		line-height: 60px;
+		font-size: 1.6rem;
+		font-weight: bold;
+	}
+
+	.volume {
+		grid-area: volume;
+	}
+
+	.balance {
+		grid-area: balance;
+	}
+
+	input[type=range] {
+		display: inline-block;
+		width: calc(100% - 40px);
+		height: 100%;
+	}
+
+	.label {
+		display: inline-block;
+		width: 20px;
+		height: 100%;
 	}
 }
 

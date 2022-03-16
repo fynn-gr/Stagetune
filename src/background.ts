@@ -19,8 +19,8 @@ const settings = {
   "lastPlaylist": "/Volumes/T7/Files extern/Alte Schule/Messias/Messias Musik/MessiasPlaylist.json",
   "loop": false
 }
-var playlistPath = settings.lastPlaylist
-const menuTemplate = [
+const playlistPath = settings.lastPlaylist
+const menuTemplate:Electron.MenuItemConstructorOptions[] = [
   //app menu
   {
     label: app.getName(),
@@ -46,14 +46,20 @@ const menuTemplate = [
       { label: 'Save as', accelerator: 'Command+Shift+S' },
     ]
   },
-  //ahortcuts
+  //shortcuts
   {
     label: 'Shortcuts',
     submenu: [
       { label: '1  -  Wald ambiente', accelerator: 'Command+1' },
-      { label: '2', accelerator: 'Command+2' },
+      { label: '2', accelerator: 'Command+2'},
       { label: '3', accelerator: 'Command+3' },
       { label: '4', accelerator: 'Command+4' },
+      { label: '5', accelerator: 'Command+5' },
+      { label: '6', accelerator: 'Command+6' },
+      { label: '7', accelerator: 'Command+7' },
+      { label: '8', accelerator: 'Command+8' },
+      { label: '9', accelerator: 'Command+9' },
+      { label: '0', accelerator: 'Command+0' },
     ]
   },
   //view
@@ -92,21 +98,23 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   const win = new BrowserWindow({
-    width: 1920,
-    height: 1080,
+    width: 1280,
+    height: 720,
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 20, y: 20 },
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: (process.env
+          .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      contextIsolation: !(process.env
+          .ELECTRON_NODE_INTEGRATION as unknown) as boolean
     }
   })
 
   //load  html or dev server page
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
     //if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
@@ -131,7 +139,7 @@ app.on('ready', async () => {
     // Install Vue Devtools
     try {
       await installExtension(VUEJS3_DEVTOOLS)
-    } catch (e) {
+    } catch (e:any) {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }

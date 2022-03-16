@@ -97,7 +97,7 @@ export default {
 }
 
 .windowBody {
-	grid-template-columns: 300px 1fr 250px;
+	grid-template-columns: 400px 1fr 200px;
 	grid-template-rows: 50px 70px 1fr;
 	grid-template-areas:'sideBar topBar topBar'
 						'sideBar playBar playBar'
