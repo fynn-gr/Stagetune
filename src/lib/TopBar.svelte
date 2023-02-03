@@ -21,7 +21,7 @@
 			<div class="spacer" data-tauri-drag-region=""></div>
 
 			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_edit.svg" aria-label=""></object>
+				<object data="../pureUI/icons/tb_lock.svg" aria-label=""></object>
 			</button>
 			<button class="toolBarButton">
 				<object data="../pureUI/icons/tb_stop.svg" aria-label=""></object>
@@ -33,7 +33,7 @@
 			<div class="spacer" data-tauri-drag-region=""></div>
 
 			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_wave.svg" aria-label=""></object>
+				<object data="../pureUI/icons/tb_properties.svg" aria-label=""></object>
 			</button>
 
 		</div>
