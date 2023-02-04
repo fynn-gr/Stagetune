@@ -12,28 +12,28 @@
 		{/if}
 		<div class="topBarContent" data-tauri-drag-region>
 			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_sidebar.svg" aria-label=""></object>
+				<img src="../pureUI/icons/tb_sidebar.svg" alt="">
 			</button>
 			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_plus.svg" aria-label=""></object>
-			</button>
-
-			<div class="spacer" data-tauri-drag-region=""></div>
-
-			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_lock.svg" aria-label=""></object>
-			</button>
-			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_stop.svg" aria-label=""></object>
-			</button>
-			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_play.svg" aria-label=""></object>
+				<img src="../pureUI/icons/tb_plus.svg" alt="">
 			</button>
 
 			<div class="spacer" data-tauri-drag-region=""></div>
 
 			<button class="toolBarButton">
-				<object data="../pureUI/icons/tb_properties.svg" aria-label=""></object>
+				<img src="../pureUI/icons/tb_lock.svg" alt="">
+			</button>
+			<button class="toolBarButton">
+				<img src="../pureUI/icons/tb_stop.svg" alt="">
+			</button>
+			<button class="toolBarButton">
+				<img src="../pureUI/icons/tb_play.svg" alt="">
+			</button>
+
+			<div class="spacer" data-tauri-drag-region=""></div>
+
+			<button class="toolBarButton">
+				<img src="../pureUI/icons/tb_properties.svg" alt="">
 			</button>
 
 		</div>
