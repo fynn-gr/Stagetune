@@ -1,40 +1,54 @@
-<script>
+<script lang="ts">
 	import '../pureUI/scss/index.scss'
 	import './style/App.scss'
 	import { onMount } from 'svelte';
-
+	import { open } from '@tauri-apps/api/dialog';
+ 
 	import PlayListItem from "./lib/PlayListItem.svelte";
-	import PlaylistAnotation from "./lib/PlayListAnotation.svelte";
 	import TrackListItem from "./lib/TrackListItem.svelte";
-	import PlayBar from "./lib/PlayBar.svelte";
 	import TopBar from "./lib/TopBar.svelte";
 	import PlayListAnotation from './lib/PlayListAnotation.svelte';
 
 	//platforms mac, win
-	let uiPlatform = "mac";
-	let editMode = true;
+	let uiPlatform = "win";
+	let editMode = false;
+	let sideBar = true;
+	let editor = true;
 
-	let tracks = [
+	let path: string;
+	let playlist = [
+		//selected
+		//text
+
+		//selected
+		//title
+		//path
+		//length
+		//annotation [before, after]
+		//state
+		//volume
+		//edit [cutIn, cutOut, fadeIn, fadeOut]
+
 		{
 			title: "Einlass Musik",
-			path: "Local > Messias",
+			path: "D:/Alte Schule/Messias/Messias Musik/Der Messias 42. Chor  Halleluja.mp3",
 			length: "2:30",
 			selected: false,
+			annotation: ["", ""]
 		},
 		{
 			title: "Hirten",
-			path: "Local > Messias",
+			path: "",
 			length: "2:55",
 			selected: true,
-			comBefore: "wenn Hirten auf",
-			comAfter: "wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"
+			annotation: ["wenn Hirten auf","wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"]
 		},
 		{
 			title: "Biene Maja",
-			path: "Local > for fun",
+			path: "",
 			length: "3:10",
 			selected: false,
-			comBefore: "wenn Hirten auf"
+			annotation: ["wenn Hirten auf", ""]
 		},
 		{
 			selected: false,
@@ -42,73 +56,134 @@
 		},
 		{
 			title: "Kein schöner Land",
-			path: "Local > Messias",
+			path: "",
 			length: "10:56",
 			selected: false,
-			state: 0.4
+			state: 0.4,
+			annotation: ["", ""]
 		}
 	]
 
+	function deselectAll() {
+		playlist.forEach(e => {
+			e.selected = false;
+		});
+	}
+
   onMount(() => {
-    document.body.classList.add(uiPlatform);
-    document.body.classList.add("dark");
+		document.addEventListener('keypress', (e) => {
+			console.log(e)
+
+			if (!editMode) {
+				//open
+				if (e.code == "KeyO" && e.ctrlKey == true) {
+
+					console.log("open Path")
+
+					const selected = open({
+						directory: true,
+						multiple: false,
+					})
+					.then(
+						sel => {
+							if (sel == null) {
+								console.log("nothing selected")
+							} else {
+								path = sel;
+								console.log(sel)
+							}
+						}
+					);
+				}
+				//up
+				else if (e.code == "KeyW" && e.ctrlKey == false) {
+
+					console.log("move up");
+
+				}
+				//move down
+				else if (e.code == "KeyS" && e.ctrlKey == false) {
+
+					console.log("move down");
+				}
+				//save File
+				else if (e.code == "KeyS" && e.ctrlKey == true) {
+
+					//save
+				}
+			}
+		})
   });
 </script>
 
-<main class="windowBody">
-	<div class="viewNavSplit">
+<main
+	class={"windowBody dark " + uiPlatform}>
 
-		<div class="sideBar">
-			<div class="trackList">
-				<p class="seperator">Messias</p>
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<p class="seperator">Alte Schule</p>
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-				<TrackListItem />
-			</div>
-		</div>
+	<div 
+		class="sideBar"
+		style={`width: ${sideBar && editMode ? '300' : '0'}px;`}>
 
-		<div class="viewSplitVertical">
-
-			<TopBar {uiPlatform}/>
-
-			<div class="playList">
-				{#each tracks as t, i}
-					{#if t.title != undefined}
-						<PlayListItem
-							bind:track={t} />
-					{:else}
-						<PlayListAnotation selected={t.selected} text={t.text}/>
-					{/if}
-				{/each}
-			</div>
-
-			<div class="properties">
-				
-			</div>
-
+		<div class="trackList">
+			<p class="seperator">Messias</p>
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<p class="seperator">Alte Schule</p>
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
+			<TrackListItem />
 		</div>
 
 	</div>
-	
+
+
+	<TopBar
+		{uiPlatform}
+		bind:sideBar={sideBar}
+		bind:editMode={editMode}
+		bind:editor={editor}/>
+
+
+	<div class="playList" >
+
+		{#each playlist as t}
+			{#if t.title != undefined}
+				<PlayListItem
+					bind:track={t}
+					bind:editMode={editMode}
+					deselectAll={deselectAll} />
+			{:else}
+				<PlayListAnotation
+					bind:selected={t.selected}
+					bind:text={t.text}
+					{editMode}
+					deselectAll={deselectAll} />
+			{/if}
+		{/each}
+
+	</div>
+
+	<div
+		class="editor"
+		style={`height: ${editor && editMode ? '300' : '0' }px;`}>
+
+	</div>
+
 	<div class="windowRim" />
 
 </main>

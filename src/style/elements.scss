@@ -1,7 +1,13 @@
-.windowBody {}
+.windowBody {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-template-rows: 54px 1fr auto;
+	grid-template-areas: 'sideBar topBar'
+						 'sideBar playList'
+						 'sideBar editor';
+}
 
 .sideBar {
-
 	.trackList {
 		height: 100%;
 		overflow-x: hidden;
@@ -39,7 +45,6 @@
 }
 
 .playList {
-	flex: 1;
 	display: flex;
 	flex-direction: column;
 	overflow-y: scroll;
@@ -104,7 +109,7 @@
 					background-color: var(--hover);
 				}
 
-				object {
+				img {
 					filter: invert(90%);
 				}
 			}
@@ -162,7 +167,21 @@
 			.volume {
 				grid-area: volume;
 				display: flex;
-				flex-direction: row;
+				flex-direction: column;
+
+				span {
+					display: flex;
+					flex-direction: row;
+					height: 18rem;
+					margin-top: 6rem;
+				}
+
+				p {
+					width: 20px;
+					margin: auto 0px;
+					text-align: center;
+					font-weight: bold;
+				}
 			}
 
 			input[type=range] {
@@ -183,12 +202,6 @@
 				}
 			}
 
-			.label {
-				width: 20px;
-				margin: auto 0px;
-				text-align: center;
-				font-weight: bold;
-			}
 
 			.progress {
 				position: absolute;
@@ -251,23 +264,8 @@
 	}
 }
 
-.statusBar {
-	display: flex;
-	flex-direction: row;
-	padding: 2px 10px 0px 10px;
-	background-color: var(--accent);
-
-	p {
-		font-size: 14rem;
-		font-weight: bold;
-	}
-
-	.spacer {
-		flex: 1;
-	}
-}
-
-.properties {
+.editor {
+	grid-area: editor;
 	height: 200rem;
 	background-color: var(--propertiesBG);
 	border-top: 1px solid var(--gridGap);
