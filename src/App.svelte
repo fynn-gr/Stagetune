@@ -10,7 +10,7 @@
 	import PlayListAnotation from './lib/PlayListAnotation.svelte';
 
 	//platforms mac, win
-	let uiPlatform = "win";
+	let uiPlatform = "mac";
 	let editMode = false;
 	let sideBar = true;
 	let editor = true;
