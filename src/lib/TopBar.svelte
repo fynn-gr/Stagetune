@@ -8,6 +8,7 @@
 	export let uiPlatform;
 	export let sideBar;
 	export let editor;
+	export let palettes;
 	export let editMode;
 	export let zoom;
 
@@ -34,9 +35,7 @@
 				<button>Open Playlist</button>
 			</AppMenu>
 
-
 			<div class="spacer" data-tauri-drag-region=""></div>
-
 
 			<TopBarButton
 				icon="../pureUI/icons/tb_mac/comment.svg"
@@ -58,9 +57,7 @@
 				toolTip="toggle comment after"
 			/>
 
-
 			<div class="spacerFix" data-tauri-drag-region=""></div>
-
 
 			<!--Lock-->
 			<TopBarToggle
@@ -87,8 +84,16 @@
 
 			<!--editor-->
 			<TopBarButton
-				icon="../pureUI/icons/tb_mac/properties.svg"
+				icon="../pureUI/icons/tb_mac/cut.svg"
 				onClick={() => {editor = !editor}}
+				toolTip="Editor"
+				disabled={!editMode}
+			/>
+
+			<!--palettes-->
+			<TopBarButton
+				icon="../pureUI/icons/tb_mac/properties.svg"
+				onClick={() => {palettes = !palettes}}
 				toolTip="Editor"
 				disabled={!editMode}
 			/>

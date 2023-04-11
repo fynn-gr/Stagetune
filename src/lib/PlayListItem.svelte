@@ -40,7 +40,7 @@
 			return "0:00";
 		} else {
 			//TODO
-			return "1:20"
+			return "10:20"
 		}
 	}
 
