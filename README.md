@@ -1,4 +1,4 @@
-# stagetune
+# pureStage
 
 ## Project setup
 ```

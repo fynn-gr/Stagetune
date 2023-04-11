@@ -1,4 +1,7 @@
 <script>
+	import TopBarButton from '../../pureUI/components/TopBarButton.svelte';
+	import TopBarToggle from '../../pureUI/components/TopBarToggle.svelte';
+	import AppMenu from '../../pureUI/components/AppMenu.svelte'
 	import WinButtonsMac from '../../pureUI/components/WinButtonsMac.svelte'
 	import WinButtonsMS from '../../pureUI/components/WinButtonsMS.svelte'
 
@@ -6,6 +9,7 @@
 	export let sideBar;
 	export let editor;
 	export let editMode;
+	export let zoom;
 
 </script>
 
@@ -19,44 +23,75 @@
 		<div class="topBarContent" data-tauri-drag-region>
 
 			<!--Sidebar-->
-			<button class="toolBarButton" on:click={() => {sideBar = !sideBar}}>
-				<img src="../pureUI/icons/tb_sidebar.svg" alt="">
-			</button>
+			<TopBarButton
+				icon="../pureUI/icons/tb_mac/sidebar.svg"
+				onClick={() => {sideBar = !sideBar}}
+				toolTip="sideBar"
+				disabled={!editMode}
+			/>
 
-			<button class="toolBarButton">
-				<img src="../pureUI/icons/tb_plus.svg" alt="">
-			</button>
+			<AppMenu name="File">
+				<button>Open Playlist</button>
+			</AppMenu>
+
 
 			<div class="spacer" data-tauri-drag-region=""></div>
+
+
+			<TopBarButton
+				icon="../pureUI/icons/tb_mac/comment.svg"
+				onClick={() => {}}
+				toolTip="add comment"
+			/>
+
+			<TopBarToggle
+				icon="../pureUI/icons/tb_mac/comment_before.svg"
+				active={false}
+				activeColor="rgb(0, 108, 141)"
+				toolTip="toggle comment before"
+			/>
+
+			<TopBarToggle
+				icon="../pureUI/icons/tb_mac/comment_after.svg"
+				active={false}
+				activeColor="rgb(0, 108, 141)"
+				toolTip="toggle comment after"
+			/>
+
+
+			<div class="spacerFix" data-tauri-drag-region=""></div>
+
 
 			<!--Lock-->
-			<button
-				class="toolBarButton"
-				style={`background-color: ${editMode ? 'none' : '#c22'};`}
-				on:click={() => {editMode = !editMode}}>
-				{#if editMode}
-					<img src="../pureUI/icons/tb_lock_open.svg" alt="">
-				{:else}
-					<img src="../pureUI/icons/tb_lock.svg" alt="">
-				{/if}
-			</button>
+			<TopBarToggle
+				icon="../pureUI/icons/tb_mac/lock.svg"
+				iconActive="../pureUI/icons/tb_mac/lock_open.svg"
+				bind:active={editMode}
+				activeColor="#c22"
+				toolTip="edit Mode"
+			/>
 
-			<button class="toolBarButton">
-				<img src="../pureUI/icons/tb_stop.svg" alt="">
-			</button>
+			<!--stop all-->
+			<TopBarButton
+				icon="../pureUI/icons/tb_mac/stop.svg"
+				onClick={() => {}}
+				toolTip="stop everything playing"
+			/>
 
-			<button class="toolBarButton">
-				<img src="../pureUI/icons/tb_play.svg" alt="">
-			</button>
+
+			<input type="range" min={1} max={2.4} bind:value={zoom} step={0.2}>
+
 
 			<div class="spacer" data-tauri-drag-region=""></div>
 
+
 			<!--editor-->
-			<button
-				class="toolBarButton"
-				on:click={() => {editor = !editor}}>
-				<img src="../pureUI/icons/tb_properties.svg" alt="">
-			</button>
+			<TopBarButton
+				icon="../pureUI/icons/tb_mac/properties.svg"
+				onClick={() => {editor = !editor}}
+				toolTip="Editor"
+				disabled={!editMode}
+			/>
 
 		</div>
 

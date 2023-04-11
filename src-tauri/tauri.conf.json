@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "stage_tune",
+    "productName": "pureStage",
     "version": "0.1.0"
   },
   "tauri": {
@@ -64,7 +64,7 @@
         "resizable": true,
         "decorations": false,
         "transparent": true,
-        "title": "stageTune"
+        "title": "pureStage"
       }
     ]
   }

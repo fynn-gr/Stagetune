@@ -9,11 +9,13 @@
 	import TopBar from "./lib/TopBar.svelte";
 	import PlayListAnotation from './lib/PlayListAnotation.svelte';
 
-	//platforms mac, win
-	let uiPlatform = "mac";
+
+	type Platform = "win" | "mac";
+	let uiPlatform: Platform = "win";
 	let editMode = false;
 	let sideBar = true;
-	let editor = true;
+	let editor = false;
+	let zoom = 1.2;
 
 	let path: string;
 	let playlist = [
@@ -21,31 +23,32 @@
 		//text
 
 		//selected
-		//title
+		//playing
 		//path
+		//title
 		//length
-		//annotation [before, after]
 		//state
 		//volume
+		//pan
+		//repeat
 		//edit [cutIn, cutOut, fadeIn, fadeOut]
+		//annotation [before, after]
 
 		{
-			title: "Einlass Musik",
 			path: "D:/Alte Schule/Messias/Messias Musik/Der Messias 42. Chor  Halleluja.mp3",
 			length: "2:30",
 			selected: false,
 			annotation: ["", ""]
 		},
 		{
-			title: "Hirten",
-			path: "",
+			title: "A Day To Remember",
+			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 			length: "2:55",
 			selected: true,
 			annotation: ["wenn Hirten auf","wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"]
 		},
 		{
-			title: "Biene Maja",
-			path: "",
+			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 			length: "3:10",
 			selected: false,
 			annotation: ["wenn Hirten auf", ""]
@@ -70,7 +73,9 @@
 		});
 	}
 
-  onMount(() => {
+	$: document.documentElement.style.fontSize = `${zoom}px`;
+
+	onMount(() => {
 		document.addEventListener('keypress', (e) => {
 			console.log(e)
 
@@ -156,13 +161,14 @@
 		{uiPlatform}
 		bind:sideBar={sideBar}
 		bind:editMode={editMode}
-		bind:editor={editor}/>
+		bind:editor={editor}
+		bind:zoom={zoom}/>
 
 
 	<div class="playList" >
 
 		{#each playlist as t}
-			{#if t.title != undefined}
+			{#if t.path != undefined}
 				<PlayListItem
 					bind:track={t}
 					bind:editMode={editMode}

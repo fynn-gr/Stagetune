@@ -1,26 +1,47 @@
 <script lang="ts">
     import { onMount } from "svelte";
 
-
 	interface playListItem {
-		title?: string,
-		path?: string,
-		length?: string,
+		text?: string,
+		
 		selected?: boolean,
 		playing?: boolean,
+		path?: string,
+		title?: string,
+		length?: string,
 		state?: number,
-		missing?: boolean,
+		volume?: number,
+		pan?: number,
+		repeat?: boolean,
+		edit?: Array<number>,
 		annotation?: Array<string>,
-		text?: string,
 	}
 
+	let missing = false;
 	export let editMode: boolean;
 	export let track: playListItem;
 	export let deselectAll = () => {};
 
-	function getSimplePath() {
-		let dirs = track.path.split('/');
-		return dirs[dirs.length - 3];
+	function getTitle() {
+
+		if (track.title == undefined) {
+			let split = track.path.split('/');
+			let fileName = split[split.length -1]
+			let title = fileName.substring(0, fileName.lastIndexOf('.'))
+			return title;
+		} else {
+			return track.title;
+		}
+	}
+
+	//TODO
+	function getTimecode() {
+		if (track.state == 0) {
+			return "0:00";
+		} else {
+			//TODO
+			return "1:20"
+		}
 	}
 
 	onMount(() => {
@@ -33,7 +54,8 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="playlistItem"
 	class:selected={track.selected}
-	class:missing={track.missing}
+	class:missing={missing}
+	class:editMode={editMode}
 	on:click={(e) => {
 		if(e.shiftKey == false) { deselectAll() }
 		track.selected = true;
@@ -42,29 +64,51 @@
 	<!--annotation before-->
 	{#if track.annotation[0] != ""}
 		<div class="annotationStart">
-			<p contenteditable="true">{track.annotation[0]}</p>
+			<p contenteditable={editMode}>{track.annotation[0]}</p>
 		</div>
 	{/if}
 
 	<div class="inner">
 
+		<!--progress-->
+		<img class="waveform" src="./waveform.png" alt="">
 		<div class="progress" style={"width: calc(100% * " + track.state + ");"}></div>
 
-		<button class="playBtn">
-			{#if track.playing == false}
-				<img src="../pureUI/icons/tb_stop.svg" alt="">
+		<!--play Button-->
+		<button
+			class="playBtn"
+			class:active={track.playing}
+			on:click={() => {
+				track.playing = !track.playing;
+			}}
+		>
+			{#if track.playing}
+				<img src="../pureUI/icons/square/pause.svg" alt="">
 			{:else}
-				<img src="../pureUI/icons/tb_play.svg" alt="">
+				<img src="../pureUI/icons/square/play.svg" alt="">
 			{/if}
 		</button>
 
-		<span class="name" style="flex: 1;">
-			<p class="title">{track.title}</p>
-			<p class="location">{getSimplePath()}</p>
-		</span>
+		<!--Info-->
+		<p class="title">{getTitle()}</p>
 
+		<!--repeat-->
+		<button
+			class="repeatBtn"
+			class:active={track.repeat}
+			on:click={() => {
+				track.repeat = editMode ? !track.repeat : track.repeat
+			}}
+		>
+			<img src="../pureUI/icons/square/repeat.svg" alt="repeat">
+		</button>
+
+		<!--time-->
+		<p class="timecode">{getTimecode()}</p>
 		<p class="length">{track.length}</p>
 
+
+		<!--fade-->
 		<span class="fade">
 			<p>Fade in:</p>
 			<input type="number" value="0" min="0" disabled={!editMode}/>
@@ -72,6 +116,7 @@
 			<input type="number" value="0" min="0" disabled={!editMode}/>
 		</span>
 
+		<!--volume-->
 		<div class="volume">
 			<span>
 				<p>-</p>
@@ -91,7 +136,7 @@
 	<!--annotation after-->
 	{#if track.annotation[1] != ""}
 		<div class="annotationEnd">
-			<p contenteditable="true">{track.annotation[1]}</p>
+			<p contenteditable={editMode}>{track.annotation[1]}</p>
 		</div>
 	{/if}
 
