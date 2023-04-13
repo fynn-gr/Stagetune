@@ -25,7 +25,8 @@
 
 			<!--Sidebar-->
 			<TopBarButton
-				icon="../pureUI/icons/tb_mac/sidebar.svg"
+				{uiPlatform}
+				icon="sidebar"
 				onClick={() => {sideBar = !sideBar}}
 				toolTip="sideBar"
 				disabled={!editMode}
@@ -38,20 +39,23 @@
 			<div class="spacer" data-tauri-drag-region=""></div>
 
 			<TopBarButton
-				icon="../pureUI/icons/tb_mac/comment.svg"
+				{uiPlatform}
+				icon="comment"
 				onClick={() => {}}
 				toolTip="add comment"
 			/>
 
 			<TopBarToggle
-				icon="../pureUI/icons/tb_mac/comment_before.svg"
+				{uiPlatform}
+				icon="comment_before"
 				active={false}
 				activeColor="rgb(0, 108, 141)"
 				toolTip="toggle comment before"
 			/>
 
 			<TopBarToggle
-				icon="../pureUI/icons/tb_mac/comment_after.svg"
+				{uiPlatform}
+				icon="comment_after"
 				active={false}
 				activeColor="rgb(0, 108, 141)"
 				toolTip="toggle comment after"
@@ -61,8 +65,9 @@
 
 			<!--Lock-->
 			<TopBarToggle
-				icon="../pureUI/icons/tb_mac/lock.svg"
-				iconActive="../pureUI/icons/tb_mac/lock_open.svg"
+				{uiPlatform}
+				icon="lock"
+				iconActive="lock_open"
 				bind:active={editMode}
 				activeColor="#c22"
 				toolTip="edit Mode"
@@ -70,7 +75,8 @@
 
 			<!--stop all-->
 			<TopBarButton
-				icon="../pureUI/icons/tb_mac/stop.svg"
+				{uiPlatform}
+				icon="stop"
 				onClick={() => {}}
 				toolTip="stop everything playing"
 			/>
@@ -84,7 +90,8 @@
 
 			<!--editor-->
 			<TopBarButton
-				icon="../pureUI/icons/tb_mac/cut.svg"
+				{uiPlatform}
+				icon="cut"
 				onClick={() => {editor = !editor}}
 				toolTip="Editor"
 				disabled={!editMode}
@@ -92,7 +99,8 @@
 
 			<!--palettes-->
 			<TopBarButton
-				icon="../pureUI/icons/tb_mac/properties.svg"
+				{uiPlatform}
+				icon="properties"
 				onClick={() => {palettes = !palettes}}
 				toolTip="Editor"
 				disabled={!editMode}
