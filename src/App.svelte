@@ -12,7 +12,7 @@
 
 
 	type Platform = "win" | "mac";
-	let uiPlatform: Platform = "win";
+	let uiPlatform: Platform = "mac";
 	let editMode = true;
 	let sideBar = false;
 	let editorPanel = false;

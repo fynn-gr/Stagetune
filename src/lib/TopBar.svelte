@@ -4,6 +4,7 @@
 	import AppMenu from '../../pureUI/components/AppMenu.svelte'
 	import WinButtonsMac from '../../pureUI/components/WinButtonsMac.svelte'
 	import WinButtonsMS from '../../pureUI/components/WinButtonsMS.svelte'
+  import TopBarSwitch from '../../pureUI/components/TopBarSwitch.svelte';
 
 	export let uiPlatform;
 	export let sideBar;
@@ -38,28 +39,32 @@
 
 			<div class="spacer" data-tauri-drag-region=""></div>
 
-			<TopBarButton
-				{uiPlatform}
-				icon="comment"
-				onClick={() => {}}
-				toolTip="add comment"
-			/>
+			<div class="toolBarGroup">
 
-			<TopBarToggle
-				{uiPlatform}
-				icon="comment_before"
-				active={false}
-				activeColor="rgb(0, 108, 141)"
-				toolTip="toggle comment before"
-			/>
+				<TopBarButton
+					{uiPlatform}
+					icon="comment"
+					onClick={() => {}}
+					toolTip="add comment"
+				/>
+	
+				<TopBarToggle
+					{uiPlatform}
+					icon="comment_before"
+					active={false}
+					activeColor="rgb(0, 108, 141)"
+					toolTip="toggle comment before"
+				/>
+	
+				<TopBarToggle
+					{uiPlatform}
+					icon="comment_after"
+					active={false}
+					activeColor="rgb(0, 108, 141)"
+					toolTip="toggle comment after"
+				/>
 
-			<TopBarToggle
-				{uiPlatform}
-				icon="comment_after"
-				active={false}
-				activeColor="rgb(0, 108, 141)"
-				toolTip="toggle comment after"
-			/>
+			</div>
 
 			<div class="spacerFix" data-tauri-drag-region=""></div>
 
@@ -87,7 +92,6 @@
 
 			<div class="spacer" data-tauri-drag-region=""></div>
 
-
 			<!--editor-->
 			<TopBarButton
 				{uiPlatform}
@@ -97,6 +101,17 @@
 				disabled={!editMode}
 			/>
 
+
+			<TopBarSwitch
+				{uiPlatform}
+				buttons={[
+					{icon: "properties", toolTip: ""},
+					{icon: "document", toolTip: ""}
+				]}
+				state={0}
+			/>
+
+		
 			<!--palettes-->
 			<TopBarButton
 				{uiPlatform}
