@@ -101,16 +101,6 @@
 				disabled={!editMode}
 			/>
 
-
-			<TopBarSwitch
-				{uiPlatform}
-				buttons={[
-					{icon: "properties", toolTip: ""},
-					{icon: "document", toolTip: ""}
-				]}
-				state={0}
-			/>
-
 		
 			<!--palettes-->
 			<TopBarButton
