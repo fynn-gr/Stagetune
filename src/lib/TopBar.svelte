@@ -4,13 +4,14 @@
 	import AppMenu from '../../pureUI/components/AppMenu.svelte'
 	import WinButtonsMac from '../../pureUI/components/WinButtonsMac.svelte'
 	import WinButtonsMS from '../../pureUI/components/WinButtonsMS.svelte'
-  import TopBarSwitch from '../../pureUI/components/TopBarSwitch.svelte';
+	import { appWindow } from '@tauri-apps/api/window';
+
+	import { editMode } from '../stores';
 
 	export let uiPlatform;
 	export let sideBar;
 	export let editor;
 	export let palettes;
-	export let editMode;
 	export let zoom;
 
 </script>
@@ -19,19 +20,40 @@
 	<div class="topBarContainer" data-tauri-drag-region>
 
 		{#if uiPlatform == "mac"}
-			<WinButtonsMac />
+			<div class="winButtonsMac" data-tauri-drag-region>
+				<button
+					on:click={() => {
+						if ($editMode) {appWindow.close()}
+					}}>
+					<img src="./pureUI/icons/winButtonsMacClose.svg" alt="">
+				</button>
+				<button 
+					on:click={() => {
+						if ($editMode) {appWindow.minimize()}
+					}}>
+					<img src="./pureUI/icons/winButtonsMacMin.svg" alt="">
+				</button>
+				<button
+					on:click={() => {
+						if ($editMode) {appWindow.toggleMaximize()}
+					}}>
+					<img src="./pureUI/icons/winButtonsMacMax.svg" alt="">
+				</button>
+			</div>
 		{/if}
 
 		<div class="topBarContent" data-tauri-drag-region>
 
 			<!--Sidebar-->
+			
 			<TopBarButton
 				{uiPlatform}
 				icon="sidebar"
 				onClick={() => {sideBar = !sideBar}}
 				toolTip="sideBar"
-				disabled={!editMode}
+				disabled={!$editMode}
 			/>
+			
 
 			<AppMenu name="File">
 				<button>Open Playlist</button>
@@ -73,7 +95,7 @@
 				{uiPlatform}
 				icon="lock"
 				iconActive="lock_open"
-				bind:active={editMode}
+				bind:active={$editMode}
 				activeColor="#c22"
 				toolTip="edit Mode"
 			/>
@@ -87,7 +109,7 @@
 			/>
 
 
-			<input type="range" min={1} max={2.4} bind:value={zoom} step={0.2}>
+			<input type="range" min={1} max={2.0} bind:value={zoom} step={0.1}>
 
 
 			<div class="spacer" data-tauri-drag-region=""></div>
@@ -98,33 +120,41 @@
 				icon="cut"
 				onClick={() => {editor = !editor}}
 				toolTip="Editor"
-				disabled={!editMode}
+				disabled={!$editMode}
 			/>
 
-
-			<TopBarSwitch
-				{uiPlatform}
-				buttons={[
-					{icon: "properties", toolTip: ""},
-					{icon: "document", toolTip: ""}
-				]}
-				state={0}
-			/>
-
-		
 			<!--palettes-->
 			<TopBarButton
 				{uiPlatform}
 				icon="properties"
 				onClick={() => {palettes = !palettes}}
 				toolTip="Editor"
-				disabled={!editMode}
+				disabled={!$editMode}
 			/>
 
 		</div>
 
 		{#if uiPlatform == "win"}
-			<WinButtonsMS />
+			<div class="winButtonsMS" data-tauri-drag-region>
+				<button
+					on:click={() => {
+						if ($editMode) {appWindow.minimize()}
+					}}>
+					<img src="./pureUI/icons/winButtonsMSMin.svg">
+				</button>
+				<button
+					on:click={() => {
+						if ($editMode) {appWindow.toggleMaximize()}
+					}}>
+					<img src="./pureUI/icons/winButtonsMSMax.svg">
+				</button>
+				<button
+					on:click={() => {
+						if ($editMode) {appWindow.close()}
+					}}>
+					<img src="./pureUI/icons/winButtonsMSClose.svg">
+				</button>
+			</div>
 		{/if}
 
 	</div>

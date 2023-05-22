@@ -7,15 +7,24 @@ use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata, Men
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+
+/*
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+async fn open_video(handle: tauri::AppHandle) {
+  let video_window = tauri::WindowBuilder::new(
+    &handle,
+    "external", /* the unique window label */
+    tauri::WindowUrl::External("./video.html".parse().unwrap())
+  ).build().unwrap();
 }
+*/
 
 fn main() {
     let context = tauri::generate_context!();
 
     tauri::Builder::default()
+
+        //.invoke_handler(tauri::generate_handler![open_video])
 
         .build(context)
 

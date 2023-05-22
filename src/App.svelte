@@ -3,34 +3,31 @@
 	import './style/App.scss'
 	import { onMount } from 'svelte';
 	import { open } from '@tauri-apps/api/dialog';
+	import { WebviewWindow } from '@tauri-apps/api/window'
+	import { readBinaryFile, readDir } from '@tauri-apps/api/fs';
  
 	import PlayListItem from "./lib/PlayListItem.svelte";
 	import PlayListAnotation from './lib/PlayListAnotation.svelte';
-	import PlayListLoop from './lib/PlayListLoop.svelte';
 	import TrackListItem from "./lib/TrackListItem.svelte";
 	import TopBar from "./lib/TopBar.svelte";
-
+	
+	import { editMode, currentDragging } from './stores';
 
 	type Platform = "win" | "mac";
-	let uiPlatform: Platform = "mac";
-	let editMode = true;
-	let sideBar = false;
+	let uiPlatform: Platform = "win";
+	let sideBar = true;
 	let editorPanel = false;
-	let palettes = true;
+	let palettes = false;
 	let zoom = 1.2;
 
+	let webview: any;
 	let path: string;
 	let srcPaths =  [
-		"D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
-		"D:/Alte Schule/Messias/Messias Musik/Biene Maja Intro (German).mp3",
-		"D:/Alte Schule/Messias/Messias Musik/Der Messias 1. Arioso. Tenor  Tröste dich, mein....mp3"
+		{name: "test.test", path: "testPath"}
 	];
-
 	let playlist = [
-		//selected
 		//text
 
-		//selected
 		//playing
 		//path
 		//title
@@ -48,33 +45,28 @@
 		{
 			path: "D:/Alte Schule/Messias/Messias Musik/Der Messias 42. Chor  Halleluja.mp3",
 			length: "2:30",
-			selected: false,
-			annotation: ["", ""]
+			annotation: [null, null]
 		},
 		{
 			title: "A Day To Remember",
 			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 			length: "2:55",
-			selected: true,
 			annotation: ["wenn Hirten auf","wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"]
 		},
 		{
 			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 			length: "3:10",
-			selected: false,
-			annotation: ["wenn Hirten auf", ""]
+			annotation: ["wenn Hirten auf", null]
 		},
 		{
-			selected: false,
 			text: "Pause - Bühne umbauen, dann nach oben gehen, nicht vergessen auf die Uhr zu schauen und dann mit einer Cola aufs Sofa setzen"
 		},
 		{
 			title: "Kein schöner Land",
 			path: "",
 			length: "10:56",
-			selected: false,
 			state: 0.4,
-			annotation: ["", ""]
+			annotation: [null, null]
 		},
 		/*
 		{
@@ -84,27 +76,22 @@
 					title: "A Day To Remember",
 					path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 					length: "2:55",
-					selected: true,
 					annotation: ["wenn Hirten auf","wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"]
 				},
 				{
 					path: "D:/Alte Schule/Messias/Messias Musik/Der Messias 42. Chor  Halleluja.mp3",
 					length: "2:30",
-					selected: false,
 					annotation: ["", ""]
 				},
 				{
 					path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 					length: "3:10",
-					selected: false,
 					annotation: ["wenn Hirten auf", ""]
 				}
 			]
 		}*/
 	];
-	let playing = [
-
-	];
+	let selectedItem = null;
 	let hotkeys = [
 		{
 			title: "A Day To Remember",
@@ -122,57 +109,140 @@
 		},
 	];
 
-	function deselectAll() {
-		playlist.forEach(e => {
-			e.selected = false;
-		});
-	}
-
 	$: document.documentElement.style.fontSize = `${zoom}px`;
 
-	onMount(() => {
-		document.addEventListener('keypress', (e) => {
-			console.log(e)
+	async function openDir() {
+		const entries = await readDir(path, { recursive: true });
+		console.log(entries)
 
-			if (!editMode) {
+		function processEntries(entries) {
+
+			for (const entry of entries) {
+				console.log(`Entry: ${entry.path}`);
+				if (entry.children) {
+				processEntries(entry.children)
+				} else {
+					srcPaths.push(entry);
+				}
+			}
+
+			//sort alphabetically
+			srcPaths.sort(function (a, b) {
+				if (a.name < b.name) {
+					return -1;
+				}
+				if (a.name > b.name) {
+					return 1;
+				}
+				return 0;
+			});
+			srcPaths = srcPaths
+		}
+
+		processEntries(entries)
+	}
+
+	function openVideoWindow() {
+		webview = new WebviewWindow('theUniqueLabel', {
+			url: '/video.html',
+			alwaysOnTop: true,
+			decorations: false,
+			focus: false,
+		})
+		webview.once('tauri://created', function () {
+		// webview window successfully created
+		})
+		webview.once('tauri://error', function (e) {
+		// an error occurred during webview window creation
+		})
+	}
+
+	function handleDropPlaylist(e) {
+		e.preventDefault();
+		console.log("handle drop on Playlist")
+		if (typeof($currentDragging) == "string") {
+			console.log("drop new track into Playlist: ", $currentDragging);
+			playlist.push({
+				path: $currentDragging,
+				length: "1:23",
+				annotation: [null, null]
+			})
+			playlist = playlist;
+			$currentDragging = null;
+
+		} else if (typeof($currentDragging) == "object") {
+
+		} else {
+			$currentDragging = null;
+		}
+	}
+
+	onMount(() => {
+
+		//shortcuts
+		document.addEventListener('keydown', (e) => {
+			console.log(e.code)
+
+			if ($editMode) {
 				//open
 				if (e.code == "KeyO" && e.ctrlKey == true) {
 
-					console.log("open Path")
-
-					const selected = open({
-						directory: true,
-						multiple: false,
-					})
-					.then(
-						sel => {
-							if (sel == null) {
-								console.log("nothing selected")
-							} else {
-								path = sel;
-								console.log(sel)
+					try {
+						open({
+							directory: true,
+							multiple: false,
+						})
+						.then(
+							sel => {
+								if (sel == null) {
+									console.log("nothing selected")
+								} else {
+									path = sel as string;
+									console.log(sel)
+									openDir()
+								}
 							}
-						}
-					);
+						);
+					} catch (err) {
+						console.error(err)
+					}
 				}
-				//up
-				else if (e.code == "KeyW" && e.ctrlKey == false) {
 
-					console.log("move up");
-
+				// openVideoWindow
+				else if (e.code == "KeyV" && e.ctrlKey) {
+					if (webview) {
+						webview == null;
+					} else {
+						openVideoWindow();
+					}
 				}
-				//move down
-				else if (e.code == "KeyS" && e.ctrlKey == false) {
 
-					console.log("move down");
-				}
-				//save File
-				else if (e.code == "KeyS" && e.ctrlKey == true) {
-
-					//save
+				else if (e.code == "Backspace" || e.code == "Delete") {
+					playlist.splice(selectedItem, 1)
+					playlist = playlist
 				}
 			}
+			
+			//move up
+			if (e.code === "KeyW" && e.ctrlKey == false) {
+				selectedItem > 0 ? selectedItem-- : selectedItem = 0;
+			}
+			//move down
+			else if (e.code === "KeyS" && e.ctrlKey == false) {
+				selectedItem < playlist.length - 1? selectedItem++ : selectedItem;
+			}
+			else if (e.code === "Space") {
+				//play
+			}
+			//save File
+			else if (e.code == "KeyS" && e.ctrlKey == true) {
+				//save
+			}
 		})
+
+		// load debug
+		path = "D:/Alte Schule/Musik/Messias"
+		openDir()
   });
 </script>
 
@@ -182,11 +252,11 @@
 	<!--SideBar-->
 	<div 
 		class="sideBar"
-		style={`width: ${sideBar && editMode ? '300' : '0'}px;`}>
+		style={`width: ${sideBar && $editMode ? '300' : '0'}px;`}>
 
 		<div class="trackList">
 			{#each srcPaths as p}
-				<TrackListItem path={p}/>
+				<TrackListItem path={p.path} fileName={p.name}/>
 			{/each}
 		</div>
 
@@ -197,7 +267,6 @@
 	<TopBar
 		{uiPlatform}
 		bind:sideBar={sideBar}
-		bind:editMode={editMode}
 		bind:editor={editorPanel}
 		bind:palettes={palettes}
 		bind:zoom={zoom}
@@ -205,27 +274,25 @@
 
 
 	<!--playlist-->
-	<div class="playList" >
+	<div
+		class="playList"
+		on:drop={handleDropPlaylist}
+		on:dragenter={() => {console.log("enter playlist")}}
+		on:dragover={e => {e.preventDefault(); return false;}}
+	>
 
-		{#each playlist as t}
+		{#each playlist as t, i}
 			{#if t.path != undefined}
 				<PlayListItem
 					bind:track={t}
-					bind:editMode={editMode}
-					deselectAll={deselectAll}
-				/>
-			{:else if t.tracks != undefined}
-				<PlayListLoop 
-					bind:track={t}
-					editMode={editMode}
-					deselectAll={deselectAll}
+					bind:selectedItem={selectedItem}
+					id={i}
 				/>
 			{:else}
 				<PlayListAnotation
-					bind:selected={t.selected}
+					bind:selectedItem={selectedItem}
 					bind:text={t.text}
-					{editMode}
-					deselectAll={deselectAll}
+					id={i}
 				/>
 			{/if}
 		{/each}
@@ -236,7 +303,7 @@
 	<!--editor-->
 	<div
 		class="editor"
-		style={`height: ${editorPanel && editMode ? '300' : '0' }px;`}
+		style={`height: ${editorPanel && $editMode ? '300' : '0' }px;`}
 	>
 		<img class="waveform" src="./waveform.png">
 	</div>

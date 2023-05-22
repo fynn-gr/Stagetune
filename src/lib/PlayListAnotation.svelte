@@ -1,22 +1,20 @@
 <script lang="ts">
+	import { editMode } from '../stores';
 
 	export let text: string;
-	export let selected: boolean;
-	export let editMode: boolean;
-	export let deselectAll = () => {};
+	export let selectedItem: number;
+	export let id: number
 
 </script>
 
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="playlistAnotation"
-	class:selected={selected}
+	class:selected={selectedItem == id}
 	on:click={(e) => {
-		console.log(e)
-		if(e.shiftKey == false) { deselectAll() }
-		selected = true;
+		selectedItem = id;
 	}}>
 
-	<p contenteditable={editMode}>{text}</p>
+	<p contenteditable={$editMode}>{text}</p>
 
 </div>

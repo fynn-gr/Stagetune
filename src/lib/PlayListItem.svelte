@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
+	import { editMode } from '../stores';
 
 	interface playListItem {
 		text?: string,
 		
-		selected?: boolean,
 		playing?: boolean,
 		path?: string,
 		title?: string,
@@ -18,9 +18,9 @@
 	}
 
 	let missing = false;
-	export let editMode: boolean;
 	export let track: playListItem;
-	export let deselectAll = () => {};
+	export let selectedItem: number;
+	export let id: number;
 
 	function getTitle() {
 
@@ -53,18 +53,17 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="playlistItem"
-	class:selected={track.selected}
+	class:selected={selectedItem == id}
 	class:missing={missing}
-	class:editMode={editMode}
+	class:editMode={$editMode}
 	on:click={(e) => {
-		if(e.shiftKey == false) { deselectAll() }
-		track.selected = true;
+		selectedItem = id;
 	}}>
 
 	<!--annotation before-->
-	{#if track.annotation[0] != ""}
+	{#if track.annotation[0] != null}
 		<div class="annotationStart">
-			<p contenteditable={editMode}>{track.annotation[0]}</p>
+			<p contenteditable={$editMode}>{track.annotation[0]}</p>
 		</div>
 	{/if}
 
@@ -97,7 +96,7 @@
 			class="repeatBtn"
 			class:active={track.repeat}
 			on:click={() => {
-				track.repeat = editMode ? !track.repeat : track.repeat
+				track.repeat = $editMode ? !track.repeat : track.repeat
 			}}
 		>
 			<img src="../pureUI/icons/square/repeat.svg" alt="repeat">
@@ -111,22 +110,22 @@
 		<!--fade-->
 		<span class="fade">
 			<p>Fade in:</p>
-			<input type="number" value="0" min="0" disabled={!editMode}/>
+			<input type="number" value="0" min="0" disabled={!$editMode}/>
 			<p>Fade out:</p>
-			<input type="number" value="0" min="0" disabled={!editMode}/>
+			<input type="number" value="0" min="0" disabled={!$editMode}/>
 		</span>
 
 		<!--volume-->
 		<div class="volume">
 			<span>
 				<p>-</p>
-				<input type="range" value="100" min="0" max="100" disabled={!editMode}/>
+				<input type="range" value="100" min="0" max="100" disabled={!$editMode}/>
 				<p>+</p>
 			</span>
 
 			<span>
 				<p>L</p>
-				<input type="range" value="5" min="0" max="10" disabled={!editMode}/>
+				<input type="range" value="5" min="0" max="10" disabled={!$editMode}/>
 				<p>R</p>
 			</span>
 		</div>
@@ -134,9 +133,9 @@
 	</div>
 
 	<!--annotation after-->
-	{#if track.annotation[1] != ""}
+	{#if track.annotation[1] != null}
 		<div class="annotationEnd">
-			<p contenteditable={editMode}>{track.annotation[1]}</p>
+			<p contenteditable={$editMode}>{track.annotation[1]}</p>
 		</div>
 	{/if}
 
