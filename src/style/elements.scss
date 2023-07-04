@@ -1,13 +1,17 @@
-.windowBody {
+.window-body {
 	display: grid;
 	grid-template-columns: auto 1fr auto;
 	grid-template-rows: 54px 1fr auto;
-	grid-template-areas: 'sideBar topBar   topBar'
+	grid-template-areas: 'topBar topBar    topBar'
 						 'sideBar playList palettes'
 						 'sideBar editor   palettes';
 }
 
-.sideBar {
+.side-bar {
+	grid-area: sideBar;
+	background-color: var(--topbar-BG);
+	padding-top: 0;
+
 	.trackList {
 		height: 100%;
 		overflow-x: hidden;
@@ -47,7 +51,7 @@
 	}
 }
 
-.playList {
+.playlist {
 	display: flex;
 	flex-direction: column;
 	overflow-y: scroll;

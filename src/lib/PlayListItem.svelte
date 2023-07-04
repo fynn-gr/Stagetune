@@ -87,7 +87,7 @@
 	<!--annotation before-->
 	{#if track.annotation[0] != null}
 		<div class="annotationStart">
-			<p contenteditable={$editMode}>{track.annotation[0]}</p>
+			<p contenteditable={$editMode && selectedItem == id}>{track.annotation[0]}</p>
 		</div>
 	{/if}
 
@@ -159,7 +159,7 @@
 	<!--annotation after-->
 	{#if track.annotation[1] != null}
 		<div class="annotationEnd">
-			<p contenteditable={$editMode}>{track.annotation[1]}</p>
+			<p contenteditable={$editMode && selectedItem == id}>{track.annotation[1]}</p>
 		</div>
 	{/if}
 

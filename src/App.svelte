@@ -15,7 +15,7 @@
 	import { isAudioFile } from './utils';
 
 	type Platform = "win" | "mac";
-	let uiPlatform: Platform = "win";
+	let uiPlatform: Platform = "mac";
 	let sideBar = true;
 	let editorPanel = false;
 	let palettes = false;
@@ -224,11 +224,11 @@
 			
 			//move up
 			if (e.code === "KeyW" && e.ctrlKey == false) {
-				selectedItem > 0 ? selectedItem-- : selectedItem = 0;
+				moveUp();
 			}
 			//move down
 			else if (e.code === "KeyS" && e.ctrlKey == false) {
-				selectedItem < playlist.length - 1? selectedItem++ : selectedItem;
+				moveDown();
 			}
 			else if (e.code === "Space") {
 				//play
@@ -239,17 +239,31 @@
 			}
 		})
 
+		function moveUp() {
+			selectedItem > 0 ? selectedItem-- : selectedItem = 0;
+			//if (playlist[selectedItem].text != null) {
+			//	moveUp();
+			//}
+		}
+
+		function moveDown()  {
+			selectedItem < playlist.length - 1? selectedItem++ : selectedItem;
+			//if (playlist[selectedItem].text != null) {
+			//	moveDown();
+			//}
+		}
+
 		// load debug
 		path = "D:/Alte Schule/Musik/Messias"
   	});
 </script>
 
-<main class={"windowBody dark " + uiPlatform}>
+<main class={"window-body dark " + uiPlatform}>
 
 
 	<!--SideBar-->
 	<div 
-		class="sideBar"
+		class="side-bar"
 		style={`width: ${sideBar && $editMode ? '300' : '0'}px;`}>
 
 		<div class="trackList">
@@ -273,7 +287,7 @@
 
 	<!--playlist-->
 	<div
-		class="playList"
+		class="playlist"
 		on:drop={handleDropPlaylist}
 		on:dragenter={() => {console.log("enter playlist")}}
 		on:dragover={e => {e.preventDefault(); return false;}}
@@ -334,6 +348,6 @@
 		</div>
 	{/if}
 
-	<div class="windowRim" />
+	<div class="window-rim" />
 
 </main>

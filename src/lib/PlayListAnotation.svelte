@@ -15,6 +15,6 @@
 		selectedItem = id;
 	}}>
 
-	<p contenteditable={$editMode}>{text}</p>
+	<p contenteditable={$editMode && selectedItem == id}>{text}</p>
 
 </div>

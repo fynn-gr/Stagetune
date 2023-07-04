@@ -4,7 +4,6 @@
 )]
 
 use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata, MenuEntry};
-use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
@@ -35,10 +34,6 @@ fn main() {
 
 				let window = app_handle.get_window("main").unwrap();
 
-				//apply Background Blur on macos, skip on windows
-				#[cfg(target_os = "macos")]
-				apply_vibrancy(&window, NSVisualEffectMaterial::Sidebar, None, Some(9.0))
-					.expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 			}_ => {}
 		});
 }
