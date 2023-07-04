@@ -1,7 +1,6 @@
 <script lang="ts">
   import { currentDragging } from "../stores";
 
-
   export let path: string;
   export let fileName: string
 
@@ -16,7 +15,7 @@
   function handleDragStart(e) {
     e.dataTransfer.dropEffect = "copy";
     e.dataTransfer.setData("text/plain", "placehold");
-    $currentDragging = path;
+    $currentDragging = {name: fileName, path: path};
     dragging = true;
     console.log("drag start", e);
 

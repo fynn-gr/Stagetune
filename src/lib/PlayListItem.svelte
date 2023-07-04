@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+	import { readBinaryFile } from '@tauri-apps/api/fs';
 	import { editMode } from '../stores';
 
 	interface playListItem {
@@ -18,6 +19,7 @@
 	}
 
 	let missing = false;
+	let audioElement: HTMLAudioElement;
 	export let track: playListItem;
 	export let selectedItem: number;
 	export let id: number;
@@ -44,15 +46,37 @@
 		}
 	}
 
-	onMount(() => {
-		let ctx = new AudioContext();
-		let audio;
+	$: playPause = (playing: boolean) => {
+		if (playing) {
+			audioElement.play();
+		} else {
+			audioElement.pause();
+		}
+	}
+
+	onMount(async () => {
+		const file = await readBinaryFile(track.path);
+		console.log(file);
+
+		const ctx = new AudioContext();
+		const gainNode = ctx.createGain();
+		gainNode.gain.value = 1;
+		gainNode.connect(ctx.destination)
+		const destNode = ctx.destination;
+		//const audioBuffer = await ctx.decodeAudioData(file);
+		const sampleSource = new AudioBufferSourceNode(ctx, {
+			buffer: file
+		});
+		sampleSource.connect(ctx.destination)
+		sampleSource.start();
+		
 	})
 
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="playlistItem"
+<div
+	class="playlistItem"
 	class:selected={selectedItem == id}
 	class:missing={missing}
 	class:editMode={$editMode}

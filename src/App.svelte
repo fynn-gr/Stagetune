@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { open } from '@tauri-apps/api/dialog';
 	import { WebviewWindow } from '@tauri-apps/api/window'
-	import { readBinaryFile, readDir } from '@tauri-apps/api/fs';
+	import { readDir } from '@tauri-apps/api/fs';
  
 	import PlayListItem from "./lib/PlayListItem.svelte";
 	import PlayListAnotation from './lib/PlayListAnotation.svelte';
@@ -12,6 +12,7 @@
 	import TopBar from "./lib/TopBar.svelte";
 	
 	import { editMode, currentDragging } from './stores';
+	import { isAudioFile } from './utils';
 
 	type Platform = "win" | "mac";
 	let uiPlatform: Platform = "win";
@@ -25,7 +26,7 @@
 	let srcPaths =  [
 		{name: "test.test", path: "testPath"}
 	];
-	let playlist = [
+	let playlist: Array<any> = [
 		//text
 
 		//playing
@@ -111,35 +112,52 @@
 
 	$: document.documentElement.style.fontSize = `${zoom}px`;
 
-	async function openDir() {
-		const entries = await readDir(path, { recursive: true });
-		console.log(entries)
+	function openDir() {
 
-		function processEntries(entries) {
+		try {
+			open({
+				directory: true,
+				multiple: false,
+			})
+			.then(
+				async sel => {
+					if (sel == null) {
+						console.log("nothing selected")
+					} else {
+						path = sel as string;
+						const entries = await readDir(path, { recursive: true });
 
-			for (const entry of entries) {
-				console.log(`Entry: ${entry.path}`);
-				if (entry.children) {
-				processEntries(entry.children)
-				} else {
-					srcPaths.push(entry);
-				}
-			}
+						function processEntries(entries) {
 
-			//sort alphabetically
-			srcPaths.sort(function (a, b) {
-				if (a.name < b.name) {
-					return -1;
+							for (const entry of entries) {
+								console.log(`Entry: ${entry.path}`);
+								if (entry.children) {
+									processEntries(entry.children)
+								} else {
+									srcPaths.push(entry);
+								}
+							}
+						}
+						console.log(srcPaths)
+						
+						processEntries(entries)
+						//sort alphabetically
+						srcPaths.sort(function (a, b) {
+							if (a.name < b.name) {
+								return -1;
+							}
+							if (a.name > b.name) {
+								return 1;
+							}
+							return 0;
+						});
+						srcPaths = srcPaths
+					}
 				}
-				if (a.name > b.name) {
-					return 1;
-				}
-				return 0;
-			});
-			srcPaths = srcPaths
+			);
+		} catch (err) {
+			console.error(err)
 		}
-
-		processEntries(entries)
 	}
 
 	function openVideoWindow() {
@@ -160,11 +178,11 @@
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 		console.log("handle drop on Playlist")
-		if (typeof($currentDragging) == "string") {
+		if ($currentDragging.path) {
 			console.log("drop new track into Playlist: ", $currentDragging);
 			playlist.push({
-				path: $currentDragging,
-				length: "1:23",
+				path: $currentDragging.path,
+				title: $currentDragging.name,
 				annotation: [null, null]
 			})
 			playlist = playlist;
@@ -186,26 +204,7 @@
 			if ($editMode) {
 				//open
 				if (e.code == "KeyO" && e.ctrlKey == true) {
-
-					try {
-						open({
-							directory: true,
-							multiple: false,
-						})
-						.then(
-							sel => {
-								if (sel == null) {
-									console.log("nothing selected")
-								} else {
-									path = sel as string;
-									console.log(sel)
-									openDir()
-								}
-							}
-						);
-					} catch (err) {
-						console.error(err)
-					}
+					openDir();
 				}
 
 				// openVideoWindow
@@ -242,8 +241,7 @@
 
 		// load debug
 		path = "D:/Alte Schule/Musik/Messias"
-		openDir()
-  });
+  	});
 </script>
 
 <main class={"windowBody dark " + uiPlatform}>
