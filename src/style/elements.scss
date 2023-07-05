@@ -296,10 +296,12 @@
 			}
 
 			.fade {
+				pointer-events: none;
 				display: none;
 			}
 
 			.volume {
+				pointer-events: none;
 				display: none;
 			}
 
@@ -322,6 +324,7 @@
 			}
 
 			.progress {
+				pointer-events: none;
 				position: absolute;
 				left: 0;
 				bottom: 0;

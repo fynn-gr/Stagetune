@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../pureUI/scss/index.scss'
+	import '../src/pureUI/scss/index.scss'
 	import './style/App.scss'
 	import { onMount } from 'svelte';
 	import { open } from '@tauri-apps/api/dialog';
@@ -11,11 +11,9 @@
 	import TrackListItem from "./lib/TrackListItem.svelte";
 	import TopBar from "./lib/TopBar.svelte";
 	
-	import { editMode, currentDragging } from './stores';
+	import { editMode, currentDragging, uiPlatform } from './stores';
 	import { isAudioFile } from './utils';
 
-	type Platform = "win" | "mac";
-	let uiPlatform: Platform = "mac";
 	let sideBar = true;
 	let editorPanel = false;
 	let palettes = false;
@@ -44,25 +42,30 @@
 		//tracks
 
 		{
+			type: "track",
 			path: "D:/Alte Schule/Messias/Messias Musik/Der Messias 42. Chor  Halleluja.mp3",
 			length: "2:30",
 			annotation: [null, null]
 		},
 		{
+			type: "track",
 			title: "A Day To Remember",
 			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 			length: "2:55",
 			annotation: ["wenn Hirten auf","wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"]
 		},
 		{
+			type: "track",
 			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
 			length: "3:10",
 			annotation: ["wenn Hirten auf", null]
 		},
 		{
+			type: "annotation",
 			text: "Pause - Bühne umbauen, dann nach oben gehen, nicht vergessen auf die Uhr zu schauen und dann mit einer Cola aufs Sofa setzen"
 		},
 		{
+			type: "track",
 			title: "Kein schöner Land",
 			path: "",
 			length: "10:56",
@@ -181,6 +184,7 @@
 		if ($currentDragging.path) {
 			console.log("drop new track into Playlist: ", $currentDragging);
 			playlist.push({
+				type: "track",
 				path: $currentDragging.path,
 				title: $currentDragging.name,
 				annotation: [null, null]
@@ -201,6 +205,8 @@
 		document.addEventListener('keydown', (e) => {
 			console.log(e.code)
 
+			if(e.repeat) return;
+
 			if ($editMode) {
 				//open
 				if (e.code == "KeyO" && e.ctrlKey == true) {
@@ -216,6 +222,7 @@
 					}
 				}
 
+				//delete playlist item
 				else if (e.code == "Backspace" || e.code == "Delete") {
 					playlist.splice(selectedItem, 1)
 					playlist = playlist
@@ -232,6 +239,8 @@
 			}
 			else if (e.code === "Space") {
 				//play
+				playlist[selectedItem].playing = !playlist[selectedItem].playing
+				console.log("change playing")
 			}
 			//save File
 			else if (e.code == "KeyS" && e.ctrlKey == true) {
@@ -258,7 +267,7 @@
   	});
 </script>
 
-<main class={"window-body dark " + uiPlatform}>
+<main class={"window-body dark " + $uiPlatform}>
 
 
 	<!--SideBar-->
@@ -277,7 +286,6 @@
 
 	<!--TopBar-->
 	<TopBar
-		{uiPlatform}
 		bind:sideBar={sideBar}
 		bind:editor={editorPanel}
 		bind:palettes={palettes}
@@ -294,13 +302,13 @@
 	>
 
 		{#each playlist as t, i}
-			{#if t.path != undefined}
+			{#if t.type == "track"}
 				<PlayListItem
 					bind:track={t}
 					bind:selectedItem={selectedItem}
 					id={i}
 				/>
-			{:else}
+			{:else if t.type == "annotation"}
 				<PlayListAnotation
 					bind:selectedItem={selectedItem}
 					bind:text={t.text}

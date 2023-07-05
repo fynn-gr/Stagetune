@@ -5,3 +5,10 @@ export function isAudioFile(filename: string): boolean {
         return false;
     }
 }
+
+export function secondsToMinutes(inp: number) {
+    let mins = ~~((inp % 3600) / 60)
+    let secs = ~~inp - mins * 60;
+    let secsFormat = secs < 10 ? "0" + secs : "" + secs;
+    return `${mins}:${secsFormat}`;
+}

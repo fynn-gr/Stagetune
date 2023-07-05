@@ -1,3 +1,3 @@
-[submodule "pureUI"]
-	path = pureUI
-	url = https://github.com/TheFynn/pureUI
+[submodule "src/pureUI"]
+	path = src/pureUI
+	url = https://github.com/fynn-g/pureUI.git

@@ -1,15 +1,19 @@
 <script lang="ts">
     import { onMount } from "svelte";
 	import { readBinaryFile } from '@tauri-apps/api/fs';
+	import { convertFileSrc } from '@tauri-apps/api/tauri';
+	import { secondsToMinutes } from "@/utils";
 	import { editMode } from '../stores';
 
 	interface playListItem {
+		type: string,
+
 		text?: string,
 		
 		playing?: boolean,
 		path?: string,
 		title?: string,
-		length?: string,
+		length?: number,
 		state?: number,
 		volume?: number,
 		pan?: number,
@@ -18,11 +22,13 @@
 		annotation?: Array<string>,
 	}
 
-	let missing = false;
-	let audioElement: HTMLAudioElement;
 	export let track: playListItem;
 	export let selectedItem: number;
 	export let id: number;
+	$: paused = !track.playing;
+	let missing = false;
+	let loaded = false;
+	let audioElement: HTMLAudioElement;
 
 	function getTitle() {
 
@@ -36,26 +42,35 @@
 		}
 	}
 
-	//TODO
-	function getTimecode() {
-		if (track.state == 0) {
-			return "0:00";
+	function onLoaded() {
+		loaded = true;
+		track.length = audioElement.duration;
+	}
+
+	function onEnd() {
+		if(track.repeat) {
+			audioElement.currentTime = 0;
+			audioElement.play();
 		} else {
-			//TODO
-			return "10:20"
+			track.playing = false;
+			track.state = 0;
 		}
 	}
 
-	$: playPause = (playing: boolean) => {
-		if (playing) {
-			audioElement.play();
-		} else {
-			audioElement.pause();
-		}
+	function getState(state: number) {
+		return track.state != undefined ? track.state / track.length : 0;
+	}
+
+	function handleSkip(e) {
+		let rec = e.target.getBoundingClientRect();
+		let x = e.clientX - rec.left;
+		let perc = Math.min(Math.max((x / rec.left) / 2, 0), 1);
+		track.state = track.length * perc;
+		console.log(perc);
 	}
 
 	onMount(async () => {
-		const file = await readBinaryFile(track.path);
+		/*const file = await readBinaryFile(track.path);
 		console.log(file);
 
 		const ctx = new AudioContext();
@@ -69,7 +84,7 @@
 		});
 		sampleSource.connect(ctx.destination)
 		sampleSource.start();
-		
+		*/
 	})
 
 </script>
@@ -94,26 +109,55 @@
 	<div class="inner">
 
 		<!--progress-->
-		<img class="waveform" src="./waveform.png" alt="">
-		<div class="progress" style={"width: calc(100% * " + track.state + ");"}></div>
+		<img
+			class="waveform"
+			src="./waveform.png"
+			alt=""
+			on:click={handleSkip}
+		>
+		<div
+			class="progress"
+			style={`width: calc(100% * ${getState(track.state)});`}
+		></div>
 
 		<!--play Button-->
 		<button
 			class="playBtn"
 			class:active={track.playing}
 			on:click={() => {
-				track.playing = !track.playing;
+				if(track.playing) {
+					track.playing = false;
+					//audioElement.pause();
+				} else {
+					track.playing = true;
+					//audioElement.play();
+				}
 			}}
 		>
 			{#if track.playing}
-				<img src="../pureUI/icons/square/pause.svg" alt="">
+				<img src="../src/pureUI/icons/square/pause.svg" alt="">
 			{:else}
-				<img src="../pureUI/icons/square/play.svg" alt="">
+				<img src="../src/pureUI/icons/square/play.svg" alt="">
 			{/if}
 		</button>
 
 		<!--Info-->
-		<p class="title">{getTitle()}</p>
+		{#if loaded == false}
+			<p class="title">loading...</p>
+		{:else}
+			<p class="title">{getTitle()}</p>
+		{/if}
+
+		<audio
+			src={convertFileSrc(track.path)}
+			bind:this={audioElement}
+			bind:currentTime={track.state}
+			bind:paused={paused}
+			on:loadeddata={onLoaded}
+			on:ended={onEnd}
+			on:waiting={() => {console.error("audio waiting")}}
+			on:stalled={() => {console.error("audio stalled")}}
+		/>
 
 		<!--repeat-->
 		<button
@@ -123,12 +167,12 @@
 				track.repeat = $editMode ? !track.repeat : track.repeat
 			}}
 		>
-			<img src="../pureUI/icons/square/repeat.svg" alt="repeat">
+			<img src="../src/pureUI/icons/square/repeat.svg" alt="repeat">
 		</button>
 
 		<!--time-->
-		<p class="timecode">{getTimecode()}</p>
-		<p class="length">{track.length}</p>
+		<p class="timecode">{secondsToMinutes(track.state)}</p>
+		<p class="length">{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}</p>
 
 
 		<!--fade-->

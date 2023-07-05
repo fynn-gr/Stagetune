@@ -1,14 +1,11 @@
 <script>
-	import TopBarButton from '../../pureUI/components/TopBarButton.svelte';
-	import TopBarToggle from '../../pureUI/components/TopBarToggle.svelte';
-	import AppMenu from '../../pureUI/components/AppMenu.svelte'
-	import WinButtonsMac from '../../pureUI/components/WinButtonsMac.svelte'
-	import WinButtonsMS from '../../pureUI/components/WinButtonsMS.svelte'
+	import TopBarButton from '../pureUI/components/TopBarButton.svelte';
+	import TopBarToggle from '../pureUI/components/TopBarToggle.svelte';
+	import AppMenu from '../pureUI/components/AppMenu.svelte'
 	import { appWindow } from '@tauri-apps/api/window';
 
-	import { editMode } from '../stores';
+	import { editMode, uiPlatform } from '@/stores';
 
-	export let uiPlatform;
 	export let sideBar;
 	export let editor;
 	export let palettes;
@@ -19,25 +16,25 @@
 <div class="topbar toolbar" data-tauri-drag-region>
 	<div class="topbar-container" data-tauri-drag-region>
 
-		{#if uiPlatform == "mac"}
+		{#if $uiPlatform == "mac"}
 			<div class="win-buttons-mac" data-tauri-drag-region>
 				<button
 					on:click={() => {
 						if ($editMode) {appWindow.close()}
 					}}>
-					<img src="./pureUI/icons/winButtonsMacClose.svg" alt="">
+					<img src="./src/pureUI/icons/winButtonsMacClose.svg" alt="">
 				</button>
 				<button 
 					on:click={() => {
 						if ($editMode) {appWindow.minimize()}
 					}}>
-					<img src="./pureUI/icons/winButtonsMacMin.svg" alt="">
+					<img src="./src/pureUI/icons/winButtonsMacMin.svg" alt="">
 				</button>
 				<button
 					on:click={() => {
 						if ($editMode) {appWindow.toggleMaximize()}
 					}}>
-					<img src="./pureUI/icons/winButtonsMacMax.svg" alt="">
+					<img src="./src/pureUI/icons/winButtonsMacMax.svg" alt="">
 				</button>
 			</div>
 		{/if}
@@ -45,7 +42,6 @@
 		<!--Sidebar-->
 		
 		<TopBarButton
-			{uiPlatform}
 			icon="sidebar"
 			onClick={() => {sideBar = !sideBar}}
 			toolTip="sideBar"
@@ -62,14 +58,12 @@
 		<div class="toolbar-group">
 
 			<TopBarButton
-				{uiPlatform}
 				icon="comment"
 				onClick={() => {}}
 				toolTip="add comment"
 			/>
 
 			<TopBarToggle
-				{uiPlatform}
 				icon="comment_before"
 				active={false}
 				activeColor="rgb(0, 108, 141)"
@@ -77,7 +71,6 @@
 			/>
 
 			<TopBarToggle
-				{uiPlatform}
 				icon="comment_after"
 				active={false}
 				activeColor="rgb(0, 108, 141)"
@@ -90,7 +83,6 @@
 
 		<!--Lock-->
 		<TopBarToggle
-			{uiPlatform}
 			icon="lock"
 			iconActive="lock_open"
 			bind:active={$editMode}
@@ -100,7 +92,6 @@
 
 		<!--stop all-->
 		<TopBarButton
-			{uiPlatform}
 			icon="stop"
 			onClick={() => {}}
 			toolTip="stop everything playing"
@@ -114,7 +105,6 @@
 
 		<!--editor-->
 		<TopBarButton
-			{uiPlatform}
 			icon="cut"
 			onClick={() => {editor = !editor}}
 			toolTip="Editor"
@@ -123,7 +113,6 @@
 
 		<!--palettes-->
 		<TopBarButton
-			{uiPlatform}
 			icon="properties"
 			onClick={() => {palettes = !palettes}}
 			toolTip="Editor"
@@ -131,25 +120,25 @@
 		/>
 
 
-		{#if uiPlatform == "win"}
+		{#if $uiPlatform == "win"}
 			<div class="win-buttons-ms" data-tauri-drag-region>
 				<button
 					on:click={() => {
 						if ($editMode) {appWindow.minimize()}
 					}}>
-					<img src="./pureUI/icons/winButtonsMSMin.svg">
+					<img src="./src/pureUI/icons/winButtonsMSMin.svg">
 				</button>
 				<button
 					on:click={() => {
 						if ($editMode) {appWindow.toggleMaximize()}
 					}}>
-					<img src="./pureUI/icons/winButtonsMSMax.svg">
+					<img src="./src/pureUI/icons/winButtonsMSMax.svg">
 				</button>
 				<button
 					on:click={() => {
 						if ($editMode) {appWindow.close()}
 					}}>
-					<img src="./pureUI/icons/winButtonsMSClose.svg">
+					<img src="./src/pureUI/icons/winButtonsMSClose.svg">
 				</button>
 			</div>
 		{/if}
