@@ -62,9 +62,8 @@
 	function handleSkip(e) {
 		let rec = e.target.getBoundingClientRect();
 		let x = e.clientX - rec.left;
-		let perc = Math.min(Math.max((x / rec.left) / 2, 0), 1);
+		let perc = Math.min(Math.max(x / rec.width, 0), 1);
 		track.state = track.length * perc;
-		console.log(perc);
 	}
 
 	onMount(async () => {
@@ -124,13 +123,7 @@
 			class="playBtn"
 			class:active={track.playing}
 			on:click={() => {
-				if(track.playing) {
-					track.playing = false;
-					//audioElement.pause();
-				} else {
-					track.playing = true;
-					//audioElement.play();
-				}
+				track.playing = !track.playing;
 			}}
 		>
 			{#if track.playing}

@@ -22,7 +22,7 @@
 		playlistPath,
 		srcPaths
 	} from './stores';
-	import { isAudioFile, isVideoFile, isPlaylistFile, openPlaylist, saveDir } from './utils';
+	import { isAudioFile, isVideoFile, isPlaylistFile, openPlaylist, saveDir, fileNameFromPath } from './utils';
 
 	let sideBar = true;
 	let editorPanel = false;
@@ -155,7 +155,7 @@
 					items[$selectedItem].state = 0;
 					selectedItem.update(n => n+1);
 					items[$selectedItem].state = 0;
-					items[$selectedItem].playing = false;
+					items[$selectedItem].playing = true;
 					return items;
 				});
 			}
@@ -188,7 +188,7 @@
 			{#each $srcFiles as p, i}
 
 					<p class="category">
-						{$srcPaths[i].substring($srcPaths[i].lastIndexOf('\\')+1)}
+						{fileNameFromPath($srcPaths[i])}
 					</p>
 
 				{#each p as e}

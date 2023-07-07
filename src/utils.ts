@@ -34,6 +34,11 @@ export function secondsToMinutes(inp: number) {
     return `${mins}:${secsFormat}`;
 }
 
+export function fileNameFromPath(filename: string) {
+    let str = filename.substring(filename.lastIndexOf('\\')+1)
+    return str.substring(str.lastIndexOf('/')+1)
+}
+
 export function openDir() {
 
     try {
@@ -103,20 +108,21 @@ function scanSrcPaths() {
         processEntries(entries)
 
         //sort alphabetically
-        /*
+        
         srcFiles.update(items => {
-            items[i].sort(function (a, b) {
-                if (a.name < b.name) {
-                    return -1;
-                }
-                if (a.name > b.name) {
-                    return 1;
-                }
-                return 0;
-            });
+            items.forEach(e => {
+                e.sort(function (a, b) {
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            })
             return items;
         })
-        */
     });
 
 }
