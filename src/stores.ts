@@ -76,3 +76,6 @@ export const playlist = writable([
     }*/
 ])
 export const selectedItem = writable(null);
+export const srcPaths = writable([]);
+export const srcFiles = writable([]);
+export const playlistPath = writable("");

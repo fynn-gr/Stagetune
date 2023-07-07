@@ -2,9 +2,9 @@
 	import '../src/pureUI/scss/index.scss'
 	import './style/App.scss'
 	import { onMount } from 'svelte';
-	import { open } from '@tauri-apps/api/dialog';
+	import { open, save } from '@tauri-apps/api/dialog';
 	import { WebviewWindow } from '@tauri-apps/api/window'
-	import { readDir } from '@tauri-apps/api/fs';
+	import { readDir, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
  
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from './lib/PlayListAnotation.svelte';
@@ -12,8 +12,17 @@
 	import TrackListItem from "./lib/TrackListItem.svelte";
 	import TopBar from "./lib/TopBar.svelte";
 	
-	import { editMode, currentDragging, uiPlatform, playlist, selectedItem } from './stores';
-	import { isAudioFile, isVideoFile, isPlaylistFile } from './utils';
+	import {
+		editMode,
+		currentDragging,
+		uiPlatform,
+		playlist,
+		selectedItem,
+		srcFiles,
+		playlistPath,
+		srcPaths
+	} from './stores';
+	import { isAudioFile, isVideoFile, isPlaylistFile, openPlaylist, saveDir } from './utils';
 
 	let sideBar = true;
 	let editorPanel = false;
@@ -21,8 +30,6 @@
 	let zoom = 1.2;
 
 	let webview: any;
-	let path: string;
-	let srcPaths = [];
 	let hotkeys = [
 		{
 			title: "A Day To Remember",
@@ -42,63 +49,6 @@
 
 	$: document.documentElement.style.fontSize = `${zoom}px`;
 
-	function openDir() {
-
-		try {
-			open({
-				directory: true,
-				multiple: false,
-			})
-			.then(
-				async sel => {
-					if (sel == null) {
-						console.log("nothing selected")
-					} else {
-						path = sel as string;
-						const entries = await readDir(path, { recursive: true });
-
-						function processEntries(entries) {
-
-							for (const entry of entries) {
-								console.log(`Entry: ${entry.path}`);
-								if (entry.children) {
-									//subfolder
-									processEntries(entry.children)
-								} else if (isPlaylistFile(entry.name)) {
-									//Playlist File
-									console.log("load playlist File")
-								} else if (isAudioFile(entry.name)) {
-									//Audio File
-									entry.type = "track"
-									srcPaths.push(entry);
-								} else if (isVideoFile(entry.name)) {
-									//Video File
-									entry.type = "video"
-									srcPaths.push(entry);
-								} else { }
-							}
-						}
-						console.log(srcPaths)
-						
-						processEntries(entries)
-						//sort alphabetically
-						srcPaths.sort(function (a, b) {
-							if (a.name < b.name) {
-								return -1;
-							}
-							if (a.name > b.name) {
-								return 1;
-							}
-							return 0;
-						});
-						srcPaths = srcPaths
-					}
-				}
-			);
-		} catch (err) {
-			console.error(err)
-		}
-	}
 
 	function openVideoWindow() {
 		webview = new WebviewWindow('theUniqueLabel', {
@@ -158,9 +108,9 @@
 			if(e.repeat) return;
 
 			if ($editMode) {
-				//open
+				//open Playlist
 				if (e.code == "KeyO" && e.ctrlKey == true) {
-					openDir();
+					openPlaylist();
 				}
 
 				// openVideoWindow
@@ -219,12 +169,10 @@
 			}
 			//save File
 			else if (e.code == "KeyS" && e.ctrlKey == true) {
-				//save
+				
+				saveDir();
 			}
 		})
-
-		// load debug
-		path = "D:/Alte Schule/Musik/Messias"
   	});
 </script>
 
@@ -237,8 +185,15 @@
 		style={`width: ${sideBar && $editMode ? '300' : '0'}px;`}>
 
 		<div class="trackList">
-			{#each srcPaths as p}
-				<TrackListItem entry={p}/>
+			{#each $srcFiles as p, i}
+
+					<p class="category">
+						{$srcPaths[i].substring($srcPaths[i].lastIndexOf('\\')+1)}
+					</p>
+
+				{#each p as e}
+					<TrackListItem entry={e}/>
+				{/each}
 			{/each}
 		</div>
 

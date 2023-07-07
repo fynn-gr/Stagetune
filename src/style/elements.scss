@@ -25,6 +25,18 @@
 			background-color: #181818;
 		}
 
+		.category {
+			height: 20px;
+			font-size: 12px;
+			padding-left: 4px;
+			margin: 16px 0 0 0;
+			font-weight: 600;
+
+			&:first-of-type {
+				margin: 0;
+			}
+		}
+
 		.trackListItem {
 			display: flex;
 			height: 30px;

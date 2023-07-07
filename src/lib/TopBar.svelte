@@ -5,6 +5,7 @@
 	import { appWindow } from '@tauri-apps/api/window';
 
 	import { editMode, playlist, selectedItem, uiPlatform } from '@/stores';
+	import { openDir } from '@/utils';
 
 	export let sideBar;
 	export let editor;
@@ -49,6 +50,13 @@
 			icon="sidebar"
 			onClick={() => {sideBar = !sideBar}}
 			toolTip="sideBar"
+			disabled={!$editMode}
+		/>
+
+		<TopBarButton
+			icon="plus"
+			onClick={() => {openDir()}}
+			toolTip="add Path"
 			disabled={!$editMode}
 		/>
 		
@@ -121,7 +129,8 @@
 			toolTip="edit Mode"
 		/>
 
-		<!--stop all-->
+
+		<!--stop All
 		<TopBarButton
 			icon="stop"
 			onClick={() => {
@@ -136,6 +145,7 @@
 			}}
 			toolTip="stop everything playing"
 		/>
+		-->
 
 
 		<input type="range" min={1} max={2.0} bind:value={zoom} step={0.1}>
