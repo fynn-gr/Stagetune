@@ -4,7 +4,7 @@
 	import AppMenu from '../pureUI/components/AppMenu.svelte'
 	import { appWindow } from '@tauri-apps/api/window';
 
-	import { editMode, uiPlatform } from '@/stores';
+	import { editMode, playlist, selectedItem, uiPlatform } from '@/stores';
 
 	export let sideBar;
 	export let editor;
@@ -17,7 +17,11 @@
 	<div class="topbar-container" data-tauri-drag-region>
 
 		{#if $uiPlatform == "mac"}
-			<div class="win-buttons-mac" data-tauri-drag-region>
+			<div
+				class="win-buttons-mac"
+				class:active={$editMode}
+				data-tauri-drag-region
+			>
 				<button
 					on:click={() => {
 						if ($editMode) {appWindow.close()}
@@ -57,22 +61,49 @@
 
 		<div class="toolbar-group">
 
+			<!--Add Annotation-->
 			<TopBarButton
 				icon="comment"
-				onClick={() => {}}
+				onClick={() => {
+					if ($selectedItem == null) {
+						playlist.update(e => {
+							e.push({type: "annotation", text: "Comment"})
+							return e;
+						})
+					} else {
+						playlist.update(e => {
+							e.splice($selectedItem + 1, 0, {type: "annotation", text: "Comment"})
+							return e;
+						})
+					}
+					console.log($playlist)
+				}}
 				toolTip="add comment"
 			/>
 
+			<!--Comment Before-->
 			<TopBarToggle
 				icon="comment_before"
-				active={false}
+				active={$playlist[$selectedItem] != undefined && $playlist[$selectedItem].annotation[0] != null}
+				onChange={(active) => {
+					playlist.update(items => {
+						items[$selectedItem].annotation[0] = active ? "Comment" : null;
+						return items;
+					})
+				}}
 				activeColor="rgb(0, 108, 141)"
 				toolTip="toggle comment before"
 			/>
 
 			<TopBarToggle
 				icon="comment_after"
-				active={false}
+				active={$playlist[$selectedItem] != undefined && $playlist[$selectedItem].annotation[1] != null}
+				onChange={(active) => {
+					playlist.update(items => {
+						items[$selectedItem].annotation[1] = active ? "Comment" : null;
+						return items;
+					})
+				}}
 				activeColor="rgb(0, 108, 141)"
 				toolTip="toggle comment after"
 			/>
@@ -93,7 +124,16 @@
 		<!--stop all-->
 		<TopBarButton
 			icon="stop"
-			onClick={() => {}}
+			onClick={() => {
+				/*
+				$playlist.forEach(e => {
+					console.log(e)
+					if (e.type == "track") {
+						e.playing = false;
+						e.state = 0;
+					}
+				})*/
+			}}
 			toolTip="stop everything playing"
 		/>
 

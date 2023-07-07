@@ -6,13 +6,14 @@
 	import { WebviewWindow } from '@tauri-apps/api/window'
 	import { readDir } from '@tauri-apps/api/fs';
  
-	import PlayListItem from "./lib/PlayListItem.svelte";
+	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from './lib/PlayListAnotation.svelte';
+	import PlayListVideo from './lib/PlayListVideo.svelte';
 	import TrackListItem from "./lib/TrackListItem.svelte";
 	import TopBar from "./lib/TopBar.svelte";
 	
-	import { editMode, currentDragging, uiPlatform } from './stores';
-	import { isAudioFile } from './utils';
+	import { editMode, currentDragging, uiPlatform, playlist, selectedItem } from './stores';
+	import { isAudioFile, isVideoFile, isPlaylistFile } from './utils';
 
 	let sideBar = true;
 	let editorPanel = false;
@@ -21,81 +22,7 @@
 
 	let webview: any;
 	let path: string;
-	let srcPaths =  [
-		{name: "test.test", path: "testPath"}
-	];
-	let playlist: Array<any> = [
-		//text
-
-		//playing
-		//path
-		//title
-		//length
-		//state
-		//volume
-		//pan
-		//repeat
-		//edit [cutIn, cutOut, fadeIn, fadeOut]
-		//annotation [before, after]
-
-		//title
-		//tracks
-
-		{
-			type: "track",
-			path: "D:/Alte Schule/Messias/Messias Musik/Der Messias 42. Chor  Halleluja.mp3",
-			length: "2:30",
-			annotation: [null, null]
-		},
-		{
-			type: "track",
-			title: "A Day To Remember",
-			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
-			length: "2:55",
-			annotation: ["wenn Hirten auf","wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"]
-		},
-		{
-			type: "track",
-			path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
-			length: "3:10",
-			annotation: ["wenn Hirten auf", null]
-		},
-		{
-			type: "annotation",
-			text: "Pause - Bühne umbauen, dann nach oben gehen, nicht vergessen auf die Uhr zu schauen und dann mit einer Cola aufs Sofa setzen"
-		},
-		{
-			type: "track",
-			title: "Kein schöner Land",
-			path: "",
-			length: "10:56",
-			state: 0.4,
-			annotation: [null, null]
-		},
-		/*
-		{
-			title: "Einlass",
-			tracks: [
-				{
-					title: "A Day To Remember",
-					path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
-					length: "2:55",
-					annotation: ["wenn Hirten auf","wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier"]
-				},
-				{
-					path: "D:/Alte Schule/Messias/Messias Musik/Der Messias 42. Chor  Halleluja.mp3",
-					length: "2:30",
-					annotation: ["", ""]
-				},
-				{
-					path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
-					length: "3:10",
-					annotation: ["wenn Hirten auf", ""]
-				}
-			]
-		}*/
-	];
-	let selectedItem = null;
+	let srcPaths = [];
 	let hotkeys = [
 		{
 			title: "A Day To Remember",
@@ -135,10 +62,20 @@
 							for (const entry of entries) {
 								console.log(`Entry: ${entry.path}`);
 								if (entry.children) {
+									//subfolder
 									processEntries(entry.children)
-								} else {
+								} else if (isPlaylistFile(entry.name)) {
+									//Playlist File
+									console.log("load playlist File")
+								} else if (isAudioFile(entry.name)) {
+									//Audio File
+									entry.type = "track"
 									srcPaths.push(entry);
-								}
+								} else if (isVideoFile(entry.name)) {
+									//Video File
+									entry.type = "video"
+									srcPaths.push(entry);
+								} else { }
 							}
 						}
 						console.log(srcPaths)
@@ -180,16 +117,15 @@
 
 	function handleDropPlaylist(e) {
 		e.preventDefault();
-		console.log("handle drop on Playlist")
 		if ($currentDragging.path) {
 			console.log("drop new track into Playlist: ", $currentDragging);
-			playlist.push({
-				type: "track",
+			$playlist.push({
+				type: $currentDragging.type,
 				path: $currentDragging.path,
 				title: $currentDragging.name,
 				annotation: [null, null]
 			})
-			playlist = playlist;
+			playlist.set($playlist);
 			$currentDragging = null;
 
 		} else if (typeof($currentDragging) == "object") {
@@ -197,6 +133,20 @@
 		} else {
 			$currentDragging = null;
 		}
+	}
+
+	function moveUp() {
+		$selectedItem > 0 ? selectedItem.update(n => n-1) : selectedItem.set(0);
+		//if (playlist[selectedItem].text != null) {
+		//	moveUp();
+		//}
+	}
+
+	function moveDown()  {
+		$selectedItem < $playlist.length - 1 ? selectedItem.update(n => n+1) : selectedItem;
+		//if (playlist[selectedItem].text != null) {
+		//	moveDown();
+		//}
 	}
 
 	onMount(() => {
@@ -224,8 +174,11 @@
 
 				//delete playlist item
 				else if (e.code == "Backspace" || e.code == "Delete") {
-					playlist.splice(selectedItem, 1)
-					playlist = playlist
+					playlist.update(e => {
+						e.splice($selectedItem, 1);
+						return e;
+					})
+					$playlist = $playlist;
 				}
 			}
 			
@@ -237,9 +190,31 @@
 			else if (e.code === "KeyS" && e.ctrlKey == false) {
 				moveDown();
 			}
+			//reset song
+			else if (e.code === "KeyA" && e.ctrlKey == false) {
+				playlist.update(items => {
+					items[$selectedItem].playing = false;
+					items[$selectedItem].state = 0;
+					return items;
+				})
+			}
+			//skip song
+			else if (e.code === "KeyD" && e.ctrlKey == false) {
+				playlist.update(items => {
+					items[$selectedItem].playing = false;
+					items[$selectedItem].state = 0;
+					selectedItem.update(n => n+1);
+					items[$selectedItem].state = 0;
+					items[$selectedItem].playing = false;
+					return items;
+				});
+			}
+			//play
 			else if (e.code === "Space") {
-				//play
-				playlist[selectedItem].playing = !playlist[selectedItem].playing
+				playlist.update(items => {
+					items[$selectedItem].playing = !$playlist[$selectedItem].playing;
+					return items;
+				})
 				console.log("change playing")
 			}
 			//save File
@@ -247,20 +222,6 @@
 				//save
 			}
 		})
-
-		function moveUp() {
-			selectedItem > 0 ? selectedItem-- : selectedItem = 0;
-			//if (playlist[selectedItem].text != null) {
-			//	moveUp();
-			//}
-		}
-
-		function moveDown()  {
-			selectedItem < playlist.length - 1? selectedItem++ : selectedItem;
-			//if (playlist[selectedItem].text != null) {
-			//	moveDown();
-			//}
-		}
 
 		// load debug
 		path = "D:/Alte Schule/Musik/Messias"
@@ -277,7 +238,7 @@
 
 		<div class="trackList">
 			{#each srcPaths as p}
-				<TrackListItem path={p.path} fileName={p.name}/>
+				<TrackListItem entry={p}/>
 			{/each}
 		</div>
 
@@ -301,21 +262,28 @@
 		on:dragover={e => {e.preventDefault(); return false;}}
 	>
 
-		{#each playlist as t, i}
-			{#if t.type == "track"}
-				<PlayListItem
-					bind:track={t}
-					bind:selectedItem={selectedItem}
-					id={i}
-				/>
-			{:else if t.type == "annotation"}
-				<PlayListAnotation
-					bind:selectedItem={selectedItem}
-					bind:text={t.text}
-					id={i}
-				/>
-			{/if}
-		{/each}
+		{#if $playlist.length > 0}
+			{#each $playlist as t, i}
+				{#if t.type == "track"}
+					<PlayListTrack
+						bind:track={t}
+						id={i}
+					/>
+				{:else if t.type == "video"}
+					<PlayListVideo
+						bind:track={t}
+						id={i}
+					/>
+				{:else if t.type == "annotation"}
+					<PlayListAnotation
+						bind:text={t.text}
+						id={i}
+					/>
+				{/if}
+			{/each}
+		{:else}
+			<p class="placeholder">Drag Song to the Playlist</p>
+		{/if}
 
 	</div>
 
@@ -336,7 +304,20 @@
 
 			<!--current playing-->
 			<div class="current">
-		
+				{#each $playlist as e}
+					{#if e.playing != undefined && e.state != 0}
+						<div class="song">
+							<div
+								class="state"
+								class:playing={e.playing}
+								style={`width: calc(100% * ${
+									e.state != undefined ? e.state / e.length : 0
+								});`}
+							/>
+							<p>{e.title}</p>
+						</div>
+					{/if}
+				{/each}
 			</div>
 
 

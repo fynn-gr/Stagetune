@@ -1,11 +1,19 @@
 main.mac {
+    .win-buttons-mac {
+        filter: grayscale(100%);
+
+        &.active {
+            filter: none;
+        }
+    }
+
     .topbar-container {
         padding-right: 14px;
     }
 }
 
 main.win {
-    .topBar .topBarContainer .topBarContent {
+    .topbar .topbar-container  {
         padding-left: 9px;
     }
 }

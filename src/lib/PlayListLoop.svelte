@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import PlayListItem from "./PlayListItem.svelte";
+    import PlayListItem from "./PlayListTrack.svelte";
 
 	interface playListItem {
 		text?: string,

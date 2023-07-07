@@ -1,21 +1,20 @@
 <script lang="ts">
   import { currentDragging } from "../stores";
 
-  export let path: string;
-  export let fileName: string
+  export let entry: any;
 
   let self: HTMLElement;
   let dragging = false;
 
   function getName() {
-    let name = fileName.substring(0, fileName.lastIndexOf('.'))
+    let name = entry.name.substring(0, entry.name.lastIndexOf('.'))
     return name;
   }
 
   function handleDragStart(e) {
     e.dataTransfer.dropEffect = "copy";
     e.dataTransfer.setData("text/plain", "placehold");
-    $currentDragging = {name: fileName, path: path};
+    $currentDragging = {name: entry.name, path: entry.path, type: entry.type};
     dragging = true;
     console.log("drag start", e);
 
@@ -36,5 +35,10 @@
   on:dragstart={handleDragStart}
   on:dragend={handleDragEnd}
 >
+  {#if entry.type == "track"}
+    <img src="./src/pureUI/icons/square/music.svg" alt="">
+  {:else if entry.type == "video"}
+    <img src="./src/pureUI/icons/square/film.svg" alt="">
+  {/if}
   <p>{getName()}</p>
 </div>

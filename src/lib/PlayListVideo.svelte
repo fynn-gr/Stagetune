@@ -3,7 +3,7 @@
 	import { readBinaryFile } from '@tauri-apps/api/fs';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import { secondsToMinutes } from "@/utils";
-	import { editMode } from '../stores';
+	import { editMode, selectedItem } from '../stores';
 
 	interface playListItem {
 		type: string,
@@ -23,12 +23,11 @@
 	}
 
 	export let track: playListItem;
-	export let selectedItem: number;
 	export let id: number;
 	$: paused = !track.playing;
 	let missing = false;
-	let loaded = false;
-	let audioElement: HTMLAudioElement;
+	let loaded = true;
+	let videoElement: HTMLVideoElement;
 
 	function getTitle() {
 
@@ -42,15 +41,10 @@
 		}
 	}
 
-	function onLoaded() {
-		loaded = true;
-		track.length = audioElement.duration;
-	}
-
 	function onEnd() {
 		if(track.repeat) {
-			audioElement.currentTime = 0;
-			audioElement.play();
+			videoElement.currentTime = 0;
+			videoElement.play();
 		} else {
 			track.playing = false;
 			track.state = 0;
@@ -70,51 +64,31 @@
 	}
 
 	onMount(async () => {
-		/*const file = await readBinaryFile(track.path);
-		console.log(file);
-
-		const ctx = new AudioContext();
-		const gainNode = ctx.createGain();
-		gainNode.gain.value = 1;
-		gainNode.connect(ctx.destination)
-		const destNode = ctx.destination;
-		//const audioBuffer = await ctx.decodeAudioData(file);
-		const sampleSource = new AudioBufferSourceNode(ctx, {
-			buffer: file
-		});
-		sampleSource.connect(ctx.destination)
-		sampleSource.start();
-		*/
 	})
 
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	class="playlistItem"
-	class:selected={selectedItem == id}
+	class="playlistVideo"
+	class:selected={$selectedItem == id}
 	class:missing={missing}
 	class:editMode={$editMode}
+	class:loaded={loaded}
 	on:click={(e) => {
-		selectedItem = id;
+		selectedItem.set(id);
 	}}>
 
 	<!--annotation before-->
 	{#if track.annotation[0] != null}
 		<div class="annotationStart">
-			<p contenteditable={$editMode && selectedItem == id}>{track.annotation[0]}</p>
+			<p contenteditable={$editMode && $selectedItem == id}>{track.annotation[0]}</p>
 		</div>
 	{/if}
 
 	<div class="inner">
 
 		<!--progress-->
-		<img
-			class="waveform"
-			src="./waveform.png"
-			alt=""
-			on:click={handleSkip}
-		>
 		<div
 			class="progress"
 			style={`width: calc(100% * ${getState(track.state)});`}
@@ -148,17 +122,6 @@
 			<p class="title">{getTitle()}</p>
 		{/if}
 
-		<audio
-			src={convertFileSrc(track.path)}
-			bind:this={audioElement}
-			bind:currentTime={track.state}
-			bind:paused={paused}
-			on:loadeddata={onLoaded}
-			on:ended={onEnd}
-			on:waiting={() => {console.error("audio waiting")}}
-			on:stalled={() => {console.error("audio stalled")}}
-		/>
-
 		<!--repeat-->
 		<button
 			class="repeatBtn"
@@ -174,14 +137,6 @@
 		<p class="timecode">{secondsToMinutes(track.state)}</p>
 		<p class="length">{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}</p>
 
-
-		<!--fade-->
-		<span class="fade">
-			<p>Fade in:</p>
-			<input type="number" value="0" min="0" disabled={!$editMode}/>
-			<p>Fade out:</p>
-			<input type="number" value="0" min="0" disabled={!$editMode}/>
-		</span>
 
 		<!--volume-->
 		<div class="volume">
@@ -203,7 +158,7 @@
 	<!--annotation after-->
 	{#if track.annotation[1] != null}
 		<div class="annotationEnd">
-			<p contenteditable={$editMode && selectedItem == id}>{track.annotation[1]}</p>
+			<p contenteditable={$editMode && $selectedItem == id}>{track.annotation[1]}</p>
 		</div>
 	{/if}
 
