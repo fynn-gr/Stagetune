@@ -1,24 +1,24 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-	import { convertFileSrc } from '@tauri-apps/api/tauri';
+	import { onMount } from "svelte";
+	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { secondsToMinutes } from "@/utils";
-	import { editMode, selectedItem } from '../stores';
+	import { editMode, selectedItem, isEditing } from "../stores";
 
 	interface playListItem {
-		type: string,
+		type: string;
 
-		text?: string,
-		
-		playing?: boolean,
-		path?: string,
-		title?: string,
-		length?: number,
-		state?: number,
-		volume?: number,
-		pan?: number,
-		repeat?: boolean,
-		edit?: Array<number>,
-		annotation?: Array<string>,
+		text?: string;
+
+		playing?: boolean;
+		path?: string;
+		title?: string;
+		length?: number;
+		state?: number;
+		volume?: number;
+		pan?: number;
+		repeat?: boolean;
+		edit?: Array<number>;
+		annotation?: Array<string>;
 	}
 
 	export let track: playListItem;
@@ -29,11 +29,10 @@
 	let audioElement: HTMLAudioElement;
 
 	function getTitle() {
-
 		if (track.title == undefined) {
-			let split = track.path.split('/');
-			let fileName = split[split.length -1]
-			let title = fileName.substring(0, fileName.lastIndexOf('.'))
+			let split = track.path.split("/");
+			let fileName = split[split.length - 1];
+			let title = fileName.substring(0, fileName.lastIndexOf("."));
 			return title;
 		} else {
 			return track.title;
@@ -46,7 +45,7 @@
 	}
 
 	function onEnd() {
-		if(track.repeat) {
+		if (track.repeat) {
 			audioElement.currentTime = 0;
 			audioElement.play();
 		} else {
@@ -82,41 +81,46 @@
 		sampleSource.connect(ctx.destination)
 		sampleSource.start();
 		*/
-	})
-
+	});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="playlistTrack"
 	class:selected={$selectedItem == id}
-	class:missing={missing}
+	class:missing
 	class:editMode={$editMode}
-	class:loaded={loaded}
+	class:loaded
 	on:click={(e) => {
 		selectedItem.set(id);
-	}}>
-
+	}}
+>
 	<!--annotation before-->
 	{#if track.annotation[0] != null}
 		<div class="annotationStart">
-			<p contenteditable={$editMode && $selectedItem == id}>{track.annotation[0]}</p>
+			<input
+				type="text"
+				disabled={!$editMode || $selectedItem != id}
+				on:focus={() => {
+					isEditing.update((e) => e + 1);
+					console.log("in focus", $isEditing);
+				}}
+				on:blur={() => {
+					isEditing.update((e) => e - 1);
+					console.log("out of focus", $isEditing);
+				}}
+				bind:value={track.annotation[0]}
+			/>
 		</div>
 	{/if}
 
 	<div class="inner">
-
 		<!--progress-->
-		<img
-			class="waveform"
-			src="./waveform.png"
-			alt=""
-			on:click={handleSkip}
-		>
+		<img class="waveform" src="./waveform.png" alt="" on:click={handleSkip} />
 		<div
 			class="progress"
 			style={`width: calc(100% * ${getState(track.state)});`}
-		></div>
+		/>
 
 		<!--play Button-->
 		<button
@@ -127,9 +131,9 @@
 			}}
 		>
 			{#if track.playing}
-				<img src="../src/pureUI/icons/square/pause.svg" alt="">
+				<img src="../src/pureUI/icons/square/pause.svg" alt="" />
 			{:else}
-				<img src="../src/pureUI/icons/square/play.svg" alt="">
+				<img src="../src/pureUI/icons/square/play.svg" alt="" />
 			{/if}
 		</button>
 
@@ -144,11 +148,15 @@
 			src={convertFileSrc(track.path)}
 			bind:this={audioElement}
 			bind:currentTime={track.state}
-			bind:paused={paused}
+			bind:paused
 			on:loadeddata={onLoaded}
 			on:ended={onEnd}
-			on:waiting={() => {console.error("audio waiting")}}
-			on:stalled={() => {console.error("audio stalled")}}
+			on:waiting={() => {
+				console.error("audio waiting");
+			}}
+			on:stalled={() => {
+				console.error("audio stalled");
+			}}
 		/>
 
 		<!--repeat-->
@@ -156,47 +164,64 @@
 			class="repeatBtn"
 			class:active={track.repeat}
 			on:click={() => {
-				track.repeat = $editMode ? !track.repeat : track.repeat
+				track.repeat = $editMode ? !track.repeat : track.repeat;
 			}}
 		>
-			<img src="../src/pureUI/icons/square/repeat.svg" alt="repeat">
+			<img src="../src/pureUI/icons/square/repeat.svg" alt="repeat" />
 		</button>
 
 		<!--time-->
 		<p class="timecode">{secondsToMinutes(track.state)}</p>
-		<p class="length">{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}</p>
-
+		<p class="length">
+			{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}
+		</p>
 
 		<!--fade-->
 		<span class="fade">
 			<p>Fade in:</p>
-			<input type="number" value="0" min="0" disabled={!$editMode}/>
+			<input type="number" value="0" min="0" disabled={!$editMode} />
 			<p>Fade out:</p>
-			<input type="number" value="0" min="0" disabled={!$editMode}/>
+			<input type="number" value="0" min="0" disabled={!$editMode} />
 		</span>
 
 		<!--volume-->
 		<div class="volume">
 			<span>
 				<p>-</p>
-				<input type="range" value="100" min="0" max="100" disabled={!$editMode}/>
+				<input
+					type="range"
+					value="100"
+					min="0"
+					max="100"
+					disabled={!$editMode}
+				/>
 				<p>+</p>
 			</span>
 
 			<span>
 				<p>L</p>
-				<input type="range" value="5" min="0" max="10" disabled={!$editMode}/>
+				<input type="range" value="5" min="0" max="10" disabled={!$editMode} />
 				<p>R</p>
 			</span>
 		</div>
-
 	</div>
 
 	<!--annotation after-->
 	{#if track.annotation[1] != null}
 		<div class="annotationEnd">
-			<p contenteditable={$editMode && $selectedItem == id}>{track.annotation[1]}</p>
+			<input
+				type="text"
+				disabled={!$editMode || $selectedItem != id}
+				on:focus={() => {
+					isEditing.update((e) => e + 1);
+					console.log("in focus", $isEditing);
+				}}
+				on:blur={() => {
+					isEditing.update((e) => e - 1);
+					console.log("out of focus", $isEditing);
+				}}
+				bind:value={track.annotation[1]}
+			/>
 		</div>
 	{/if}
-
 </div>

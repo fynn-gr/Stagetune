@@ -1,19 +1,19 @@
 main.mac {
-    .win-buttons-mac {
-        filter: grayscale(100%);
+	.win-buttons-mac {
+		filter: grayscale(100%);
 
-        &.active {
-            filter: none;
-        }
-    }
+		&.active {
+			filter: none;
+		}
+	}
 
-    .topbar-container {
-        padding-right: 14px;
-    }
+	.topbar-container {
+		padding-right: 14px;
+	}
 }
 
 main.win {
-    .topbar .topbar-container  {
-        padding-left: 9px;
-    }
+	.topbar .topbar-container {
+		padding-left: 9px;
+	}
 }

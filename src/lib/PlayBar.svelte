@@ -1,8 +1,4 @@
 <script lang="ts">
-
 </script>
 
-
-<div class="playBar">
-
-</div>
+<div class="playBar" />

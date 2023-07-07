@@ -1,25 +1,25 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-	import { readBinaryFile } from '@tauri-apps/api/fs';
-	import { convertFileSrc } from '@tauri-apps/api/tauri';
+	import { onMount } from "svelte";
+	import { readBinaryFile } from "@tauri-apps/api/fs";
+	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { secondsToMinutes } from "@/utils";
-	import { editMode, selectedItem } from '../stores';
+	import { editMode, selectedItem } from "../stores";
 
 	interface playListItem {
-		type: string,
+		type: string;
 
-		text?: string,
-		
-		playing?: boolean,
-		path?: string,
-		title?: string,
-		length?: number,
-		state?: number,
-		volume?: number,
-		pan?: number,
-		repeat?: boolean,
-		edit?: Array<number>,
-		annotation?: Array<string>,
+		text?: string;
+
+		playing?: boolean;
+		path?: string;
+		title?: string;
+		length?: number;
+		state?: number;
+		volume?: number;
+		pan?: number;
+		repeat?: boolean;
+		edit?: Array<number>;
+		annotation?: Array<string>;
 	}
 
 	export let track: playListItem;
@@ -30,11 +30,10 @@
 	let videoElement: HTMLVideoElement;
 
 	function getTitle() {
-
 		if (track.title == undefined) {
-			let split = track.path.split('/');
-			let fileName = split[split.length -1]
-			let title = fileName.substring(0, fileName.lastIndexOf('.'))
+			let split = track.path.split("/");
+			let fileName = split[split.length - 1];
+			let title = fileName.substring(0, fileName.lastIndexOf("."));
 			return title;
 		} else {
 			return track.title;
@@ -42,7 +41,7 @@
 	}
 
 	function onEnd() {
-		if(track.repeat) {
+		if (track.repeat) {
 			videoElement.currentTime = 0;
 			videoElement.play();
 		} else {
@@ -58,48 +57,47 @@
 	function handleSkip(e) {
 		let rec = e.target.getBoundingClientRect();
 		let x = e.clientX - rec.left;
-		let perc = Math.min(Math.max((x / rec.left) / 2, 0), 1);
+		let perc = Math.min(Math.max(x / rec.left / 2, 0), 1);
 		track.state = track.length * perc;
 		console.log(perc);
 	}
 
-	onMount(async () => {
-	})
-
+	onMount(async () => {});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="playlistVideo"
 	class:selected={$selectedItem == id}
-	class:missing={missing}
+	class:missing
 	class:editMode={$editMode}
-	class:loaded={loaded}
+	class:loaded
 	on:click={(e) => {
 		selectedItem.set(id);
-	}}>
-
+	}}
+>
 	<!--annotation before-->
 	{#if track.annotation[0] != null}
 		<div class="annotationStart">
-			<p contenteditable={$editMode && $selectedItem == id}>{track.annotation[0]}</p>
+			<p contenteditable={$editMode && $selectedItem == id}>
+				{track.annotation[0]}
+			</p>
 		</div>
 	{/if}
 
 	<div class="inner">
-
 		<!--progress-->
 		<div
 			class="progress"
 			style={`width: calc(100% * ${getState(track.state)});`}
-		></div>
+		/>
 
 		<!--play Button-->
 		<button
 			class="playBtn"
 			class:active={track.playing}
 			on:click={() => {
-				if(track.playing) {
+				if (track.playing) {
 					track.playing = false;
 					//audioElement.pause();
 				} else {
@@ -109,9 +107,9 @@
 			}}
 		>
 			{#if track.playing}
-				<img src="../src/pureUI/icons/square/pause.svg" alt="">
+				<img src="../src/pureUI/icons/square/pause.svg" alt="" />
 			{:else}
-				<img src="../src/pureUI/icons/square/play.svg" alt="">
+				<img src="../src/pureUI/icons/square/play.svg" alt="" />
 			{/if}
 		</button>
 
@@ -127,39 +125,46 @@
 			class="repeatBtn"
 			class:active={track.repeat}
 			on:click={() => {
-				track.repeat = $editMode ? !track.repeat : track.repeat
+				track.repeat = $editMode ? !track.repeat : track.repeat;
 			}}
 		>
-			<img src="../src/pureUI/icons/square/repeat.svg" alt="repeat">
+			<img src="../src/pureUI/icons/square/repeat.svg" alt="repeat" />
 		</button>
 
 		<!--time-->
 		<p class="timecode">{secondsToMinutes(track.state)}</p>
-		<p class="length">{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}</p>
-
+		<p class="length">
+			{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}
+		</p>
 
 		<!--volume-->
 		<div class="volume">
 			<span>
 				<p>-</p>
-				<input type="range" value="100" min="0" max="100" disabled={!$editMode}/>
+				<input
+					type="range"
+					value="100"
+					min="0"
+					max="100"
+					disabled={!$editMode}
+				/>
 				<p>+</p>
 			</span>
 
 			<span>
 				<p>L</p>
-				<input type="range" value="5" min="0" max="10" disabled={!$editMode}/>
+				<input type="range" value="5" min="0" max="10" disabled={!$editMode} />
 				<p>R</p>
 			</span>
 		</div>
-
 	</div>
 
 	<!--annotation after-->
 	{#if track.annotation[1] != null}
 		<div class="annotationEnd">
-			<p contenteditable={$editMode && $selectedItem == id}>{track.annotation[1]}</p>
+			<p contenteditable={$editMode && $selectedItem == id}>
+				{track.annotation[1]}
+			</p>
 		</div>
 	{/if}
-
 </div>
