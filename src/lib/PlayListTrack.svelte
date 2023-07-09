@@ -124,7 +124,7 @@
 
 		<!--play Button-->
 		<button
-			class="playBtn"
+			class="play-btn"
 			class:active={track.playing}
 			on:click={() => {
 				track.playing = !track.playing;
@@ -161,7 +161,7 @@
 
 		<!--repeat-->
 		<button
-			class="repeatBtn"
+			class="repeat-btn"
 			class:active={track.repeat}
 			on:click={() => {
 				track.repeat = $editMode ? !track.repeat : track.repeat;

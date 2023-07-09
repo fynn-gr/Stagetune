@@ -12,6 +12,7 @@
 	import TrackListItem from "./lib/TrackListItem.svelte";
 	import TopBar from "./lib/TopBar.svelte";
 
+	import { pureLocale } from "./pureUI/modules/pureLocale";
 	import {
 		editMode,
 		currentDragging,
@@ -23,6 +24,7 @@
 		srcPaths,
 		isEditing,
 		hotkeys,
+		locale
 	} from "./stores";
 	import {
 		isAudioFile,
@@ -32,29 +34,20 @@
 		saveDir,
 		fileNameFromPath,
 	} from "./utils";
+	import { invoke } from "@tauri-apps/api/tauri";
 
 	let sideBar = true;
 	let editorPanel = false;
 	let palettes = false;
 	let zoom = 1.2;
 
-	let webview: any;
+	let projector = false;
+	$: _ = $locale;
 
 	$: document.documentElement.style.fontSize = `${zoom}px`;
 
-	function openVideoWindow() {
-		webview = new WebviewWindow("theUniqueLabel", {
-			url: "/video.html",
-			alwaysOnTop: true,
-			decorations: false,
-			focus: false,
-		});
-		webview.once("tauri://created", function () {
-			// webview window successfully created
-		});
-		webview.once("tauri://error", function (e) {
-			// an error occurred during webview window creation
-		});
+	function openVideoWindow(show: boolean) {
+		invoke("show_projector", {invokeMessage: show ? "true" : "false"})
 	}
 
 	function handleDropPlaylist(e) {
@@ -92,6 +85,9 @@
 	}
 
 	onMount(() => {
+		//i18n
+		new pureLocale("en");
+
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
 			if ($isEditing > 0) {
@@ -106,11 +102,8 @@
 
 					// openVideoWindow
 					else if (e.code == "KeyV" && e.ctrlKey) {
-						if (webview) {
-							webview == null;
-						} else {
-							openVideoWindow();
-						}
+						openVideoWindow(!projector)
+						projector = !projector;
 					}
 
 					//delete playlist item
@@ -206,13 +199,16 @@
 				{#if t.type == "track"}
 					<PlayListTrack bind:track={t} id={i} />
 				{:else if t.type == "video"}
-					<PlayListVideo bind:track={t} id={i} />
+					<PlayListVideo
+						bind:track={t}
+						id={i}
+					/>
 				{:else if t.type == "annotation"}
 					<PlayListAnotation bind:item={t} id={i} />
 				{/if}
 			{/each}
 		{:else}
-			<p class="placeholder">Drag Song to the Playlist</p>
+			<p class="placeholder">Drag Track here</p>
 		{/if}
 	</div>
 

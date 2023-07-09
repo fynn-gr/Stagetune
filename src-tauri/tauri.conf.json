@@ -13,6 +13,9 @@
   "tauri": {
     "allowlist": {
       "all": true,
+      "fs": {
+        "scope": ["C:/"]
+      },
       "protocol": {
         "asset": true,
         "assetScope": ["**"]
@@ -53,7 +56,7 @@
       }
     },
     "security": {
-      "csp": null
+      "csp": "default-src: 'self'; media-src 'self' asset:"
     },
     "updater": {
       "active": false

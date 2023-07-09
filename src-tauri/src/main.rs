@@ -7,33 +7,44 @@ use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata, Men
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
-/*
 #[tauri::command]
-async fn open_video(handle: tauri::AppHandle) {
-  let video_window = tauri::WindowBuilder::new(
-    &handle,
-    "external", /* the unique window label */
-    tauri::WindowUrl::External("./video.html".parse().unwrap())
-  ).build().unwrap();
+async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
+  if invoke_message == "true" {
+    let video_window = tauri::WindowBuilder::new(
+      &handle,
+      "video_window", /* the unique window label */
+      tauri::WindowUrl::App("video.html".into())
+    )
+    .build()
+    .unwrap();
+
+    video_window.set_always_on_top(true);
+    video_window.set_decorations(false);
+  } else {
+    let window = handle.get_window("video_window").unwrap();
+    window.close();
+  }
+
 }
-*/
+
 
 fn main() {
-    let context = tauri::generate_context!();
+  let context = tauri::generate_context!();
+  let menu = Menu::new();
 
-    tauri::Builder::default()
+  tauri::Builder::default()
 
-        //.invoke_handler(tauri::generate_handler![open_video])
+  .invoke_handler(tauri::generate_handler![show_projector])
 
-        .build(context)
+  .menu(menu)
 
-        .expect("error while running tauri application")
+  .build(context)
+  
+  .expect("error while running tauri application")
 
-        .run(|app_handle, event| match event {
-			tauri::RunEvent::Ready {} => {
-
-				let window = app_handle.get_window("main").unwrap();
-
-			}_ => {}
-		});
+  .run(|app_handle, event| match event {
+    tauri::RunEvent::Ready {} => {
+      let window = app_handle.get_window("main").unwrap();
+    }_ => {}
+  });
 }
