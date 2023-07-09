@@ -116,10 +116,18 @@
 
 	<div class="inner">
 		<!--progress-->
-		<img class="waveform" src="./waveform.png" alt="" on:click={handleSkip} />
+		<!--<img class="waveform" src="./waveform.png" alt=""  />-->
 		<div
 			class="progress"
-			style={`width: calc(100% * ${getState(track.state)});`}
+			on:click={handleSkip}
+			style={`
+				background: linear-gradient(
+					90deg,
+					var(--secondary) 0%,
+					var(--secondary) calc(100% * ${getState(track.state)}),
+					#111 calc(100% * ${getState(track.state)}),
+					#111 100%
+				);`}
 		/>
 
 		<!--play Button-->

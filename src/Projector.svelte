@@ -15,6 +15,9 @@
         console.log(e.payload)
         if (e.payload.action == "stop") {
             src="";
+        } else if (e.payload.action == "skip") {
+            console.log(videoElement.duration * e.payload.position)
+            videoElement.currentTime = videoElement.duration * e.payload.position;
         } else if (e.payload.action == "pause") {
             videoElement.pause();
         } else if (e.payload.action == "resume") {

@@ -461,8 +461,8 @@
 		}
 
 		.progress {
-			pointer-events: none;
 			position: absolute;
+			width: 100%;
 			left: 0;
 			bottom: 0;
 			height: 6rem;

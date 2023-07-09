@@ -22,18 +22,29 @@
 	}
 
 	export let track: playListItem;
+	track.playing = false;
 	export let id: number;
 	let missing = false;
-	track.playing = false;
 
 	function getState(state: number) {
 		return track.state != undefined ? track.state : 0;
 	}
 
+	const unlisten = listen("video_state", (e: any) => {
+		track.state = e.payload.progress;
+	})
+
+	function handleSkip(e) {
+		let rec = e.target.getBoundingClientRect();
+		let x = e.clientX - rec.left;
+		let perc = Math.min(Math.max(x / rec.width, 0), 1);
+
+		track.playing = false;
+		emit("update_play", { action: "skip", position: perc });
+	}
+
 	onMount(async () => {
-		const unlisten = await listen("video_state", (e: any) => {
-			track.state = e.payload.progress;
-		})
+
 	});
 </script>
 
@@ -61,7 +72,15 @@
 		<!--progress-->
 		<div
 			class="progress"
-			style={`width: calc(100% * ${getState(track.state)});`}
+			on:click={handleSkip}
+			style={`
+				background: linear-gradient(
+					90deg,
+					var(--secondary) 0%,
+					var(--secondary) calc(100% * ${getState(track.state)}),
+					#111 calc(100% * ${getState(track.state)}),
+					#111 100%
+				);`}
 		/>
 
 		<!--play Button-->
@@ -79,7 +98,7 @@
 					track.playing = true;
 				} else {
 					//start
-					emit("play_video", {url: track.path})
+					emit("play_video", { url: track.path })
 					track.playing = true;
 				}
 			}}
@@ -96,10 +115,11 @@
 			class="set-btn"
 			class:active={false}
 			on:click={async () => {
+				track.playing = false;
 				emit("update_play", { action: "stop" })
 			}}
 		>
-			<img src="../src/pureUI/icons/square/film.svg" alt="">
+			<img src="../src/pureUI/icons/square/stop.svg" alt="">
 		</button>
 
 		<!--Title-->
