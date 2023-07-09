@@ -101,7 +101,7 @@
 					}
 
 					// openVideoWindow
-					else if (e.code == "KeyV" && e.ctrlKey) {
+					else if (e.code == "KeyV" && ( e.ctrlKey || e.metaKey )) {
 						openVideoWindow(!projector)
 						projector = !projector;
 					}

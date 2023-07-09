@@ -1,5 +1,7 @@
 <script lang="ts">
     import { emit, listen } from '@tauri-apps/api/event';
+    import { platform } from '@tauri-apps/api/os';
+	import { convertFileSrc } from '@tauri-apps/api/tauri';
     import { currentMonitor, appWindow, LogicalSize, PhysicalSize } from '@tauri-apps/api/window';
 
     let videoElement: HTMLVideoElement;
@@ -7,8 +9,19 @@
     let fullscreen = false;
 
     const unlisten = listen("play_video", (event: any) => {
-        src = "https://asset.localhost/" + event.payload.url;
-        //videoElement.play();
+        const p = platform()
+        .then(e => {
+            /*
+            if (e == "darwin") {
+                //src = "/Users/fynn/Files local/Alte Schule musik/Hänsel/Cutscenes 2.mp4"
+                src = "assets://" + event.payload.url;
+            } else {
+                src = "https://asset.localhost" + event.payload.url;
+            }
+            */
+
+            src = convertFileSrc(event.payload.url)
+        })
     })
     
     const unlistenPause = listen("update_play", (e: any) => {
@@ -45,7 +58,8 @@
         bind:this={videoElement}
         on:canplay={() => videoElement.play()}
         on:timeupdate={() => emit("video_state", {
-            "progress": videoElement.currentTime / videoElement.duration
+            "progress": videoElement.currentTime / videoElement.duration,
+            "buffer": videoElement.buffered
         })}
     />
 </div>

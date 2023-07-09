@@ -32,6 +32,7 @@
 
 	const unlisten = listen("video_state", (e: any) => {
 		track.state = e.payload.progress;
+		console.log(e.payload.buffer.length)
 	})
 
 	function handleSkip(e) {
@@ -78,8 +79,8 @@
 					90deg,
 					var(--secondary) 0%,
 					var(--secondary) calc(100% * ${getState(track.state)}),
-					#111 calc(100% * ${getState(track.state)}),
-					#111 100%
+					#0002 calc(100% * ${getState(track.state)}),
+					#0002 100%
 				);`}
 		/>
 
