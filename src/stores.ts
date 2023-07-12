@@ -67,4 +67,3 @@ export const hotkeys = writable([
 		],
 	},
 ]);
-export const locale = writable({});

@@ -2,9 +2,6 @@
 	import "../src/pureUI/scss/index.scss";
 	import "./style/App.scss";
 	import { onMount } from "svelte";
-	import { open, save } from "@tauri-apps/api/dialog";
-	import { WebviewWindow } from "@tauri-apps/api/window";
-	import { readDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
@@ -23,28 +20,25 @@
 		playlistPath,
 		srcPaths,
 		isEditing,
-		hotkeys,
-		locale
+		hotkeys
 	} from "./stores";
 	import {
-		isAudioFile,
-		isVideoFile,
-		isPlaylistFile,
 		openPlaylist,
 		saveDir,
 		fileNameFromPath,
 	} from "./utils";
 	import { invoke } from "@tauri-apps/api/tauri";
 
+	let trackElements = [];
 	let sideBar = true;
 	let editorPanel = false;
 	let palettes = false;
 	let zoom = 1.2;
-
 	let projector = false;
-	$: _ = $locale;
 
 	$: document.documentElement.style.fontSize = `${zoom}px`;
+
+	const ctx = new AudioContext();
 
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", {invokeMessage: show ? "true" : "false"})
@@ -85,8 +79,6 @@
 	}
 
 	onMount(() => {
-		//i18n
-		new pureLocale("en");
 
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
@@ -96,7 +88,7 @@
 				console.log(e.code);
 				if ($editMode) {
 					//open Playlist
-					if (e.code == "KeyO" && e.ctrlKey == true) {
+					if (e.code == "KeyO" && ( e.ctrlKey || e.metaKey )) {
 						openPlaylist();
 					}
 
@@ -145,14 +137,15 @@
 				}
 				//play
 				else if (e.code === "Space") {
-					playlist.update((items) => {
+					trackElements[$selectedItem].playPause();
+					/*playlist.update((items) => {
 						items[$selectedItem].playing = !$playlist[$selectedItem].playing;
 						return items;
-					});
+					});*/
 					console.log("change playing");
 				}
 				//save File
-				else if (e.code == "KeyS" && e.ctrlKey == true) {
+				else if (e.code == "KeyS" &&  ( e.ctrlKey || e.metaKey )) {
 					saveDir();
 				}
 			}
@@ -197,7 +190,12 @@
 		{#if $playlist.length > 0}
 			{#each $playlist as t, i}
 				{#if t.type == "track"}
-					<PlayListTrack bind:track={t} id={i} />
+					<PlayListTrack
+						bind:this={trackElements[i]}
+						bind:track={t}
+						id={i}
+						{ctx}
+						/>
 				{:else if t.type == "video"}
 					<PlayListVideo
 						bind:track={t}

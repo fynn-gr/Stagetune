@@ -2,7 +2,7 @@
     import { emit, listen } from '@tauri-apps/api/event';
     import { platform } from '@tauri-apps/api/os';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
-    import { currentMonitor, appWindow, LogicalSize, PhysicalSize } from '@tauri-apps/api/window';
+    import { appWindow, LogicalSize } from '@tauri-apps/api/window';
 
     let videoElement: HTMLVideoElement;
     let src: string;
@@ -11,15 +11,6 @@
     const unlisten = listen("play_video", (event: any) => {
         const p = platform()
         .then(e => {
-            /*
-            if (e == "darwin") {
-                //src = "/Users/fynn/Files local/Alte Schule musik/Hänsel/Cutscenes 2.mp4"
-                src = "assets://" + event.payload.url;
-            } else {
-                src = "https://asset.localhost" + event.payload.url;
-            }
-            */
-
             src = convertFileSrc(event.payload.url)
         })
     })

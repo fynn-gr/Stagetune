@@ -25,9 +25,12 @@
     "bundle": {
       "active": true,
       "category": "DeveloperTool",
-      "copyright": "",
+      "copyright": "Fynn Gr. 2023",
       "deb": {
         "depends": []
+      },
+      "appimage": {
+        "bundleMediaFramework": true
       },
       "externalBin": [],
       "icon": [
@@ -41,6 +44,7 @@
       "longDescription": "",
       "macOS": {
         "entitlements": null,
+        "minimumSystemVersion": "11.0",
         "exceptionDomain": "",
         "frameworks": [],
         "providerShortName": null,

@@ -23,10 +23,15 @@
 
 	export let track: playListItem;
 	export let id: number;
-	$: paused = !track.playing;
+	export let ctx: AudioContext;
 	let missing = false;
 	let loaded = false;
 	let audioElement: HTMLAudioElement;
+
+	let gainNode: GainNode;
+	let panNode: StereoPannerNode;
+	let gain = 100;
+	let pan = 0;
 
 	function getTitle() {
 		if (track.title == undefined) {
@@ -65,23 +70,28 @@
 		track.state = track.length * perc;
 	}
 
-	onMount(async () => {
-		/*const file = await readBinaryFile(track.path);
-		console.log(file);
+	export function playPause() {
+		if(track.playing) {
+			//pause track
+			track.playing = false;
+			audioElement.pause()
+		} else {
+			//play or resume Track
+			track.playing = true;
+			audioElement.play()
+		}
+	}
 
-		const ctx = new AudioContext();
-		const gainNode = ctx.createGain();
-		gainNode.gain.value = 1;
-		gainNode.connect(ctx.destination)
-		const destNode = ctx.destination;
-		//const audioBuffer = await ctx.decodeAudioData(file);
-		const sampleSource = new AudioBufferSourceNode(ctx, {
-			buffer: file
-		});
-		sampleSource.connect(ctx.destination)
-		sampleSource.start();
-		*/
+	onMount(() => {
+		const audioInput = ctx.createMediaElementSource(audioElement);
+		gainNode = ctx.createGain();
+		panNode = ctx.createStereoPanner();
+		audioInput.connect(gainNode).connect(panNode).connect(ctx.destination);
 	});
+
+	$:panNode ? panNode.pan.value = pan : null;
+	$:gainNode ? gainNode.gain.setValueAtTime(gain / 100, ctx.currentTime) : null;
+	
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -115,6 +125,23 @@
 	{/if}
 
 	<div class="inner">
+
+		<audio
+			src={convertFileSrc(track.path)}
+			crossorigin="anonymous"
+			autoplay={false}
+			bind:this={audioElement}
+			bind:currentTime={track.state}
+			on:loadeddata={onLoaded}
+			on:ended={onEnd}
+			on:waiting={() => {
+				console.error("audio waiting");
+			}}
+			on:stalled={() => {
+				console.error("audio stalled");
+			}}
+		/>
+
 		<!--progress-->
 		<!--<img class="waveform" src="./waveform.png" alt=""  />-->
 		<div
@@ -125,8 +152,8 @@
 					90deg,
 					var(--secondary) 0%,
 					var(--secondary) calc(100% * ${getState(track.state)}),
-					#111 calc(100% * ${getState(track.state)}),
-					#111 100%
+					#0002 calc(100% * ${getState(track.state)}),
+					#0002 100%
 				);`}
 		/>
 
@@ -135,7 +162,7 @@
 			class="play-btn"
 			class:active={track.playing}
 			on:click={() => {
-				track.playing = !track.playing;
+				playPause();
 			}}
 		>
 			{#if track.playing}
@@ -152,20 +179,6 @@
 			<p class="title">{getTitle()}</p>
 		{/if}
 
-		<audio
-			src={convertFileSrc(track.path)}
-			bind:this={audioElement}
-			bind:currentTime={track.state}
-			bind:paused
-			on:loadeddata={onLoaded}
-			on:ended={onEnd}
-			on:waiting={() => {
-				console.error("audio waiting");
-			}}
-			on:stalled={() => {
-				console.error("audio stalled");
-			}}
-		/>
 
 		<!--repeat-->
 		<button
@@ -197,8 +210,8 @@
 			<span>
 				<p>-</p>
 				<input
+					bind:value={gain}
 					type="range"
-					value="100"
 					min="0"
 					max="100"
 					disabled={!$editMode}
@@ -208,7 +221,14 @@
 
 			<span>
 				<p>L</p>
-				<input type="range" value="5" min="0" max="10" disabled={!$editMode} />
+				<input
+					bind:value={pan}
+					type="range"
+					min={-1}
+					max={1}
+					step={0.25}
+					disabled={!$editMode}
+				/>
 				<p>R</p>
 			</span>
 		</div>
