@@ -82,6 +82,9 @@
 
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
+
+			console.log(e)
+
 			if ($isEditing > 0) {
 				return;
 			} else {

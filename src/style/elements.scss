@@ -139,13 +139,11 @@
 			}
 		}
 
-		&.loaded {
-			opacity: 100%;
-		}
+		&.loaded { opacity: 100%; }
 
 		&.editMode {
 			.inner {
-				.repeatBtn {
+				.repeat-btn {
 					visibility: visible;
 
 					&:hover {
@@ -161,36 +159,30 @@
 					}
 				}
 
-				.playBtn {
-					margin: 12rem 0 0 12rem;
+				.play-btn {
+					margin: 12rem;
 				}
 
 				.title {
-					position: relative;
-					flex: 1;
-					padding: 0rem 0 0 14rem;
 					height: 54rem;
 					line-height: 27rem;
 					font-size: 18rem;
-					font-weight: 500;
-					color: white;
 				}
 
-				.repeatBtn {
+				.repeat-btn {
 					margin: 12rem;
+				}
+				
+				.timecode {
+					display: none;
 				}
 
 				.length {
 					text-align: right;
 					width: 60rem;
-					height: 50rem;
-					line-height: 50rem;
-					padding: 0rem 16rem 0 0;
-					font-weight: 600;
-				}
-
-				.timecode {
-					display: none;
+					height: 54rem;
+					padding: 0 16rem 0 0;
+					line-height: 54rem;
 				}
 
 				.fade {
@@ -216,6 +208,7 @@
 						margin: 6rem 0 0 0;
 						border-radius: 4rem;
 						text-align: right;
+						font-size: 10rem;
 					}
 				}
 
@@ -224,7 +217,7 @@
 					grid-area: volume;
 					display: flex;
 					flex-direction: column;
-					height: 48rem;
+					height: 54rem;
 
 					span {
 						display: flex;
@@ -285,7 +278,7 @@
 
 		&.editMode {
 			.inner {
-				.repeatBtn {
+				.repeat-btn {
 					visibility: visible;
 
 					&:hover {
@@ -301,19 +294,18 @@
 					}
 				}
 
-				.playBtn {
-					margin: 12rem 0 0 12rem;
+				.play-btn {
+					margin: 12rem;
+				}
+
+				.set-btn {
+					margin: 12rem 12rem 12rem 0;
 				}
 
 				.title {
-					position: relative;
-					flex: 1;
-					padding: 0rem 0 0 14rem;
 					height: 54rem;
 					line-height: 27rem;
 					font-size: 18rem;
-					font-weight: 500;
-					color: white;
 				}
 			}
 		}
@@ -332,8 +324,9 @@
 		.title {
 			position: relative;
 			flex: 1;
-			height: 30rem;
-			padding: 8rem 0 0 14rem;
+			//padding: 0 0 0 10rem;
+			height: 42rem;
+			line-height: 42rem;
 			text-overflow: ellipsis;
 			overflow: hidden;
 			font-size: 20rem;
@@ -345,7 +338,7 @@
 			position: relative;
 			width: 30rem;
 			height: 30rem;
-			margin: 6rem 0 0 6rem;
+			margin: 6rem;
 			border-radius: 5rem;
 			background-color: transparent;
 
@@ -368,7 +361,7 @@
 			position: relative;
 			width: 30rem;
 			height: 30rem;
-			margin: 6rem 0 0 6rem;
+			margin: 6rem 6rem 6rem;
 			border-radius: 5rem;
 			background-color: transparent;
 
@@ -392,7 +385,7 @@
 			visibility: hidden;
 			width: 30rem;
 			height: 30rem;
-			margin: 6rem 14rem 0 14rem;
+			margin: 6rem;
 			border-radius: 5rem;
 			background-color: transparent;
 
@@ -414,7 +407,8 @@
 		.timecode {
 			position: relative;
 			width: 60rem;
-			padding: 12rem 0 0 0;
+			height: 42rem;
+			line-height: 42rem;
 			text-align: right;
 			font-size: 16rem;
 			font-weight: 600;
@@ -428,10 +422,11 @@
 		.length {
 			position: relative;
 			width: 50rem;
-			padding: 12rem 0 0 0;
+			height: 42rem;
+			line-height: 42rem;
 			text-align: left;
 			font-size: 16rem;
-			font-weight: 400;
+			font-weight: 600;
 		}
 
 		.fade {
@@ -525,7 +520,7 @@
 			}
 		}
 
-		.playBtn {
+		.play-btn {
 			inset: 4rem;
 		}
 
@@ -583,7 +578,7 @@
 					.playBtn {
 						display: none;
 					}
-					.repeatBtn {
+					.repeat-btn {
 						display: none;
 					}
 					.fade {

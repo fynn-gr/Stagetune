@@ -52,7 +52,7 @@
 	function onEnd() {
 		if (track.repeat) {
 			audioElement.currentTime = 0;
-			audioElement.play();
+			playPause();
 		} else {
 			track.playing = false;
 			track.state = 0;

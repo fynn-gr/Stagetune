@@ -73,9 +73,11 @@
 			/>
 		</div>
 
-		<AppMenu name="File">
-			<button>Open Playlist</button>
-		</AppMenu>
+		{#if $uiPlatform == "win"}
+			<AppMenu name="File">
+				<button>Open Playlist</button>
+			</AppMenu>
+		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />
 
@@ -83,6 +85,7 @@
 			<!--Add Annotation-->
 			<TopBarButton
 				icon="comment"
+				disabled={!$editMode}
 				onClick={() => {
 					if ($selectedItem == null) {
 						playlist.update((e) => {
@@ -106,7 +109,9 @@
 			<!--Comment Before-->
 			<TopBarToggle
 				icon="comment_before"
-				active={$playlist[$selectedItem] != undefined &&
+				disabled={!$editMode}
+				active={
+					$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
 					$playlist[$selectedItem].annotation[0] != null}
 				onChange={(active) => {
@@ -121,7 +126,9 @@
 
 			<TopBarToggle
 				icon="comment_after"
-				active={$playlist[$selectedItem] != undefined &&
+				disabled={!$editMode}
+				active={
+					$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
 					$playlist[$selectedItem].annotation[1] != null}
 				onChange={(active) => {

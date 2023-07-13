@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { emit, listen } from '@tauri-apps/api/event'
 	import { secondsToMinutes } from "@/utils";
-	import { editMode, selectedItem } from "../stores";
+	import { editMode, selectedItem, isEditing } from "../stores";
 
 	interface playListItem {
 		type: string;
@@ -62,9 +62,19 @@
 	<!--annotation before-->
 	{#if track.annotation[0] != null}
 		<div class="annotationStart">
-			<p contenteditable={$editMode && $selectedItem == id}>
-				{track.annotation[0]}
-			</p>
+			<input
+				type="text"
+				disabled={!$editMode || $selectedItem != id}
+				on:focus={() => {
+					isEditing.update((e) => e + 1);
+					console.log("in focus", $isEditing);
+				}}
+				on:blur={() => {
+					isEditing.update((e) => e - 1);
+					console.log("out of focus", $isEditing);
+				}}
+				bind:value={track.annotation[0]}
+			/>
 		</div>
 	{/if}
 
@@ -131,9 +141,19 @@
 	<!--annotation after-->
 	{#if track.annotation[1] != null}
 		<div class="annotationEnd">
-			<p contenteditable={$editMode && $selectedItem == id}>
-				{track.annotation[1]}
-			</p>
+			<input
+				type="text"
+				disabled={!$editMode || $selectedItem != id}
+				on:focus={() => {
+					isEditing.update((e) => e + 1);
+					console.log("in focus", $isEditing);
+				}}
+				on:blur={() => {
+					isEditing.update((e) => e - 1);
+					console.log("out of focus", $isEditing);
+				}}
+				bind:value={track.annotation[1]}
+			/>
 		</div>
 	{/if}
 </div>

@@ -30,7 +30,13 @@ async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
 
 fn main() {
   let context = tauri::generate_context!();
-  let menu = Menu::new();
+  let submenu = Submenu::new("File", Menu::new()
+    .add_item(CustomMenuItem::new("quit".to_string(), "Quit"))
+    .add_item(CustomMenuItem::new("close".to_string(), "Close")));
+  let menu = Menu::new()
+    .add_native_item(MenuItem::Copy)
+    .add_item(CustomMenuItem::new("hide", "Hide"))
+    .add_submenu(submenu);
 
   tauri::Builder::default()
 
