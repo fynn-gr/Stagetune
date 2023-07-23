@@ -103,6 +103,7 @@
 
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
+						playlist[$selectedItem].stop();
 						playlist.update((e) => {
 							e.splice($selectedItem, 1);
 							return e;
@@ -112,23 +113,22 @@
 				}
 
 				//move up
-				if (e.code === "KeyW" && e.ctrlKey == false) {
+				if ((e.code === "KeyW" || e.code === "ArrowUp") && e.ctrlKey == false) {
 					moveUp();
 				}
 				//move down
-				else if (e.code === "KeyS" && e.ctrlKey == false) {
+				else if ((e.code === "KeyS" || e.code === "ArrowDown") && e.ctrlKey == false) {
 					moveDown();
 				}
 				//reset song
-				else if (e.code === "KeyA" && e.ctrlKey == false) {
+				else if ((e.code === "KeyA" || e.code === "ArrowLeft") && e.ctrlKey == false) {
 					playlist.update((items) => {
-						items[$selectedItem].playing = false;
-						items[$selectedItem].state = 0;
+						trackElements[$selectedItem].stop(true)
 						return items;
 					});
 				}
 				//skip song
-				else if (e.code === "KeyD" && e.ctrlKey == false) {
+				else if ((e.code === "KeyD" || e.code === "ArrowRight") && e.ctrlKey == false) {
 					playlist.update((items) => {
 						items[$selectedItem].playing = false;
 						items[$selectedItem].state = 0;
@@ -141,11 +141,6 @@
 				//play
 				else if (e.code === "Space") {
 					trackElements[$selectedItem].playPause();
-					/*playlist.update((items) => {
-						items[$selectedItem].playing = !$playlist[$selectedItem].playing;
-						return items;
-					});*/
-					console.log("change playing");
 				}
 				//save File
 				else if (e.code == "KeyS" &&  ( e.ctrlKey || e.metaKey )) {

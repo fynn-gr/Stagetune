@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { secondsToMinutes } from "@/utils";
 	import { editMode, selectedItem, isEditing } from "../stores";
+	import Annotation from "./Annotation.svelte";
 
 	interface playListItem {
 		type: string;
@@ -26,7 +27,11 @@
 	export let ctx: AudioContext;
 	let missing = false;
 	let loaded = false;
-	let audioElement: HTMLAudioElement;
+	let audioBuffer: AudioBuffer;
+	let input: AudioBufferSourceNode;
+
+	let startedAt = 0; //global time started
+	let pausedAt = 0; //track relative pause time
 
 	let gainNode: GainNode;
 	let panNode: StereoPannerNode;
@@ -44,49 +49,90 @@
 		}
 	}
 
-	function onLoaded() {
-		loaded = true;
-		track.length = audioElement.duration;
-	}
-
 	function onEnd() {
 		if (track.repeat) {
-			audioElement.currentTime = 0;
-			playPause();
+			play(0);
 		} else {
-			track.playing = false;
-			track.state = 0;
+			stop();
+			pausedAt = 0;
 		}
-	}
-
-	function getState(state: number) {
-		return track.state != undefined ? track.state / track.length : 0;
 	}
 
 	function handleSkip(e) {
 		let rec = e.target.getBoundingClientRect();
 		let x = e.clientX - rec.left;
 		let perc = Math.min(Math.max(x / rec.width, 0), 1);
-		track.state = track.length * perc;
+
+		if (track.playing) {
+			stop();
+			play(track.length * perc);
+			track.state = track.length * perc;
+		} else {
+			pausedAt = track.length * perc;
+			track.state = track.length * perc;
+		}
+			
 	}
 
 	export function playPause() {
+		//console.log("started at: ", startedAt,"paused at: ", pausedAt)
 		if(track.playing) {
-			//pause track
-			track.playing = false;
-			audioElement.pause()
+			stop();
 		} else {
-			//play or resume Track
-			track.playing = true;
-			audioElement.play()
+			play();
 		}
 	}
 
-	onMount(() => {
-		const audioInput = ctx.createMediaElementSource(audioElement);
+	export function play(startTime: number = null) {
+		//resume track
+		if (startTime == null) {
+			input.start(0, pausedAt);
+			startedAt = ctx.currentTime - pausedAt;
+		} else {
+			input.start(0, startTime);
+			startedAt = ctx.currentTime - startTime;
+		}
+		console.log("resumed at:", pausedAt)
+		track.playing = true;
+	}
+
+	export function stop(reset: boolean = false) {
+		//pause track
+		input.stop();
+		input = new AudioBufferSourceNode(ctx, {buffer: audioBuffer})
+		input.connect(gainNode);
+		if (reset) {
+			pausedAt = 0;
+			track.state = 0;
+		} else {
+			pausedAt = ctx.currentTime - startedAt;
+		}
+		track.playing = false;
+	}
+
+	onMount(async () => {
+		const response = await fetch(convertFileSrc(track.path));
+		const arrayBuffer = await response.arrayBuffer();
+		audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+		input = new AudioBufferSourceNode(ctx, {buffer: audioBuffer})
+		track.length = audioBuffer.duration;
+		
+		loaded = true;
+		
 		gainNode = ctx.createGain();
 		panNode = ctx.createStereoPanner();
-		audioInput.connect(gainNode).connect(panNode).connect(ctx.destination);
+		input.connect(gainNode).connect(panNode).connect(ctx.destination);
+		input.onended = () => {onEnd()};
+
+		const loop = async () => {
+			await setTimeout(() => {
+				if (track.playing) {
+					track.state = ctx.currentTime - startedAt;
+				}
+				loop();
+			}, 1000)
+		}
+		loop();
 	});
 
 	$:panNode ? panNode.pan.value = pan : null;
@@ -106,41 +152,10 @@
 	}}
 >
 	<!--annotation before-->
-	{#if track.annotation[0] != null}
-		<div class="annotationStart">
-			<input
-				type="text"
-				disabled={!$editMode || $selectedItem != id}
-				on:focus={() => {
-					isEditing.update((e) => e + 1);
-					console.log("in focus", $isEditing);
-				}}
-				on:blur={() => {
-					isEditing.update((e) => e - 1);
-					console.log("out of focus", $isEditing);
-				}}
-				bind:value={track.annotation[0]}
-			/>
-		</div>
-	{/if}
+	<Annotation bind:annotation={track.annotation} {id} start={true}/>
 
 	<div class="inner">
 
-		<audio
-			src={convertFileSrc(track.path)}
-			crossorigin="anonymous"
-			autoplay={false}
-			bind:this={audioElement}
-			bind:currentTime={track.state}
-			on:loadeddata={onLoaded}
-			on:ended={onEnd}
-			on:waiting={() => {
-				console.error("audio waiting");
-			}}
-			on:stalled={() => {
-				console.error("audio stalled");
-			}}
-		/>
 
 		<!--progress-->
 		<!--<img class="waveform" src="./waveform.png" alt=""  />-->
@@ -151,8 +166,8 @@
 				background: linear-gradient(
 					90deg,
 					var(--secondary) 0%,
-					var(--secondary) calc(100% * ${getState(track.state)}),
-					#0002 calc(100% * ${getState(track.state)}),
+					var(--secondary) calc(100% * ${track.state / track.length}),
+					#0002 calc(100% * ${track.state / track.length}),
 					#0002 100%
 				);`}
 		/>
@@ -178,7 +193,6 @@
 		{:else}
 			<p class="title">{getTitle()}</p>
 		{/if}
-
 
 		<!--repeat-->
 		<button
@@ -235,21 +249,5 @@
 	</div>
 
 	<!--annotation after-->
-	{#if track.annotation[1] != null}
-		<div class="annotationEnd">
-			<input
-				type="text"
-				disabled={!$editMode || $selectedItem != id}
-				on:focus={() => {
-					isEditing.update((e) => e + 1);
-					console.log("in focus", $isEditing);
-				}}
-				on:blur={() => {
-					isEditing.update((e) => e - 1);
-					console.log("out of focus", $isEditing);
-				}}
-				bind:value={track.annotation[1]}
-			/>
-		</div>
-	{/if}
+	<Annotation bind:annotation={track.annotation} {id} start={false}/>
 </div>

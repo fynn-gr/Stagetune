@@ -3,6 +3,7 @@
 	import { emit, listen } from '@tauri-apps/api/event'
 	import { secondsToMinutes } from "@/utils";
 	import { editMode, selectedItem, isEditing } from "../stores";
+	import Annotation from "./Annotation.svelte";
 
 	interface playListItem {
 		type: string;
@@ -32,7 +33,7 @@
 
 	const unlisten = listen("video_state", (e: any) => {
 		track.state = e.payload.progress;
-		console.log(e.payload.buffer.length)
+		console.log(e, e.payload.buffer.length)
 	})
 
 	function handleSkip(e) {
@@ -44,9 +45,7 @@
 		emit("update_play", { action: "skip", position: perc });
 	}
 
-	onMount(async () => {
 
-	});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -60,23 +59,7 @@
 	}}
 >
 	<!--annotation before-->
-	{#if track.annotation[0] != null}
-		<div class="annotationStart">
-			<input
-				type="text"
-				disabled={!$editMode || $selectedItem != id}
-				on:focus={() => {
-					isEditing.update((e) => e + 1);
-					console.log("in focus", $isEditing);
-				}}
-				on:blur={() => {
-					isEditing.update((e) => e - 1);
-					console.log("out of focus", $isEditing);
-				}}
-				bind:value={track.annotation[0]}
-			/>
-		</div>
-	{/if}
+	<Annotation bind:annotation={track.annotation} {id} start={false}/>
 
 	<div class="inner">
 
@@ -139,21 +122,5 @@
 	</div>
 
 	<!--annotation after-->
-	{#if track.annotation[1] != null}
-		<div class="annotationEnd">
-			<input
-				type="text"
-				disabled={!$editMode || $selectedItem != id}
-				on:focus={() => {
-					isEditing.update((e) => e + 1);
-					console.log("in focus", $isEditing);
-				}}
-				on:blur={() => {
-					isEditing.update((e) => e - 1);
-					console.log("out of focus", $isEditing);
-				}}
-				bind:value={track.annotation[1]}
-			/>
-		</div>
-	{/if}
+	<Annotation bind:annotation={track.annotation} {id} start={false}/>
 </div>

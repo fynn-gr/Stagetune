@@ -3,15 +3,21 @@
     import { platform } from '@tauri-apps/api/os';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
     import { appWindow, LogicalSize } from '@tauri-apps/api/window';
+	import { onMount } from 'svelte';
 
     let videoElement: HTMLVideoElement;
-    let src: string;
+    let src: string = convertFileSrc("/Volumes/T7/Files extern/Alte Schule/Musik/Test/TJ BEASTBOY 1000 x COOLER LIVE.mp4");
     let fullscreen = false;
+
+    let ctx = new AudioContext()
+	let input: MediaElementAudioSourceNode;
+    let gainNode: GainNode;
+    let panNode: StereoPannerNode;
 
     const unlisten = listen("play_video", (event: any) => {
         const p = platform()
         .then(e => {
-            src = convertFileSrc(event.payload.url)
+            //src = convertFileSrc(event.payload.url)
         })
     })
     
@@ -29,6 +35,26 @@
         }  
     })
 
+	onMount(async () => {
+
+        input = ctx.createMediaElementSource(videoElement);
+
+        gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(100 / 360, ctx.currentTime)
+        panNode = ctx.createStereoPanner();
+        input.connect(gainNode).connect(panNode).connect(ctx.destination);
+
+        
+        const loop = async () => {
+            await setTimeout(() => {
+                console.log(videoElement.buffered)
+                loop();
+            }, 1000)
+        }
+        loop();
+        
+    });
+
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
@@ -44,14 +70,14 @@
     }}
 >
     <video
+        id="video"
+        controls="true"
         src={src}
+        preload="auto"
         data-tauri-drag-region
         bind:this={videoElement}
-        on:canplay={() => videoElement.play()}
-        on:timeupdate={() => emit("video_state", {
-            "progress": videoElement.currentTime / videoElement.duration,
-            "buffer": videoElement.buffered
-        })}
+        on:canplaythrough={() => {videoElement.play()}}
+        on:canplay={() => {}}
     />
 </div>
 
