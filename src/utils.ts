@@ -1,7 +1,7 @@
 import { open, save } from "@tauri-apps/api/dialog";
 import { get } from "svelte/store";
 import { readDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
-import { playlist, playlistPath, srcPaths, srcFiles } from "./stores";
+import { playlist, playlistPath, srcPaths, srcFiles, currentDragging, hotkeys } from "./stores";
 
 export function isAudioFile(filename: string): boolean {
 	if (filename.match(/\.(mp3|ogg|aac|flac|wav|m4a)$/)) {
@@ -134,6 +134,7 @@ export function openPlaylist() {
 					let obj = JSON.parse(e);
 					playlist.set(obj.playlist);
 					srcPaths.set(obj.srcPaths);
+					hotkeys.set(obj.hotkeys)
 					scanSrcPaths();
 				});
 			}
@@ -143,7 +144,7 @@ export function openPlaylist() {
 	}
 }
 
-export function saveDir() {
+export function savePlaylist() {
 	try {
 		save({
 			filters: [
@@ -159,6 +160,7 @@ export function saveDir() {
 				let saveObj = {
 					playlist: get(playlist),
 					srcPaths: get(srcPaths),
+					hotkeys: get(hotkeys),
 				};
 				writeTextFile(sel, JSON.stringify(saveObj), {});
 			}

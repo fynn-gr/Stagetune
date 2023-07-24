@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 
     let videoElement: HTMLVideoElement;
-    let src: string = convertFileSrc("/Volumes/T7/Files extern/Alte Schule/Musik/Test/TJ BEASTBOY 1000 x COOLER LIVE.mp4");
+    let src: string;
     let fullscreen = false;
 
     let ctx = new AudioContext()
@@ -17,7 +17,7 @@
     const unlisten = listen("play_video", (event: any) => {
         const p = platform()
         .then(e => {
-            //src = convertFileSrc(event.payload.url)
+            src = convertFileSrc(event.payload.url)
         })
     })
     
@@ -71,7 +71,7 @@
 >
     <video
         id="video"
-        controls="true"
+        controls={true}
         src={src}
         preload="auto"
         data-tauri-drag-region

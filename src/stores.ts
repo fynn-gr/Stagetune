@@ -47,23 +47,73 @@ export const playlistPath = writable("");
 export const isEditing = writable(0);
 export const hotkeys = writable([
 	{
-		title: "A Day To Remember",
-		path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
-		length: "2:55",
-		selected: true,
-		annotation: [
-			"wenn Hirten auf",
-			"wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier",
-		],
+		key: "1",
+		type: "track",
+		title: "Sus",
+		path: "D:\\Alte Schule\\Musik\\Test\\sus.mp3",
+		playing: false
 	},
 	{
-		title: "Glocke",
-		path: "D:/Alte Schule/Messias/Messias Musik/A Day To Remember - Mr. Highway's Thinking About The End.mp3",
-		length: "2:55",
-		selected: true,
-		annotation: [
-			"wenn Hirten auf",
-			"wenn Hireten ab, Komet runter, licht auf Hitern wechseln und Bla bla bla warten bis etwas passiert was soll das hier",
-		],
+		key: "2",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "3",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "4",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "5",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "6",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "7",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "8",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "9",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
+	},
+	{
+		key: "0",
+		type: "track",
+		title: "",
+		path: "",
+		playing: false
 	},
 ]);

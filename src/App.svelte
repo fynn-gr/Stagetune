@@ -24,15 +24,17 @@
 	} from "./stores";
 	import {
 		openPlaylist,
-		saveDir,
+		savePlaylist,
 		fileNameFromPath,
 	} from "./utils";
 	import { invoke } from "@tauri-apps/api/tauri";
+	import Hotkey from "./lib/Hotkey.svelte";
+	import HotkeyPlaceholder from "./lib/HotkeyPlaceholder.svelte";
 
 	let trackElements = [];
 	let sideBar = true;
 	let editorPanel = false;
-	let palettes = false;
+	let palettes = true;
 	let zoom = 1.2;
 	let projector = false;
 
@@ -83,12 +85,11 @@
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
 
-			console.log(e)
+			//console.log(e)
 
 			if ($isEditing > 0) {
 				return;
 			} else {
-				console.log(e.code);
 				if ($editMode) {
 					//open Playlist
 					if (e.code == "KeyO" && ( e.ctrlKey || e.metaKey )) {
@@ -144,7 +145,7 @@
 				}
 				//save File
 				else if (e.code == "KeyS" &&  ( e.ctrlKey || e.metaKey )) {
-					saveDir();
+					savePlaylist();
 				}
 			}
 		});
@@ -177,9 +178,6 @@
 	<div
 		class="playlist"
 		on:drop={handleDropPlaylist}
-		on:dragenter={() => {
-			console.log("enter playlist");
-		}}
 		on:dragover={(e) => {
 			e.preventDefault();
 			return false;
@@ -238,14 +236,15 @@
 			</div>
 
 			<!--hotkeys-->
-			<div class="hotkeys">
-				{#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] as a, i}
-					<div class="hotkeySlot">
-						<p class="key">{a}</p>
-						{#if hotkeys[i]}
-							<p class="name">{hotkeys[i].title}</p>
-						{/if}
-					</div>
+			<div
+				class="hotkeys"
+			>
+				{#each $hotkeys as a}
+					{#if a.path != ""}
+						<Hotkey bind:track={a} {ctx} />
+					{:else}
+						<HotkeyPlaceholder bind:track={a}/>
+					{/if}
 				{/each}
 			</div>
 		</div>
