@@ -12,6 +12,7 @@
 	grid-area: sideBar;
 	background-color: var(--topbar-BG);
 	padding-top: 0;
+	border-bottom-left-radius: var(--win-corner);
 
 	.trackList {
 		height: 100%;
@@ -234,6 +235,10 @@
 						font-weight: bold;
 					}
 				}
+
+				.progress { height: 5rem; }
+
+				.waveform { display: none; }
 			}
 		}
 	}
@@ -461,16 +466,16 @@
 			width: 100%;
 			left: 0;
 			bottom: 0;
-			height: 6rem;
+			height: 18rem;
 			background-color: var(--secondary);
 		}
 
 		.waveform {
+			pointer-events: none;
 			position: absolute;
-			bottom: 0rem;
-			height: 20rem;
+			bottom: 6rem;
+			height: 12rem;
 			width: 100%;
-			filter: brightness(50%);
 		}
 	}
 
@@ -764,6 +769,7 @@
 	}
 }
 
-.topBar {
+.topbar.toolbar {
 	min-height: var(--topbar-height);
+	border-top-left-radius: var(--win-corner) !important;
 }

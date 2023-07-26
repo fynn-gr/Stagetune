@@ -34,9 +34,9 @@
 	on:dragend={handleDragEnd}
 >
 	{#if entry.type == "track"}
-		<img src="./src/pureUI/icons/square/music.svg" alt="" />
+		<img src="./icons/square/music.svg" alt="" />
 	{:else if entry.type == "video"}
-		<img src="./src/pureUI/icons/square/film.svg" alt="" />
+		<img src="./icons/square/film.svg" alt="" />
 	{/if}
 	<p>{getName()}</p>
 </div>

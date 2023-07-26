@@ -49,8 +49,8 @@ export const hotkeys = writable([
 	{
 		key: "1",
 		type: "track",
-		title: "Sus",
-		path: "D:\\Alte Schule\\Musik\\Test\\sus.mp3",
+		title: "",
+		path: "",
 		playing: false
 	},
 	{

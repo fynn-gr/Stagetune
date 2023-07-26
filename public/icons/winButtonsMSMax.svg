@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g transform="matrix(1.33333,0,0,1.71429,-0.666667,-4.85714)">
-        <path d="M11,5.75C11,4.784 9.992,4 8.75,4L4.25,4C3.008,4 2,4.784 2,5.75L2,9.25C2,10.216 3.008,11 4.25,11L8.75,11C9.992,11 11,10.216 11,9.25L11,5.75ZM9.906,5.75L9.906,9.25C9.906,9.746 9.388,10.149 8.75,10.149L4.25,10.149C3.612,10.149 3.094,9.746 3.094,9.25C3.094,9.25 3.094,5.75 3.094,5.75C3.094,5.254 3.612,4.851 4.25,4.851C4.25,4.851 8.75,4.851 8.75,4.851C9.388,4.851 9.906,5.254 9.906,5.75Z" style="fill:white;"/>
-    </g>
+<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1_2)">
+<rect x="0.55" y="0.55" width="8.9" height="8.9" rx="1.45" stroke="white" stroke-width="1.1"/>
+</g>
+<defs>
+<clipPath id="clip0_1_2">
+<rect width="10" height="10" fill="white"/>
+</clipPath>
+</defs>
 </svg>

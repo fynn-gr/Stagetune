@@ -98,9 +98,9 @@
 			}}
 		>
 			{#if track.playing}
-				<img src="../src/pureUI/icons/square/pause.svg" alt="" />
+				<img src="./icons/square/pause.svg" alt="" />
 			{:else}
-				<img src="../src/pureUI/icons/square/play.svg" alt="" />
+				<img src="./icons/square/play.svg" alt="" />
 			{/if}
 		</button>
 
@@ -113,7 +113,7 @@
 				emit("update_play", { action: "stop" })
 			}}
 		>
-			<img src="../src/pureUI/icons/square/stop.svg" alt="">
+			<img src="./icons/square/stop.svg" alt="">
 		</button>
 
 		<!--Title-->

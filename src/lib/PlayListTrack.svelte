@@ -4,6 +4,7 @@
 	import { secondsToMinutes } from "@/utils";
 	import { editMode, selectedItem, isEditing } from "../stores";
 	import Annotation from "./Annotation.svelte";
+	import Waveform from "./Waveform.svelte";
 
 	interface playListItem {
 		type: string;
@@ -98,7 +99,7 @@
 
 	export function stop(reset: boolean = false) {
 		//pause track
-		input.stop();
+		if (track.playing) input.stop();
 		input = new AudioBufferSourceNode(ctx, {buffer: audioBuffer})
 		input.connect(gainNode);
 		if (reset) {
@@ -108,6 +109,10 @@
 			pausedAt = ctx.currentTime - startedAt;
 		}
 		track.playing = false;
+	}
+
+	export function getBuffer(): AudioBuffer {
+		return audioBuffer;
 	}
 
 	onMount(async () => {
@@ -158,7 +163,7 @@
 
 
 		<!--progress-->
-		<!--<img class="waveform" src="./waveform.png" alt=""  />-->
+		
 		<div
 			class="progress"
 			on:click={handleSkip}
@@ -167,9 +172,14 @@
 					90deg,
 					var(--secondary) 0%,
 					var(--secondary) calc(100% * ${track.state / track.length}),
-					#0002 calc(100% * ${track.state / track.length}),
-					#0002 100%
+					#0004 calc(100% * ${track.state / track.length}),
+					#0004 100%
 				);`}
+		/>
+		<Waveform
+			buffer={audioBuffer}
+			samples={100}
+			res={[1000, 100]}
 		/>
 
 		<!--play Button-->
@@ -181,9 +191,9 @@
 			}}
 		>
 			{#if track.playing}
-				<img src="../src/pureUI/icons/square/pause.svg" alt="" />
+				<img src="./icons/square/pause.svg" alt="" />
 			{:else}
-				<img src="../src/pureUI/icons/square/play.svg" alt="" />
+				<img src="./icons/square/play.svg" alt="" />
 			{/if}
 		</button>
 
@@ -202,7 +212,7 @@
 				track.repeat = $editMode ? !track.repeat : track.repeat;
 			}}
 		>
-			<img src="../src/pureUI/icons/square/repeat.svg" alt="repeat" />
+			<img src="./icons/square/repeat.svg" alt="repeat" />
 		</button>
 
 		<!--time-->

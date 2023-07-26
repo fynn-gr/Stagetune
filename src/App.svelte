@@ -30,10 +30,12 @@
 	import { invoke } from "@tauri-apps/api/tauri";
 	import Hotkey from "./lib/Hotkey.svelte";
 	import HotkeyPlaceholder from "./lib/HotkeyPlaceholder.svelte";
+	import Waveform from "./lib/Waveform.svelte";
 
 	let trackElements = [];
+	let hotkeyElements = [];
 	let sideBar = true;
-	let editorPanel = false;
+	let editorPanel = true;
 	let palettes = true;
 	let zoom = 1.2;
 	let projector = false;
@@ -61,6 +63,14 @@
 		} else if (typeof $currentDragging == "object") {
 		} else {
 			$currentDragging = null;
+		}
+	}
+
+	function stopAll(playlist: boolean, hotkeys: boolean) {
+		if (hotkeys) {
+			for (let i = 0; i < hotkeyElements.length; i++) {
+				hotkeyElements[i].createInput(true)
+			}
 		}
 	}
 
@@ -104,8 +114,8 @@
 
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
-						playlist[$selectedItem].stop();
-						playlist.update((e) => {
+						if ($playlist[$selectedItem].playing) trackElements[$selectedItem].stop();
+						playlist.update(e => {
 							e.splice($selectedItem, 1);
 							return e;
 						});
@@ -124,18 +134,16 @@
 				//reset song
 				else if ((e.code === "KeyA" || e.code === "ArrowLeft") && e.ctrlKey == false) {
 					playlist.update((items) => {
-						trackElements[$selectedItem].stop(true)
+						trackElements[$selectedItem].stop(true);
 						return items;
 					});
 				}
 				//skip song
 				else if ((e.code === "KeyD" || e.code === "ArrowRight") && e.ctrlKey == false) {
 					playlist.update((items) => {
-						items[$selectedItem].playing = false;
-						items[$selectedItem].state = 0;
+						trackElements[$selectedItem].stop(true);
 						selectedItem.update((n) => n + 1);
-						items[$selectedItem].state = 0;
-						items[$selectedItem].playing = true;
+						trackElements[$selectedItem].play(0);
 						return items;
 					});
 				}
@@ -211,7 +219,13 @@
 		class="editor"
 		style={`height: ${editorPanel && $editMode ? "300" : "0"}px;`}
 	>
-		<img class="waveform" src="./waveform.png" />
+		{#if $selectedItem != undefined}
+			<Waveform
+				buffer={trackElements[$selectedItem].getBuffer()}
+				samples={500}
+				res={[1000, 200]}
+			/>
+		{/if}
 	</div>
 
 	<!--palettes on the right-->
@@ -239,11 +253,11 @@
 			<div
 				class="hotkeys"
 			>
-				{#each $hotkeys as a}
+				{#each $hotkeys as a, i}
 					{#if a.path != ""}
-						<Hotkey bind:track={a} {ctx} />
+						<Hotkey bind:track={a} {ctx} bind:this={hotkeyElements[i]} stopAll={stopAll}/>
 					{:else}
-						<HotkeyPlaceholder bind:track={a}/>
+						<HotkeyPlaceholder bind:track={a} bind:this={hotkeyElements[i]}/>
 					{/if}
 				{/each}
 			</div>

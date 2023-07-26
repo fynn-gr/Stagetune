@@ -3,7 +3,7 @@ import { resolve } from "path";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import sveltePreprocess from "svelte-preprocess";
 import * as path from "path";
-import * as fs from 'fs';
+import { processIcons } from "./src/pureUI/modules/pureIconPlugin";
 
 // https://vitejs.dev/config/
 export default defineConfig(({command}) =>{
@@ -19,10 +19,10 @@ export default defineConfig(({command}) =>{
 	
 			{
 				name: "pureIcons pull",
-				pullIcons(options) {
+				buildStart(options) {
 					if (command === "serve") return
 
-					
+					processIcons();
 				}
 			}
 		],

@@ -6,6 +6,7 @@
 
     export let ctx: AudioContext;
     export let track: any;
+    export let stopAll = (playlist: boolean, hotkeys: boolean) => {};
 	let missing = false;
 	let loaded = false;
 	let audioBuffer: AudioBuffer;
@@ -16,15 +17,9 @@
 		if ($currentDragging.path && $currentDragging.type == "track") {
 			console.log("drop new track into Hotkeys: ", $currentDragging);
 
-            track.path = $currentDragging.path;
             if(track.playing) input.stop();
-            input = null;
-            const response = await fetch(convertFileSrc(track.path));
-            const arrayBuffer = await response.arrayBuffer();
-            audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-            input = new AudioBufferSourceNode(ctx, {buffer: audioBuffer});
-            input.connect(ctx.destination);
-            input.onended = onEnd
+            track.path = $currentDragging.path;
+            createInput(true);
 
 			$currentDragging = null;
 		} else {
@@ -36,39 +31,42 @@
 
     function onEnd() {
         track.playing = false;
+        createInput(false);
+    }
+
+    export async function createInput(reload: boolean) {
         input = null;
-        input = new AudioBufferSourceNode(ctx, {buffer: audioBuffer});
-        input.connect(ctx.destination);
+        if (reload) {
+            const response = await fetch(convertFileSrc(track.path));
+            const arrayBuffer = await response.arrayBuffer();
+            audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+        }
+		input = new AudioBufferSourceNode(ctx, {buffer: audioBuffer})
+		input.connect(ctx.destination);
         input.onended = onEnd;
     }
 
     onMount(async () => {
-        const response = await fetch(convertFileSrc(track.path));
-		const arrayBuffer = await response.arrayBuffer();
-		audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-		input = new AudioBufferSourceNode(ctx, {buffer: audioBuffer})
-		input.connect(ctx.destination);
-		
+        createInput(true);
 		loaded = true;
-
-		input.onended = onEnd
 
         document.addEventListener("keydown", e => {
             if ($isEditing > 0) {
 				return;
 			} else if (e.code === `Digit${track.key}` && !e.ctrlKey && !e.altKey && !track.playing) {
                 //playing
+                //stopAll(false, true);
+
                 input.start(0);
                 track.playing = true;
             } else if (e.code === `Digit${track.key}` && !e.ctrlKey && e.altKey && $editMode) {
                 //deleting hotkey
-                hotkeys.update(items => {
-                    track.path = "";
-                    track.playing = false;
-                    track.title = "";
-                    return items;
-                })
+                if (track.playing) input.stop();
                 input = null;
+                track.title = "";
+                track.playing = false;
+                track.path = "";
+                console.log(input, track)
             }
         })
     })

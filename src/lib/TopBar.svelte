@@ -28,7 +28,7 @@
 						}
 					}}
 				>
-					<img src="./src/pureUI/icons/winButtonsMacClose.svg" alt="" />
+					<img src="./icons/winButtonsMacClose.svg" alt="close" />
 				</button>
 				<button
 					on:click={() => {
@@ -37,7 +37,7 @@
 						}
 					}}
 				>
-					<img src="./src/pureUI/icons/winButtonsMacMin.svg" alt="" />
+					<img src="./icons/winButtonsMacMin.svg" alt="minimize" />
 				</button>
 				<button
 					on:click={() => {
@@ -46,7 +46,7 @@
 						}
 					}}
 				>
-					<img src="./src/pureUI/icons/winButtonsMacMax.svg" alt="" />
+					<img src="./icons/winButtonsMacMax.svg" alt="maximize" />
 				</button>
 			</div>
 		{/if}
@@ -205,7 +205,7 @@
 						}
 					}}
 				>
-					<img src="./src/pureUI/icons/winButtonsMSMin.svg" />
+					<img src="./icons/winButtonsMSMin.svg" alt="minimize"/>
 				</button>
 				<button
 					on:click={() => {
@@ -214,7 +214,7 @@
 						}
 					}}
 				>
-					<img src="./src/pureUI/icons/winButtonsMSMax.svg" />
+					<img src="./icons/winButtonsMSMax.svg" alt="maximise"/>
 				</button>
 				<button
 					on:click={() => {
@@ -223,7 +223,7 @@
 						}
 					}}
 				>
-					<img src="./src/pureUI/icons/winButtonsMSClose.svg" />
+					<img src="./icons/winButtonsMSClose.svg" alt="close"/>
 				</button>
 			</div>
 		{/if}

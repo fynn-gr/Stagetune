@@ -1,6 +1,5 @@
 <script lang="ts">
     import { hotkeys, currentDragging, isEditing, editMode } from "@/stores";
-	import type { A } from "@tauri-apps/api/os-1507a225";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { onMount } from "svelte";
 
