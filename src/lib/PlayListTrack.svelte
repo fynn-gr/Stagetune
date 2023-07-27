@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick } from "svelte";
+	import { onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { secondsToMinutes } from "@/utils";
 	import { editMode, selectedItem, isEditing } from "../stores";
@@ -20,6 +20,7 @@
 		pan?: number;
 		repeat?: boolean;
 		edit?: Array<number>;
+		fade?: Array<number>;
 		annotation?: Array<string>;
 	}
 
@@ -135,7 +136,7 @@
 					track.state = ctx.currentTime - startedAt;
 				}
 				loop();
-			}, 1000)
+			}, 100)
 		}
 		loop();
 	});
@@ -224,9 +225,9 @@
 		<!--fade-->
 		<span class="fade">
 			<p>Fade in:</p>
-			<input type="number" value="0" min="0" disabled={!$editMode} />
+			<input type="number" value={track.fade[0]} min="0" disabled={!$editMode} />
 			<p>Fade out:</p>
-			<input type="number" value="0" min="0" disabled={!$editMode} />
+			<input type="number" value={track.fade[1]} min="0" disabled={!$editMode} />
 		</span>
 
 		<!--volume-->

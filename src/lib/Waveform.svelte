@@ -7,27 +7,31 @@
 	export let res: Array<number>;
 	let resX = res[0];
 	let resY = res[1];
+	let step = resX / ( samples);
+
 
 	let canvas: HTMLCanvasElement;
 	let can: CanvasRenderingContext2D;
 	
 	$: if (buffer != undefined && canvas != undefined) {
-		console.time()
 		let data = waveformCalc(buffer, samples);
 		can = canvas.getContext("2d");
 		can.fillStyle = "rgb(45, 45, 45)";
 
 		//draw plygon
+		can.clearRect(0, 0, canvas.width, canvas.height);
+		can.globalAlpha = 1;
 		can.beginPath();
-		can.moveTo(resX, 0);
+		can.moveTo(resX, resY)
+		can.lineTo(resX, 0);
 		can.lineTo(0, 0);
 		for (let i = 0; i < data.length; i++) {
-			let x = i * (resX / samples);
+			let x = i * step;
 			let y = resY - data[i] * resY;
+			//console.log("x: ", x, "y: ", y)
 			can.lineTo(x, y);
 		}
 		can.fill();
-		console.timeEnd()
 	}
 
 	onMount(() => {

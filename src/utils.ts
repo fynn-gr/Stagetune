@@ -161,28 +161,43 @@ export function openPlaylist() {
 	}
 }
 
-export function savePlaylist() {
-	try {
-		save({
-			filters: [
-				{
-					name: "pureStage Playlist",
-					extensions: ["playlist"],
-				},
-			],
-		}).then(async (sel) => {
-			if (sel == null) {
-				console.log("nothing selected");
-			} else {
-				let saveObj = {
-					playlist: get(playlist),
-					srcPaths: get(srcPaths),
-					hotkeys: get(hotkeys),
-				};
-				writeTextFile(sel, JSON.stringify(saveObj), {});
-			}
-		});
-	} catch (err) {
-		console.error(err);
+export function savePlaylist(save_as: boolean = false) {
+
+	if (save_as || get(playlistPath) == "") {
+		//ask for path
+		try {
+			save({
+				filters: [
+					{
+						name: "pureStage Playlist",
+						extensions: ["playlist"],
+					},
+				],
+			}).then(async (sel) => {
+				if (sel == null) {
+					console.log("nothing selected");
+				} else {
+					let saveObj = {
+						playlist: get(playlist),
+						srcPaths: get(srcPaths),
+						hotkeys: get(hotkeys),
+					};
+					writeTextFile(sel, JSON.stringify(saveObj), {});
+					playlistPath.set(sel);
+				}
+			});
+		} catch (err) {
+			console.error(err);
+		}
+	} else {
+		//save to known path
+		console.log("save to path: ", get(playlistPath))
+		let saveObj = {
+			playlist: get(playlist),
+			srcPaths: get(srcPaths),
+			hotkeys: get(hotkeys), 
+		};
+		writeTextFile(get(playlistPath), JSON.stringify(saveObj), {});
 	}
+
 }

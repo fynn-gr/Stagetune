@@ -13,6 +13,7 @@
 	background-color: var(--topbar-BG);
 	padding-top: 0;
 	border-bottom-left-radius: var(--win-corner);
+	border-right: 1px solid var(--grid-gap);
 
 	.trackList {
 		height: 100%;
@@ -647,14 +648,71 @@
 
 .editor {
 	grid-area: editor;
-	height: 200rem;
-	background-color: var(--properties-BG);
+	position: relative;
+	background-color: rgb(31, 31, 31);
 	border-top: 1px solid var(--grid-gap);
 
-	.waveform {
+	.prop-bar {
+		height: 28rem;
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		display: flex;
+		flex-direction: row;
+		background-color: var(--panel);
+
+		label {
+			height: 28rem;
+			line-height: 28rem;
+			padding: 0 8rem;
+			font-size: 13rem;
+		}
+
+		input {
+			height: 20rem;
+			width: 50rem;
+			margin: 4rem 2rem;
+			padding: 0 2rem;
+			border-radius: 4rem;
+			font-size: 12rem;
+			text-align: right;
+		}
+	}
+
+	.track {
+		position: absolute;
+		inset: 40rem 12rem 12rem 12rem;
+		background-color: var(--accent);
+		//overflow: hidden;
+		box-shadow: 0 0 2px black;
+
+		.resizer {
+			pointer-events: none;
+			position: absolute;
+			z-index: 10;
+			width: 60rem;
+			inset: 0 auto 0 0;
+			background-color: rgba(0, 0, 0, 0.422);
+			border-right: 1rem solid rgb(255, 255, 255);
+		}
+
+		.waveform {
+			pointer-events: none;
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	p {
+		display: block;
 		width: 100%;
-		height: 100%;
-		filter: invert(100%);
+		height: 200rem;
+		line-height: 200rem;
+		font-size: 14rem;
+		font-weight: 600;
+		color: gray;
+		text-align: center;
 	}
 }
 
@@ -665,6 +723,7 @@
 	gap: 1px;
 	background-color: var(--grid-gap);
 	width: 250rem;
+	border-left: 1px solid var(--grid-gap);
 }
 
 .current {

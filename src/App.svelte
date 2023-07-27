@@ -26,11 +26,15 @@
 		openPlaylist,
 		savePlaylist,
 		fileNameFromPath,
+		openDir,
 	} from "./utils";
 	import { invoke } from "@tauri-apps/api/tauri";
 	import Hotkey from "./lib/Hotkey.svelte";
 	import HotkeyPlaceholder from "./lib/HotkeyPlaceholder.svelte";
 	import Waveform from "./lib/Waveform.svelte";
+	import { listen } from "@tauri-apps/api/event";
+	import { appWindow } from "@tauri-apps/api/window";
+	import { confirm } from "@tauri-apps/api/dialog";
 
 	let trackElements = [];
 	let hotkeyElements = [];
@@ -57,6 +61,8 @@
 				path: $currentDragging.path,
 				title: $currentDragging.name,
 				annotation: [null, null],
+				fade: [0, 0],
+				edit: [0, 0],
 			});
 			playlist.set($playlist);
 			$currentDragging = null;
@@ -90,6 +96,30 @@
 		//}
 	}
 
+	const unlisten = listen("menu", async event => {
+		console.log(event)
+		if (event.payload == "quit") {
+			if ($editMode) {
+				const confirmed = await confirm('wanna save changes', {title: 'Tauri', type: 'warning'})
+				.then(isOK => isOK ? appWindow.close() : null)
+				
+			}
+		} else if (event.payload == "new") {
+
+		} else if (event.payload == "open") {
+			openPlaylist();
+		} else if (event.payload == "save") {
+			savePlaylist();
+		} else if (event.payload == "save_as") {
+			savePlaylist(true);
+		} else if (event.payload == "add") {
+			openDir();
+		} else if (event.payload == "projector") {
+			openVideoWindow(!projector);
+			projector = !projector;
+		}
+	})
+
 	onMount(() => {
 
 		//shortcuts
@@ -102,12 +132,16 @@
 			} else {
 				if ($editMode) {
 					//open Playlist
-					if (e.code == "KeyO" && ( e.ctrlKey || e.metaKey )) {
+					if (e.code == "KeyO" && ( e.ctrlKey )) {
 						openPlaylist();
 					}
 
+					else if (e.code == "KeyA" && ( e.ctrlKey )) {
+						openDir();
+					}
+
 					// openVideoWindow
-					else if (e.code == "KeyV" && ( e.ctrlKey || e.metaKey )) {
+					else if (e.code == "KeyP" && ( e.ctrlKey )) {
 						openVideoWindow(!projector)
 						projector = !projector;
 					}
@@ -115,8 +149,12 @@
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
 						if ($playlist[$selectedItem].playing) trackElements[$selectedItem].stop();
+						let toDelete = $selectedItem;
+						if ($playlist.length - 1 > $selectedItem) $selectedItem++;
+						else if ($selectedItem > 0) $selectedItem--;
+						else $selectedItem = null;
 						playlist.update(e => {
-							e.splice($selectedItem, 1);
+							e.splice(toDelete, 1);
 							return e;
 						});
 						$playlist = $playlist;
@@ -124,22 +162,22 @@
 				}
 
 				//move up
-				if ((e.code === "KeyW" || e.code === "ArrowUp") && e.ctrlKey == false) {
+				if ((e.code === "KeyW" || e.code === "ArrowUp") && !e.ctrlKey && !e.metaKey) {
 					moveUp();
 				}
 				//move down
-				else if ((e.code === "KeyS" || e.code === "ArrowDown") && e.ctrlKey == false) {
+				else if ((e.code === "KeyS" || e.code === "ArrowDown") && !e.ctrlKey && !e.metaKey) {
 					moveDown();
 				}
 				//reset song
-				else if ((e.code === "KeyA" || e.code === "ArrowLeft") && e.ctrlKey == false) {
+				else if ((e.code === "KeyA" || e.code === "ArrowLeft") && !e.ctrlKey && e.metaKey) {
 					playlist.update((items) => {
 						trackElements[$selectedItem].stop(true);
 						return items;
 					});
 				}
 				//skip song
-				else if ((e.code === "KeyD" || e.code === "ArrowRight") && e.ctrlKey == false) {
+				else if ((e.code === "KeyD" || e.code === "ArrowRight") && !e.ctrlKey && !e.metaKey) {
 					playlist.update((items) => {
 						trackElements[$selectedItem].stop(true);
 						selectedItem.update((n) => n + 1);
@@ -152,7 +190,7 @@
 					trackElements[$selectedItem].playPause();
 				}
 				//save File
-				else if (e.code == "KeyS" &&  ( e.ctrlKey || e.metaKey )) {
+				else if (e.code == "KeyS" &&  ( e.ctrlKey )) {
 					savePlaylist();
 				}
 			}
@@ -217,14 +255,38 @@
 	<!--editor-->
 	<div
 		class="editor"
-		style={`height: ${editorPanel && $editMode ? "300" : "0"}px;`}
+		style={`height: ${editorPanel && $editMode ? "200" : "0"}rem;`}
 	>
-		{#if $selectedItem != undefined}
-			<Waveform
-				buffer={trackElements[$selectedItem].getBuffer()}
-				samples={500}
-				res={[1000, 200]}
-			/>
+
+		{#if $selectedItem != null && $selectedItem != undefined}
+			<div class="prop-bar">
+				<label>start</label>
+				<input type="number" bind:value={$playlist[$selectedItem].edit[0]}>
+				<label>fade in</label>
+				<input type="number" bind:value={$playlist[$selectedItem].fade[0]}>
+				<label>fade in</label>
+				<input type="number" bind:value={$playlist[$selectedItem].fade[1]}>
+			</div>
+		
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<div
+				class="track"
+				on:click={e => {
+
+				}}
+			>
+				<Waveform
+					buffer={trackElements[$selectedItem].getBuffer()}
+					samples={1000}
+					res={[1000, 200]}
+				/>
+				<div
+					class="resizer"
+					style={`width: ${($playlist[$selectedItem].edit[0] / $playlist[$selectedItem].length) * 100 }%;`}
+				></div>
+			</div>
+		{:else}
+			<p>No track selected</p>
 		{/if}
 	</div>
 

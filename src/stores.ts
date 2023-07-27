@@ -13,7 +13,8 @@ export const playlist = writable([
 	//volume
 	//pan
 	//repeat
-	//edit [cutIn, cutOut, fadeIn, fadeOut]
+	//edit [cutIn, cutOut]
+	//fade [fadeIn, fadeOut]
 	//annotation [before, after]
 	//title
 	//tracks
