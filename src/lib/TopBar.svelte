@@ -89,13 +89,18 @@
 				onClick={() => {
 					if ($selectedItem == null) {
 						playlist.update((e) => {
-							e.push({ type: "annotation", text: "Comment" });
+							e.push({
+								type: "annotation",
+								origin: "playlist",
+								text: "Comment"
+							});
 							return e;
 						});
 					} else {
 						playlist.update((e) => {
 							e.splice($selectedItem + 1, 0, {
 								type: "annotation",
+								origin: "playlist",
 								text: "Comment",
 							});
 							return e;

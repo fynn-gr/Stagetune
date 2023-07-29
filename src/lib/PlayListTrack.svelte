@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { secondsToMinutes } from "@/utils";
-	import { editMode, selectedItem, isEditing, currentDragging } from "../stores";
+	import { editMode, selectedItem, isEditing, currentDragging, playlist } from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
 	import type { playListItem } from "@/utils";
@@ -22,7 +22,7 @@
 	let gainNode: GainNode;
 	let fadeNode: GainNode;
 	let panNode: StereoPannerNode;
-	let gain = 100;
+	let gain = 80;
 	let pan = 0;
 
 	function onEnd() {
@@ -61,6 +61,39 @@
 	function handleDragEnd(e) {
 		dragging = false;
 		console.log("end dragging", e);
+	}
+
+	function handleDrop(e) {
+		e.preventDefault();
+		if ($currentDragging.origin == "playlist") {
+			let oldPosition = $playlist.indexOf($currentDragging);
+			let newPosition = id;
+			playlist.update(e => {
+				e.splice(oldPosition, 1)
+				e.splice(newPosition, 0, $currentDragging)
+				return e
+			})
+		} else if ($currentDragging.origin == "src") {
+			let newPosition = id;
+			playlist.update(e => {
+				e.splice(newPosition, 0, {
+					type: $currentDragging.type,
+					origin: "playlist",
+					path: $currentDragging.path,
+					name: $currentDragging.name,
+					playing: false,
+					state: 0,
+					fade: [0, 0],
+					edit: [0, 0],
+					annotation: [null, null],
+				})
+				return e;
+			})
+			$selectedItem = newPosition;
+		} else {
+
+		}
+		$currentDragging = null;
 	}
 
 	export function playPause() {
@@ -115,8 +148,9 @@
 		console.log(track)
 		
 		gainNode = ctx.createGain();
+		fadeNode = ctx.createGain();
 		panNode = ctx.createStereoPanner();
-		input.connect(gainNode).connect(panNode).connect(ctx.destination);
+		input.connect(fadeNode).connect(gainNode).connect(panNode).connect(ctx.destination);
 		input.onended = () => {onEnd()};
 
 		const loop = async () => {
@@ -145,114 +179,117 @@
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
+	on:drop={handleDrop}
 	on:click={(e) => {
 		selectedItem.set(id);
 	}}
 >
-	<!--annotation before-->
-	<Annotation bind:annotation={track.annotation} {id} start={true}/>
 
-	<div
-		class="inner"
-	>
-
-
-		<!--progress-->
-		
-		<div
-			class="progress"
-			on:click={handleSkip}
-			style={`
-				background: linear-gradient(
-					90deg,
-					white 0%,
-					white calc(100% * ${track.state / track.length}),
-					#0004 calc(100% * ${track.state / track.length}),
-					#0004 100%
-				);`}
-		/>
-		<Waveform
-			buffer={audioBuffer}
-			samples={100}
-			resY={50}
-		/>
-
-		<!--play Button-->
-		<button
-			class="play-btn"
-			class:active={track.playing}
-			on:click={() => {
-				playPause();
-			}}
-		>
-			{#if track.playing}
-				<img src="./icons/square/pause.svg" alt="" />
+	<div class="border">
+		<!--annotation before-->
+		<Annotation bind:annotation={track.annotation} {id} start={true}/>
+	
+		<div class="inner">
+	
+			<!--progress-->
+			<div
+				class="progress"
+				on:click={handleSkip}
+				style={`
+					background: linear-gradient(
+						90deg,
+						white 0%,
+						white calc(100% * ${track.state / track.length}),
+						#0004 calc(100% * ${track.state / track.length}),
+						#0004 100%
+					);`}
+			/>
+			<Waveform
+				buffer={audioBuffer}
+				samples={100}
+				resY={50}
+			/>
+	
+			<!--play Button-->
+			<button
+				class="play-btn"
+				class:active={track.playing}
+				on:click={() => {
+					playPause();
+				}}
+			>
+				{#if track.playing}
+					<img src="./icons/square/pause.svg" alt="" />
+				{:else}
+					<img src="./icons/square/play.svg" alt="" />
+				{/if}
+			</button>
+	
+			<!--name-->
+			{#if loaded == false}
+				<div class="title"><p>loading...</p></div>
 			{:else}
-				<img src="./icons/square/play.svg" alt="" />
+				<div class="title"><p>{track.name}</p></div>
 			{/if}
-		</button>
-
-		<!--Info-->
-		{#if loaded == false}
-			<p class="title">loading...</p>
-		{:else}
-			<p class="title">{track.name}</p>
-		{/if}
-
-		<!--repeat-->
-		<button
-			class="repeat-btn"
-			class:active={track.repeat}
-			on:click={() => {
-				track.repeat = $editMode ? !track.repeat : track.repeat;
-			}}
-		>
-			<img src="./icons/square/repeat.svg" alt="repeat" />
-		</button>
-
-		<!--time-->
-		<p class="timecode">{secondsToMinutes(track.state)}</p>
-		<p class="length">
-			{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}
-		</p>
-
-		<!--fade-->
-		<span class="fade">
-			<p>Fade in:</p>
-			<input type="number" value={track.fade[0]} min="0" disabled={!$editMode} />
-			<p>Fade out:</p>
-			<input type="number" value={track.fade[1]} min="0" disabled={!$editMode} />
-		</span>
-
-		<!--volume-->
-		<div class="volume">
-			<span>
-				<p>–</p>
-				<input
-					bind:value={gain}
-					type="range"
-					min="0"
-					max="100"
-					disabled={!$editMode}
-				/>
-				<p>+</p>
+	
+			<!--repeat-->
+			<button
+				class="repeat-btn"
+				class:active={track.repeat}
+				on:click={() => {
+					track.repeat = $editMode ? !track.repeat : track.repeat;
+				}}
+			>
+				<img src="./icons/square/repeat.svg" alt="repeat" />
+			</button>
+	
+			<!--time-->
+			<p class="timecode">{secondsToMinutes(track.state)}</p>
+			<p class="length">
+				{track.length != undefined ? secondsToMinutes(track.length) : "--:--"}
+			</p>
+	
+			<!--fade-->
+			<span class="fade">
+				<p>Fade in:</p>
+				<input type="number" value={track.fade[0]} min="0" disabled={!$editMode} />
+				<p>Fade out:</p>
+				<input type="number" value={track.fade[1]} min="0" disabled={!$editMode} />
 			</span>
-
-			<span>
-				<p>L</p>
-				<input
-					bind:value={pan}
-					type="range"
-					min={-1}
-					max={1}
-					step={0.25}
-					disabled={!$editMode}
-				/>
-				<p>R</p>
-			</span>
+	
+			<!--volume-->
+			<div class="volume">
+				<span>
+					<p>–</p>
+					<input
+						bind:value={gain}
+						type="range"
+						min="0"
+						max="100"
+						step="10"
+						disabled={!$editMode}
+					/>
+					<p>+</p>
+				</span>
+	
+				<span>
+					<p>L</p>
+					<input
+						class="pan"
+						bind:value={pan}
+						type="range"
+						min={-1}
+						max={1}
+						step={0.25}
+						disabled={!$editMode}
+					/>
+					<p>R</p>
+				</span>
+			</div>
 		</div>
-	</div>
+	
+		<!--annotation after-->
+		<Annotation bind:annotation={track.annotation} {id} start={false}/>
 
-	<!--annotation after-->
-	<Annotation bind:annotation={track.annotation} {id} start={false}/>
+	</div>
 </div>

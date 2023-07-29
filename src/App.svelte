@@ -2,7 +2,6 @@
 	import "../src/pureUI/scss/index.scss";
 	import "./style/App.scss";
 	import { onMount } from "svelte";
-	import { dndzone } from 'svelte-dnd-action';
 	import { listen } from "@tauri-apps/api/event";
 	import { appWindow } from "@tauri-apps/api/window";
 	import { confirm } from "@tauri-apps/api/dialog";
@@ -36,6 +35,7 @@
 		openDir,
 	} from "./utils";
 	import type { playListItem } from "@/utils";
+	import PlayListLoop from "./lib/PlayListLoop.svelte";
 
 	const ctx = new AudioContext();
 	let playlistElement: HTMLElement;
@@ -57,41 +57,26 @@
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 		if ($currentDragging.origin == "src") {
-			console.log("drop new track into Playlist: ", $currentDragging);
 			$playlist.push({
-				type: $currentDragging.type,
 				origin: "playlist",
+				type: $currentDragging.type,
 				path: $currentDragging.path,
 				name: $currentDragging.name,
-				annotation: [null, null],
+				playing: false,
+				state: 0,
 				fade: [0, 0],
 				edit: [0, 0],
+				annotation: [null, null],
 			});
 			playlist.set($playlist);
 			$currentDragging = null;
 		} else if ($currentDragging.origin == "playlist") {
-			console.log("reorder elment: ", $currentDragging)
-			console.log(e)
-			let rect = e.target.getBoundingClientRect()
-			let y = e.clientY - rect.top
-
-			let smallestDist
-			let position
-			for (let i = 0; i < playlistElements.length; i++) {
-				let dist = Math.abs(playlistElements[i].offsetTop - y)
-				console.log("mousePos: ", y, "trackY: ", playlistElements[i])
-				if (smallestDist > dist) {
-					smallestDist = dist
-					position = i
-				}
-			}
-
-			let oldPosition = $currentDragging.id
+			let oldPosition = $playlist.indexOf($currentDragging);
 			playlist.update(e => {
 				e.splice(oldPosition, 1);
-				e.splice(position, 0, $currentDragging)
 				return e;
 			});
+			$playlist.push($currentDragging);
 			$playlist = $playlist;
 
 			$currentDragging= null;
@@ -99,10 +84,6 @@
 		} else {
 			$currentDragging = null;
 		}
-	}
-
-	function handleConsider() {
-		
 	}
 
 	function stopAll(playlist: boolean, hotkeys: boolean) {
@@ -237,11 +218,7 @@
 		class="side-bar"
 		style={`width: ${sideBar && $editMode ? "300" : "0"}px;`}
 	>
-		<div
-			class="trackList"
-			use:dndzone={{$srcFiles}}
-			on:consider={handleConsider}
-		>
+		<div class="trackList">
 			{#each $srcFiles as p, i}
 				<p class="category">
 					{fileNameFromPath($srcPaths[i])}
@@ -258,6 +235,8 @@
 	<TopBar bind:sideBar bind:editor={editorPanel} bind:palettes bind:zoom />
 
 	<!--playlist-->
+	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div
 		class="playlist"
 		bind:this={playlistElement}
@@ -275,14 +254,26 @@
 						bind:track={t}
 						id={i}
 						{ctx}
-						/>
+					/>
 				{:else if t.type == "video"}
 					<PlayListVideo
+						bind:this={playlistElements[i]}
 						bind:track={t}
 						id={i}
 					/>
 				{:else if t.type == "annotation"}
-					<PlayListAnotation bind:item={t} id={i} />
+					<PlayListAnotation
+						bind:this={playlistElements[i]}
+						bind:item={t}
+						id={i}
+					/>
+				{:else if t.type == "loop"}
+					<PlayListLoop
+						bind:this={playlistElements[i]}
+						bind:track={t}
+						id={i}
+						{ctx}
+					/>
 				{/if}
 			{/each}
 		{:else}

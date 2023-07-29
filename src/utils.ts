@@ -22,6 +22,9 @@ export interface playListItem {
 	edit?: Array<number>;
 	fade?: Array<number>;
 	annotation?: Array<string>;
+
+	//loop
+	tracks?: Array<playListItem>;
 }
 
 export function isAudioFile(filename: string): boolean {
