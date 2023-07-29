@@ -3,6 +3,27 @@ import { get } from "svelte/store";
 import { readDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { playlist, playlistPath, srcPaths, srcFiles, currentDragging, hotkeys } from "./stores";
 
+export interface playListItem {
+	type: string;
+	origin: string;
+
+	//comment
+	text?: string;
+
+	//track, video
+	path?: string;
+	name?: string;
+	length?: number;
+	playing?: boolean;
+	state?: number;
+	volume?: number;
+	pan?: number;
+	repeat?: boolean;
+	edit?: Array<number>;
+	fade?: Array<number>;
+	annotation?: Array<string>;
+}
+
 export function isAudioFile(filename: string): boolean {
 	if (filename.match(/\.(mp3|ogg|aac|flac|wav|m4a)$/)) {
 		return true;
@@ -101,6 +122,8 @@ function scanSrcPaths() {
 				} else if (isAudioFile(entry.name)) {
 					//Audio File
 					entry.type = "track";
+					entry.origin = "src";
+					entry.name = entry.name.replace(/\.[^.]+$/gm, '');
 					srcFiles.update((items) => {
 						items[i].push(entry);
 						return items;
@@ -108,6 +131,8 @@ function scanSrcPaths() {
 				} else if (isVideoFile(entry.name)) {
 					//Video File
 					entry.type = "video";
+					entry.origin = "src";
+					entry.name = entry.name.replace(/\.[^.]+$/gm, '');
 					srcFiles.update((items) => {
 						items[i].push(entry);
 						return items;

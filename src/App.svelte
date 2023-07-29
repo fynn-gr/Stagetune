@@ -2,14 +2,21 @@
 	import "../src/pureUI/scss/index.scss";
 	import "./style/App.scss";
 	import { onMount } from "svelte";
+	import { dndzone } from 'svelte-dnd-action';
+	import { listen } from "@tauri-apps/api/event";
+	import { appWindow } from "@tauri-apps/api/window";
+	import { confirm } from "@tauri-apps/api/dialog";
+	import { invoke } from "@tauri-apps/api/tauri";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
 	import PlayListVideo from "./lib/PlayListVideo.svelte";
 	import TrackListItem from "./lib/TrackListItem.svelte";
 	import TopBar from "./lib/TopBar.svelte";
-
-	import { pureLocale } from "./pureUI/modules/pureLocale";
+	import Hotkey from "./lib/Hotkey.svelte";
+	import HotkeyPlaceholder from "./lib/HotkeyPlaceholder.svelte";
+	import Waveform from "./lib/Waveform.svelte";
+	
 	import {
 		editMode,
 		currentDragging,
@@ -28,25 +35,20 @@
 		fileNameFromPath,
 		openDir,
 	} from "./utils";
-	import { invoke } from "@tauri-apps/api/tauri";
-	import Hotkey from "./lib/Hotkey.svelte";
-	import HotkeyPlaceholder from "./lib/HotkeyPlaceholder.svelte";
-	import Waveform from "./lib/Waveform.svelte";
-	import { listen } from "@tauri-apps/api/event";
-	import { appWindow } from "@tauri-apps/api/window";
-	import { confirm } from "@tauri-apps/api/dialog";
-
-	let trackElements = [];
-	let hotkeyElements = [];
-	let sideBar = true;
-	let editorPanel = true;
-	let palettes = true;
-	let zoom = 1.2;
-	let projector = false;
-
-	$: document.documentElement.style.fontSize = `${zoom}px`;
+	import type { playListItem } from "@/utils";
 
 	const ctx = new AudioContext();
+	let playlistElement: HTMLElement;
+
+	let playlistElements = [];
+	let hotkeyElements = [];
+	let sideBar = true;
+	let editorPanel = false;
+	let projector = false;
+	let palettes = true;
+	let zoom = 1.2;
+
+	$: document.documentElement.style.fontSize = `${zoom}px`;
 
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", {invokeMessage: show ? "true" : "false"})
@@ -54,22 +56,53 @@
 
 	function handleDropPlaylist(e) {
 		e.preventDefault();
-		if ($currentDragging.path) {
+		if ($currentDragging.origin == "src") {
 			console.log("drop new track into Playlist: ", $currentDragging);
 			$playlist.push({
 				type: $currentDragging.type,
+				origin: "playlist",
 				path: $currentDragging.path,
-				title: $currentDragging.name,
+				name: $currentDragging.name,
 				annotation: [null, null],
 				fade: [0, 0],
 				edit: [0, 0],
 			});
 			playlist.set($playlist);
 			$currentDragging = null;
-		} else if (typeof $currentDragging == "object") {
+		} else if ($currentDragging.origin == "playlist") {
+			console.log("reorder elment: ", $currentDragging)
+			console.log(e)
+			let rect = e.target.getBoundingClientRect()
+			let y = e.clientY - rect.top
+
+			let smallestDist
+			let position
+			for (let i = 0; i < playlistElements.length; i++) {
+				let dist = Math.abs(playlistElements[i].offsetTop - y)
+				console.log("mousePos: ", y, "trackY: ", playlistElements[i])
+				if (smallestDist > dist) {
+					smallestDist = dist
+					position = i
+				}
+			}
+
+			let oldPosition = $currentDragging.id
+			playlist.update(e => {
+				e.splice(oldPosition, 1);
+				e.splice(position, 0, $currentDragging)
+				return e;
+			});
+			$playlist = $playlist;
+
+			$currentDragging= null;
+
 		} else {
 			$currentDragging = null;
 		}
+	}
+
+	function handleConsider() {
+		
 	}
 
 	function stopAll(playlist: boolean, hotkeys: boolean) {
@@ -102,7 +135,6 @@
 			if ($editMode) {
 				const confirmed = await confirm('wanna save changes', {title: 'Tauri', type: 'warning'})
 				.then(isOK => isOK ? appWindow.close() : null)
-				
 			}
 		} else if (event.payload == "new") {
 
@@ -148,7 +180,7 @@
 
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
-						if ($playlist[$selectedItem].playing) trackElements[$selectedItem].stop();
+						if ($playlist[$selectedItem].playing) playlistElements[$selectedItem].stop();
 						let toDelete = $selectedItem;
 						if ($playlist.length - 1 > $selectedItem) $selectedItem++;
 						else if ($selectedItem > 0) $selectedItem--;
@@ -170,24 +202,24 @@
 					moveDown();
 				}
 				//reset song
-				else if ((e.code === "KeyA" || e.code === "ArrowLeft") && !e.ctrlKey && e.metaKey) {
+				else if ((e.code === "KeyA" || e.code === "ArrowLeft") && !e.ctrlKey && !e.metaKey) {
 					playlist.update((items) => {
-						trackElements[$selectedItem].stop(true);
+						playlistElements[$selectedItem].stop(true);
 						return items;
 					});
 				}
 				//skip song
 				else if ((e.code === "KeyD" || e.code === "ArrowRight") && !e.ctrlKey && !e.metaKey) {
 					playlist.update((items) => {
-						trackElements[$selectedItem].stop(true);
+						playlistElements[$selectedItem].stop(true);
 						selectedItem.update((n) => n + 1);
-						trackElements[$selectedItem].play(0);
+						playlistElements[$selectedItem].play(0);
 						return items;
 					});
 				}
 				//play
 				else if (e.code === "Space") {
-					trackElements[$selectedItem].playPause();
+					playlistElements[$selectedItem].playPause();
 				}
 				//save File
 				else if (e.code == "KeyS" &&  ( e.ctrlKey )) {
@@ -196,6 +228,7 @@
 			}
 		});
 	});
+
 </script>
 
 <main class={"window-body dark " + $uiPlatform}>
@@ -204,7 +237,11 @@
 		class="side-bar"
 		style={`width: ${sideBar && $editMode ? "300" : "0"}px;`}
 	>
-		<div class="trackList">
+		<div
+			class="trackList"
+			use:dndzone={{$srcFiles}}
+			on:consider={handleConsider}
+		>
 			{#each $srcFiles as p, i}
 				<p class="category">
 					{fileNameFromPath($srcPaths[i])}
@@ -223,6 +260,7 @@
 	<!--playlist-->
 	<div
 		class="playlist"
+		bind:this={playlistElement}
 		on:drop={handleDropPlaylist}
 		on:dragover={(e) => {
 			e.preventDefault();
@@ -233,7 +271,7 @@
 			{#each $playlist as t, i}
 				{#if t.type == "track"}
 					<PlayListTrack
-						bind:this={trackElements[i]}
+						bind:this={playlistElements[i]}
 						bind:track={t}
 						id={i}
 						{ctx}
@@ -253,42 +291,45 @@
 	</div>
 
 	<!--editor-->
-	<div
-		class="editor"
-		style={`height: ${editorPanel && $editMode ? "200" : "0"}rem;`}
-	>
+	{#if editorPanel && $editMode}
 
-		{#if $selectedItem != null && $selectedItem != undefined}
-			<div class="prop-bar">
-				<label>start</label>
-				<input type="number" bind:value={$playlist[$selectedItem].edit[0]}>
-				<label>fade in</label>
-				<input type="number" bind:value={$playlist[$selectedItem].fade[0]}>
-				<label>fade in</label>
-				<input type="number" bind:value={$playlist[$selectedItem].fade[1]}>
-			</div>
-		
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<div
-				class="track"
-				on:click={e => {
+		<div class="editor">
 
-				}}
-			>
-				<Waveform
-					buffer={trackElements[$selectedItem].getBuffer()}
-					samples={1000}
-					res={[1000, 200]}
-				/>
+			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
+				<div class="prop-bar">
+					<label>start</label>
+					<input type="number" bind:value={$playlist[$selectedItem].edit[0]}>
+					<label>fade in</label>
+					<input type="number" bind:value={$playlist[$selectedItem].fade[0]}>
+					<label>fade in</label>
+					<input type="number" bind:value={$playlist[$selectedItem].fade[1]}>
+				</div>
+			
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
-					class="resizer"
-					style={`width: ${($playlist[$selectedItem].edit[0] / $playlist[$selectedItem].length) * 100 }%;`}
-				></div>
-			</div>
-		{:else}
-			<p>No track selected</p>
-		{/if}
-	</div>
+					class="track"
+					on:click={e => {
+						let rec = e.target.getBoundingClientRect();
+						let x = e.clientX - rec.left;
+						let perc = Math.min(Math.max(x / rec.width, 0), 1);
+						$playlist[$selectedItem].edit[0] = perc * $playlist[$selectedItem].length
+					}}
+				>
+					<Waveform
+						buffer={playlistElements[$selectedItem].getBuffer()}
+						samples={window.innerWidth}
+						resY={200}
+					/>
+					<div
+						class="resizer"
+						style={`width: ${($playlist[$selectedItem].edit[0] / $playlist[$selectedItem].length) * 100 }%;`}
+					></div>
+				</div>
+			{:else}
+				<p>No track selected</p>
+			{/if}
+		</div>
+	{/if}
 
 	<!--palettes on the right-->
 	{#if palettes || !$editMode}
@@ -305,19 +346,17 @@
 									e.state != undefined ? e.state / e.length : 0
 								});`}
 							/>
-							<p>{e.title}</p>
+							<p>{e.name}</p>
 						</div>
 					{/if}
 				{/each}
 			</div>
 
 			<!--hotkeys-->
-			<div
-				class="hotkeys"
-			>
+			<div class="hotkeys">
 				{#each $hotkeys as a, i}
 					{#if a.path != ""}
-						<Hotkey bind:track={a} {ctx} bind:this={hotkeyElements[i]} stopAll={stopAll}/>
+						<Hotkey bind:track={a} bind:this={hotkeyElements[i]} {ctx} stopAll={stopAll}/>
 					{:else}
 						<HotkeyPlaceholder bind:track={a} bind:this={hotkeyElements[i]}/>
 					{/if}

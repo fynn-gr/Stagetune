@@ -63,7 +63,7 @@
                 //deleting hotkey
                 if (track.playing) input.stop();
                 input = null;
-                track.title = "";
+                track.name = "";
                 track.playing = false;
                 track.path = "";
                 console.log(input, track)

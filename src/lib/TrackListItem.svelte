@@ -14,7 +14,7 @@
 	function handleDragStart(e) {
 		e.dataTransfer.dropEffect = "copy";
 		e.dataTransfer.setData("text/plain", "placehold");
-		$currentDragging = { name: entry.name, path: entry.path, type: entry.type };
+		$currentDragging = entry;
 		dragging = true;
 		console.log("drag start", e);
 	}
@@ -38,5 +38,5 @@
 	{:else if entry.type == "video"}
 		<img src="./icons/square/film.svg" alt="" />
 	{/if}
-	<p>{getName()}</p>
+	<p>{entry.name}</p>
 </div>

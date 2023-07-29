@@ -4,9 +4,8 @@
 
 	export let buffer: AudioBuffer;
 	export let samples: number;
-	export let res: Array<number>;
-	let resX = res[0];
-	let resY = res[1];
+	export let resY: number;
+	let resX = window.innerWidth;
 	let step = resX / ( samples);
 
 

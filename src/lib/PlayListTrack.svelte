@@ -2,31 +2,15 @@
 	import { onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { secondsToMinutes } from "@/utils";
-	import { editMode, selectedItem, isEditing } from "../stores";
+	import { editMode, selectedItem, isEditing, currentDragging } from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
-
-	interface playListItem {
-		type: string;
-
-		text?: string;
-
-		playing?: boolean;
-		path?: string;
-		title?: string;
-		length?: number;
-		state?: number;
-		volume?: number;
-		pan?: number;
-		repeat?: boolean;
-		edit?: Array<number>;
-		fade?: Array<number>;
-		annotation?: Array<string>;
-	}
+	import type { playListItem } from "@/utils";
 
 	export let track: playListItem;
 	export let id: number;
 	export let ctx: AudioContext;
+	let dragging = false;
 	let missing = false;
 	let loaded = false;
 	let audioBuffer: AudioBuffer;
@@ -36,20 +20,10 @@
 	let pausedAt = 0; //track relative pause time
 
 	let gainNode: GainNode;
+	let fadeNode: GainNode;
 	let panNode: StereoPannerNode;
 	let gain = 100;
 	let pan = 0;
-
-	function getTitle() {
-		if (track.title == undefined) {
-			let split = track.path.split("/");
-			let fileName = split[split.length - 1];
-			let title = fileName.substring(0, fileName.lastIndexOf("."));
-			return title;
-		} else {
-			return track.title;
-		}
-	}
 
 	function onEnd() {
 		if (track.repeat) {
@@ -74,6 +48,19 @@
 			track.state = track.length * perc;
 		}
 			
+	}
+
+	function handleDragStart(e) {
+		e.dataTransfer.dropEffect = "copy";
+		e.dataTransfer.setData("text/plain", "placehold");
+		$currentDragging = track;
+		dragging = true;
+		console.log("drag start", e);
+	}
+
+	function handleDragEnd(e) {
+		dragging = false;
+		console.log("end dragging", e);
 	}
 
 	export function playPause() {
@@ -117,6 +104,7 @@
 	}
 
 	onMount(async () => {
+		//load file
 		const response = await fetch(convertFileSrc(track.path));
 		const arrayBuffer = await response.arrayBuffer();
 		audioBuffer = await ctx.decodeAudioData(arrayBuffer);
@@ -124,6 +112,7 @@
 		track.length = audioBuffer.duration;
 		
 		loaded = true;
+		console.log(track)
 		
 		gainNode = ctx.createGain();
 		panNode = ctx.createStereoPanner();
@@ -150,9 +139,12 @@
 <div
 	class="playlistTrack"
 	class:selected={$selectedItem == id}
-	class:missing
 	class:editMode={$editMode}
+	class:missing
 	class:loaded
+	draggable={$editMode}
+	on:dragstart={handleDragStart}
+	on:dragend={handleDragEnd}
 	on:click={(e) => {
 		selectedItem.set(id);
 	}}
@@ -160,7 +152,9 @@
 	<!--annotation before-->
 	<Annotation bind:annotation={track.annotation} {id} start={true}/>
 
-	<div class="inner">
+	<div
+		class="inner"
+	>
 
 
 		<!--progress-->
@@ -171,8 +165,8 @@
 			style={`
 				background: linear-gradient(
 					90deg,
-					var(--secondary) 0%,
-					var(--secondary) calc(100% * ${track.state / track.length}),
+					white 0%,
+					white calc(100% * ${track.state / track.length}),
 					#0004 calc(100% * ${track.state / track.length}),
 					#0004 100%
 				);`}
@@ -180,7 +174,7 @@
 		<Waveform
 			buffer={audioBuffer}
 			samples={100}
-			res={[1000, 100]}
+			resY={50}
 		/>
 
 		<!--play Button-->
@@ -202,7 +196,7 @@
 		{#if loaded == false}
 			<p class="title">loading...</p>
 		{:else}
-			<p class="title">{getTitle()}</p>
+			<p class="title">{track.name}</p>
 		{/if}
 
 		<!--repeat-->
@@ -233,7 +227,7 @@
 		<!--volume-->
 		<div class="volume">
 			<span>
-				<p>-</p>
+				<p>–</p>
 				<input
 					bind:value={gain}
 					type="range"

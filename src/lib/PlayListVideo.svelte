@@ -7,12 +7,13 @@
 
 	interface playListItem {
 		type: string;
+		origin: string;
 
 		text?: string;
 
 		playing?: boolean;
 		path?: string;
-		title?: string;
+		name?: string;
 		length?: number;
 		state?: number;
 		volume?: number;
@@ -117,7 +118,7 @@
 		</button>
 
 		<!--Title-->
-		<p class="title">{track.title}</p>
+		<p class="title">{track.name}</p>
 
 	</div>
 
