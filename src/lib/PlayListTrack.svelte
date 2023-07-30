@@ -47,7 +47,6 @@
 			pausedAt = track.length * perc;
 			track.state = track.length * perc;
 		}
-			
 	}
 
 	function handleDragStart(e) {
@@ -108,10 +107,10 @@
 	export function play(startTime: number = null) {
 		//resume track
 		if (startTime == null) {
-			input.start(0, pausedAt);
+			input.start(0, pausedAt + cutIn);
 			startedAt = ctx.currentTime - pausedAt;
 		} else {
-			input.start(0, startTime);
+			input.start(0, startTime + cutIn);
 			startedAt = ctx.currentTime - startTime;
 		}
 		console.log("resumed at:", pausedAt)
@@ -164,6 +163,7 @@
 		loop();
 	});
 
+	$:cutIn = track.edit[0];
 	$:panNode ? panNode.pan.value = pan : null;
 	$:gainNode ? gainNode.gain.setValueAtTime(gain / 100, ctx.currentTime) : null;
 	
@@ -208,6 +208,7 @@
 				buffer={audioBuffer}
 				samples={100}
 				resY={50}
+				cutInFac={cutIn / track.length}
 			/>
 	
 			<!--play Button-->

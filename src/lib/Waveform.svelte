@@ -5,6 +5,7 @@
 	export let buffer: AudioBuffer;
 	export let samples: number;
 	export let resY: number;
+	export let cutInFac: number = 0;
 	let resX = window.innerWidth;
 	let step = resX / ( samples);
 
@@ -13,7 +14,7 @@
 	let can: CanvasRenderingContext2D;
 	
 	$: if (buffer != undefined && canvas != undefined) {
-		let data = waveformCalc(buffer, samples);
+		let data = waveformCalc(buffer, samples, cutInFac);
 		can = canvas.getContext("2d");
 		can.fillStyle = "rgb(45, 45, 45)";
 
