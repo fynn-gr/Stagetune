@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createPlaylistTrack } from "@/utils";
 	import { editMode, selectedItem, isEditing, currentDragging, playlist } from "../stores";
 
 	export let item: any;
@@ -31,17 +32,12 @@
 		} else if ($currentDragging.origin == "src") {
 			let newPosition = id;
 			playlist.update(e => {
-				e.splice(newPosition, 0, {
-					type: $currentDragging.type,
-					origin: "playlist",
-					path: $currentDragging.path,
-					name: $currentDragging.name,
-					playing: false,
-					state: 0,
-					fade: [0, 0],
-					edit: [0, 0],
-					annotation: [null, null],
-				})
+				e.splice(newPosition, 0, createPlaylistTrack(
+					"playlist",
+					$currentDragging.type,
+					$currentDragging.path,
+					$currentDragging.name,
+				))
 				return e;
 			})
 			$selectedItem = newPosition;

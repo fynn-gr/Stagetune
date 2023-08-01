@@ -2,11 +2,11 @@
     import { editMode, selectedItem, isEditing } from "@/stores";
 
     export let id: number;
-    export let annotation: any;
+    export let annotation: { before: string, after: string };
     export let start: boolean;
 </script>
 
-{#if annotation[ start ? 0 : 1 ] != null}
+{#if annotation[ start ? "before" : "after" ] != null}
     <div class={start ? "annotationStart" : "annotationEnd"}>
         <input
             type="text"

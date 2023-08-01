@@ -19,9 +19,12 @@ export interface playListItem {
 	volume?: number;
 	pan?: number;
 	repeat?: boolean;
-	edit?: Array<number>;
-	fade?: Array<number>;
-	annotation?: Array<string>;
+	edit?: { in?: number, out?: number };
+	fade?: { in?: number, out?: number };
+	annotation?: { before: string, after: string };
+	buffer?: AudioBuffer;
+	startedAt: number;
+	pausedAt: number;
 
 	//loop
 	tracks?: Array<playListItem>;
@@ -79,6 +82,24 @@ export function waveformCalc(buffer: AudioBuffer, samples: number, cutInFac:numb
 
 	const multiplier = Math.pow(Math.max(...filteredData), -1);
 	return filteredData.map(n => n * multiplier);
+}
+
+export function createPlaylistTrack(origin: string, type: string, path: string, name: string, ): playListItem {
+	return {
+		type: type,
+		origin: origin,
+		path: path,
+		name: name,
+		playing: false,
+		state: 0, //seconds playing since start
+		volume: 80, //volume (standart is 80 of 100 max)
+		pan: 0, // -1 to 1
+		fade: { in: 0, out: 0 }, //fade in and out in seconds
+		edit: { in: 0, out: 0 }, // cut in in seconds (TODO: cutout)
+		annotation: { before: null, after: null},
+		startedAt: 0, //ctx time track started at
+		pausedAt: 0, //track time paused at
+	}
 }
 
 export function openDir() {

@@ -33,6 +33,7 @@
 		savePlaylist,
 		fileNameFromPath,
 		openDir,
+		createPlaylistTrack
 	} from "./utils";
 	import type { playListItem } from "@/utils";
 	import PlayListLoop from "./lib/PlayListLoop.svelte";
@@ -57,17 +58,12 @@
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 		if ($currentDragging.origin == "src") {
-			$playlist.push({
-				origin: "playlist",
-				type: $currentDragging.type,
-				path: $currentDragging.path,
-				name: $currentDragging.name,
-				playing: false,
-				state: 0,
-				fade: [0, 0],
-				edit: [0, 0],
-				annotation: [null, null],
-			});
+			$playlist.push(createPlaylistTrack(
+					"playlist",
+					$currentDragging.type,
+					$currentDragging.path,
+					$currentDragging.name,
+				));
 			playlist.set($playlist);
 			$currentDragging = null;
 		} else if ($currentDragging.origin == "playlist") {
@@ -289,11 +285,11 @@
 			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
 				<div class="prop-bar">
 					<label>start</label>
-					<input type="number" bind:value={$playlist[$selectedItem].edit[0]}>
+					<input type="number" bind:value={$playlist[$selectedItem].edit.in}>
 					<label>fade in</label>
-					<input type="number" bind:value={$playlist[$selectedItem].fade[0]}>
+					<input type="number" bind:value={$playlist[$selectedItem].fade.in}>
 					<label>fade in</label>
-					<input type="number" bind:value={$playlist[$selectedItem].fade[1]}>
+					<input type="number" bind:value={$playlist[$selectedItem].fade.out}>
 				</div>
 			
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -303,7 +299,7 @@
 						let rec = e.target.getBoundingClientRect();
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);
-						$playlist[$selectedItem].edit[0] = perc * $playlist[$selectedItem].length
+						$playlist[$selectedItem].edit.in = perc * $playlist[$selectedItem].length
 					}}
 				>
 					<Waveform
@@ -313,7 +309,7 @@
 					/>
 					<div
 						class="resizer"
-						style={`width: ${($playlist[$selectedItem].edit[0] / $playlist[$selectedItem].length) * 100 }%;`}
+						style={`width: ${($playlist[$selectedItem].edit.in / $playlist[$selectedItem].length) * 100 }%;`}
 					></div>
 				</div>
 			{:else}

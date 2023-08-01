@@ -154,7 +154,7 @@
 			icon="lock"
 			iconActive="lock_open"
 			bind:active={$editMode}
-			activeColor="#c22"
+			activeColor="var(--secondary)"
 			toolTip="edit Mode"
 		/>
 

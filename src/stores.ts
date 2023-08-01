@@ -4,50 +4,6 @@ export const currentDragging = writable(null);
 export const editMode = writable(true);
 export const uiPlatform = writable("mac");
 export const playlist = writable([
-	{
-		type: "track",
-		origin: "playlist",
-		path: "/Volumes/T7/Files extern/Alte Schule/Musik/Test/sus.mp3",
-		name: "1",
-		playing: false,
-		state: 0,
-		fade: [0, 0],
-		edit: [0, 0],
-		annotation: [null, null]
-	},
-	{
-		type: "track",
-		origin: "playlist",
-		path: "/Volumes/T7/Files extern/Alte Schule/Musik/Test/sus.mp3",
-		name: "Numero Two LopremInpusm Rest Titel ",
-		playing: false,
-		state: 0,
-		fade: [0, 0],
-		edit: [0, 0],
-		annotation: [null, null]
-	},
-	{
-		type: "track",
-		origin: "playlist",
-		path: "/Volumes/T7/Files extern/Alte Schule/Musik/Test/sus.mp3",
-		name: "3",
-		playing: false,
-		state: 0,
-		fade: [0, 0],
-		edit: [0, 0],
-		annotation: ["fefefwef", null]
-	},
-	{
-		type: "track",
-		origin: "playlist",
-		path: "/Volumes/T7/Files extern/Alte Schule/Musik/Test/sus.mp3",
-		name: "4",
-		playing: false,
-		state: 0,
-		fade: [0, 0],
-		edit: [0, 0],
-		annotation: [null, null]
-	},
 	/*
 	{
 		type: "loop",

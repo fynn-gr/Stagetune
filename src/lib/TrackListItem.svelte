@@ -16,12 +16,12 @@
 		e.dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = entry;
 		dragging = true;
-		console.log("drag start", e);
+		//console.log("drag start", e);
 	}
 
 	function handleDragEnd(e) {
 		dragging = false;
-		console.log("end dragging", e);
+		//console.log("end dragging", e);
 	}
 </script>
 
