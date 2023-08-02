@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { createPlaylistTrack } from "@/utils";
-	import { editMode, selectedItem, isEditing, currentDragging, playlist } from "../stores";
+	import {
+		editMode,
+		selectedItem,
+		isEditing,
+		currentDragging,
+		playlist,
+	} from "../stores";
 
 	export let item: any;
 	export let id: number;
@@ -24,25 +30,28 @@
 		if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
-			playlist.update(e => {
-				e.splice(oldPosition, 1)
-				e.splice(newPosition, 0, $currentDragging)
-				return e
-			})
+			playlist.update((e) => {
+				e.splice(oldPosition, 1);
+				e.splice(newPosition, 0, $currentDragging);
+				return e;
+			});
 		} else if ($currentDragging.origin == "src") {
 			let newPosition = id;
-			playlist.update(e => {
-				e.splice(newPosition, 0, createPlaylistTrack(
-					"playlist",
-					$currentDragging.type,
-					$currentDragging.path,
-					$currentDragging.name,
-				))
+			playlist.update((e) => {
+				e.splice(
+					newPosition,
+					0,
+					createPlaylistTrack(
+						"playlist",
+						$currentDragging.type,
+						$currentDragging.path,
+						$currentDragging.name
+					)
+				);
 				return e;
-			})
+			});
 			$selectedItem = newPosition;
 		} else {
-
 		}
 		$currentDragging = null;
 	}
@@ -60,7 +69,6 @@
 		selectedItem.set(id);
 	}}
 >
-
 	<div class="border">
 		<div class="container">
 			<input

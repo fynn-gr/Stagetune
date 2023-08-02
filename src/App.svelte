@@ -15,7 +15,7 @@
 	import Hotkey from "./lib/Hotkey.svelte";
 	import HotkeyPlaceholder from "./lib/HotkeyPlaceholder.svelte";
 	import Waveform from "./lib/Waveform.svelte";
-	
+
 	import {
 		editMode,
 		currentDragging,
@@ -26,14 +26,14 @@
 		playlistPath,
 		srcPaths,
 		isEditing,
-		hotkeys
+		hotkeys,
 	} from "./stores";
 	import {
 		openPlaylist,
 		savePlaylist,
 		fileNameFromPath,
 		openDir,
-		createPlaylistTrack
+		createPlaylistTrack,
 	} from "./utils";
 	import type { playListItem } from "@/utils";
 	import PlayListLoop from "./lib/PlayListLoop.svelte";
@@ -53,31 +53,32 @@
 	$: document.documentElement.style.fontSize = `${zoom}px`;
 
 	function openVideoWindow(show: boolean) {
-		invoke("show_projector", {invokeMessage: show ? "true" : "false"})
+		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
 	}
 
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 		if ($currentDragging.origin == "src") {
-			$playlist.push(createPlaylistTrack(
+			$playlist.push(
+				createPlaylistTrack(
 					"playlist",
 					$currentDragging.type,
 					$currentDragging.path,
-					$currentDragging.name,
-				));
+					$currentDragging.name
+				)
+			);
 			playlist.set($playlist);
 			$currentDragging = null;
 		} else if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
-			playlist.update(e => {
+			playlist.update((e) => {
 				e.splice(oldPosition, 1);
 				return e;
 			});
 			$playlist.push($currentDragging);
 			$playlist = $playlist;
 
-			$currentDragging= null;
-
+			$currentDragging = null;
 		} else {
 			$currentDragging = null;
 		}
@@ -86,7 +87,7 @@
 	function stopAll(playlist: boolean, hotkeys: boolean) {
 		if (hotkeys) {
 			for (let i = 0; i < hotkeyElements.length; i++) {
-				hotkeyElements[i].createInput(true)
+				hotkeyElements[i].createInput(true);
 			}
 		}
 	}
@@ -107,17 +108,16 @@
 		//}
 	}
 
-	const unlisten = listen("menu", async event => {
-		console.log(event)
+	const unlisten = listen("menu", async (event) => {
+		console.log(event);
 		if (event.payload == "quit") {
 			if ($editMode) {
 				const confirmed = await confirm(
-					'Do you want to discard all unsaved changes?', {title: 'Quit?', type: 'warning', okLabel: 'Quit'}
-				)
-				.then(isOK => isOK ? appWindow.close() : null)
+					"Do you want to discard all unsaved changes?",
+					{ title: "Quit?", type: "warning", okLabel: "Quit" }
+				).then((isOK) => (isOK ? appWindow.close() : null));
 			}
 		} else if (event.payload == "new") {
-
 		} else if (event.payload == "open") {
 			openPlaylist();
 		} else if (event.payload == "save") {
@@ -130,13 +130,11 @@
 			openVideoWindow(!projector);
 			projector = !projector;
 		}
-	})
+	});
 
 	onMount(() => {
-
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
-
 			//console.log(e)
 
 			if ($isEditing > 0) {
@@ -144,31 +142,30 @@
 			} else {
 				if ($editMode) {
 					//open Playlist
-					if (e.code == "KeyO" && ( e.ctrlKey )) {
+					if (e.code == "KeyO" && e.ctrlKey) {
 						openPlaylist();
-					}
-
-					else if (e.code == "KeyA" && ( e.ctrlKey )) {
+					} else if (e.code == "KeyA" && e.ctrlKey) {
 						openDir();
 					}
 
 					// openVideoWindow
-					else if (e.code == "KeyP" && ( e.ctrlKey )) {
-						openVideoWindow(!projector)
+					else if (e.code == "KeyP" && e.ctrlKey) {
+						openVideoWindow(!projector);
 						projector = !projector;
 					}
 
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
 						//stop track if playing
-						if ($playlist[$selectedItem].playing) playlistElements[$selectedItem].stop();
+						if ($playlist[$selectedItem].playing)
+							playlistElements[$selectedItem].stop();
 
 						let toDelete = $selectedItem;
 						//find new selected item
 						if ($playlist.length - 1 > $selectedItem) $selectedItem++;
 						else if ($selectedItem > 0) $selectedItem--;
 						else $selectedItem = null;
-						playlist.update(e => {
+						playlist.update((e) => {
 							e.splice(toDelete, 1);
 							return e;
 						});
@@ -177,22 +174,38 @@
 				}
 
 				//move up
-				if ((e.code === "KeyW" || e.code === "ArrowUp") && !e.ctrlKey && !e.metaKey) {
+				if (
+					(e.code === "KeyW" || e.code === "ArrowUp") &&
+					!e.ctrlKey &&
+					!e.metaKey
+				) {
 					moveUp();
 				}
 				//move down
-				else if ((e.code === "KeyS" || e.code === "ArrowDown") && !e.ctrlKey && !e.metaKey) {
+				else if (
+					(e.code === "KeyS" || e.code === "ArrowDown") &&
+					!e.ctrlKey &&
+					!e.metaKey
+				) {
 					moveDown();
 				}
 				//reset song
-				else if ((e.code === "KeyA" || e.code === "ArrowLeft") && !e.ctrlKey && !e.metaKey) {
+				else if (
+					(e.code === "KeyA" || e.code === "ArrowLeft") &&
+					!e.ctrlKey &&
+					!e.metaKey
+				) {
 					playlist.update((items) => {
 						playlistElements[$selectedItem].stop(true);
 						return items;
 					});
 				}
 				//skip song
-				else if ((e.code === "KeyD" || e.code === "ArrowRight") && !e.ctrlKey && !e.metaKey) {
+				else if (
+					(e.code === "KeyD" || e.code === "ArrowRight") &&
+					!e.ctrlKey &&
+					!e.metaKey
+				) {
 					playlist.update((items) => {
 						playlistElements[$selectedItem].stop(true);
 						selectedItem.update((n) => n + 1);
@@ -205,7 +218,7 @@
 					playlistElements[$selectedItem].playPause();
 				}
 				//save File
-				else if (e.code == "KeyS" &&  ( e.ctrlKey )) {
+				else if (e.code == "KeyS" && e.ctrlKey) {
 					savePlaylist();
 				}
 			}
@@ -214,20 +227,18 @@
 		//splashScreen.showModal();
 
 		const interval = setInterval(() => {
-			console.time("update")
+			console.time("update");
 			for (const e of playlistElements) {
-				e.update()
+				e.update();
 			}
-			console.timeEnd("update")
-		}, 300)
+			console.timeEnd("update");
+		}, 300);
 
 		return () => clearInterval(interval);
 	});
-
 </script>
 
 <main class={"window-body dark " + $uiPlatform}>
-
 	<!--
 	<dialog bind:this={splashScreen} >
 		<h1>pure<b>Stage</b></h1>
@@ -311,27 +322,26 @@
 
 	<!--editor-->
 	{#if editorPanel && $editMode}
-
 		<div class="editor">
-
 			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
 				<div class="prop-bar">
 					<label>start</label>
-					<input type="number" bind:value={$playlist[$selectedItem].edit.in}>
+					<input type="number" bind:value={$playlist[$selectedItem].edit.in} />
 					<label>fade in</label>
-					<input type="number" bind:value={$playlist[$selectedItem].fade.in}>
+					<input type="number" bind:value={$playlist[$selectedItem].fade.in} />
 					<label>fade in</label>
-					<input type="number" bind:value={$playlist[$selectedItem].fade.out}>
+					<input type="number" bind:value={$playlist[$selectedItem].fade.out} />
 				</div>
-			
+
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="track"
-					on:click={e => {
+					on:click={(e) => {
 						let rec = e.target.getBoundingClientRect();
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);
-						$playlist[$selectedItem].edit.in = perc * $playlist[$selectedItem].length
+						$playlist[$selectedItem].edit.in =
+							perc * $playlist[$selectedItem].length;
 					}}
 				>
 					<Waveform
@@ -341,8 +351,12 @@
 					/>
 					<div
 						class="resizer"
-						style={`width: ${($playlist[$selectedItem].edit.in / $playlist[$selectedItem].length) * 100 }%;`}
-					></div>
+						style={`width: ${
+							($playlist[$selectedItem].edit.in /
+								$playlist[$selectedItem].length) *
+							100
+						}%;`}
+					/>
 				</div>
 			{:else}
 				<p>No track selected</p>
@@ -375,9 +389,14 @@
 			<div class="hotkeys">
 				{#each $hotkeys as a, i}
 					{#if a.path != ""}
-						<Hotkey bind:track={a} bind:this={hotkeyElements[i]} {ctx} stopAll={stopAll}/>
+						<Hotkey
+							bind:track={a}
+							bind:this={hotkeyElements[i]}
+							{ctx}
+							{stopAll}
+						/>
 					{:else}
-						<HotkeyPlaceholder bind:track={a} bind:this={hotkeyElements[i]}/>
+						<HotkeyPlaceholder bind:track={a} bind:this={hotkeyElements[i]} />
 					{/if}
 				{/each}
 			</div>

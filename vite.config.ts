@@ -6,7 +6,7 @@ import * as path from "path";
 import { processIcons } from "./src/pureUI/modules/pureIconPlugin";
 
 // https://vitejs.dev/config/
-export default defineConfig(({command}) =>{
+export default defineConfig(({ command }) => {
 	return {
 		plugins: [
 			svelte({
@@ -16,24 +16,24 @@ export default defineConfig(({command}) =>{
 					}),
 				],
 			}),
-	
+
 			{
 				name: "pureIcons pull",
 				buildStart(options) {
-					if (command === "serve") return
+					if (command === "serve") return;
 
 					processIcons();
-				}
-			}
+				},
+			},
 		],
-	
+
 		resolve: {
 			alias: {
 				"@": path.resolve(__dirname, "./src"),
 			},
 		},
 		publicDir: "public",
-	
+
 		// Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
 		// prevent vite from obscuring rust errors
 		clearScreen: false,
@@ -52,13 +52,14 @@ export default defineConfig(({command}) =>{
 					nested: resolve(__dirname, "video.html"),
 				},
 			},
-	
+
 			// Tauri supports es2021
-			target: process.env.TAURI_PLATFORM == "windows" ? "chrome105" : "safari13",
+			target:
+				process.env.TAURI_PLATFORM == "windows" ? "chrome105" : "safari13",
 			// don't minify for debug builds
 			minify: !process.env.TAURI_DEBUG ? "esbuild" : false,
 			// produce sourcemaps for debug builds
 			sourcemap: !!process.env.TAURI_DEBUG,
-		}
-	}
+		},
+	};
 });

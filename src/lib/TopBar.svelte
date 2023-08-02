@@ -25,10 +25,11 @@
 				<button
 					on:click={async () => {
 						if ($editMode) {
-							const confirmed = await confirm(
-								'Discard all unsaved changes?', {title: 'Quit?', type: 'warning', okLabel: 'Quit'}
-							)
-							.then(isOK => isOK ? appWindow.close() : null)
+							const confirmed = await confirm("Discard all unsaved changes?", {
+								title: "Quit?",
+								type: "warning",
+								okLabel: "Quit",
+							}).then((isOK) => (isOK ? appWindow.close() : null));
 						}
 					}}
 				>
@@ -96,7 +97,7 @@
 							e.push({
 								type: "annotation",
 								origin: "playlist",
-								text: "Comment"
+								text: "Comment",
 							});
 							return e;
 						});
@@ -119,8 +120,7 @@
 			<TopBarToggle
 				icon="comment_before"
 				disabled={!$editMode}
-				active={
-					$playlist[$selectedItem] != undefined &&
+				active={$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
 					$playlist[$selectedItem].annotation.before != null}
 				onChange={(active) => {
@@ -136,8 +136,7 @@
 			<TopBarToggle
 				icon="comment_after"
 				disabled={!$editMode}
-				active={
-					$playlist[$selectedItem] != undefined &&
+				active={$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
 					$playlist[$selectedItem].annotation.after != null}
 				onChange={(active) => {
@@ -214,7 +213,7 @@
 						}
 					}}
 				>
-					<img src="./icons/winButtonsMSMin.svg" alt="minimize"/>
+					<img src="./icons/winButtonsMSMin.svg" alt="minimize" />
 				</button>
 				<button
 					on:click={() => {
@@ -223,7 +222,7 @@
 						}
 					}}
 				>
-					<img src="./icons/winButtonsMSMax.svg" alt="maximise"/>
+					<img src="./icons/winButtonsMSMax.svg" alt="maximise" />
 				</button>
 				<button
 					on:click={() => {
@@ -232,7 +231,7 @@
 						}
 					}}
 				>
-					<img src="./icons/winButtonsMSClose.svg" alt="close"/>
+					<img src="./icons/winButtonsMSClose.svg" alt="close" />
 				</button>
 			</div>
 		{/if}

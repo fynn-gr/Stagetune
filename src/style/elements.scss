@@ -22,7 +22,9 @@ dialog {
 		font-size: 28px;
 		font-weight: 400;
 
-		b {	font-weight: 700; }
+		b {
+			font-weight: 700;
+		}
 	}
 
 	.version {
@@ -132,7 +134,7 @@ dialog {
 	}
 
 	.selected .border::after {
-		content: '';
+		content: "";
 		position: absolute;
 		inset: 6rem 6rem -3rem 6rem;
 		background-color: var(--secondary);
@@ -265,9 +267,13 @@ dialog {
 			font-weight: 600;
 		}
 
-		.fade {	display: none; }
+		.fade {
+			display: none;
+		}
 
-		.volume { display: none; }
+		.volume {
+			display: none;
+		}
 
 		input[type="range"] {
 			-webkit-appearance: none;
@@ -289,12 +295,21 @@ dialog {
 
 			&::-webkit-slider-runnable-track {
 				height: 16rem;
-				background: linear-gradient(90deg, hsl(0, 0%, 100%), hsl(0, 0%, 67%) 80%, rgb(105, 105, 105) 80%);
+				background: linear-gradient(
+					90deg,
+					hsl(0, 0%, 100%),
+					hsl(0, 0%, 67%) 80%,
+					rgb(105, 105, 105) 80%
+				);
 				border-radius: 4rem;
 			}
 
 			&.pan::-webkit-slider-runnable-track {
-				background: linear-gradient(270deg, hsl(0, 0%, 62%) 50%, rgb(255, 255, 255) 50%);
+				background: linear-gradient(
+					270deg,
+					hsl(0, 0%, 62%) 50%,
+					rgb(255, 255, 255) 50%
+				);
 			}
 		}
 
@@ -346,7 +361,7 @@ dialog {
 		.repeat-btn {
 			margin: 12rem;
 		}
-		
+
 		.timecode {
 			display: none;
 		}
@@ -409,9 +424,13 @@ dialog {
 			}
 		}
 
-		.progress { height: 6rem; }
+		.progress {
+			height: 6rem;
+		}
 
-		.waveform { display: none; }
+		.waveform {
+			display: none;
+		}
 	}
 
 	.placeholder {
@@ -452,7 +471,9 @@ dialog {
 			}
 		}
 
-		&.loaded { opacity: 100%; }
+		&.loaded {
+			opacity: 100%;
+		}
 	}
 
 	.playlistVideo {
@@ -530,7 +551,6 @@ dialog {
 				background-color: transparent;
 			}
 		}
-
 	}
 
 	.playlistLoop {
@@ -538,7 +558,7 @@ dialog {
 		z-index: 1;
 		height: auto;
 		border-radius: 8rem;
-		
+
 		.border .container {
 			background-color: var(--panel2);
 			border-radius: 8rem;
@@ -549,38 +569,38 @@ dialog {
 				height: 30rem;
 				border-radius: 5rem;
 				background-color: transparent;
-	
+
 				&:hover {
 					background-color: var(--hover);
 				}
-	
+
 				img {
 					width: 30rem;
 					height: 30rem;
 					filter: invert(90%);
 				}
 			}
-	
+
 			.play-btn {
 				inset: 4rem;
 			}
-	
+
 			.shuffleBtn {
 				inset: 4rem 0 0 38rem;
 			}
-	
+
 			.name {
 				position: absolute;
 				inset: 4rem 0 0 72rem;
 				font-size: 16rem;
 				padding: 4rem 0 4rem 8rem;
 			}
-	
+
 			.content {
 				display: flex;
 				flex-direction: column;
 				padding: 38rem 4rem 4rem 4rem;
-	
+
 				.playlistTrack {
 					border-radius: 0;
 					background-color: rgb(22, 22, 22);
@@ -588,26 +608,26 @@ dialog {
 					.border {
 						padding: 0;
 					}
-	
+
 					&:first-child {
 						border-radius: 5rem 5rem 0 0;
 						.inner {
 							border-radius: 5rem 5rem 0 0;
 						}
 					}
-	
+
 					&:last-child {
 						border-radius: 0 0 5rem 5rem;
 						.inner {
 							border-radius: 0 0 5rem 5rem;
 						}
 					}
-	
+
 					.inner {
 						height: 30rem;
 						border-radius: 0;
 						background-color: transparent;
-	
+
 						.title {
 							font-size: 14rem;
 						}
@@ -797,13 +817,11 @@ dialog {
 			}
 		}
 
-		&:has( > .placeholder) {
+		&:has(> .placeholder) {
 			.key {
 				color: #6e6e6e;
 				background-color: rgb(25, 25, 25);
 			}
-
-			
 		}
 
 		.key {

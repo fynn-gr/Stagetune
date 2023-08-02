@@ -53,70 +53,70 @@ export const hotkeys = writable([
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "2",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "3",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "4",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "5",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "6",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "7",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "8",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "9",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 	{
 		key: "0",
 		type: "track",
 		name: "",
 		path: "",
-		playing: false
+		playing: false,
 	},
 ]);
 

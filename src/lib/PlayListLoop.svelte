@@ -27,14 +27,14 @@
 		if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
-			playlist.update(e => {
-				e.splice(oldPosition, 1)
-				e.splice(newPosition, 0, $currentDragging)
-				return e
-			})
+			playlist.update((e) => {
+				e.splice(oldPosition, 1);
+				e.splice(newPosition, 0, $currentDragging);
+				return e;
+			});
 		} else if ($currentDragging.origin == "src") {
 			let newPosition = id;
-			playlist.update(e => {
+			playlist.update((e) => {
 				e.splice(newPosition, 0, {
 					type: $currentDragging.type,
 					origin: "playlist",
@@ -45,12 +45,11 @@
 					fade: [0, 0],
 					edit: [0, 0],
 					annotation: [null, null],
-				})
+				});
 				return e;
-			})
+			});
 			$selectedItem = newPosition;
 		} else {
-
 		}
 		$currentDragging = null;
 	}
@@ -75,20 +74,18 @@
 			<button class="playBtn">
 				<img src="./icons/square/play.svg" alt="play" />
 			</button>
-		
+
 			<button class="shuffleBtn">
 				<img src="./icons/square/shuffle.svg" alt="shuffle" />
 			</button>
-		
+
 			<p class="name">{track.name}</p>
-		
+
 			<div class="content">
 				{#each track.tracks as t, i}
 					<div class="playlistTrack">
 						<div class="border">
-							<div class="inner">
-								
-							</div>
+							<div class="inner" />
 						</div>
 					</div>
 				{/each}

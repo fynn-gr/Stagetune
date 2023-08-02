@@ -1,7 +1,14 @@
 import { open, save } from "@tauri-apps/api/dialog";
 import { get } from "svelte/store";
 import { readDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
-import { playlist, playlistPath, srcPaths, srcFiles, currentDragging, hotkeys } from "./stores";
+import {
+	playlist,
+	playlistPath,
+	srcPaths,
+	srcFiles,
+	currentDragging,
+	hotkeys,
+} from "./stores";
 
 export interface playListItem {
 	type: string;
@@ -19,9 +26,9 @@ export interface playListItem {
 	volume?: number;
 	pan?: number;
 	repeat?: boolean;
-	edit?: { in?: number, out?: number };
-	fade?: { in?: number, out?: number };
-	annotation?: { before: string, after: string };
+	edit?: { in?: number; out?: number };
+	fade?: { in?: number; out?: number };
+	annotation?: { before: string; after: string };
 	buffer?: AudioBuffer;
 	startedAt: number;
 	pausedAt: number;
@@ -66,25 +73,34 @@ export function fileNameFromPath(filename: string) {
 	return str.substring(str.lastIndexOf("/") + 1);
 }
 
-export function waveformCalc(buffer: AudioBuffer, samples: number, cutInFac:number = 0): Array<any> {
-	let rawData = buffer.getChannelData(0); 
-	let cutData = rawData.subarray(Math.floor(rawData.length * cutInFac))
+export function waveformCalc(
+	buffer: AudioBuffer,
+	samples: number,
+	cutInFac: number = 0
+): Array<any> {
+	let rawData = buffer.getChannelData(0);
+	let cutData = rawData.subarray(Math.floor(rawData.length * cutInFac));
 	const blockSize = Math.floor(cutData.length / samples);
 	const filteredData = [];
 	for (let i = 0; i < samples; i++) {
 		let blockStart = blockSize * i;
 		let sum = 0;
 		for (let j = 0; j < blockSize; j++) {
-			sum = sum + Math.abs(cutData[blockStart + j])
+			sum = sum + Math.abs(cutData[blockStart + j]);
 		}
 		filteredData.push(sum / blockSize);
 	}
 
 	const multiplier = Math.pow(Math.max(...filteredData), -1);
-	return filteredData.map(n => n * multiplier);
+	return filteredData.map((n) => n * multiplier);
 }
 
-export function createPlaylistTrack(origin: string, type: string, path: string, name: string, ): playListItem {
+export function createPlaylistTrack(
+	origin: string,
+	type: string,
+	path: string,
+	name: string
+): playListItem {
 	return {
 		type: type,
 		origin: origin,
@@ -96,10 +112,10 @@ export function createPlaylistTrack(origin: string, type: string, path: string, 
 		pan: 0, // -1 to 1
 		fade: { in: 0, out: 0 }, //fade in and out in seconds
 		edit: { in: 0, out: 0 }, // cut in in seconds (TODO: cutout)
-		annotation: { before: null, after: null},
+		annotation: { before: null, after: null },
 		startedAt: 0, //ctx time track started at
 		pausedAt: 0, //track time paused at
-	}
+	};
 }
 
 export function openDir() {
@@ -148,7 +164,7 @@ function scanSrcPaths() {
 					//Audio File
 					entry.type = "track";
 					entry.origin = "src";
-					entry.name = entry.name.replace(/\.[^.]+$/gm, '');
+					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
 					srcFiles.update((items) => {
 						items[i].push(entry);
 						return items;
@@ -157,7 +173,7 @@ function scanSrcPaths() {
 					//Video File
 					entry.type = "video";
 					entry.origin = "src";
-					entry.name = entry.name.replace(/\.[^.]+$/gm, '');
+					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
 					srcFiles.update((items) => {
 						items[i].push(entry);
 						return items;
@@ -201,7 +217,7 @@ export function openPlaylist() {
 					let obj = JSON.parse(e);
 					playlist.set(obj.playlist);
 					srcPaths.set(obj.srcPaths);
-					hotkeys.set(obj.hotkeys)
+					hotkeys.set(obj.hotkeys);
 					scanSrcPaths();
 				});
 			}
@@ -212,7 +228,6 @@ export function openPlaylist() {
 }
 
 export function savePlaylist(save_as: boolean = false) {
-
 	if (save_as || get(playlistPath) == "") {
 		//ask for path
 		try {
@@ -241,13 +256,12 @@ export function savePlaylist(save_as: boolean = false) {
 		}
 	} else {
 		//save to known path
-		console.log("save to path: ", get(playlistPath))
+		console.log("save to path: ", get(playlistPath));
 		let saveObj = {
 			playlist: get(playlist),
 			srcPaths: get(srcPaths),
-			hotkeys: get(hotkeys), 
+			hotkeys: get(hotkeys),
 		};
 		writeTextFile(get(playlistPath), JSON.stringify(saveObj), {});
 	}
-
 }

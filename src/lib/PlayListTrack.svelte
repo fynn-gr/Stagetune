@@ -2,7 +2,13 @@
 	import { onDestroy, onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { createPlaylistTrack, secondsToMinutes } from "@/utils";
-	import { editMode, selectedItem, isEditing, currentDragging, playlist } from "../stores";
+	import {
+		editMode,
+		selectedItem,
+		isEditing,
+		currentDragging,
+		playlist,
+	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
 	import type { playListItem } from "@/utils";
@@ -12,7 +18,7 @@
 	export let ctx: AudioContext;
 	let dragging = false;
 	let missing = false;
-	let inFade = false;  //currently in fade, cant start or stop track during fade
+	let inFade = false; //currently in fade, cant start or stop track during fade
 
 	let input: AudioBufferSourceNode;
 	let gainNode: GainNode;
@@ -37,25 +43,28 @@
 		if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
-			playlist.update(e => {
-				e.splice(oldPosition, 1)
-				e.splice(newPosition, 0, $currentDragging)
-				return e
-			})
+			playlist.update((e) => {
+				e.splice(oldPosition, 1);
+				e.splice(newPosition, 0, $currentDragging);
+				return e;
+			});
 		} else if ($currentDragging.origin == "src") {
 			let newPosition = id;
-			playlist.update(e => {
-				e.splice(newPosition, 0, createPlaylistTrack(
-					"playlist",
-					$currentDragging.type,
-					$currentDragging.path,
-					$currentDragging.name,
-				))
+			playlist.update((e) => {
+				e.splice(
+					newPosition,
+					0,
+					createPlaylistTrack(
+						"playlist",
+						$currentDragging.type,
+						$currentDragging.path,
+						$currentDragging.name
+					)
+				);
 				return e;
-			})
+			});
 			$selectedItem = newPosition;
 		} else {
-
 		}
 		$currentDragging = null;
 	}
@@ -63,9 +72,9 @@
 	function onEnd() {
 		if (track.state >= track.length * 0.99) {
 			//reached end of track
-			console.log("ended")
+			console.log("ended");
 			if (track.repeat) {
-				stop(true, false)
+				stop(true, false);
 				play(0);
 			} else {
 				stop(true);
@@ -91,11 +100,15 @@
 
 	export function playPause() {
 		//console.log("started at: ", startedAt,"paused at: ", pausedAt)
-		if(track.playing) {
-			console.log(`paused: started: ${track.startedAt}, paused: ${track.pausedAt}, state: ${track.state}`)
+		if (track.playing) {
+			console.log(
+				`paused: started: ${track.startedAt}, paused: ${track.pausedAt}, state: ${track.state}`
+			);
 			stop(false, true);
 		} else {
-			console.log(`played: started: ${track.startedAt}, paused: ${track.pausedAt}, state: ${track.state}`)
+			console.log(
+				`played: started: ${track.startedAt}, paused: ${track.pausedAt}, state: ${track.state}`
+			);
 			play(null, true);
 		}
 	}
@@ -105,11 +118,11 @@
 
 		if (track.fade.in > 0 && !inFade && useFade) {
 			inFade = true;
-			fadeNode.gain.setValueAtTime(0.01, 0)
-			fadeNode.gain.linearRampToValueAtTime(1, ctx.currentTime + track.fade.in)
+			fadeNode.gain.setValueAtTime(0.01, 0);
+			fadeNode.gain.linearRampToValueAtTime(1, ctx.currentTime + track.fade.in);
 			setTimeout(() => {
 				inFade = false;
-			}, track.fade.in)
+			}, track.fade.in);
 		}
 
 		if (startTime == null) {
@@ -125,32 +138,37 @@
 
 	export function stop(reset: boolean = false, useFade: boolean = false) {
 		const end = () => {
-			input = new AudioBufferSourceNode(ctx, {buffer: track.buffer})
+			input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
 			input.connect(fadeNode);
-			input.onended = () => {onEnd()}
+			input.onended = () => {
+				onEnd();
+			};
 			if (reset) {
-				console.log("reset song")
+				console.log("reset song");
 				track.pausedAt = 0;
 				track.state = 0;
 			} else {
 				track.pausedAt = ctx.currentTime - track.startedAt;
 			}
-		}
+		};
 		//pause track
 		if (track.fade.out > 0 && track.playing && !inFade && useFade) {
 			inFade = true;
-			fadeNode.gain.setValueAtTime(1, ctx.currentTime)
-			fadeNode.gain.linearRampToValueAtTime(0.01, ctx.currentTime + track.fade.out)
+			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
+			fadeNode.gain.linearRampToValueAtTime(
+				0.01,
+				ctx.currentTime + track.fade.out
+			);
 			setTimeout(() => {
-				console.log("stop")
+				console.log("stop");
 				input.stop();
 				fadeNode = ctx.createGain();
 				fadeNode.connect(gainNode);
-				input.connect(fadeNode)
+				input.connect(fadeNode);
 				end();
 				inFade = false;
 				track.playing = false;
-			}, track.fade.out * 1000)
+			}, track.fade.out * 1000);
 		} else if (track.playing && !inFade) {
 			input.stop();
 			end();
@@ -174,32 +192,38 @@
 			const response = await fetch(convertFileSrc(track.path));
 			const arrayBuffer = await response.arrayBuffer();
 			track.buffer = await ctx.decodeAudioData(arrayBuffer);
-			input = new AudioBufferSourceNode(ctx, {buffer: track.buffer})
+			input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
 			track.length = track.buffer.duration;
-			
+
 			//track = track
-			console.log(track)
-			
+			console.log(track);
+
 			gainNode = ctx.createGain();
 			fadeNode = ctx.createGain();
 			panNode = ctx.createStereoPanner();
-			input.connect(fadeNode).connect(gainNode).connect(panNode).connect(ctx.destination);
-			input.onended = () => {onEnd()};
-		}
+			input
+				.connect(fadeNode)
+				.connect(gainNode)
+				.connect(panNode)
+				.connect(ctx.destination);
+			input.onended = () => {
+				onEnd();
+			};
+		};
 		setup();
 	});
 
 	onDestroy(() => {
-		console.log("destroy", track.name)
-	})
+		console.log("destroy", track.name);
+	});
 
-	$:cutIn = track.edit.in;
-	$:cutTrackLength = track.length ? track.length - cutIn : null;
-	$:panNode ? panNode.pan.value = track.pan : null;
-	$:gainNode ? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime) : null;
-	
+	$: cutIn = track.edit.in;
+	$: cutTrackLength = track.length ? track.length - cutIn : null;
+	$: panNode ? (panNode.pan.value = track.pan) : null;
+	$: gainNode
+		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
+		: null;
 </script>
-
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
@@ -216,13 +240,11 @@
 		selectedItem.set(id);
 	}}
 >
-
 	<div class="border">
 		<!--annotation before-->
-		<Annotation bind:annotation={track.annotation} {id} start={true}/>
-	
+		<Annotation bind:annotation={track.annotation} {id} start={true} />
+
 		<div class="inner">
-	
 			<!--progress-->
 			<div
 				class="progress"
@@ -234,8 +256,7 @@
 						white calc(100% * ${track.state / cutTrackLength}),
 						#0004 calc(100% * ${track.state / cutTrackLength}),
 						#0004 100%
-					);`
-				}
+					);`}
 			/>
 			<Waveform
 				buffer={track.buffer}
@@ -243,7 +264,7 @@
 				resY={50}
 				cutInFac={cutIn / track.length}
 			/>
-	
+
 			<!--play Button-->
 			<button
 				class="play-btn"
@@ -258,14 +279,14 @@
 					<img src="./icons/square/play.svg" alt="" />
 				{/if}
 			</button>
-	
+
 			<!--name-->
 			{#if track.buffer != undefined}
 				<div class="title"><p>{track.name}</p></div>
 			{:else}
 				<div class="title"><p>loading...</p></div>
 			{/if}
-	
+
 			<!--repeat-->
 			<button
 				class="repeat-btn"
@@ -276,21 +297,33 @@
 			>
 				<img src="./icons/square/repeat.svg" alt="repeat" />
 			</button>
-	
+
 			<!--time-->
 			<p class="timecode">{secondsToMinutes(track.state)}</p>
 			<p class="length">
 				{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
 			</p>
-	
+
 			<!--fade-->
 			<span class="fade">
 				<p>Fade in:</p>
-				<input type="number" bind:value={track.fade.in} min="0" max={track.length} disabled={!$editMode} />
+				<input
+					type="number"
+					bind:value={track.fade.in}
+					min="0"
+					max={track.length}
+					disabled={!$editMode}
+				/>
 				<p>Fade out:</p>
-				<input type="number" bind:value={track.fade.out} min="0" max={track.length} disabled={!$editMode} />
+				<input
+					type="number"
+					bind:value={track.fade.out}
+					min="0"
+					max={track.length}
+					disabled={!$editMode}
+				/>
 			</span>
-	
+
 			<!--volume Pan-->
 			<div class="volume">
 				<span>
@@ -306,7 +339,7 @@
 					/>
 					<p>+</p>
 				</span>
-	
+
 				<span>
 					<p>L</p>
 					<input
@@ -323,9 +356,8 @@
 				</span>
 			</div>
 		</div>
-	
-		<!--annotation after-->
-		<Annotation bind:annotation={track.annotation} {id} start={false}/>
 
+		<!--annotation after-->
+		<Annotation bind:annotation={track.annotation} {id} start={false} />
 	</div>
 </div>
