@@ -3,6 +3,7 @@
 	import TopBarToggle from "../pureUI/components/TopBarToggle.svelte";
 	import AppMenu from "../pureUI/components/AppMenu.svelte";
 	import { appWindow } from "@tauri-apps/api/window";
+	import { confirm } from "@tauri-apps/api/dialog";
 
 	import { editMode, playlist, selectedItem, uiPlatform } from "@/stores";
 	import { openDir } from "@/utils";
@@ -22,9 +23,12 @@
 				data-tauri-drag-region
 			>
 				<button
-					on:click={() => {
+					on:click={async () => {
 						if ($editMode) {
-							appWindow.close();
+							const confirmed = await confirm(
+								'Discard all unsaved changes?', {title: 'Quit?', type: 'warning', okLabel: 'Quit'}
+							)
+							.then(isOK => isOK ? appWindow.close() : null)
 						}
 					}}
 				>
@@ -118,10 +122,10 @@
 				active={
 					$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
-					$playlist[$selectedItem].annotation[0] != null}
+					$playlist[$selectedItem].annotation.before != null}
 				onChange={(active) => {
 					playlist.update((items) => {
-						items[$selectedItem].annotation[0] = active ? "Comment" : null;
+						items[$selectedItem].annotation.before = active ? "Comment" : null;
 						return items;
 					});
 				}}
@@ -135,10 +139,10 @@
 				active={
 					$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
-					$playlist[$selectedItem].annotation[1] != null}
+					$playlist[$selectedItem].annotation.after != null}
 				onChange={(active) => {
 					playlist.update((items) => {
-						items[$selectedItem].annotation[1] = active ? "Comment" : null;
+						items[$selectedItem].annotation.after = active ? "Comment" : null;
 						return items;
 					});
 				}}

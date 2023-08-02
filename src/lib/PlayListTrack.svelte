@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { createPlaylistTrack, secondsToMinutes } from "@/utils";
 	import { editMode, selectedItem, isEditing, currentDragging, playlist } from "../stores";
@@ -164,34 +164,34 @@
 		return track.buffer;
 	}
 
-	onMount(async () => {
-		//load file
-		const response = await fetch(convertFileSrc(track.path));
-		const arrayBuffer = await response.arrayBuffer();
-		track.buffer = await ctx.decodeAudioData(arrayBuffer);
-		input = new AudioBufferSourceNode(ctx, {buffer: track.buffer})
-		track.length = track.buffer.duration;
-		
-		//track = track
-		console.log(track)
-		
-		gainNode = ctx.createGain();
-		fadeNode = ctx.createGain();
-		panNode = ctx.createStereoPanner();
-		input.connect(fadeNode).connect(gainNode).connect(panNode).connect(ctx.destination);
-		input.onended = () => {onEnd()};
+	export function update() {
+		if (track.playing) track.state = ctx.currentTime - track.startedAt;
+	}
 
-		const loop = async () => {
-			await setTimeout(() => {
-				if (track.playing) {
-					track.state = ctx.currentTime - track.startedAt;
-					console.log(fadeNode.gain.value)
-				}
-				loop();
-			}, 200)
+	onMount(() => {
+		const setup = async () => {
+			//load file
+			const response = await fetch(convertFileSrc(track.path));
+			const arrayBuffer = await response.arrayBuffer();
+			track.buffer = await ctx.decodeAudioData(arrayBuffer);
+			input = new AudioBufferSourceNode(ctx, {buffer: track.buffer})
+			track.length = track.buffer.duration;
+			
+			//track = track
+			console.log(track)
+			
+			gainNode = ctx.createGain();
+			fadeNode = ctx.createGain();
+			panNode = ctx.createStereoPanner();
+			input.connect(fadeNode).connect(gainNode).connect(panNode).connect(ctx.destination);
+			input.onended = () => {onEnd()};
 		}
-		loop();
+		setup();
 	});
+
+	onDestroy(() => {
+		console.log("destroy", track.name)
+	})
 
 	$:cutIn = track.edit.in;
 	$:cutTrackLength = track.length ? track.length - cutIn : null;
@@ -303,10 +303,6 @@
 						step="10"
 						disabled={!$editMode}
 						draggable="true"
-						on:dragstart={e => {
-							//e.preventDefault()
-							//e.stopPropagation()
-						}}
 					/>
 					<p>+</p>
 				</span>
@@ -322,10 +318,6 @@
 						step={0.25}
 						disabled={!$editMode}
 						draggable="true"
-						on:dragstart={e => {
-							//e.preventDefault()
-							//e.stopPropagation()
-						}}
 					/>
 					<p>R</p>
 				</span>

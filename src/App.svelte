@@ -40,6 +40,7 @@
 
 	const ctx = new AudioContext();
 	let playlistElement: HTMLElement;
+	let splashScreen: HTMLDialogElement;
 
 	let playlistElements = [];
 	let hotkeyElements = [];
@@ -110,7 +111,9 @@
 		console.log(event)
 		if (event.payload == "quit") {
 			if ($editMode) {
-				const confirmed = await confirm('wanna save changes', {title: 'Tauri', type: 'warning'})
+				const confirmed = await confirm(
+					'Do you want to discard all unsaved changes?', {title: 'Quit?', type: 'warning', okLabel: 'Quit'}
+				)
 				.then(isOK => isOK ? appWindow.close() : null)
 			}
 		} else if (event.payload == "new") {
@@ -157,8 +160,11 @@
 
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
+						//stop track if playing
 						if ($playlist[$selectedItem].playing) playlistElements[$selectedItem].stop();
+
 						let toDelete = $selectedItem;
+						//find new selected item
 						if ($playlist.length - 1 > $selectedItem) $selectedItem++;
 						else if ($selectedItem > 0) $selectedItem--;
 						else $selectedItem = null;
@@ -204,11 +210,37 @@
 				}
 			}
 		});
+
+		//splashScreen.showModal();
+
+		const interval = setInterval(() => {
+			console.time("update")
+			for (const e of playlistElements) {
+				e.update()
+			}
+			console.timeEnd("update")
+		}, 300)
+
+		return () => clearInterval(interval);
 	});
 
 </script>
 
 <main class={"window-body dark " + $uiPlatform}>
+
+	<!--
+	<dialog bind:this={splashScreen} >
+		<h1>pure<b>Stage</b></h1>
+		<p class="version">0.1.0</p>
+		<p class="name">Beta</p>
+
+		<div class="container">
+
+		</div>
+	</dialog>
+
+	-->
+
 	<!--SideBar-->
 	<div
 		class="side-bar"
