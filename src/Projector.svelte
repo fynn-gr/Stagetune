@@ -42,13 +42,16 @@
 		panNode = ctx.createStereoPanner();
 		input.connect(gainNode).connect(panNode).connect(ctx.destination);
 
-		const loop = async () => {
-			await setTimeout(() => {
-				console.log(videoElement.buffered);
-				loop();
-			}, 1000);
-		};
-		loop();
+		const interval = setInterval(() => {
+			//console.time("update");
+			emit('video_state', {
+				state: videoElement.currentTime,
+				duration: videoElement.duration
+			})
+			//console.timeEnd("update");
+		}, 1000);
+
+		return () => clearInterval(interval);
 	});
 </script>
 

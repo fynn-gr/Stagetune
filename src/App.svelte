@@ -6,6 +6,7 @@
 	import { appWindow } from "@tauri-apps/api/window";
 	import { confirm } from "@tauri-apps/api/dialog";
 	import { invoke } from "@tauri-apps/api/tauri";
+	import { getVersion } from "@tauri-apps/api/app";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
@@ -37,10 +38,11 @@
 	} from "./utils";
 	import type { playListItem } from "@/utils";
 	import PlayListLoop from "./lib/PlayListLoop.svelte";
+	import Splash from "./lib/Splash.svelte";
 
 	const ctx = new AudioContext();
 	let playlistElement: HTMLElement;
-	let splashScreen: HTMLDialogElement;
+	let splashScreen = true;
 
 	let playlistElements = [];
 	let hotkeyElements = [];
@@ -224,34 +226,24 @@
 			}
 		});
 
-		//splashScreen.showModal();
-
 		const interval = setInterval(() => {
-			console.time("update");
+			//console.time("update");
 			for (const e of playlistElements) {
 				e.update();
 			}
-			console.timeEnd("update");
+			//console.timeEnd("update");
 		}, 300);
 
 		return () => clearInterval(interval);
 	});
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+{#if splashScreen}
+	<Splash bind:splashScreen />
+{/if}
+
 <main class={"window-body dark " + $uiPlatform}>
-	<!--
-	<dialog bind:this={splashScreen} >
-		<h1>pure<b>Stage</b></h1>
-		<p class="version">0.1.0</p>
-		<p class="name">Beta</p>
-
-		<div class="container">
-
-		</div>
-	</dialog>
-
-	-->
-
 	<!--SideBar-->
 	<div
 		class="side-bar"

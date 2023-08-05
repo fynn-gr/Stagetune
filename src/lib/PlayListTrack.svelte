@@ -213,10 +213,6 @@
 		setup();
 	});
 
-	onDestroy(() => {
-		console.log("destroy", track.name);
-	});
-
 	$: cutIn = track.edit.in;
 	$: cutTrackLength = track.length ? track.length - cutIn : null;
 	$: panNode ? (panNode.pan.value = track.pan) : null;
@@ -273,7 +269,9 @@
 					playPause();
 				}}
 			>
-				{#if track.playing}
+				{#if inFade}
+					<img src="./icons/square/fade.svg" alt="" />
+				{:else if track.playing}
 					<img src="./icons/square/pause.svg" alt="" />
 				{:else}
 					<img src="./icons/square/play.svg" alt="" />
@@ -310,6 +308,12 @@
 				<input
 					type="number"
 					bind:value={track.fade.in}
+					on:focus={() => {
+						$isEditing++;
+					}}
+					on:blur={() => {
+						$isEditing--;
+					}}
 					min="0"
 					max={track.length}
 					disabled={!$editMode}

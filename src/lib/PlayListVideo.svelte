@@ -12,20 +12,18 @@
 	import Annotation from "./Annotation.svelte";
 
 	import type { playListItem } from "@/utils";
+	import TrackListItem from "./TrackListItem.svelte";
 
 	export let track: playListItem;
-	track.playing = false;
 	export let id: number;
 	let dragging = false;
 	let missing = false;
 
-	function getState(state: number) {
-		return track.state != undefined ? track.state : 0;
-	}
-
 	const unlisten = listen("video_state", (e: any) => {
-		track.state = e.payload.progress;
-		console.log(e, e.payload.buffer.length);
+		track.state = e.payload.state;
+		track.length = e.payload.duration;
+		console.log( track.state / track.length)
+		//console.log(e, e.payload.buffer.length);
 	});
 
 	function handleSkip(e) {
@@ -80,14 +78,16 @@
 		dragging = false;
 		console.log("end dragging", e);
 	}
+
+	export function update() { }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="playlistVideo"
 	class:selected={$selectedItem == id}
-	class:missing
 	class:editMode={$editMode}
+	class:missing
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
@@ -109,8 +109,8 @@
 					background: linear-gradient(
 						90deg,
 						var(--secondary) 0%,
-						var(--secondary) calc(100% * ${getState(track.state)}),
-						#0002 calc(100% * ${getState(track.state)}),
+						var(--secondary) calc(100% * ${track.state / track.length}),
+						#0002 calc(100% * ${track.state / track.length}),
 						#0002 100%
 					);`}
 			/>

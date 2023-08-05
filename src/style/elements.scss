@@ -8,44 +8,98 @@
 		"sideBar editor   palettes";
 }
 
-dialog {
-	width: 480px;
-	height: 360px;
-	margin: auto;
-	border-radius: 6px;
+.splash {
+	position: fixed;
+	z-index: 900;
+	width: 100vw;
+	height: 100vh;
 	display: flex;
 
-	h1 {
-		position: absolute;
-		inset: 6px 0 0 12px;
-		font-family: pure;
-		font-size: 28px;
-		font-weight: 400;
+	&::backdrop {
+	}
 
-		b {
-			font-weight: 700;
+	.wrapper {
+		position: relative;
+		inset: 0;
+		width: 536px;
+		height: 536px;
+		margin: auto;
+		background-color: rgb(54, 54, 54);
+		//border: 12px solid #FF2D55;
+		border-radius: 28px;
+		box-shadow: 2px 2px 12px black;
+
+		img {
+			position: absolute;
+			width: 512px;
+			height: 256px;
+			inset: 12px 12px 0 12px;
+			object-fit: cover;
+			border-radius: 16px;
 		}
-	}
 
-	.version {
-		display: inline;
-		font-family: pure;
-	}
+		.top {
+			position: absolute;
+			inset: 292px 24px auto 24px;
+			height: 62px;
+			//background-color: #6300aa;
 
-	.name {
-		position: absolute;
-		inset: 42px 0 0 12px;
-		font-family: pure;
-		font-size: 24px;
-		font-weight: 400;
-	}
+			.icon {
+				width: 76px;
+				height: 76px;
+				inset: -7px auto auto -7px;
+			}
 
-	.container {
-		position: absolute;
-		inset: auto 0 0 0;
-		width: 100%;
-		height: 160px;
-		background-color: #141414;
+			h1 {
+				position: absolute;
+				inset: -20px auto auto 82px;
+				color: #ff2d55;
+				font-family: pure;
+				font-size: 42px;
+				font-weight: 400;
+				text-shadow: 1px 1px 12px hsl(349, 80%, 40%);
+
+				b {
+					font-weight: 700;
+				}
+			}
+
+			.version {
+				position: absolute;
+				inset: auto auto -8px 82px;
+				color: white;
+				font-size: 30px;
+				font-family: pure;
+				letter-spacing: 2px;
+			}
+		}
+
+		.container {
+			position: absolute;
+			inset: auto 0 0 0;
+			width: 100%;
+			height: 180px;
+			padding: 26px;
+			display: flex;
+			flex-direction: row;
+			background-color: transparent;
+
+			span {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+
+				button {
+					height: 20px;
+					line-height: 20px;
+					font-size: 18px;
+					font-weight: 400;
+					text-align: left;
+					color: white;
+					background-color: transparent;
+				}
+			}
+		}
 	}
 }
 
@@ -399,6 +453,10 @@ dialog {
 				text-align: right;
 				font-size: 10rem;
 				font-weight: 700;
+
+				&:focus {
+					box-shadow: 0 0 0 3rem var(--secondary);
+				}
 			}
 		}
 
