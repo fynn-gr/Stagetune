@@ -1,6 +1,11 @@
 import { open, save } from "@tauri-apps/api/dialog";
 import { get } from "svelte/store";
-import { readDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import {
+	BaseDirectory,
+	readDir,
+	readTextFile,
+	writeTextFile,
+} from "@tauri-apps/api/fs";
 import {
 	playlist,
 	playlistPath,
@@ -8,10 +13,11 @@ import {
 	srcFiles,
 	currentDragging,
 	hotkeys,
+	recent,
 } from "./stores";
 
 export interface playListItem {
-	type: string;
+	type: string; //track, video, annotation, loop
 	origin: string;
 
 	//comment
@@ -30,8 +36,8 @@ export interface playListItem {
 	fade?: { in?: number; out?: number };
 	annotation?: { before: string; after: string };
 	buffer?: AudioBuffer;
-	startedAt: number;
-	pausedAt: number;
+	startedAt?: number;
+	pausedAt?: number;
 
 	//loop
 	tracks?: Array<playListItem>;
@@ -203,12 +209,13 @@ function scanSrcPaths() {
 	});
 }
 
-export function openPlaylist() {
+export function openPlaylist(file: string = null) {
 	try {
 		open({
 			directory: false,
 			multiple: false,
 			title: "open Playlist",
+			defaultPath: file != null ? file : ""
 		}).then(async (sel) => {
 			if (sel == null || Array.isArray(sel)) {
 				console.log("nothing selected");
@@ -220,6 +227,13 @@ export function openPlaylist() {
 					hotkeys.set(obj.hotkeys);
 					scanSrcPaths();
 				});
+				if (!get(recent).includes(sel)) {
+					recent.update((item) => {
+						item.unshift(sel);
+						return item;
+					});
+					saveRecent();
+				}
 			}
 		});
 	} catch (err) {
@@ -264,4 +278,18 @@ export function savePlaylist(save_as: boolean = false) {
 		};
 		writeTextFile(get(playlistPath), JSON.stringify(saveObj), {});
 	}
+}
+
+export function saveRecent() {
+	console.log("save: ", get(recent));
+	writeTextFile("recent.json", JSON.stringify(get(recent)), {
+		dir: BaseDirectory.Document,
+	});
+}
+
+export async function loadRecent() {
+	const obj = await readTextFile("recent.json", {
+		dir: BaseDirectory.Document,
+	});
+	recent.set(JSON.parse(obj));
 }

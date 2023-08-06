@@ -29,7 +29,7 @@
 		border-radius: 28px;
 		box-shadow: 2px 2px 12px black;
 
-		img {
+		.splash-art {
 			position: absolute;
 			width: 512px;
 			height: 256px;
@@ -45,6 +45,7 @@
 			//background-color: #6300aa;
 
 			.icon {
+				position: absolute;
 				width: 76px;
 				height: 76px;
 				inset: -7px auto auto -7px;
@@ -87,16 +88,28 @@
 			span {
 				display: flex;
 				flex-direction: column;
-				justify-content: space-between;
+				gap: 16px;
+				min-width: 200px;
 
 				button {
+					position: relative;
 					height: 20px;
+					padding: 0 0 0 24px;
 					line-height: 20px;
 					font-size: 18px;
 					font-weight: 400;
 					text-align: left;
 					color: white;
 					background-color: transparent;
+
+					img {
+						position: absolute;
+						inset: 0;
+						width: 20px;
+						height: 20px;
+						filter: invert(30%) sepia(71%) saturate(4134%) hue-rotate(333deg)
+							brightness(104%) contrast(101%);
+					}
 				}
 			}
 		}

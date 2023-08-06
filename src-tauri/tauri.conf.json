@@ -14,7 +14,7 @@
     "allowlist": {
       "all": true,
       "fs": {
-        "scope": ["C:/"]
+        "scope": ["*/*", "$DESKTOP/*", "$DATA/*", "$APPCONFIG/*", "$DOCUMENT/*"]
       },
       "protocol": {
         "asset": true,

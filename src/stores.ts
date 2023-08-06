@@ -123,4 +123,5 @@ export const hotkeys = writable([
 export const srcPaths = writable([]);
 export const srcFiles = writable([]);
 export const playlistPath = writable("");
+export const recent = writable([]);
 export const isEditing = writable(0);

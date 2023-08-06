@@ -44,10 +44,10 @@
 
 		const interval = setInterval(() => {
 			//console.time("update");
-			emit('video_state', {
+			emit("video_state", {
 				state: videoElement.currentTime,
-				duration: videoElement.duration
-			})
+				duration: videoElement.duration,
+			});
 			//console.timeEnd("update");
 		}, 1000);
 

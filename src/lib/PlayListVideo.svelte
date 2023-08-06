@@ -22,7 +22,7 @@
 	const unlisten = listen("video_state", (e: any) => {
 		track.state = e.payload.state;
 		track.length = e.payload.duration;
-		console.log( track.state / track.length)
+		console.log(track.state / track.length);
 		//console.log(e, e.payload.buffer.length);
 	});
 
@@ -79,7 +79,7 @@
 		console.log("end dragging", e);
 	}
 
-	export function update() { }
+	export function update() {}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
