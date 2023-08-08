@@ -19,20 +19,26 @@
 	let dragging = false;
 	let missing = false;
 
-	const unlisten = listen("video_state", (e: any) => {
-		track.state = e.payload.state;
-		track.length = e.payload.duration;
-		console.log(track.state / track.length);
-		//console.log(e, e.payload.buffer.length);
+	const unlistenState = listen("video_state", (e: any) => {
+		if (track.playing) {
+			track.state = e.payload.state;
+			track.length = e.payload.duration;
+			//console.log(track.state / track.length);
+			//console.log(e, e.payload.buffer);
+		}
 	});
 
-	function handleSkip(e) {
-		let rec = e.target.getBoundingClientRect();
-		let x = e.clientX - rec.left;
-		let perc = Math.min(Math.max(x / rec.width, 0), 1);
+	function handleDragStart(e) {
+		e.dataTransfer.dropEffect = "copy";
+		e.dataTransfer.setData("text/plain", "placehold");
+		$currentDragging = track;
+		dragging = true;
+		console.log("drag start", e);
+	}
 
-		track.playing = false;
-		emit("update_play", { action: "skip", position: perc });
+	function handleDragEnd(e) {
+		dragging = false;
+		console.log("end dragging", e);
 	}
 
 	function handleDrop(e) {
@@ -66,17 +72,41 @@
 		$currentDragging = null;
 	}
 
-	function handleDragStart(e) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
-		$currentDragging = track;
-		dragging = true;
-		console.log("drag start", e);
+	function handleSkip(e) {
+		let rec = e.target.getBoundingClientRect();
+		let x = e.clientX - rec.left;
+		let perc = Math.min(Math.max(x / rec.width, 0), 1);
+
+		track.playing = false;
+		emit("update_play", { action: "skip", position: perc });
 	}
 
-	function handleDragEnd(e) {
-		dragging = false;
-		console.log("end dragging", e);
+	export function playPause() {
+		if (track.playing) {
+			//pause
+			stop();
+		} else if (track.state > 0) {
+			//resume
+			play(true);
+		} else {
+			//start
+			play(false);
+		}
+	}
+
+	export function play(resume: boolean) {
+		if (resume) {
+			emit("update_play", { action: "resume" });
+			track.playing = true;
+		} else {
+			emit("play_video", { url: track.path });
+			track.playing = true;
+		}
+	}
+
+	export function stop() {
+		emit("update_play", { action: "pause" });
+		track.playing = false;
 	}
 
 	export function update() {}
@@ -108,8 +138,8 @@
 				style={`
 					background: linear-gradient(
 						90deg,
-						var(--secondary) 0%,
-						var(--secondary) calc(100% * ${track.state / track.length}),
+						white 0%,
+						white calc(100% * ${track.state / track.length}),
 						#0002 calc(100% * ${track.state / track.length}),
 						#0002 100%
 					);`}
@@ -120,19 +150,7 @@
 				class="play-btn"
 				class:active={track.playing}
 				on:click={() => {
-					if (track.playing) {
-						//pause
-						emit("update_play", { action: "pause" });
-						track.playing = false;
-					} else if (track.state > 0) {
-						//resume
-						emit("update_play", { action: "resume" });
-						track.playing = true;
-					} else {
-						//start
-						emit("play_video", { url: track.path });
-						track.playing = true;
-					}
+					playPause();
 				}}
 			>
 				{#if track.playing}

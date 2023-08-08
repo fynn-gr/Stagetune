@@ -55,6 +55,8 @@
 		}
 		$currentDragging = null;
 	}
+
+	export function update() {}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

@@ -3,7 +3,7 @@
 		windows_subsystem = "windows"
 )]
 
-use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata, MenuEntry};
+use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata };
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 

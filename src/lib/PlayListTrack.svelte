@@ -309,10 +309,10 @@
 					type="number"
 					bind:value={track.fade.in}
 					on:focus={() => {
-						$isEditing++;
+						isEditing.update((e) => e + 1);
 					}}
 					on:blur={() => {
-						$isEditing--;
+						isEditing.update((e) => e - 1);
 					}}
 					min="0"
 					max={track.length}
@@ -322,6 +322,12 @@
 				<input
 					type="number"
 					bind:value={track.fade.out}
+					on:focus={() => {
+						isEditing.update((e) => e + 1);
+					}}
+					on:blur={() => {
+						isEditing.update((e) => e - 1);
+					}}
 					min="0"
 					max={track.length}
 					disabled={!$editMode}

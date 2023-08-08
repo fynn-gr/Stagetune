@@ -10,7 +10,7 @@
 	onMount(async () => {
 		loadRecent();
 		recentList = $recent;
-		if (recentList.length > 4) recentList.splice(4, recentList.length - 4)
+		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
 		console.log(recentList);
 	});
 </script>
@@ -33,7 +33,7 @@
 
 		<div class="container">
 			<span>
-				<button class="online" on:click={e => {}}
+				<button class="online" on:click={(e) => {}}
 					><img src="/icons/square/web.svg" />Website</button
 				>
 				<button class="online"><img src="/icons/square/web.svg" />Source</button
@@ -47,7 +47,13 @@
 			</span>
 			<span>
 				{#each recentList as item}
-					<button class="recent" on:click={e => {e.stopPropagation(); openPlaylist(item)}}>
+					<button
+						class="recent"
+						on:click={(e) => {
+							e.stopPropagation();
+							openPlaylist(item);
+						}}
+					>
 						<img src="/icons/square/file.svg" />
 						{item.split("\\").pop().split("/").pop()}
 					</button>

@@ -15,9 +15,12 @@
 	let panNode: StereoPannerNode;
 
 	const unlisten = listen("play_video", (event: any) => {
+		/*
 		const p = platform().then((e) => {
 			src = convertFileSrc(event.payload.url);
 		});
+		*/
+		src = event.payload.url;
 	});
 
 	const unlistenPause = listen("update_play", (e: any) => {
@@ -47,6 +50,7 @@
 			emit("video_state", {
 				state: videoElement.currentTime,
 				duration: videoElement.duration,
+				buffer: videoElement.buffered,
 			});
 			//console.timeEnd("update");
 		}, 1000);
@@ -69,7 +73,7 @@
 >
 	<video
 		id="video"
-		controls={true}
+		controls={false}
 		{src}
 		preload="auto"
 		data-tauri-drag-region

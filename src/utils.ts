@@ -14,6 +14,7 @@ import {
 	currentDragging,
 	hotkeys,
 	recent,
+	localFiles,
 } from "./stores";
 
 export interface playListItem {
@@ -215,7 +216,7 @@ export function openPlaylist(file: string = null) {
 			directory: false,
 			multiple: false,
 			title: "open Playlist",
-			defaultPath: file != null ? file : ""
+			defaultPath: file != null ? file : "",
 		}).then(async (sel) => {
 			if (sel == null || Array.isArray(sel)) {
 				console.log("nothing selected");

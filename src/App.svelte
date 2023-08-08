@@ -6,7 +6,6 @@
 	import { appWindow } from "@tauri-apps/api/window";
 	import { confirm } from "@tauri-apps/api/dialog";
 	import { invoke } from "@tauri-apps/api/tauri";
-	import { getVersion } from "@tauri-apps/api/app";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
@@ -28,6 +27,7 @@
 		srcPaths,
 		isEditing,
 		hotkeys,
+		localFiles,
 	} from "./stores";
 	import {
 		openPlaylist,
@@ -52,6 +52,7 @@
 	let palettes = true;
 	let zoom = 1.2;
 
+	$: console.log($isEditing)
 	$: document.documentElement.style.fontSize = `${zoom}px`;
 
 	function openVideoWindow(show: boolean) {
@@ -228,8 +229,8 @@
 
 		const interval = setInterval(() => {
 			//console.time("update");
-			for (const e of playlistElements) {
-				e.update();
+			for (let i = 0; i < playlistElements.length; i++) {
+				playlistElements[i].update();
 			}
 			//console.timeEnd("update");
 		}, 300);
@@ -258,6 +259,10 @@
 				{#each p as e}
 					<TrackListItem entry={e} />
 				{/each}
+			{/each}
+			<p class="category">standart</p>
+			{#each $localFiles as l}
+				<TrackListItem entry={l} />
 			{/each}
 		</div>
 	</div>
@@ -318,11 +323,38 @@
 			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
 				<div class="prop-bar">
 					<label>start</label>
-					<input type="number" bind:value={$playlist[$selectedItem].edit.in} />
+					<input
+						type="number"
+						bind:value={$playlist[$selectedItem].edit.in}
+						on:focus={() => {
+							isEditing.update((e) => e + 1);
+						}}
+						on:blur={() => {
+							isEditing.update((e) => e - 1);
+						}}
+					/>
 					<label>fade in</label>
-					<input type="number" bind:value={$playlist[$selectedItem].fade.in} />
+					<input
+						type="number"
+						bind:value={$playlist[$selectedItem].fade.in}
+						on:focus={() => {
+							isEditing.update((e) => e + 1);
+						}}
+						on:blur={() => {
+							isEditing.update((e) => e - 1);
+						}}
+					/>
 					<label>fade in</label>
-					<input type="number" bind:value={$playlist[$selectedItem].fade.out} />
+					<input
+						type="number"
+						bind:value={$playlist[$selectedItem].fade.out}
+						on:focus={() => {
+							isEditing.update((e) => e + 1);
+						}}
+						on:blur={() => {
+							isEditing.update((e) => e - 1);
+						}}
+					/>
 				</div>
 
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
