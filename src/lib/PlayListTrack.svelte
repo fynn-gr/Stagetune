@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
-	import { createPlaylistTrack, secondsToMinutes } from "@/utils";
+	import { createPlaylistTrack, secondsToMinutes, waveformCalc } from "@/utils";
 	import {
 		editMode,
 		selectedItem,
@@ -16,6 +16,7 @@
 	export let track: playListItem;
 	export let id: number;
 	export let ctx: AudioContext;
+	export let masterGain: GainNode;
 	let dragging = false;
 	let missing = false;
 	let inFade = false; //currently in fade, cant start or stop track during fade
@@ -40,7 +41,9 @@
 
 	function handleDrop(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		if ($currentDragging.origin == "playlist") {
+			console.log("drop Track form playlist", e )
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
 			playlist.update((e) => {
@@ -183,7 +186,9 @@
 	}
 
 	export function update() {
-		if (track.playing) track.state = ctx.currentTime - track.startedAt;
+		if (track.playing) {
+			track.state = ctx.currentTime - track.startedAt;
+		}
 	}
 
 	onMount(() => {
@@ -205,7 +210,7 @@
 				.connect(fadeNode)
 				.connect(gainNode)
 				.connect(panNode)
-				.connect(ctx.destination);
+				.connect(masterGain);
 			input.onended = () => {
 				onEnd();
 			};
@@ -219,6 +224,7 @@
 	$: gainNode
 		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 		: null;
+	$: waveformData = track.buffer ? waveformCalc(track.buffer, 100, cutIn / track.length) : undefined
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -255,10 +261,9 @@
 					);`}
 			/>
 			<Waveform
-				buffer={track.buffer}
+				data={waveformData}
 				samples={100}
 				resY={50}
-				cutInFac={cutIn / track.length}
 			/>
 
 			<!--play Button-->

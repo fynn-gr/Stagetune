@@ -258,6 +258,10 @@ export function savePlaylist(save_as: boolean = false) {
 					console.log("nothing selected");
 				} else {
 					let saveObj = {
+						meta: {
+							version: "0.1",
+							fileVersion: 1
+						},
 						playlist: get(playlist),
 						srcPaths: get(srcPaths),
 						hotkeys: get(hotkeys),

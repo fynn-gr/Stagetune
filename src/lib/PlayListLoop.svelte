@@ -7,6 +7,7 @@
 	export let track: playListItem;
 	export let id: number;
 	export let ctx: AudioContext;
+	export let masterGain: GainNode;
 	let dragging = false;
 
 	function handleDragStart(e) {

@@ -7,10 +7,13 @@
 		currentDragging,
 		playlist,
 	} from "../stores";
+	import { tick } from "svelte";
 
 	export let item: any;
 	export let id: number;
 	let dragging = false;
+	let editing = false;
+	let inputElement: HTMLInputElement;
 
 	function handleDragStart(e) {
 		e.dataTransfer.dropEffect = "copy";
@@ -72,18 +75,36 @@
 	}}
 >
 	<div class="border">
-		<div class="container">
+		<div
+			class="container"
+			on:dblclick={e => {
+				editing = !editing;
+				if (editing) {
+					//tick();
+					console.log(inputElement)
+					inputElement.focus()
+					console.log(inputElement.select())
+					isEditing.update((e) => e + 1);
+				} else {
+					inputElement.blur();
+					isEditing.update((e) => e - 1);
+				}
+			}}
+		>
 			<input
+				style="visibility: {editing ? "visible" : "hidden"};"
 				type="text"
 				disabled={!$editMode || $selectedItem != id}
-				on:focus={() => {
-					isEditing.update((e) => e + 1);
-				}}
-				on:blur={() => {
-					isEditing.update((e) => e - 1);
-				}}
 				bind:value={item.text}
+				bind:this={inputElement}
+				on:blur={() => {
+					editing = false;
+				}}
 			/>
+			<p
+				class="value-display"
+				style="visibility: {editing ? "hidden" : "visible"};"
+			>{item.text}</p>
 		</div>
 	</div>
 </div>

@@ -11,7 +11,7 @@
 	export let sideBar;
 	export let editor;
 	export let palettes;
-	export let zoom;
+	//let zoom = 1.4
 </script>
 
 <div class="topbar toolbar" data-tauri-drag-region>
@@ -178,7 +178,42 @@
 		/>
 		-->
 
-		<input type="range" min={1} max={2.0} bind:value={zoom} step={0.1} />
+		<!--
+		<input
+			type="range"
+			min={1}
+			max={2.0}
+			bind:value={zoom}
+			step={0.1}
+			on:change={() => {
+				console.log(zoom)
+				//document.documentElement.style.fontSize = `${0.1}px`;
+				//document.documentElement.style.fontSize = `${10}px`;
+				document.documentElement.style.fontSize = `${zoom}px`;
+
+				document.body.focus();
+			}}
+		/>
+		-->
+
+		<!--
+		<select
+			bind:value={zoom}
+			on:change={() => {
+				//console.log(zoom)
+				document.documentElement.style.fontSize = `${0.1}px`;
+				document.documentElement.style.fontSize = `${10}px`;
+				document.documentElement.style.fontSize = `${zoom}px`;
+
+				document.body.focus();
+			}}
+		>
+			<option value="1">100%</option>
+			<option value="1.2">120%</option>
+			<option value="1.4">140%</option>
+			<option value="1.8">180%</option>
+		</select>
+		-->
 
 		<div class="spacer" data-tauri-drag-region="" />
 

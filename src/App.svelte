@@ -35,31 +35,47 @@
 		fileNameFromPath,
 		openDir,
 		createPlaylistTrack,
+		waveformCalc,
 	} from "./utils";
 	import type { playListItem } from "@/utils";
 	import PlayListLoop from "./lib/PlayListLoop.svelte";
 	import Splash from "./lib/Splash.svelte";
+	import Annotation from "./lib/Annotation.svelte";
 
-	const ctx = new AudioContext();
 	let playlistElement: HTMLElement;
-	let splashScreen = true;
+	let meterCanvas: HTMLCanvasElement;
+	let meterCtx: CanvasRenderingContext2D;
 
+	let splashScreen = false;
 	let playlistElements = [];
 	let hotkeyElements = [];
 	let sideBar = true;
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
-	let zoom = 1.2;
+	//let zoom = 1.2;
 
-	$: console.log($isEditing)
-	$: document.documentElement.style.fontSize = `${zoom}px`;
+	const ctx = new AudioContext();
+	const analyser = ctx.createAnalyser();
+	const masterGain = ctx.createGain();
+	masterGain.connect(analyser).connect(ctx.destination);
+
+	/*
+	analyser.fftSize = 32;
+	const bufferLength = analyser.frequencyBinCount;
+	const dataArray = new Uint8Array(bufferLength);
+	analyser.getByteTimeDomainData(dataArray);
+	*/
+
+	//$: console.log($isEditing)
+	//$: document.documentElement.style.fontSize = `${zoom}px`;
 
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
 	}
 
 	function handleDropPlaylist(e) {
+		console.log("grag on playlist")
 		e.preventDefault();
 		if ($currentDragging.origin == "src") {
 			$playlist.push(
@@ -96,16 +112,20 @@
 	}
 
 	function moveUp() {
+		console.log($selectedItem)
 		$selectedItem > 0 ? selectedItem.update((n) => n - 1) : selectedItem.set(0);
+		console.log($selectedItem)
 		//if (playlist[selectedItem].text != null) {
 		//	moveUp();
 		//}
 	}
 
 	function moveDown() {
+		console.log($selectedItem)
 		$selectedItem < $playlist.length - 1
 			? selectedItem.update((n) => n + 1)
 			: selectedItem;
+		console.log($selectedItem)
 		//if (playlist[selectedItem].text != null) {
 		//	moveDown();
 		//}
@@ -135,12 +155,32 @@
 		}
 	});
 
+	function drawMeter() {
+		//requestAnimationFrame(drawMeter);
+
+		analyser.getByteTimeDomainData(dataArray);
+
+		meterCtx.fillStyle = "rgb(200, 200, 200)";
+		meterCtx.fillRect(0, 0, meterCanvas.width, meterCanvas.height);
+
+		for (let i = 0; i < bufferLength; i++) {
+			const v = dataArray[i] / 128.0;
+			const y = (v * meterCanvas.height) / 1.5;
+			console.log(v, y)
+
+			//meterCtx.lineTo(x, y);
+			meterCtx.fillStyle = "rgb(256, 0, 0)";
+			meterCtx.fillRect(0, meterCanvas.height - y, meterCanvas.width, meterCanvas.height)
+		}
+	}
+
 	onMount(() => {
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
 			//console.log(e)
 
 			if ($isEditing > 0) {
+				console.log("is Editing")
 				return;
 			} else {
 				if ($editMode) {
@@ -228,15 +268,19 @@
 		});
 
 		const interval = setInterval(() => {
-			//console.time("update");
+			//console.log(playlistElements);
 			for (let i = 0; i < playlistElements.length; i++) {
 				playlistElements[i].update();
+				//console.log("peak: ", peak)
 			}
+			//drawMeter()
 			//console.timeEnd("update");
 		}, 300);
 
 		return () => clearInterval(interval);
 	});
+
+	$: console.log($isEditing)
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -245,30 +289,45 @@
 {/if}
 
 <main class={"window-body dark " + $uiPlatform}>
+
 	<!--SideBar-->
 	<div
 		class="side-bar"
-		style={`width: ${sideBar && $editMode ? "300" : "0"}px;`}
+		style={`width: ${sideBar ? "300" : "0"}px;`}
 	>
-		<div class="trackList">
-			{#each $srcFiles as p, i}
-				<p class="category">
-					{fileNameFromPath($srcPaths[i])}
-				</p>
+		{#if $editMode}
+			<div class="trackList">
+				{#each $srcFiles as p, i}
+					<p class="category">
+						{fileNameFromPath($srcPaths[i])}
+					</p>
 
-				{#each p as e}
-					<TrackListItem entry={e} />
+					{#each p as e}
+						<TrackListItem entry={e} />
+					{/each}
 				{/each}
-			{/each}
-			<p class="category">standart</p>
-			{#each $localFiles as l}
-				<TrackListItem entry={l} />
-			{/each}
-		</div>
+				<p class="category">standart</p>
+				{#each $localFiles as l}
+					<TrackListItem entry={l} />
+				{/each}
+			</div>
+		<!--
+			<div class="meter">
+				<canvas
+					class="can-meter"
+					bind:this={meterCanvas}
+					width="30"
+					height="500"
+				>
+
+				</canvas>
+			</div>
+		-->
+		{/if}
 	</div>
 
 	<!--TopBar-->
-	<TopBar bind:sideBar bind:editor={editorPanel} bind:palettes bind:zoom />
+	<TopBar bind:sideBar bind:editor={editorPanel} bind:palettes />
 
 	<!--playlist-->
 	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -290,6 +349,7 @@
 						bind:track={t}
 						id={i}
 						{ctx}
+						{masterGain}
 					/>
 				{:else if t.type == "video"}
 					<PlayListVideo
@@ -309,6 +369,7 @@
 						bind:track={t}
 						id={i}
 						{ctx}
+						{masterGain}
 					/>
 				{/if}
 			{/each}
@@ -369,7 +430,10 @@
 					}}
 				>
 					<Waveform
-						buffer={playlistElements[$selectedItem].getBuffer()}
+						data={
+							waveformCalc(playlistElements[$selectedItem].getBuffer(),
+							window.innerWidth)
+						}
 						samples={window.innerWidth}
 						resY={200}
 					/>

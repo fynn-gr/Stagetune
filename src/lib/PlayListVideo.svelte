@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import { emit, listen } from "@tauri-apps/api/event";
 	import { createPlaylistTrack, secondsToMinutes } from "@/utils";
 	import {
@@ -18,31 +18,24 @@
 	export let id: number;
 	let dragging = false;
 	let missing = false;
-
-	const unlistenState = listen("video_state", (e: any) => {
-		if (track.playing) {
-			track.state = e.payload.state;
-			track.length = e.payload.duration;
-			//console.log(track.state / track.length);
-			//console.log(e, e.payload.buffer);
-		}
-	});
+	let unlistenState;
 
 	function handleDragStart(e) {
 		e.dataTransfer.dropEffect = "copy";
 		e.dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = track;
 		dragging = true;
-		console.log("drag start", e);
+		//console.log("drag start", e);
 	}
 
 	function handleDragEnd(e) {
 		dragging = false;
-		console.log("end dragging", e);
+		//console.log("end dragging", e);
 	}
 
 	function handleDrop(e) {
 		e.preventDefault();
+		e.stopPropagation();
 		if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
@@ -110,6 +103,21 @@
 	}
 
 	export function update() {}
+
+	onMount(async () => {
+		unlistenState = await listen("video_state", (e: any) => {
+			if (track.playing) {
+				track.state = e.payload.state;
+				track.length = e.payload.duration;
+				//console.log(track.state / track.length);
+				//console.log(e, e.payload.buffer);
+			}
+		});
+	})
+
+	onDestroy(() => {
+		unlistenState();
+	})
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

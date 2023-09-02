@@ -14,7 +14,7 @@
 	let gainNode: GainNode;
 	let panNode: StereoPannerNode;
 
-	const unlisten = listen("play_video", (event: any) => {
+	const unlistenPlay = listen("play_video", (event: any) => {
 		/*
 		const p = platform().then((e) => {
 			src = convertFileSrc(event.payload.url);

@@ -2,18 +2,18 @@
 	import { waveformCalc } from "@/utils";
 	import { onMount } from "svelte";
 
-	export let buffer: AudioBuffer;
+	//export let buffer: AudioBuffer;
+	export let data: Array<number>;
 	export let samples: number;
 	export let resY: number;
-	export let cutInFac: number = 0;
 	let resX = window.innerWidth;
 	let step = resX / samples;
 
 	let canvas: HTMLCanvasElement;
 	let can: CanvasRenderingContext2D;
 
-	$: if (buffer != undefined && canvas != undefined) {
-		let data = waveformCalc(buffer, samples, cutInFac);
+	$: if (data != undefined && canvas != undefined) {
+		//let data = waveformCalc(buffer, samples, cutInFac);
 		can = canvas.getContext("2d");
 		can.fillStyle = "rgb(45, 45, 45)";
 
@@ -32,8 +32,6 @@
 		}
 		can.fill();
 	}
-
-	onMount(() => {});
 </script>
 
 <canvas class="waveform" width={resX} height={resY} bind:this={canvas} />
