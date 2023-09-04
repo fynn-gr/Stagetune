@@ -193,6 +193,7 @@
 
 					// openVideoWindow
 					else if (e.code == "KeyP" && e.ctrlKey) {
+						e.preventDefault();
 						openVideoWindow(!projector);
 						projector = !projector;
 					}

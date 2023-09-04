@@ -7,7 +7,6 @@
 		currentDragging,
 		playlist,
 	} from "../stores";
-	import { tick } from "svelte";
 
 	export let item: any;
 	export let id: number;
@@ -16,11 +15,16 @@
 	let inputElement: HTMLInputElement;
 
 	function handleDragStart(e) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
-		$currentDragging = item;
-		dragging = true;
-		console.log("drag start", e);
+		let rec = e.target.getBoundingClientRect();
+		let x = e.clientX - rec.left;
+		if (x < 80) {
+			e.dataTransfer.dropEffect = "copy";
+			e.dataTransfer.setData("text/plain", "placehold");
+			$currentDragging = item;
+			dragging = true;
+		} else {
+			e.preventDefault();
+		}
 	}
 
 	function handleDragEnd(e) {
@@ -66,6 +70,7 @@
 <div
 	class="playlistAnotation"
 	class:selected={$selectedItem == id}
+	class:editMode={$editMode}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
@@ -75,36 +80,16 @@
 	}}
 >
 	<div class="border">
-		<div
-			class="container"
-			on:dblclick={e => {
-				editing = !editing;
-				if (editing) {
-					//tick();
-					console.log(inputElement)
-					inputElement.focus()
-					console.log(inputElement.select())
-					isEditing.update((e) => e + 1);
-				} else {
-					inputElement.blur();
-					isEditing.update((e) => e - 1);
-				}
-			}}
-		>
+		<div class="container">
+			<div class="drag-area"></div>
 			<input
-				style="visibility: {editing ? "visible" : "hidden"};"
 				type="text"
-				disabled={!$editMode || $selectedItem != id}
 				bind:value={item.text}
 				bind:this={inputElement}
 				on:blur={() => {
 					editing = false;
 				}}
 			/>
-			<p
-				class="value-display"
-				style="visibility: {editing ? "hidden" : "visible"};"
-			>{item.text}</p>
 		</div>
 	</div>
 </div>

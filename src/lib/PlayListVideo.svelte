@@ -21,11 +21,16 @@
 	let unlistenState;
 
 	function handleDragStart(e) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
-		$currentDragging = track;
-		dragging = true;
-		//console.log("drag start", e);
+		let rec = e.target.getBoundingClientRect();
+		let x = e.clientX - rec.left;
+		if (x < 80) {
+			e.dataTransfer.dropEffect = "copy";
+			e.dataTransfer.setData("text/plain", "placehold");
+			$currentDragging = track;
+			dragging = true;
+		} else {
+			e.preventDefault();
+		}
 	}
 
 	function handleDragEnd(e) {
@@ -136,7 +141,7 @@
 >
 	<div class="border">
 		<!--annotation before-->
-		<Annotation bind:annotation={track.annotation} {id} start={false} />
+		<Annotation bind:annotation={track.annotation} {id} start={true} />
 
 		<div class="inner">
 			<!--progress-->
@@ -152,6 +157,8 @@
 						#0002 100%
 					);`}
 			/>
+
+			<div class="drag-area"></div>
 
 			<!--play Button-->
 			<button

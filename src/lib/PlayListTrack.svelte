@@ -27,10 +27,17 @@
 	let panNode: StereoPannerNode;
 
 	function handleDragStart(e) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
-		$currentDragging = track;
-		dragging = true;
+		let rec = e.target.getBoundingClientRect();
+		let x = e.clientX - rec.left;
+		if (x < 80) {
+			e.dataTransfer.dropEffect = "copy";
+			e.dataTransfer.setData("text/plain", "placehold");
+			$currentDragging = track;
+			dragging = true;
+		} else {
+			e.preventDefault();
+		}
+
 		//console.log("drag start", e);
 	}
 
@@ -254,10 +261,10 @@
 				style={`
 					background: linear-gradient(
 						90deg,
-						white 0%,
+						var(--secondary) 0%,
+						var(--secondary) calc(100% * ${track.state / cutTrackLength}),
 						white calc(100% * ${track.state / cutTrackLength}),
-						#0004 calc(100% * ${track.state / cutTrackLength}),
-						#0004 100%
+						white 100%
 					);`}
 			/>
 			<Waveform
@@ -265,6 +272,8 @@
 				samples={100}
 				resY={50}
 			/>
+
+			<div class="drag-area"></div>
 
 			<!--play Button-->
 			<button
@@ -350,7 +359,6 @@
 						max="100"
 						step="10"
 						disabled={!$editMode}
-						draggable="true"
 					/>
 					<p>+</p>
 				</span>
@@ -365,7 +373,6 @@
 						max={1}
 						step={0.25}
 						disabled={!$editMode}
-						draggable="true"
 					/>
 					<p>R</p>
 				</span>
