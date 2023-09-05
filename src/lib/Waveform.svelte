@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { waveformCalc } from "@/utils";
-	import { onMount } from "svelte";
 
 	//export let buffer: AudioBuffer;
 	export let data: Array<number>;

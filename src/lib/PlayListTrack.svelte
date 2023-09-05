@@ -17,6 +17,7 @@
 	export let id: number;
 	export let ctx: AudioContext;
 	export let masterGain: GainNode;
+	let loaded = false;
 	let dragging = false;
 	let missing = false;
 	let inFade = false; //currently in fade, cant start or stop track during fade
@@ -198,31 +199,30 @@
 		}
 	}
 
-	onMount(() => {
-		const setup = async () => {
-			//load file
-			const response = await fetch(convertFileSrc(track.path));
-			const arrayBuffer = await response.arrayBuffer();
-			track.buffer = await ctx.decodeAudioData(arrayBuffer);
-			input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
-			track.length = track.buffer.duration;
+	onMount(async () => {
 
-			//track = track
-			console.log(track);
+		//load file
+		const response = await fetch(convertFileSrc(track.path));
+		const arrayBuffer = await response.arrayBuffer();
+		track.buffer = await ctx.decodeAudioData(arrayBuffer);
+		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
+		loaded = true;
+		track.length = track.buffer.duration;
 
-			gainNode = ctx.createGain();
-			fadeNode = ctx.createGain();
-			panNode = ctx.createStereoPanner();
-			input
-				.connect(fadeNode)
-				.connect(gainNode)
-				.connect(panNode)
-				.connect(masterGain);
-			input.onended = () => {
-				onEnd();
-			};
+		//track = track
+		console.log(track);
+
+		gainNode = ctx.createGain();
+		fadeNode = ctx.createGain();
+		panNode = ctx.createStereoPanner();
+		input
+			.connect(fadeNode)
+			.connect(gainNode)
+			.connect(panNode)
+			.connect(masterGain);
+		input.onended = () => {
+			onEnd();
 		};
-		setup();
 	});
 
 	$: cutIn = track.edit.in;
@@ -231,7 +231,7 @@
 	$: gainNode
 		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 		: null;
-	$: waveformData = track.buffer ? waveformCalc(track.buffer, 100, cutIn / track.length) : undefined
+	$: waveformData = loaded ? waveformCalc(track.buffer, 100, cutIn / track.length) : undefined
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

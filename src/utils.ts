@@ -135,14 +135,9 @@ export function openDir() {
 				console.log("nothing selected");
 			} else {
 				//add to src paths
-				if (get(srcPaths).includes(sel)) return;
-				srcPaths.update((items) => {
-					items.push(sel);
-					return items;
-				});
-				console.log("srcPaths: ", get(srcPaths));
+				scanSrcPaths(sel);
+				playlistPath.set(sel)
 				console.log("srcFiles: ", get(srcFiles));
-				scanSrcPaths();
 			}
 		});
 	} catch (err) {
@@ -150,64 +145,69 @@ export function openDir() {
 	}
 }
 
-function scanSrcPaths() {
-	srcFiles.set([]);
-	get(srcPaths).forEach(async (e, i) => {
-		srcFiles.update((itmes) => {
-			itmes.push([]);
-			return itmes;
+async function scanSrcPaths(path: string) {
+	let playlistFile: string;
+
+	//recursive scan src path
+	const entries = await readDir(path, { recursive: true });
+	console.log(entries)
+
+	function processEntries(entries) {
+		entries.forEach((entry, j) => {
+			console.log(`Entry: `, entry.path);
+			if (entry.children) {
+				//subfolder
+				processEntries(entry.children);
+			} else if (isAudioFile(entry.path)) {
+				//Audio File
+				console.log("audio File")
+				entry.type = "track";
+				entry.origin = "src";
+				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
+				srcFiles.update((items) => {
+					items.push(entry);
+					return items;
+				});
+			} else if (isVideoFile(entry.path)) {
+				//Video File
+				entry.type = "video";
+				entry.origin = "src";
+				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
+				srcFiles.update((items) => {
+					items.push(entry);
+					return items;
+				});
+			} else if (isPlaylistFile(entry.path)) {
+				console.log("Playlist File")
+				playlistFile = entry.path;
+				readTextFile(playlistFile, {})
+				.then((e) => {
+					console.log("load playlist")
+					let obj = JSON.parse(e);
+					playlist.set(obj.playlist);
+					//srcPaths.set(obj.srcPaths);
+					hotkeys.set(obj.hotkeys);
+				});
+			} else {}
 		});
 
-		//go through individual src paths
-		const entries = await readDir(e, { recursive: true });
-
-		function processEntries(entries) {
-			entries.forEach((entry, j) => {
-				console.log(`Entry: `, entry.path);
-				if (entry.children) {
-					//subfolder
-					processEntries(entry.children);
-				} else if (isAudioFile(entry.name)) {
-					//Audio File
-					entry.type = "track";
-					entry.origin = "src";
-					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-					srcFiles.update((items) => {
-						items[i].push(entry);
-						return items;
-					});
-				} else if (isVideoFile(entry.name)) {
-					//Video File
-					entry.type = "video";
-					entry.origin = "src";
-					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-					srcFiles.update((items) => {
-						items[i].push(entry);
-						return items;
-					});
-				} else {
-				}
-			});
-		}
-		processEntries(entries);
-
 		//sort alphabetically
-
 		srcFiles.update((items) => {
-			items.forEach((e) => {
-				e.sort(function (a, b) {
-					if (a.name < b.name) {
-						return -1;
-					}
-					if (a.name > b.name) {
-						return 1;
-					}
-					return 0;
-				});
+			items.sort(function (a, b) {
+				if (a.name < b.name) {
+					return -1;
+				}
+				if (a.name > b.name) {
+					return 1;
+				}
+				return 0;
 			});
 			return items;
 		});
-	});
+	}
+	processEntries(await entries);
+
+	console.log(get(srcFiles), get(playlist))
 }
 
 export function openPlaylist(file: string = null) {
@@ -215,8 +215,7 @@ export function openPlaylist(file: string = null) {
 		open({
 			directory: false,
 			multiple: false,
-			title: "open Playlist",
-			defaultPath: file != null ? file : "",
+			title: "open Playlist"
 		}).then(async (sel) => {
 			if (sel == null || Array.isArray(sel)) {
 				console.log("nothing selected");
@@ -226,15 +225,8 @@ export function openPlaylist(file: string = null) {
 					playlist.set(obj.playlist);
 					srcPaths.set(obj.srcPaths);
 					hotkeys.set(obj.hotkeys);
-					scanSrcPaths();
+					//scanSrcPaths();
 				});
-				if (!get(recent).includes(sel)) {
-					recent.update((item) => {
-						item.unshift(sel);
-						return item;
-					});
-					saveRecent();
-				}
 			}
 		});
 	} catch (err) {
@@ -278,10 +270,10 @@ export function savePlaylist(save_as: boolean = false) {
 		console.log("save to path: ", get(playlistPath));
 		let saveObj = {
 			playlist: get(playlist),
-			srcPaths: get(srcPaths),
+			//srcPaths: get(srcPaths),
 			hotkeys: get(hotkeys),
 		};
-		writeTextFile(get(playlistPath), JSON.stringify(saveObj), {});
+		writeTextFile(get(playlistPath) + "/playlist.playlist", JSON.stringify(saveObj), {});
 	}
 }
 

@@ -161,23 +161,6 @@
 			toolTip="edit Mode"
 		/>
 
-		<!--stop All
-		<TopBarButton
-			icon="stop"
-			onClick={() => {
-				/*
-				$playlist.forEach(e => {
-					console.log(e)
-					if (e.type == "track") {
-						e.playing = false;
-						e.state = 0;
-					}
-				})*/
-			}}
-			toolTip="stop everything playing"
-		/>
-		-->
-
 		<!--
 		<input
 			type="range"

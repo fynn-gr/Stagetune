@@ -142,13 +142,13 @@
 			}
 		} else if (event.payload == "new") {
 		} else if (event.payload == "open") {
-			openPlaylist();
+			openDir();
 		} else if (event.payload == "save") {
 			savePlaylist();
 		} else if (event.payload == "save_as") {
-			savePlaylist(true);
+			//savePlaylist(true);
 		} else if (event.payload == "add") {
-			openDir();
+			//openDir();
 		} else if (event.payload == "projector") {
 			openVideoWindow(!projector);
 			projector = !projector;
@@ -186,8 +186,6 @@
 				if ($editMode) {
 					//open Playlist
 					if (e.code == "KeyO" && e.ctrlKey) {
-						openPlaylist();
-					} else if (e.code == "KeyA" && e.ctrlKey) {
 						openDir();
 					}
 
@@ -268,6 +266,7 @@
 			}
 		});
 
+		
 		const interval = setInterval(() => {
 			//console.log(playlistElements);
 			for (let i = 0; i < playlistElements.length; i++) {
@@ -279,6 +278,7 @@
 		}, 300);
 
 		return () => clearInterval(interval);
+		
 	});
 
 	$: console.log($isEditing)
@@ -299,13 +299,7 @@
 		{#if $editMode}
 			<div class="trackList">
 				{#each $srcFiles as p, i}
-					<p class="category">
-						{fileNameFromPath($srcPaths[i])}
-					</p>
-
-					{#each p as e}
-						<TrackListItem entry={e} />
-					{/each}
+					<TrackListItem entry={p} />
 				{/each}
 				<p class="category">standart</p>
 				{#each $localFiles as l}
