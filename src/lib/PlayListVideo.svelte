@@ -12,7 +12,6 @@
 	import Annotation from "./Annotation.svelte";
 
 	import type { playListItem } from "@/utils";
-	import TrackListItem from "./TrackListItem.svelte";
 
 	export let track: playListItem;
 	export let id: number;
@@ -97,25 +96,31 @@
 			emit("update_play", { action: "resume" });
 			track.playing = true;
 		} else {
-			emit("play_video", { url: track.path });
+			emit("play_video", { url: track.path, name: track.name });
 			track.playing = true;
 		}
 	}
 
-	export function stop() {
-		emit("update_play", { action: "pause" });
-		track.playing = false;
+	export function stop(reset: boolean = false) {
+		if (reset) {
+			emit("update_play", { action: "stop" });
+			track.playing = false;
+			track.state = 0;
+		} else {
+			emit("update_play", { action: "pause" });
+			track.playing = false;
+		}
 	}
 
 	export function update() {}
 
 	onMount(async () => {
 		unlistenState = await listen("video_state", (e: any) => {
-			if (track.playing) {
+			console.log(e.payload)
+			if (track.playing && e.payload.name == track.name) {
 				track.state = e.payload.state;
 				track.length = e.payload.duration;
-				//console.log(track.state / track.length);
-				//console.log(e, e.payload.buffer);
+				console.log(track.state / track.length);
 			}
 		});
 	})
@@ -151,10 +156,10 @@
 				style={`
 					background: linear-gradient(
 						90deg,
-						white 0%,
-						white calc(100% * ${track.state / track.length}),
-						#0002 calc(100% * ${track.state / track.length}),
-						#0002 100%
+						var(--secondary) 0%,
+						var(--secondary) calc(100% * ${track.state / track.length || 0}),
+						white calc(100% * ${track.state / track.length || 0 }),
+						white 100%
 					);`}
 			/>
 

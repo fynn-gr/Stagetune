@@ -3,9 +3,9 @@
 	import "./style/App.scss";
 	import { onMount } from "svelte";
 	import { listen } from "@tauri-apps/api/event";
-	import { appWindow } from "@tauri-apps/api/window";
 	import { confirm } from "@tauri-apps/api/dialog";
 	import { invoke } from "@tauri-apps/api/tauri";
+	import { exit } from "@tauri-apps/api/process";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
@@ -37,7 +37,6 @@
 		createPlaylistTrack,
 		waveformCalc,
 	} from "./utils";
-	import type { playListItem } from "@/utils";
 	import PlayListLoop from "./lib/PlayListLoop.svelte";
 	import Splash from "./lib/Splash.svelte";
 	import Annotation from "./lib/Annotation.svelte";
@@ -138,17 +137,13 @@
 				const confirmed = await confirm(
 					"Do you want to discard all unsaved changes?",
 					{ title: "Quit?", type: "warning", okLabel: "Quit" }
-				).then((isOK) => (isOK ? appWindow.close() : null));
+				).then((isOK) => (isOK ? exit(0) : null));
 			}
 		} else if (event.payload == "new") {
 		} else if (event.payload == "open") {
 			openDir();
 		} else if (event.payload == "save") {
 			savePlaylist();
-		} else if (event.payload == "save_as") {
-			//savePlaylist(true);
-		} else if (event.payload == "add") {
-			//openDir();
 		} else if (event.payload == "projector") {
 			openVideoWindow(!projector);
 			projector = !projector;

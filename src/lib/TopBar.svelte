@@ -66,16 +66,6 @@
 				toolTip="sideBar"
 				disabled={!$editMode}
 			/>
-
-			<!--add path-->
-			<TopBarButton
-				icon="plus"
-				onClick={() => {
-					openDir();
-				}}
-				toolTip="add Path"
-				disabled={!$editMode}
-			/>
 		</div>
 
 		{#if $uiPlatform == "win"}

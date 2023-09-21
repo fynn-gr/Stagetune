@@ -24,7 +24,7 @@
 		width: 536px;
 		height: 536px;
 		margin: auto;
-		background-color: rgb(54, 54, 54);
+		background-color: var(--secondary);
 		//border: 12px solid #FF2D55;
 		border-radius: 28px;
 		box-shadow: 2px 2px 12px black;
@@ -40,7 +40,7 @@
 
 		.top {
 			position: absolute;
-			inset: 292px 24px auto 24px;
+			inset: 28px 28px auto 28px;
 			height: 62px;
 			//background-color: #6300aa;
 
@@ -53,12 +53,12 @@
 
 			h1 {
 				position: absolute;
-				inset: -20px auto auto 82px;
-				color: #ff2d55;
+				inset: -16px auto auto 76px;
+				color: rgb(255, 255, 255);
 				font-family: pure;
 				font-size: 42px;
 				font-weight: 400;
-				text-shadow: 1px 1px 12px hsl(349, 80%, 40%);
+				text-shadow: 1px 0 8px black;
 
 				b {
 					font-weight: 700;
@@ -67,11 +67,12 @@
 
 			.version {
 				position: absolute;
-				inset: auto auto -8px 82px;
+				inset: auto auto -8px 76px;
 				color: white;
-				font-size: 30px;
+				font-size: 26px;
 				font-family: pure;
 				letter-spacing: 2px;
+				text-shadow: 1px 0 4px black;
 			}
 		}
 
@@ -107,8 +108,7 @@
 						inset: 0;
 						width: 20px;
 						height: 20px;
-						filter: invert(30%) sepia(71%) saturate(4134%) hue-rotate(333deg)
-							brightness(104%) contrast(101%);
+						filter: invert(100%);
 					}
 				}
 			}

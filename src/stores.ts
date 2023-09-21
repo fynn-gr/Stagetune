@@ -131,7 +131,7 @@ export const localFiles = writable([
 	},
 	{
 		name: "cutscene 2",
-		path: "/videos/Cutscene 2mp4",
+		path: "/videos/Cutscene 2.mp4",
 		type: "video",
 		origin: "src",
 	},
@@ -176,7 +176,7 @@ export const localFiles = writable([
 		path: "/videos/Cutscene 9.mp4",
 		type: "video",
 		origin: "src",
-	},
+	}
 ]);
 export const playlistPath = writable("");
 export const recent = writable([]);

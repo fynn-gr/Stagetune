@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { emit, listen } from "@tauri-apps/api/event";
-	import { platform } from "@tauri-apps/api/os";
-	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { appWindow, LogicalSize } from "@tauri-apps/api/window";
 	import { onMount } from "svelte";
 
 	let videoElement: HTMLVideoElement;
 	let src: string;
+	let name: string;
 	let fullscreen = false;
 
 	let ctx = new AudioContext();
@@ -20,10 +19,14 @@
 			src = convertFileSrc(event.payload.url);
 		});
 		*/
+		console.log(event)
+		videoElement.pause();
 		src = event.payload.url;
+		name = event.payload.name;
+		videoElement.play();
 	});
 
-	const unlistenPause = listen("update_play", (e: any) => {
+	const unlistenUpdate = listen("update_play", (e: any) => {
 		console.log(e.payload);
 		if (e.payload.action == "stop") {
 			src = "";
@@ -50,7 +53,7 @@
 			emit("video_state", {
 				state: videoElement.currentTime,
 				duration: videoElement.duration,
-				buffer: videoElement.buffered,
+				name: name,
 			});
 			//console.timeEnd("update");
 		}, 1000);
@@ -79,9 +82,11 @@
 		data-tauri-drag-region
 		bind:this={videoElement}
 		on:canplaythrough={() => {
-			videoElement.play();
+			//videoElement.play();
 		}}
-		on:canplay={() => {}}
+		on:canplay={() => {
+			videoElement.play()
+		}}
 	/>
 </div>
 
