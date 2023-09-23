@@ -16,6 +16,7 @@ import {
 	recent,
 	localFiles,
 } from "./stores";
+import { emit } from "@tauri-apps/api/event";
 
 export interface playListItem {
 	type: string; //track, video, annotation, loop
@@ -137,6 +138,10 @@ export function openDir() {
 				//add to src paths
 				scanSrcPaths(sel);
 				playlistPath.set(sel)
+				recent.update(e => {
+					e.push(sel);
+					return e;
+				})
 				console.log("srcFiles: ", get(srcFiles));
 			}
 		});
@@ -248,6 +253,7 @@ export function savePlaylist() {
 		e.state = 0;
 	})
 	writeTextFile(get(playlistPath) + "/playlist.playlist", JSON.stringify(saveObj), {});
+	saveRecent();
 }
 
 export function saveRecent() {
@@ -262,4 +268,15 @@ export async function loadRecent() {
 		dir: BaseDirectory.Document,
 	});
 	recent.set(JSON.parse(obj));
+}
+
+export function updateProjectorList() {
+	let list = [];
+	get(playlist).forEach(e => {
+		if (e.type == "video") {
+			list.push({	name: e.name, url: e.path })
+		}
+	})
+
+	emit("updateList", {list})
 }

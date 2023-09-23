@@ -3,10 +3,12 @@
 	import { appWindow, LogicalSize } from "@tauri-apps/api/window";
 	import { onMount } from "svelte";
 
-	let videoElement: HTMLVideoElement;
-	let src: string;
-	let name: string;
+	let editMode = true;
+	let list: Array<any> = [];
+	let listElements: Array<HTMLVideoElement> = [];
+	let active = -1;
 	let fullscreen = false;
+	let buffer = [];
 
 	let ctx = new AudioContext();
 	let input: MediaElementAudioSourceNode;
@@ -20,42 +22,66 @@
 		});
 		*/
 		console.log(event)
-		videoElement.pause();
-		src = event.payload.url;
-		name = event.payload.name;
-		videoElement.play();
+		list.forEach((e, i) => {
+			if (e.name ==  event.payload.name) active = i;
+		})
+		listElements[active].play();
 	});
 
 	const unlistenUpdate = listen("update_play", (e: any) => {
 		console.log(e.payload);
 		if (e.payload.action == "stop") {
-			src = "";
+			listElements[active].pause();
+			active = -1
 		} else if (e.payload.action == "skip") {
-			console.log(videoElement.duration * e.payload.position);
-			videoElement.currentTime = videoElement.duration * e.payload.position;
+			listElements[active].currentTime = listElements[active].duration * e.payload.position;
 		} else if (e.payload.action == "pause") {
-			videoElement.pause();
+			listElements[active].pause();
 		} else if (e.payload.action == "resume") {
-			videoElement.play();
+
+			listElements[active].play();
 		}
 	});
 
+	const unlistenUpdateList = listen("updateList", (e) => {
+		console.log(e.payload);
+		list = e.payload.list;
+	})
+
+	const unlistenEditMode = listen("editMode", e => {
+		editMode = e.payload.edit;
+	})
+
 	onMount(async () => {
-		input = ctx.createMediaElementSource(videoElement);
+		//input = ctx.createMediaElementSource(videoElement);
 
 		gainNode = ctx.createGain();
 		gainNode.gain.setValueAtTime(100 / 360, ctx.currentTime);
 		panNode = ctx.createStereoPanner();
-		input.connect(gainNode).connect(panNode).connect(ctx.destination);
+		//input.connect(gainNode).connect(panNode).connect(ctx.destination);
+
+		emit("projctorReq", {})
 
 		const interval = setInterval(() => {
-			//console.time("update");
-			emit("video_state", {
-				state: videoElement.currentTime,
-				duration: videoElement.duration,
-				name: name,
-			});
-			//console.timeEnd("update");
+			if (active != -1) {
+				emit("video_state", {
+					state: listElements[active].currentTime,
+					duration: listElements[active].duration,
+					name: list[active].name,
+				});
+			}
+
+			/*
+			for (let i = 0; i < listElements.length; i++) {
+				buffer[i] = {
+					buffer: listElements[i].buffered.end(0),
+					duration:listElements[i].duration
+				}
+			}
+			console.log(buffer)
+	
+			emit("video_buffer", buffer);
+			*/
 		}, 1000);
 
 		return () => clearInterval(interval);
@@ -65,6 +91,8 @@
 <!-- svelte-ignore a11y-media-has-caption -->
 <div
 	class="wrapper"
+	class:edit={editMode}
+	data-tauri-drag-region
 	on:dblclick={() => {
 		if (fullscreen) {
 			appWindow.setFullscreen(false);
@@ -74,25 +102,42 @@
 		}
 	}}
 >
-	<video
-		id="video"
-		controls={false}
-		{src}
-		preload="auto"
-		data-tauri-drag-region
-		bind:this={videoElement}
-		on:canplaythrough={() => {
-			//videoElement.play();
-		}}
-		on:canplay={() => {
-			videoElement.play()
-		}}
-	/>
+	{#each list as video, i}
+		<video
+			id="video"
+			controls={editMode}
+			src={video.url}
+			preload="auto"
+			data-tauri-drag-region
+			class:vis={i == active}
+			bind:this={listElements[i]}
+		/>
+	{/each}
+
+	{#if editMode}
+		<div class="buffers">
+			{#each buffer as b}
+				<div
+					class="bar" 
+					style={`
+						background: linear-gradient(
+							90deg,
+							red 0%,
+							red calc(100% * ${b.buffer / b.duration}),
+							#555 calc(100% * ${b.buffer / b.duration}),
+							#555 100%
+						);`}
+				/>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
+
 	.wrapper {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: center;
 		overflow: hidden;
 		width: 100vw;
@@ -102,10 +147,40 @@
 		background-color: black;
 
 		video {
+			position: absolute;
 			width: 100%;
 			height: 100%;
 			object-fit: contain;
 			margin: auto;
+			opacity: 0;
+
+			&.vis {
+				opacity: 1;
+			}
+		}
+	}
+
+	.buffers {
+		position: fixed;
+		inset: auto 0 0 0;
+		background-color: white;
+		display: flex;
+		flex-direction: column;
+
+		.bar {
+			height: 6px;
+			width: 100%;
+		}
+	}
+
+	.wrapper.edit {
+		overflow: scroll;
+
+		video {
+			width: 50%;
+			height: auto;
+			position: relative;
+			opacity: 1 !important;
 		}
 	}
 </style>

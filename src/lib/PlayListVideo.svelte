@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from "svelte";
 	import { emit, listen } from "@tauri-apps/api/event";
-	import { createPlaylistTrack, secondsToMinutes } from "@/utils";
+	import { createPlaylistTrack, secondsToMinutes, updateProjectorList } from "@/utils";
 	import {
 		editMode,
 		selectedItem,
@@ -92,13 +92,9 @@
 	}
 
 	export function play(resume: boolean) {
-		if (resume) {
-			emit("update_play", { action: "resume" });
-			track.playing = true;
-		} else {
-			emit("play_video", { url: track.path, name: track.name });
-			track.playing = true;
-		}
+
+		emit("play_video", { name: track.name });
+		track.playing = true;
 	}
 
 	export function stop(reset: boolean = false) {
@@ -123,6 +119,8 @@
 				console.log(track.state / track.length);
 			}
 		});
+
+		updateProjectorList();
 	})
 
 	onDestroy(() => {
@@ -158,8 +156,8 @@
 						90deg,
 						var(--secondary) 0%,
 						var(--secondary) calc(100% * ${track.state / track.length || 0}),
-						white calc(100% * ${track.state / track.length || 0 }),
-						white 100%
+						#555 calc(100% * ${track.state / track.length || 0 }),
+						#555 100%
 					);`}
 			/>
 

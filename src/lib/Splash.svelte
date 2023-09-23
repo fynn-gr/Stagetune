@@ -22,12 +22,15 @@
 	on:click={(e) => {
 		splashScreen = false;
 	}}
+	on:mousedown={e => {
+		splashScreen = false;
+	}}
 >
 	<div class="wrapper">
 		<img src="./splash.jpg" class="splash-art" />
 		<div class="top">
-			<img src="./app-icon.png" class="icon" />
-			<h1>pure<b>Stage</b></h1>
+			<img src="./splash_icon.png" class="icon" />
+			<h1>cosy <b>Stagetune</b></h1>
 			<p class="version">0.1 Beta</p>
 		</div>
 

@@ -27,7 +27,7 @@
 		background-color: var(--secondary);
 		//border: 12px solid #FF2D55;
 		border-radius: 28px;
-		box-shadow: 2px 2px 12px black;
+		box-shadow: 2px 2px 64px rgba(0, 0, 0, 0.585);
 
 		.splash-art {
 			position: absolute;
@@ -40,20 +40,20 @@
 
 		.top {
 			position: absolute;
-			inset: 28px 28px auto 28px;
+			inset: 286px 28px auto 26px;
 			height: 62px;
 			//background-color: #6300aa;
 
 			.icon {
 				position: absolute;
-				width: 76px;
-				height: 76px;
-				inset: -7px auto auto -7px;
+				width: 140px;
+				aspect-ratio: 1;
+				inset: -40px -24px auto auto;
 			}
 
 			h1 {
 				position: absolute;
-				inset: -16px auto auto 76px;
+				inset: -16px auto auto 0px;
 				color: rgb(255, 255, 255);
 				font-family: pure;
 				font-size: 42px;
@@ -67,7 +67,7 @@
 
 			.version {
 				position: absolute;
-				inset: auto auto -8px 76px;
+				inset: auto auto -8px 0px;
 				color: white;
 				font-size: 26px;
 				font-family: pure;
@@ -90,7 +90,7 @@
 				display: flex;
 				flex-direction: column;
 				gap: 16px;
-				min-width: 200px;
+				min-width: 256px;
 
 				button {
 					position: relative;
@@ -236,12 +236,13 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+			margin-left: 10rem;
 			height: 42rem;
 			line-height: 42rem;
 			text-overflow: ellipsis;
 			overflow: hidden;
-			font-size: 20rem;
-			font-weight: 600;
+			font-size: 18rem;
+			font-weight: 500;
 			color: white;
 
 			& > p {
@@ -278,7 +279,7 @@
 			position: relative;
 			width: 30rem;
 			height: 30rem;
-			margin: 6rem 6rem 6rem 0;
+			margin: 6rem 0;
 			border-radius: 5rem;
 			background-color: transparent;
 
@@ -433,7 +434,11 @@
 		}
 
 		.play-btn {
-			margin: 12rem 0 12rem 0rem;
+			margin: 12rem 0 12rem 0;
+		}
+
+		.set-btn {
+			margin: 12rem 0;
 		}
 
 		.title {
@@ -593,6 +598,10 @@
 					height: 6rem;
 				}
 
+				.play-btn {
+					margin: 7rem 0;
+				}
+
 				.repeat-btn {
 					visibility: visible;
 
@@ -608,19 +617,27 @@
 						filter: invert(90%);
 					}
 				}
-
-				.play-btn {
-					margin: 12rem 0 12rem 0rem;
-				}
-
-				.set-btn {
-					margin: 12rem 12rem 12rem 0;
-				}
 			}
 		}
 
-		.inner .progress {
-			height: 14rem;
+		.inner {
+			height: 50rem;
+
+			.play-btn {
+				margin: 7rem 0 7rem 7rem;
+			}
+
+			.set-btn {
+				margin: 7rem 0;
+			}
+
+			.title {
+				height: 44rem;
+			}
+
+			.progress {
+				height: 6rem;
+			}
 		}
 	}
 

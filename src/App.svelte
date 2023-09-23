@@ -2,7 +2,7 @@
 	import "../src/pureUI/scss/index.scss";
 	import "./style/App.scss";
 	import { onMount } from "svelte";
-	import { listen } from "@tauri-apps/api/event";
+	import { emit, listen } from "@tauri-apps/api/event";
 	import { confirm } from "@tauri-apps/api/dialog";
 	import { invoke } from "@tauri-apps/api/tauri";
 	import { exit } from "@tauri-apps/api/process";
@@ -36,6 +36,7 @@
 		openDir,
 		createPlaylistTrack,
 		waveformCalc,
+		updateProjectorList,
 	} from "./utils";
 	import PlayListLoop from "./lib/PlayListLoop.svelte";
 	import Splash from "./lib/Splash.svelte";
@@ -45,7 +46,7 @@
 	let meterCanvas: HTMLCanvasElement;
 	let meterCtx: CanvasRenderingContext2D;
 
-	let splashScreen = false;
+	let splashScreen = true;
 	let playlistElements = [];
 	let hotkeyElements = [];
 	let sideBar = true;
@@ -130,7 +131,7 @@
 		//}
 	}
 
-	const unlisten = listen("menu", async (event) => {
+	const unlistenMenus = listen("menu", async (event) => {
 		console.log(event);
 		if (event.payload == "quit") {
 			if ($editMode) {
@@ -149,6 +150,10 @@
 			projector = !projector;
 		}
 	});
+
+	const unlistenProjectorReq = listen("projctorReq", (e) => {
+		updateProjectorList();
+	})
 
 	function drawMeter() {
 		//requestAnimationFrame(drawMeter);
@@ -277,6 +282,7 @@
 	});
 
 	$: console.log($isEditing)
+	$: emit("editMode", {edit: $editMode});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

@@ -263,8 +263,8 @@
 						90deg,
 						var(--secondary) 0%,
 						var(--secondary) calc(100% * ${track.state / cutTrackLength}),
-						white calc(100% * ${track.state / cutTrackLength}),
-						white 100%
+						#555 calc(100% * ${track.state / cutTrackLength}),
+						#555 100%
 					);`}
 			/>
 			<Waveform
