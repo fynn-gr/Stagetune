@@ -1,9 +1,11 @@
 main.mac {
-	.win-buttons-mac {
-		filter: grayscale(100%);
-
-		&.active {
-			filter: none;
+	.toolbar {
+		.win-buttons-mac {
+			filter: grayscale(100%);
+	
+			&.active {
+				filter: none;
+			}
 		}
 	}
 

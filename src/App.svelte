@@ -46,7 +46,7 @@
 	let meterCanvas: HTMLCanvasElement;
 	let meterCtx: CanvasRenderingContext2D;
 
-	let splashScreen = true;
+	let splashScreen = false;
 	let playlistElements = [];
 	let hotkeyElements = [];
 	let sideBar = true;
@@ -72,6 +72,10 @@
 
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
+	}
+
+	function openSettings() {
+		invoke("open_settings", { invokeMessage: "" });
 	}
 
 	function handleDropPlaylist(e) {
@@ -148,6 +152,8 @@
 		} else if (event.payload == "projector") {
 			openVideoWindow(!projector);
 			projector = !projector;
+		} else if (event.payload == "settings") {
+			openSettings();
 		}
 	});
 
@@ -177,7 +183,7 @@
 	onMount(() => {
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
-			//console.log(e)
+			console.log(e)
 
 			if ($isEditing > 0) {
 				console.log("is Editing")
@@ -212,6 +218,12 @@
 							return e;
 						});
 						$playlist = $playlist;
+					}
+
+					//open Preferences
+					else if (e.code == "Comma" && e.ctrlKey) {
+						e.preventDefault();
+						openSettings();
 					}
 				}
 
@@ -257,6 +269,7 @@
 				}
 				//play
 				else if (e.code === "Space") {
+					e.preventDefault();
 					playlistElements[$selectedItem].playPause();
 				}
 				//save File
@@ -302,7 +315,7 @@
 				{#each $srcFiles as p, i}
 					<TrackListItem entry={p} />
 				{/each}
-				<p class="category">standart</p>
+				<p class="category">videos</p>
 				{#each $localFiles as l}
 					<TrackListItem entry={l} />
 				{/each}

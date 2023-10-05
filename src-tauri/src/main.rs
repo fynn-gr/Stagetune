@@ -3,7 +3,7 @@
 		windows_subsystem = "windows"
 )]
 
-use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata };
+use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata, Window };
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
@@ -27,20 +27,35 @@ async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
 
 }
 
+#[tauri::command]
+async fn open_settings(handle: tauri::AppHandle, invoke_message: String) {
+	let settings_window = tauri::WindowBuilder::new(
+		&handle,
+		"settings_window",
+		tauri::WindowUrl::App("settings.html".into())
+	)
+	.transparent(true)
+	.build()
+	.unwrap();
+
+	settings_window.set_decorations(false);
+}
+
 
 fn main() {
 	let context = tauri::generate_context!();
 
 	let submenu = Submenu::new("Main", Menu::new()
-	.add_native_item(MenuItem::About(context.package_info().name.clone(), AboutMetadata::default()).into())
-	.add_native_item(MenuItem::Separator)
-	.add_native_item(MenuItem::Services)
-	.add_native_item(MenuItem::Separator)
-	.add_native_item(MenuItem::Hide)
-	.add_native_item(MenuItem::HideOthers)
-	.add_native_item(MenuItem::ShowAll)
-	.add_native_item(MenuItem::Separator)
-	.add_item(CustomMenuItem::new("quit".to_string(), "Quit").accelerator("cmd+Q")));
+		.add_native_item(MenuItem::About(context.package_info().name.clone(), AboutMetadata::default()).into())
+		.add_item(CustomMenuItem::new("settings", "Settings").accelerator("cmd+,"))
+		.add_native_item(MenuItem::Separator)
+		.add_native_item(MenuItem::Services)
+		.add_native_item(MenuItem::Separator)
+		.add_native_item(MenuItem::Hide)
+		.add_native_item(MenuItem::HideOthers)
+		.add_native_item(MenuItem::ShowAll)
+		.add_native_item(MenuItem::Separator)
+		.add_item(CustomMenuItem::new("quit".to_string(), "Quit").accelerator("cmd+Q")));
 	let menu = Menu::new()
 		.add_submenu(submenu)
 		.add_submenu(Submenu::new("File", Menu::new()
@@ -59,7 +74,6 @@ fn main() {
 
 	tauri::Builder::default()
 	.setup(|app|{
-
 		Ok(())
 	})
 
@@ -71,6 +85,7 @@ fn main() {
 	})
 
 	.invoke_handler(tauri::generate_handler![show_projector])
+	.invoke_handler(tauri::generate_handler![open_settings])
 
 	.build(context)
 	

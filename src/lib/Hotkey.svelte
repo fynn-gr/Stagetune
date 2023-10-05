@@ -67,6 +67,15 @@
 			} else if (
 				e.code === `Digit${track.key}` &&
 				!e.ctrlKey &&
+				!e.altKey &&
+				track.playing
+			) {
+				//stop
+				input.stop();
+				onEnd();
+			} else if (
+				e.code === `Digit${track.key}` &&
+				!e.ctrlKey &&
 				e.altKey &&
 				$editMode
 			) {

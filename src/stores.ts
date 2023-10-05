@@ -110,14 +110,7 @@ export const hotkeys = writable([
 		name: "",
 		path: "",
 		playing: false,
-	},
-	{
-		key: "0",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
-	},
+	}
 ]);
 
 export const srcPaths = writable([]);

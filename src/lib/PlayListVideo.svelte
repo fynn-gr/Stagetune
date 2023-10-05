@@ -18,6 +18,7 @@
 	let dragging = false;
 	let missing = false;
 	let unlistenState;
+	let unlistenEnd;
 
 	function handleDragStart(e) {
 		let rec = e.target.getBoundingClientRect();
@@ -99,9 +100,11 @@
 
 	export function stop(reset: boolean = false) {
 		if (reset) {
-			emit("update_play", { action: "stop" });
+			emit("update_play", { action: "pause" });
 			track.playing = false;
 			track.state = 0;
+			emit("update_play", { action: "skip", position: 0 })
+			emit("update_play", { action: "stop"})
 		} else {
 			emit("update_play", { action: "pause" });
 			track.playing = false;
@@ -119,6 +122,13 @@
 				console.log(track.state / track.length);
 			}
 		});
+
+		unlistenEnd = await listen("video_ended", (e: any) => {
+			if (e.payload.name == track.name) {
+				track.playing = false;
+				track.state = 0;
+			}
+		})
 
 		updateProjectorList();
 	})
@@ -161,7 +171,20 @@
 					);`}
 			/>
 
-			<div class="drag-area"></div>
+			<div class="drag-area">
+				<img src="/icons/square/drag_n_drop.svg" alt="">
+			</div>
+
+			<!--reset-btn-->
+			<button
+				class="play-btn"
+				on:click={() => {
+					track.playing = false;
+					emit("update_play", { action: "stop" });
+				}}
+			>
+				<img src="./icons/square/reset.svg" alt="">
+			</button>
 
 			<!--play Button-->
 			<button
@@ -176,18 +199,6 @@
 				{:else}
 					<img src="./icons/square/play.svg" alt="" />
 				{/if}
-			</button>
-
-			<!--set Button-->
-			<button
-				class="set-btn"
-				class:active={false}
-				on:click={async () => {
-					track.playing = false;
-					emit("update_play", { action: "stop" });
-				}}
-			>
-				<img src="./icons/square/stop.svg" alt="" />
 			</button>
 
 			<!--Title-->

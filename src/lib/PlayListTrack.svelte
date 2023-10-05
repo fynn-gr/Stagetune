@@ -184,7 +184,7 @@
 			input.stop();
 			end();
 			track.playing = false;
-		} else {
+		} else if (!inFade) {
 			end();
 		}
 	}
@@ -273,7 +273,19 @@
 				resY={50}
 			/>
 
-			<div class="drag-area"></div>
+			<div class="drag-area">
+				<img src="/icons/square/drag_n_drop.svg" alt="">
+			</div>
+
+			<!--reset-btn-->
+			<button
+				class="play-btn"
+				on:click={() => {
+					stop(true)
+				}}
+			>
+				<img src="./icons/square/reset.svg" alt="">
+			</button>
 
 			<!--play Button-->
 			<button
@@ -310,11 +322,34 @@
 				<img src="./icons/square/repeat.svg" alt="repeat" />
 			</button>
 
+			{#if !$editMode && track.fade.in > 0}
+				<img class="fade-icon" src="./icons/square/fade_in.svg" alt="">
+			{/if}
+
+			{#if !$editMode && track.fade.out > 0}
+				<img class="fade-icon" src="./icons/square/fade_out.svg" alt="">
+			{/if}
+
 			<!--time-->
 			<p class="timecode">{secondsToMinutes(track.state)}</p>
 			<p class="length">
 				{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
 			</p>
+
+			<!--Hotkey-->
+			<span class="hotkey">
+				<input
+					type="text"
+					placeholder="Key"
+					on:focus={() => {
+						isEditing.update((e) => e + 1);
+					}}
+					on:blur={() => {
+						isEditing.update((e) => e - 1);
+					}}
+					disabled={!$editMode}
+				>
+			</span>
 
 			<!--fade-->
 			<span class="fade">

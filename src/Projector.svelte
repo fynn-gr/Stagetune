@@ -111,6 +111,7 @@
 			data-tauri-drag-region
 			class:vis={i == active}
 			bind:this={listElements[i]}
+			on:ended={() => {emit("video_ended", {name: list[active].name})}}
 		/>
 	{/each}
 
