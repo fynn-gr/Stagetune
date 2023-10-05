@@ -250,6 +250,13 @@
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}
+
+			input {
+				color: inherit;
+				background-color: transparent;
+				font-size: inherit;
+				font-weight: inherit;
+			}
 		}
 
 		.play-btn {
@@ -432,10 +439,6 @@
 
 		.play-btn {
 			margin: 12rem 0 12rem 0;
-		}
-
-		.set-btn {
-			margin: 12rem 0;
 		}
 
 		.title {

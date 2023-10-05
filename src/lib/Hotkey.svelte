@@ -14,6 +14,7 @@
 
 	async function handleDropHotkeys(e) {
 		e.preventDefault();
+		
 		if ($currentDragging.path && $currentDragging.type == "track") {
 			console.log("drop new track into Hotkeys: ", $currentDragging);
 

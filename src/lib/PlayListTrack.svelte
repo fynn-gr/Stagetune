@@ -306,7 +306,19 @@
 
 			<!--name-->
 			{#if track.buffer != undefined}
-				<div class="title"><p>{track.name}</p></div>
+				<div class="title">
+					<input
+						type="text"
+						bind:value={track.name}
+						on:focus={() => {
+							isEditing.update((e) => e + 1);
+						}}
+						on:blur={() => {
+							isEditing.update((e) => e - 1);
+						}}
+						disabled={!editMode}
+					>
+				</div>
 			{:else}
 				<div class="title"><p>loading...</p></div>
 			{/if}
@@ -336,20 +348,6 @@
 				{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
 			</p>
 
-			<!--Hotkey-->
-			<span class="hotkey">
-				<input
-					type="text"
-					placeholder="Key"
-					on:focus={() => {
-						isEditing.update((e) => e + 1);
-					}}
-					on:blur={() => {
-						isEditing.update((e) => e - 1);
-					}}
-					disabled={!$editMode}
-				>
-			</span>
 
 			<!--fade-->
 			<span class="fade">
