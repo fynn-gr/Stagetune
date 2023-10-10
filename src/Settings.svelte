@@ -5,6 +5,7 @@
 	import { LogicalSize, appWindow } from "@tauri-apps/api/window";
 	import { onMount } from "svelte";
 	import { prevent_default } from "svelte/internal";
+	import Keymap from "./pureUI/components/Keymap.svelte";
 
 
 	onMount(() => {
@@ -64,6 +65,9 @@
 	</div>
 
 	<div class="content">
+		<div class="keymap-frame">
+			<Keymap keySize={3} config={{}}/>
+		</div>
 	</div>
 
 	<div class="window-rim" />
@@ -94,19 +98,14 @@
 		grid-area: content;
 		inset: 0 0 0 0;
 		display: flex;
-		overflow: hidden scroll;
 		background-color: var(--properties-BG);
 		border-radius: 0 0 var(--win-corner) var(--win-corner);
 
-		.frame {
-			width: 640px;
-
-			img {
-				margin: auto;
-				width: 100%;
-
-			}
+		.keymap-frame {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			justify-content: center;
 		}
-
 	}
 </style>

@@ -321,7 +321,7 @@
 
 			<!--repeat-->
 			<button
-				class="repeat-btn"
+				class="option repeat-btn"
 				class:active={track.repeat}
 				on:click={() => {
 					track.repeat = $editMode ? !track.repeat : track.repeat;
@@ -331,21 +331,21 @@
 			</button>
 
 			<button
-				class="repeat-btn"
+				class="option auto-reset-btn"
 				class:active={track.autoReset}
 				on:click={() => {
 					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
 				}}
 			>
-				<img src="./icons/square/stop.svg" alt="auto reset">
+				<img src="./icons/square/auto_reset.svg" alt="auto reset">
 			</button>
 
 			{#if !$editMode && track.fade.in > 0}
-				<img class="fade-icon" src="./icons/square/fade_in.svg" alt="">
+				<img class="option fade-icon" src="./icons/square/fade_in.svg" alt="">
 			{/if}
 
 			{#if !$editMode && track.fade.out > 0}
-				<img class="fade-icon" src="./icons/square/fade_out.svg" alt="">
+				<img class="option fade-icon" src="./icons/square/fade_out.svg" alt="">
 			{/if}
 
 			<!--time-->

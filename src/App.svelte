@@ -283,12 +283,12 @@
 	$: emit("editMode", {edit: $editMode});
 	$: if($editMode) {
 		appWindow.setResizable(true);
-		appWindow.setMinimizable(true);
-		appWindow.setClosable(true);
+		//appWindow.setMinimizable(true);
+		//appWindow.setClosable(true);
 	} else {
 		appWindow.setResizable(false);
-		appWindow.setMinimizable(false);
-		appWindow.setClosable(false);
+		//appWindow.setMinimizable(false);
+		//appWindow.setClosable(false);
 	}
 </script>
 

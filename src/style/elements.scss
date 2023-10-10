@@ -278,12 +278,11 @@
 			}
 		}
 
-		.repeat-btn {
+		.option {
 			position: relative;
-			display: none;
 			width: 30rem;
 			height: 30rem;
-			margin: 6rem;
+			margin: 6rem 0 6rem 6rem;
 			border-radius: 5rem;
 			background-color: transparent;
 
@@ -295,10 +294,14 @@
 				display: block;
 			}
 
+			&.fade-icon {
+				filter: invert(100%);
+			}
+
 			img {
 				width: 30rem;
 				height: 30rem;
-				filter: invert(90%);
+				filter: invert(100%);
 			}
 		}
 
@@ -329,13 +332,6 @@
 
 		.fade {
 			display: none;
-		}
-
-		.fade-icon {
-			width: 30rem;
-			height: 30rem;
-			margin: 6rem 0;
-			filter: invert(100%);
 		}
 
 		.volume {
@@ -416,9 +412,19 @@
 				translate: 2rem 0;;
 			}
 		}
-		
-		.repeat-btn {
-			display: block;
+
+		.play-btn {
+			margin: 12rem 0 12rem 0;
+		}
+
+		.title {
+			height: 54rem;
+			line-height: 27rem;
+			font-size: 18rem;
+		}
+
+		.option {
+			margin: 12rem 0 12rem 12rem;
 
 			&:hover {
 				background-color: var(--hover);
@@ -431,20 +437,6 @@
 			img {
 				filter: invert(90%);
 			}
-		}
-
-		.play-btn {
-			margin: 12rem 0 12rem 0;
-		}
-
-		.title {
-			height: 54rem;
-			line-height: 27rem;
-			font-size: 18rem;
-		}
-
-		.repeat-btn {
-			margin: 12rem;
 		}
 
 		.timecode {
