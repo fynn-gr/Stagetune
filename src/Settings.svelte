@@ -2,8 +2,23 @@
 	import "../src/pureUI/scss/index.scss";
 	import "./style/App.scss";
 	import { uiPlatform } from "./stores";
-	import { appWindow } from "@tauri-apps/api/window";
+	import { LogicalSize, appWindow } from "@tauri-apps/api/window";
+	import { onMount } from "svelte";
+	import { prevent_default } from "svelte/internal";
 
+
+	onMount(() => {
+		appWindow.setSize(new LogicalSize(800, 480))
+
+		document.addEventListener("keydown", e => {
+			if (e.metaKey) {
+
+			}
+		})
+		document.addEventListener("keyup", e => {
+
+		})
+	})
 </script>
 
 <main class={"window-body dark " + $uiPlatform}>
@@ -49,7 +64,6 @@
 	</div>
 
 	<div class="content">
-		<img src="./keymap.png" alt="">
 	</div>
 
 	<div class="window-rim" />
@@ -79,11 +93,20 @@
 	.content {
 		grid-area: content;
 		inset: 0 0 0 0;
+		display: flex;
 		overflow: hidden scroll;
 		background-color: var(--properties-BG);
+		border-radius: 0 0 var(--win-corner) var(--win-corner);
 
-		img {
-			width: 100vw;
+		.frame {
+			width: 640px;
+
+			img {
+				margin: auto;
+				width: 100%;
+
+			}
 		}
+
 	}
 </style>

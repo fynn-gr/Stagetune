@@ -81,7 +81,7 @@
 	}
 
 	function onEnd() {
-		if (track.state >= track.length * 0.99) {
+		if (ctx.currentTime - track.startedAt >= track.length * 0.96) {
 			//reached end of track
 			console.log("ended");
 			if (track.repeat) {
@@ -112,14 +112,10 @@
 	export function playPause() {
 		//console.log("started at: ", startedAt,"paused at: ", pausedAt)
 		if (track.playing) {
-			console.log(
-				`paused: started: ${track.startedAt}, paused: ${track.pausedAt}, state: ${track.state}`
-			);
-			stop(false, true);
+			//pause
+			stop(track.autoReset, true);
 		} else {
-			console.log(
-				`played: started: ${track.startedAt}, paused: ${track.pausedAt}, state: ${track.state}`
-			);
+			//play
 			play(null, true);
 		}
 	}
@@ -143,7 +139,7 @@
 			input.start(0, startTime + cutIn);
 			track.startedAt = ctx.currentTime - startTime;
 		}
-		//console.log("resumed at:", track.pausedAt)
+
 		track.playing = true;
 	}
 
@@ -316,7 +312,7 @@
 						on:blur={() => {
 							isEditing.update((e) => e - 1);
 						}}
-						disabled={!editMode}
+						disabled={!editMode || $selectedItem != id}
 					>
 				</div>
 			{:else}
@@ -332,6 +328,16 @@
 				}}
 			>
 				<img src="./icons/square/repeat.svg" alt="repeat" />
+			</button>
+
+			<button
+				class="repeat-btn"
+				class:active={track.autoReset}
+				on:click={() => {
+					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
+				}}
+			>
+				<img src="./icons/square/stop.svg" alt="auto reset">
 			</button>
 
 			{#if !$editMode && track.fade.in > 0}

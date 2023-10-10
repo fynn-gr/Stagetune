@@ -1,26 +1,48 @@
 <script lang="ts">
-	import { hotkeys, currentDragging, isEditing, editMode } from "@/stores";
-	import { fileNameFromPath } from "@/utils";
-	import { convertFileSrc } from "@tauri-apps/api/tauri";
+	import {
+		hotkeys,
+		currentDragging,
+		isEditing,
+		editMode,
+		playlist,
+		playlistElements,
+	} from "@/stores";
+	import { createPlaylistTrack } from "@/utils";
 	import { onMount } from "svelte";
 
-	export let ctx: AudioContext;
-	export let track: any;
-	export let stopAll = (playlist: boolean, hotkeys: boolean) => {};
-	let missing = false;
-	let loaded = false;
-	let audioBuffer: AudioBuffer;
-	let input: AudioBufferSourceNode;
+	export let key: string;
+	export let track: any = null;
+	let isPlaying = false;
 
 	async function handleDropHotkeys(e) {
 		e.preventDefault();
-		
-		if ($currentDragging.path && $currentDragging.type == "track") {
-			console.log("drop new track into Hotkeys: ", $currentDragging);
 
-			if (track.playing) input.stop();
-			track.path = $currentDragging.path;
-			createInput(true);
+		if ($currentDragging.origin == "src" && $currentDragging.type == "track") {
+			playlist.update((e) => {
+				e.splice(
+					$playlist.length,
+					0,
+					createPlaylistTrack(
+						"playlist",
+						$currentDragging.type,
+						$currentDragging.path,
+						$currentDragging.name
+					)
+				);
+				return e;
+			})
+			$playlist[$playlist.length - 1].hotkey = key;
+			track = $playlist[$playlist.length -1];
+
+			$currentDragging = null;
+		} else if (
+			$currentDragging.origin == "playlist" &&
+			$currentDragging.type == "track"
+		) {
+			console.log($currentDragging);
+
+			$currentDragging.hotkey = key;
+			track = $currentDragging;
 
 			$currentDragging = null;
 		} else {
@@ -30,77 +52,46 @@
 		console.log("hotkeys", $hotkeys);
 	}
 
-	function onEnd() {
-		track.playing = false;
-		createInput(false);
-	}
-
-	export async function createInput(reload: boolean) {
-		input = null;
-		if (reload) {
-			const response = await fetch(convertFileSrc(track.path));
-			const arrayBuffer = await response.arrayBuffer();
-			audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-		}
-		input = new AudioBufferSourceNode(ctx, { buffer: audioBuffer });
-		input.connect(ctx.destination);
-		input.onended = onEnd;
-	}
-
 	onMount(async () => {
-		createInput(true);
-		loaded = true;
-
 		document.addEventListener("keydown", (e) => {
-			if ($isEditing > 0) {
+			if ($isEditing > 0 || e.ctrlKey || e.code != `Digit${key}`) {
 				return;
-			} else if (
-				e.code === `Digit${track.key}` &&
-				!e.ctrlKey &&
-				!e.altKey &&
-				!track.playing
-			) {
-				//playing
-				//stopAll(false, true);
-
-				input.start(0);
-				track.playing = true;
-			} else if (
-				e.code === `Digit${track.key}` &&
-				!e.ctrlKey &&
-				!e.altKey &&
-				track.playing
-			) {
+			} else if (!e.altKey && !track.playing) {
+				//play
+				e.preventDefault();
+				console.log($playlist[$playlist.indexOf(track)], track)
+				let id = $playlist.indexOf(track);
+				$playlistElements[id].play(null, true);
+			} else if (!e.altKey && track.playing) {
 				//stop
-				input.stop();
-				onEnd();
-			} else if (
-				e.code === `Digit${track.key}` &&
-				!e.ctrlKey &&
-				e.altKey &&
-				$editMode
-			) {
+				e.preventDefault();
+				let id = $playlist.indexOf(track);
+				$playlistElements[id].stop(true, true);
+			} else if (e.altKey && $editMode) {
 				//deleting hotkey
-				if (track.playing) input.stop();
-				input = null;
-				track.name = "";
-				track.playing = false;
-				track.path = "";
-				console.log(input, track);
+				e.preventDefault();
+				track.key = undefined;
+				track = null;
 			}
 		});
 	});
+
+	$: if (track != null) {
+		isPlaying = track.playing;
+	}
 </script>
 
 <div
 	class="hotkeySlot"
-	class:playing={track.playing}
+	class:playing={isPlaying}
 	on:dragover={(e) => {
 		e.preventDefault();
 		return false;
 	}}
 	on:drop={handleDropHotkeys}
 >
-	<p class="key">{track.key}</p>
-	<p class="name">{fileNameFromPath(track.path)}</p>
+	<p class="key">{key}</p>
+	<p class="name" class:placeholder={track == null}>
+		{track ? track.name : ""}
+	</p>
 </div>

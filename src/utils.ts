@@ -9,7 +9,6 @@ import {
 import {
 	playlist,
 	playlistPath,
-	srcPaths,
 	srcFiles,
 	currentDragging,
 	hotkeys,
@@ -34,6 +33,7 @@ export interface playListItem {
 	volume?: number;
 	pan?: number;
 	repeat?: boolean;
+	autoReset: boolean;
 	edit?: { in?: number; out?: number };
 	fade?: { in?: number; out?: number };
 	annotation?: { before: string; after: string };
@@ -136,8 +136,8 @@ export function openDir() {
 				console.log("nothing selected");
 			} else {
 				//add to src paths
-				scanSrcPaths(sel);
-				playlistPath.set(sel)
+				scanSrcPaths(sel as string);
+				playlistPath.set(sel as string)
 				recent.update(e => {
 					e.push(sel);
 					return e;
@@ -190,8 +190,16 @@ async function scanSrcPaths(path: string) {
 					console.log("load playlist")
 					let obj = JSON.parse(e);
 					playlist.set(obj.playlist);
-					//srcPaths.set(obj.srcPaths);
 					hotkeys.set(obj.hotkeys);
+
+					get(hotkeys).forEach(e => {
+						if (e.track != null) {
+							let ref = get(playlist)[e.track];
+							e.track = ref;
+						}
+					});
+
+					console.log(get(hotkeys))
 				});
 			} else {}
 		});
@@ -215,43 +223,41 @@ async function scanSrcPaths(path: string) {
 	console.log(get(srcFiles), get(playlist))
 }
 
-export function openPlaylist(file: string = null) {
-	try {
-		open({
-			directory: false,
-			multiple: false,
-			title: "open Playlist"
-		}).then(async (sel) => {
-			if (sel == null || Array.isArray(sel)) {
-				console.log("nothing selected");
-			} else if (isPlaylistFile(sel)) {
-				readTextFile(sel, {}).then((e) => {
-					let obj = JSON.parse(e);
-					playlist.set(obj.playlist);
-					srcPaths.set(obj.srcPaths);
-					hotkeys.set(obj.hotkeys);
-					//scanSrcPaths();
-				});
-			}
-		});
-	} catch (err) {
-		console.error(err);
-	}
-}
-
 export function savePlaylist() {
 	//save to known path
 	console.log("save to path: ", get(playlistPath));
 	
 	let saveObj = {
+		meta: {
+			version: "0.1.0",
+			fileVersion: 1
+		},
 		playlist: get(playlist),
-		hotkeys: get(hotkeys),
+		hotkeys: []
 	};
 
 	saveObj.playlist.forEach(e => {
 		e.playing = false;
 		e.state = 0;
+		e.startedAt = 0;
+		e.pausedAt = 0;
+		e.buffer = null;
 	})
+
+	get(hotkeys).forEach(e => {
+		if (e.track != null) {
+			saveObj.hotkeys.push({
+				key: e.key,
+				track: get(playlist).indexOf(e.track)
+			})
+		} else {
+			saveObj.hotkeys.push({
+				key: e.key,
+				track: null
+			})
+		}
+	})
+
 	writeTextFile(get(playlistPath) + "/playlist.playlist", JSON.stringify(saveObj), {});
 	saveRecent();
 }

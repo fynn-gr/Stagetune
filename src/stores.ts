@@ -50,70 +50,45 @@ export const selectedItem = writable(null);
 export const hotkeys = writable([
 	{
 		key: "1",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "2",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "3",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "4",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "5",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "6",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "7",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "8",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
+		track: null,
 	},
 	{
 		key: "9",
-		type: "track",
-		name: "",
-		path: "",
-		playing: false,
-	}
+		track: null,
+	},
 ]);
+export const hotkeyElements = writable([]);
+export const playlistElements = writable([]);
 
-export const srcPaths = writable([]);
+
 export const srcFiles = writable([]);
 export const localFiles = writable([
 	{

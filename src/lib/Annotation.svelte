@@ -3,7 +3,7 @@
 
 	export let id: number;
 	export let annotation: { before: string; after: string };
-	export let start: boolean;
+	export let start: boolean; //true if before track, false if after
 </script>
 
 {#if annotation[start ? "before" : "after"] != null}
@@ -19,7 +19,7 @@
 				isEditing.update((e) => e - 1);
 				console.log("out of focus", $isEditing);
 			}}
-			bind:value={annotation[start ? 0 : 1]}
+			bind:value={annotation[start ? "before" : "after"]}
 		/>
 	</div>
 {/if}

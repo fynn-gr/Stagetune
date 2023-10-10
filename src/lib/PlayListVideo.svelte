@@ -202,7 +202,19 @@
 			</button>
 
 			<!--Title-->
-			<p class="title">{track.name}</p>
+			<div class="title">
+				<input
+					type="text"
+					bind:value={track.name}
+					on:focus={() => {
+						isEditing.update((e) => e + 1);
+					}}
+					on:blur={() => {
+						isEditing.update((e) => e - 1);
+					}}
+					disabled={!editMode || $selectedItem != id}
+				>
+			</div>
 		</div>
 
 		<!--annotation after-->

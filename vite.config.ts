@@ -50,6 +50,7 @@ export default defineConfig(({ command }) => {
 				input: {
 					main: resolve(__dirname, "index.html"),
 					nested: resolve(__dirname, "video.html"),
+					settings: resolve(__dirname, "settings.html"),
 				},
 			},
 

@@ -5,7 +5,7 @@
 
 use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata, Window };
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+
 
 #[tauri::command]
 async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
@@ -19,13 +19,14 @@ async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
 		.unwrap();
 
 		video_window.set_always_on_top(true);
-		video_window.set_decorations(false);
+		video_window.set_title("projector");
 	} else {
 		let window = handle.get_window("video_window").unwrap();
 		window.close();
 	}
 
 }
+
 
 #[tauri::command]
 async fn open_settings(handle: tauri::AppHandle, invoke_message: String) {
@@ -37,7 +38,6 @@ async fn open_settings(handle: tauri::AppHandle, invoke_message: String) {
 	.transparent(true)
 	.build()
 	.unwrap();
-
 	settings_window.set_decorations(false);
 }
 
@@ -84,8 +84,7 @@ fn main() {
 		event.window().emit("menu", event_name).unwrap();
 	})
 
-	.invoke_handler(tauri::generate_handler![show_projector])
-	.invoke_handler(tauri::generate_handler![open_settings])
+	.invoke_handler(tauri::generate_handler![show_projector, open_settings])
 
 	.build(context)
 	

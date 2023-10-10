@@ -2,7 +2,7 @@
 	import { recent } from "@/stores";
 	import { onMount } from "svelte";
 	import { dataDir } from "@tauri-apps/api/path";
-	import { loadRecent, openPlaylist } from "@/utils";
+	import { loadRecent } from "@/utils";
 
 	export let splashScreen;
 	let recentList = [];
@@ -54,7 +54,6 @@
 						class="recent"
 						on:click={(e) => {
 							e.stopPropagation();
-							openPlaylist(item);
 						}}
 					>
 						<img src="/icons/square/file.svg" />

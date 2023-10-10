@@ -13,8 +13,8 @@
 	import TrackListItem from "./lib/TrackListItem.svelte";
 	import TopBar from "./lib/TopBar.svelte";
 	import Hotkey from "./lib/Hotkey.svelte";
-	import HotkeyPlaceholder from "./lib/HotkeyPlaceholder.svelte";
 	import Waveform from "./lib/Waveform.svelte";
+	import Splash from "./lib/Splash.svelte";
 
 	import {
 		editMode,
@@ -23,14 +23,13 @@
 		playlist,
 		selectedItem,
 		srcFiles,
-		playlistPath,
-		srcPaths,
+		playlistElements,
+		hotkeyElements,
 		isEditing,
 		hotkeys,
 		localFiles,
 	} from "./stores";
 	import {
-		openPlaylist,
 		savePlaylist,
 		fileNameFromPath,
 		openDir,
@@ -38,22 +37,16 @@
 		waveformCalc,
 		updateProjectorList,
 	} from "./utils";
-	import PlayListLoop from "./lib/PlayListLoop.svelte";
-	import Splash from "./lib/Splash.svelte";
-	import Annotation from "./lib/Annotation.svelte";
+	import { appWindow } from "@tauri-apps/api/window";
 
-	let playlistElement: HTMLElement;
 	let meterCanvas: HTMLCanvasElement;
 	let meterCtx: CanvasRenderingContext2D;
 
 	let splashScreen = false;
-	let playlistElements = [];
-	let hotkeyElements = [];
 	let sideBar = true;
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
-	//let zoom = 1.2;
 
 	const ctx = new AudioContext();
 	const analyser = ctx.createAnalyser();
@@ -107,14 +100,6 @@
 		}
 	}
 
-	function stopAll(playlist: boolean, hotkeys: boolean) {
-		if (hotkeys) {
-			for (let i = 0; i < hotkeyElements.length; i++) {
-				hotkeyElements[i].createInput(true);
-			}
-		}
-	}
-
 	function moveUp() {
 		console.log($selectedItem)
 		$selectedItem > 0 ? selectedItem.update((n) => n - 1) : selectedItem.set(0);
@@ -133,6 +118,25 @@
 		//if (playlist[selectedItem].text != null) {
 		//	moveDown();
 		//}
+	}
+
+	function drawMeter() {
+		//requestAnimationFrame(drawMeter);
+
+		analyser.getByteTimeDomainData(dataArray);
+
+		meterCtx.fillStyle = "rgb(200, 200, 200)";
+		meterCtx.fillRect(0, 0, meterCanvas.width, meterCanvas.height);
+
+		for (let i = 0; i < bufferLength; i++) {
+			const v = dataArray[i] / 128.0;
+			const y = (v * meterCanvas.height) / 1.5;
+			console.log(v, y)
+
+			//meterCtx.lineTo(x, y);
+			meterCtx.fillStyle = "rgb(256, 0, 0)";
+			meterCtx.fillRect(0, meterCanvas.height - y, meterCanvas.width, meterCanvas.height)
+		}
 	}
 
 	const unlistenMenus = listen("menu", async (event) => {
@@ -161,25 +165,6 @@
 		updateProjectorList();
 	})
 
-	function drawMeter() {
-		//requestAnimationFrame(drawMeter);
-
-		analyser.getByteTimeDomainData(dataArray);
-
-		meterCtx.fillStyle = "rgb(200, 200, 200)";
-		meterCtx.fillRect(0, 0, meterCanvas.width, meterCanvas.height);
-
-		for (let i = 0; i < bufferLength; i++) {
-			const v = dataArray[i] / 128.0;
-			const y = (v * meterCanvas.height) / 1.5;
-			console.log(v, y)
-
-			//meterCtx.lineTo(x, y);
-			meterCtx.fillStyle = "rgb(256, 0, 0)";
-			meterCtx.fillRect(0, meterCanvas.height - y, meterCanvas.width, meterCanvas.height)
-		}
-	}
-
 	onMount(() => {
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
@@ -206,7 +191,7 @@
 					else if (e.code == "Backspace" || e.code == "Delete") {
 						//stop track if playing
 						if ($playlist[$selectedItem].playing)
-							playlistElements[$selectedItem].stop();
+							$playlistElements[$selectedItem].stop();
 
 						let toDelete = $selectedItem;
 						//find new selected item
@@ -250,7 +235,7 @@
 					!e.metaKey
 				) {
 					playlist.update((items) => {
-						playlistElements[$selectedItem].stop(true);
+						$playlistElements[$selectedItem].stop(true);
 						return items;
 					});
 				}
@@ -261,16 +246,16 @@
 					!e.metaKey
 				) {
 					playlist.update((items) => {
-						playlistElements[$selectedItem].stop(true);
+						$playlistElements[$selectedItem].stop(true);
 						selectedItem.update((n) => n + 1);
-						playlistElements[$selectedItem].play(0);
+						$playlistElements[$selectedItem].play(0);
 						return items;
 					});
 				}
 				//play
 				else if (e.code === "Space") {
 					e.preventDefault();
-					playlistElements[$selectedItem].playPause();
+					$playlistElements[$selectedItem].playPause();
 				}
 				//save File
 				else if (e.code == "KeyS" && e.ctrlKey) {
@@ -281,9 +266,9 @@
 
 		
 		const interval = setInterval(() => {
-			//console.log(playlistElements);
-			for (let i = 0; i < playlistElements.length; i++) {
-				playlistElements[i].update();
+			//console.log($playlistElements);
+			for (let i = 0; i < $playlistElements.length; i++) {
+				$playlistElements[i].update();
 				//console.log("peak: ", peak)
 			}
 			//drawMeter()
@@ -296,6 +281,15 @@
 
 	$: console.log($isEditing)
 	$: emit("editMode", {edit: $editMode});
+	$: if($editMode) {
+		appWindow.setResizable(true);
+		appWindow.setMinimizable(true);
+		appWindow.setClosable(true);
+	} else {
+		appWindow.setResizable(false);
+		appWindow.setMinimizable(false);
+		appWindow.setClosable(false);
+	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -303,6 +297,8 @@
 	<Splash bind:splashScreen />
 {/if}
 
+	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
 
 	<!--SideBar-->
@@ -339,11 +335,8 @@
 	<TopBar bind:sideBar bind:editor={editorPanel} bind:palettes />
 
 	<!--playlist-->
-	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div
 		class="playlist"
-		bind:this={playlistElement}
 		on:drop={handleDropPlaylist}
 		on:dragover={(e) => {
 			e.preventDefault();
@@ -354,7 +347,7 @@
 			{#each $playlist as t, i}
 				{#if t.type == "track"}
 					<PlayListTrack
-						bind:this={playlistElements[i]}
+						bind:this={$playlistElements[i]}
 						bind:track={t}
 						id={i}
 						{ctx}
@@ -362,23 +355,15 @@
 					/>
 				{:else if t.type == "video"}
 					<PlayListVideo
-						bind:this={playlistElements[i]}
+						bind:this={$playlistElements[i]}
 						bind:track={t}
 						id={i}
 					/>
 				{:else if t.type == "annotation"}
 					<PlayListAnotation
-						bind:this={playlistElements[i]}
+						bind:this={$playlistElements[i]}
 						bind:item={t}
 						id={i}
-					/>
-				{:else if t.type == "loop"}
-					<PlayListLoop
-						bind:this={playlistElements[i]}
-						bind:track={t}
-						id={i}
-						{ctx}
-						{masterGain}
 					/>
 				{/if}
 			{/each}
@@ -440,7 +425,7 @@
 				>
 					<Waveform
 						data={
-							waveformCalc(playlistElements[$selectedItem].getBuffer(),
+							waveformCalc($playlistElements[$selectedItem].getBuffer(),
 							window.innerWidth)
 						}
 						samples={window.innerWidth}
@@ -485,16 +470,11 @@
 			<!--hotkeys-->
 			<div class="hotkeys">
 				{#each $hotkeys as a, i}
-					{#if a.path != ""}
-						<Hotkey
-							bind:track={a}
-							bind:this={hotkeyElements[i]}
-							{ctx}
-							{stopAll}
-						/>
-					{:else}
-						<HotkeyPlaceholder bind:track={a} bind:this={hotkeyElements[i]} />
-					{/if}
+					<Hotkey
+						bind:this={$hotkeyElements[i]}
+						bind:track={a.track}
+						key={a.key}
+					/>
 				{/each}
 			</div>
 		</div>
