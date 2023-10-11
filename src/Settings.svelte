@@ -57,6 +57,11 @@
 
 		<div class="tab">
 			<div class="icon"></div>
+			<p>Projector</p>
+		</div>
+
+		<div class="tab">
+			<div class="icon"></div>
 			<p>Update</p>
 		</div>
 
@@ -66,7 +71,23 @@
 
 	<div class="content">
 		<div class="keymap-frame">
-			<Keymap keySize={3} config={{}}/>
+			<Keymap
+				keySize={3}
+				configStandart={{
+					W: "Up",
+					A: "Reset",
+					S: "Down",
+					D: "Skip",
+					ArrowUp: "Up"
+				}}
+				configCmd={{
+					O: "Open",
+					S: "Save",
+					P: "Projector"
+				}}
+				configAlt={{}}
+				modifier="cmd"
+			/>
 		</div>
 	</div>
 
@@ -101,11 +122,6 @@
 		background-color: var(--properties-BG);
 		border-radius: 0 0 var(--win-corner) var(--win-corner);
 
-		.keymap-frame {
-			display: flex;
-			width: 100%;
-			height: 100%;
-			justify-content: center;
-		}
+
 	}
 </style>

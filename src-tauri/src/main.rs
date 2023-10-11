@@ -3,7 +3,7 @@
 		windows_subsystem = "windows"
 )]
 
-use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata, Window };
+use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata };
 
 
 
@@ -56,7 +56,7 @@ fn main() {
 		.add_native_item(MenuItem::ShowAll)
 		.add_native_item(MenuItem::Separator)
 		.add_item(CustomMenuItem::new("quit".to_string(), "Quit").accelerator("cmd+Q")));
-	let menu = Menu::new()
+	let mut menu = Menu::new()
 		.add_submenu(submenu)
 		.add_submenu(Submenu::new("File", Menu::new()
 			.add_item(CustomMenuItem::new("new", "New Playlist").accelerator("cmd+N"))
@@ -71,6 +71,10 @@ fn main() {
 			.add_native_item(MenuItem::Separator)
 			.add_item(CustomMenuItem::new("projector", "Projector").accelerator("cmd+P"))))
 		.add_submenu(Submenu::new("Help", Menu::with_items([CustomMenuItem::new("Learn More", "Learn More").into()])));
+
+	if cfg!(windows) {
+		menu = Menu::new();
+	}
 
 	tauri::Builder::default()
 	.setup(|app|{

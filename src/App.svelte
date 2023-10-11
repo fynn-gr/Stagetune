@@ -120,6 +120,18 @@
 		//}
 	}
 
+	function pauseAll() {
+		for (let i = 0; i < $playlistElements.length; i++) {
+			$playlistElements[i].stop(false, false)
+		}
+	}
+
+	function resetAll() {
+		for (let i = 0; i < $playlistElements.length; i++) {
+			$playlistElements[i].stop(true, false)
+		}
+	}
+
 	function drawMeter() {
 		//requestAnimationFrame(drawMeter);
 
@@ -297,8 +309,8 @@
 	<Splash bind:splashScreen />
 {/if}
 
-	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
 
 	<!--SideBar-->
@@ -332,7 +344,7 @@
 	</div>
 
 	<!--TopBar-->
-	<TopBar bind:sideBar bind:editor={editorPanel} bind:palettes />
+	<TopBar bind:sideBar bind:editor={editorPanel} bind:palettes {pauseAll} {resetAll}/>
 
 	<!--playlist-->
 	<div

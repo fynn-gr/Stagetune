@@ -11,7 +11,9 @@
 	export let sideBar;
 	export let editor;
 	export let palettes;
-	//let zoom = 1.4
+	export let pauseAll;
+	export let resetAll;
+
 </script>
 
 <div class="topbar toolbar" data-tauri-drag-region>
@@ -123,6 +125,7 @@
 				toolTip="toggle comment before"
 			/>
 
+			<!--Comment After-->
 			<TopBarToggle
 				icon="comment_after"
 				disabled={!$editMode}
@@ -151,42 +154,21 @@
 			toolTip="edit Mode"
 		/>
 
-		<!--
-		<input
-			type="range"
-			min={1}
-			max={2.0}
-			bind:value={zoom}
-			step={0.1}
-			on:change={() => {
-				console.log(zoom)
-				//document.documentElement.style.fontSize = `${0.1}px`;
-				//document.documentElement.style.fontSize = `${10}px`;
-				document.documentElement.style.fontSize = `${zoom}px`;
+		<div class="spacer-fix" data-tauri-drag-region="" />
 
-				document.body.focus();
-			}}
-		/>
-		-->
-
-		<!--
-		<select
-			bind:value={zoom}
-			on:change={() => {
-				//console.log(zoom)
-				document.documentElement.style.fontSize = `${0.1}px`;
-				document.documentElement.style.fontSize = `${10}px`;
-				document.documentElement.style.fontSize = `${zoom}px`;
-
-				document.body.focus();
-			}}
-		>
-			<option value="1">100%</option>
-			<option value="1.2">120%</option>
-			<option value="1.4">140%</option>
-			<option value="1.8">180%</option>
-		</select>
-		-->
+		<div class="group">
+			<TopBarButton
+				icon="reset"
+				toolTip="reset all tracks"
+				onClick={resetAll}
+			/>
+	
+			<TopBarButton
+				icon="stop"
+				toolTip="pause all tracks"
+				onClick={pauseAll}
+			/>
+		</div>
 
 		<div class="spacer" data-tauri-drag-region="" />
 
