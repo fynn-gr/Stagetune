@@ -312,7 +312,7 @@
 						on:blur={() => {
 							isEditing.update((e) => e - 1);
 						}}
-						disabled={!editMode || $selectedItem != id}
+						disabled={!$editMode || $selectedItem != id}
 					>
 				</div>
 			{:else}

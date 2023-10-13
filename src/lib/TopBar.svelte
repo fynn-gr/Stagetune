@@ -8,6 +8,7 @@
 	import { editMode, playlist, selectedItem, uiPlatform } from "@/stores";
 	import { openDir } from "@/utils";
 	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
+	import ModeSwitch from "./ModeSwitch.svelte";
 
 	export let sideBar;
 	export let editor;
@@ -134,16 +135,13 @@
 		<div class="spacer-fix" data-tauri-drag-region="" />
 
 		<!--Lock-->
-		<TopBarToggle
+		<ModeSwitch
 			icon="lock"
 			iconActive="lock_open"
 			bind:active={$editMode}
 			activeColor="var(--secondary)"
 			toolTip="edit Mode"
 		/>
-		<div class="mode-lable" class:edit={$editMode}>
-			{$editMode ? "Edit" : "Live"}
-		</div>
 
 		<div class="spacer-fix" data-tauri-drag-region="" />
 

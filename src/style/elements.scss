@@ -1007,19 +1007,15 @@
 	min-height: var(--topbar-height);
 	border-top-left-radius: var(--win-corner) !important;
 
-	.mode-lable {
-		height: 28px;
-		width: 46px;
-		margin: 14px 0 13px -16px;
-		padding: 0 10px 0 8px;
+	.topbar-button.mode-switch {
+		width: 80px !important;
+		display: flex;
+		flex-direction: row;
 		line-height: 28px;
 		font-size: 14px;
 		font-weight: 600;
 		border-radius: 0 6px 6px 0;
+		color: var(--text);
 		background-color: transparent;
-
-		&.edit {
-			background-color: var(--secondary);
-		}
 	}
 }
