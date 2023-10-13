@@ -2,6 +2,7 @@
     "folders": [
         "tb_mac",
         "tb_win",
-        "square"
+        "square",
+        "settings_tabs"
     ]
 }

@@ -1,13 +1,4 @@
 main.mac {
-	.toolbar {
-		.win-buttons-mac {
-			filter: grayscale(100%);
-	
-			&.active {
-				filter: none;
-			}
-		}
-	}
 
 	.topbar-container {
 		padding-right: 14px;

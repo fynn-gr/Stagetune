@@ -3,11 +3,10 @@
 
 :root {
 	--accent: rgb(0, 108, 141);
-	//--secondary: rgb(201, 34, 22);
-	--secondary: rgb(245, 35, 75);
+	--secondary: rgb(245, 36, 74);
+	--secondary-filter: invert(20%) sepia(72%) saturate(4109%) hue-rotate(339deg) brightness(102%) contrast(92%);
 
 	--annotation: rgb(54, 54, 54);
-
 	--topBarHeight: 54px;
 }
 

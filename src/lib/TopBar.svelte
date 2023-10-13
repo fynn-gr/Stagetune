@@ -7,6 +7,7 @@
 
 	import { editMode, playlist, selectedItem, uiPlatform } from "@/stores";
 	import { openDir } from "@/utils";
+	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 
 	export let sideBar;
 	export let editor;
@@ -19,43 +20,30 @@
 <div class="topbar toolbar" data-tauri-drag-region>
 	<div class="topbar-container" data-tauri-drag-region>
 		{#if $uiPlatform == "mac"}
-			<div
-				class="win-buttons-mac"
-				class:active={$editMode}
-				data-tauri-drag-region
-			>
-				<button
-					on:click={async () => {
-						if ($editMode) {
-							const confirmed = await confirm("Discard all unsaved changes?", {
-								title: "Quit?",
-								type: "warning",
-								okLabel: "Quit",
-							}).then((isOK) => (isOK ? appWindow.close() : null));
-						}
-					}}
-				>
-					<img src="./icons/winButtonsMacClose.svg" alt="close" />
-				</button>
-				<button
-					on:click={() => {
-						if ($editMode) {
-							appWindow.minimize();
-						}
-					}}
-				>
-					<img src="./icons/winButtonsMacMin.svg" alt="minimize" />
-				</button>
-				<button
-					on:click={() => {
-						if ($editMode) {
-							appWindow.toggleMaximize();
-						}
-					}}
-				>
-					<img src="./icons/winButtonsMacMax.svg" alt="maximize" />
-				</button>
-			</div>
+			<WinButtonsMac
+				onClose={async () => {
+					if ($editMode) {
+						const confirmed = await confirm("Discard all unsaved changes?", {
+							title: "Quit?",
+							type: "warning",
+							okLabel: "Quit",
+						}).then((isOK) => (isOK ? appWindow.close() : null));
+					}
+				}}
+				onMin={() => {
+					if ($editMode) {
+						appWindow.minimize();
+					}
+				}}
+				onMax={() => {
+					if ($editMode) {
+						appWindow.toggleMaximize();
+					}
+				}}
+				CanMinimize={$editMode}
+				CanMaximise={$editMode}
+				CanClose={$editMode}
+			/>
 		{/if}
 
 		<div class="group">
@@ -153,16 +141,21 @@
 			activeColor="var(--secondary)"
 			toolTip="edit Mode"
 		/>
+		<div class="mode-lable" class:edit={$editMode}>
+			{$editMode ? "Edit" : "Live"}
+		</div>
 
 		<div class="spacer-fix" data-tauri-drag-region="" />
 
 		<div class="group">
+			<!--reset all-->
 			<TopBarButton
 				icon="reset"
 				toolTip="reset all tracks"
 				onClick={resetAll}
 			/>
 	
+			<!--stop all-->
 			<TopBarButton
 				icon="stop"
 				toolTip="pause all tracks"

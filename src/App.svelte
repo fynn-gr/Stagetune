@@ -153,22 +153,21 @@
 
 	const unlistenMenus = listen("menu", async (event) => {
 		console.log(event);
-		if (event.payload == "quit") {
-			if ($editMode) {
-				const confirmed = await confirm(
-					"Do you want to discard all unsaved changes?",
-					{ title: "Quit?", type: "warning", okLabel: "Quit" }
-				).then((isOK) => (isOK ? exit(0) : null));
-			}
-		} else if (event.payload == "new") {
-		} else if (event.payload == "open") {
+		if (event.payload == "quit" && $editMode) {
+			const confirmed = await confirm(
+				"Do you want to discard all unsaved changes?",
+				{ title: "Quit?", type: "warning", okLabel: "Quit" }
+			).then((isOK) => (isOK ? exit(0) : null));
+		} else if (event.payload == "new" && $editMode) {
+		} else if (event.payload == "open"  && $editMode) {
 			openDir();
 		} else if (event.payload == "save") {
 			savePlaylist();
 		} else if (event.payload == "projector") {
+			console.log("projector")
 			openVideoWindow(!projector);
 			projector = !projector;
-		} else if (event.payload == "settings") {
+		} else if (event.payload == "settings"  && $editMode) {
 			openSettings();
 		}
 	});
@@ -189,6 +188,7 @@
 				if ($editMode) {
 					//open Playlist
 					if (e.code == "KeyO" && e.ctrlKey) {
+						e.preventDefault();
 						openDir();
 					}
 
@@ -201,6 +201,7 @@
 
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
+						e.preventDefault();
 						//stop track if playing
 						if ($playlist[$selectedItem].playing)
 							$playlistElements[$selectedItem].stop();
@@ -230,6 +231,7 @@
 					!e.ctrlKey &&
 					!e.metaKey
 				) {
+					e.preventDefault();
 					moveUp();
 				}
 				//move down
@@ -238,6 +240,7 @@
 					!e.ctrlKey &&
 					!e.metaKey
 				) {
+					e.preventDefault();
 					moveDown();
 				}
 				//reset song
@@ -246,6 +249,7 @@
 					!e.ctrlKey &&
 					!e.metaKey
 				) {
+					e.preventDefault();
 					playlist.update((items) => {
 						$playlistElements[$selectedItem].stop(true);
 						return items;
@@ -257,6 +261,7 @@
 					!e.ctrlKey &&
 					!e.metaKey
 				) {
+					e.preventDefault();
 					playlist.update((items) => {
 						$playlistElements[$selectedItem].stop(true);
 						selectedItem.update((n) => n + 1);
@@ -271,6 +276,7 @@
 				}
 				//save File
 				else if (e.code == "KeyS" && e.ctrlKey) {
+					e.preventDefault();
 					savePlaylist();
 				}
 			}
@@ -278,13 +284,10 @@
 
 		
 		const interval = setInterval(() => {
-			//console.log($playlistElements);
 			for (let i = 0; i < $playlistElements.length; i++) {
 				$playlistElements[i].update();
-				//console.log("peak: ", peak)
 			}
 			//drawMeter()
-			//console.timeEnd("update");
 		}, 300);
 
 		return () => clearInterval(interval);

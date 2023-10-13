@@ -319,6 +319,22 @@
 				<div class="title"><p>loading...</p></div>
 			{/if}
 
+			<!--Hotkey-->
+			{#if track.hotkey != undefined}
+				<div class="option hotkey">
+					<p>{track.hotkey}</p>
+				</div>
+			{/if}
+
+			<!--fade icons-->
+			{#if !$editMode && track.fade.in > 0}
+				<img class="option fade-icon" src="./icons/square/fade_in.svg" alt="">
+			{/if}
+
+			{#if !$editMode && track.fade.out > 0}
+				<img class="option fade-icon" src="./icons/square/fade_out.svg" alt="">
+			{/if}
+
 			<!--repeat-->
 			<button
 				class="option repeat-btn"
@@ -330,6 +346,7 @@
 				<img src="./icons/square/repeat.svg" alt="repeat" />
 			</button>
 
+			<!--auto reset-->
 			<button
 				class="option auto-reset-btn"
 				class:active={track.autoReset}
@@ -339,14 +356,6 @@
 			>
 				<img src="./icons/square/auto_reset.svg" alt="auto reset">
 			</button>
-
-			{#if !$editMode && track.fade.in > 0}
-				<img class="option fade-icon" src="./icons/square/fade_in.svg" alt="">
-			{/if}
-
-			{#if !$editMode && track.fade.out > 0}
-				<img class="option fade-icon" src="./icons/square/fade_out.svg" alt="">
-			{/if}
 
 			<!--time-->
 			<p class="timecode">{secondsToMinutes(track.state)}</p>

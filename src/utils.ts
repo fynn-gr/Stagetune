@@ -40,6 +40,7 @@ export interface playListItem {
 	buffer?: AudioBuffer;
 	startedAt?: number;
 	pausedAt?: number;
+	hotkey?: string;
 
 	//loop
 	tracks?: Array<playListItem>;
