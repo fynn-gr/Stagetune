@@ -49,7 +49,7 @@
 
 	function handleDrop(e) {
 		e.preventDefault();
-		e.stopPropagation();
+		//e.stopPropagation();
 		if ($currentDragging.origin == "playlist") {
 			console.log("drop Track form playlist", e )
 			let oldPosition = $playlist.indexOf($currentDragging);
@@ -78,6 +78,19 @@
 		} else {
 		}
 		$currentDragging = null;
+	}
+
+	function handleDragEnter(e) {
+		for (let i = 0; i < $playlist.length; i++) {
+			if ($playlist[i].type == "insert") {
+				$playlist.splice(i, 1);
+			}
+		}
+		$playlist.splice(id, 0, { type: "insert"});
+	}
+
+	function handleDragLeave(e) {
+
 	}
 
 	function onEnd() {
@@ -227,7 +240,7 @@
 	$: gainNode
 		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 		: null;
-	$: waveformData = loaded ? waveformCalc(track.buffer, 100, cutIn / track.length) : undefined
+	$: waveformData = loaded ? waveformCalc(track.buffer, 300, cutIn / track.length) : undefined
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -265,7 +278,7 @@
 			/>
 			<Waveform
 				data={waveformData}
-				samples={100}
+				samples={300}
 				resY={50}
 			/>
 

@@ -1,5 +1,10 @@
 import { writable } from "svelte/store";
 
+export const settings = writable({
+	show_splash: true,
+	ui_scale: 1.3,
+})
+
 export const currentDragging = writable(null);
 export const editMode = writable(true);
 export const uiPlatform = writable("mac");
@@ -87,7 +92,6 @@ export const hotkeys = writable([
 ]);
 export const hotkeyElements = writable([]);
 export const playlistElements = writable([]);
-
 
 export const srcFiles = writable([]);
 export const localFiles = writable([

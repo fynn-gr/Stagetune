@@ -97,3 +97,17 @@
         }
     }
 }
+
+.content:has(.keymap-frame) {
+    padding: 30px 0;
+}
+
+.content.update {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 600;
+    padding: 30px 100px;
+}

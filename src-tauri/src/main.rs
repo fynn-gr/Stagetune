@@ -5,8 +5,6 @@
 
 use tauri::{Manager, CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata };
 
-
-
 #[tauri::command]
 async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
 	if invoke_message == "true" {
@@ -38,7 +36,9 @@ async fn open_settings(handle: tauri::AppHandle, invoke_message: String) {
 	.transparent(true)
 	.build()
 	.unwrap();
+	settings_window.set_resizable(false);
 	settings_window.set_decorations(false);
+	settings_window.emit("settings", invoke_message);
 }
 
 

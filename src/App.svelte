@@ -28,6 +28,7 @@
 		isEditing,
 		hotkeys,
 		localFiles,
+		settings,
 	} from "./stores";
 	import {
 		savePlaylist,
@@ -60,21 +61,25 @@
 	analyser.getByteTimeDomainData(dataArray);
 	*/
 
-	//$: console.log($isEditing)
-	//$: document.documentElement.style.fontSize = `${zoom}px`;
-
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
 	}
 
 	function openSettings() {
-		invoke("open_settings", { invokeMessage: "" });
+		invoke("open_settings", { invokeMessage: JSON.stringify($settings) });
 	}
 
 	function handleDropPlaylist(e) {
-		console.log("grag on playlist")
 		e.preventDefault();
-		if ($currentDragging.origin == "src") {
+		if ($currentDragging.origin == "playlist") {
+			let oldPosition = $playlist.indexOf($currentDragging);
+			playlist.update((e) => {
+				e.splice(oldPosition, 1);
+				return e;
+			});
+			$playlist.push($currentDragging);
+			$playlist = $playlist;
+		} else if ($currentDragging.origin == "src") {
 			$playlist.push(
 				createPlaylistTrack(
 					"playlist",
@@ -84,37 +89,22 @@
 				)
 			);
 			playlist.set($playlist);
-			$currentDragging = null;
-		} else if ($currentDragging.origin == "playlist") {
-			let oldPosition = $playlist.indexOf($currentDragging);
-			playlist.update((e) => {
-				e.splice(oldPosition, 1);
-				return e;
-			});
-			$playlist.push($currentDragging);
-			$playlist = $playlist;
-
-			$currentDragging = null;
 		} else {
-			$currentDragging = null;
 		}
+		$currentDragging = null;
 	}
 
 	function moveUp() {
-		console.log($selectedItem)
 		$selectedItem > 0 ? selectedItem.update((n) => n - 1) : selectedItem.set(0);
-		console.log($selectedItem)
 		//if (playlist[selectedItem].text != null) {
 		//	moveUp();
 		//}
 	}
 
 	function moveDown() {
-		console.log($selectedItem)
 		$selectedItem < $playlist.length - 1
 			? selectedItem.update((n) => n + 1)
 			: selectedItem;
-		console.log($selectedItem)
 		//if (playlist[selectedItem].text != null) {
 		//	moveDown();
 		//}
@@ -164,7 +154,6 @@
 		} else if (event.payload == "save") {
 			savePlaylist();
 		} else if (event.payload == "projector") {
-			console.log("projector")
 			openVideoWindow(!projector);
 			projector = !projector;
 		} else if (event.payload == "settings"  && $editMode) {
@@ -182,7 +171,6 @@
 			console.log(e)
 
 			if ($isEditing > 0) {
-				console.log("is Editing")
 				return;
 			} else {
 				if ($editMode) {

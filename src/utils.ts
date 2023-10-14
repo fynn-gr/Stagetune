@@ -134,7 +134,7 @@ export function openDir() {
 			multiple: false,
 		}).then(async (sel) => {
 			if (sel == null) {
-				console.log("nothing selected");
+
 			} else {
 				//add to src paths
 				scanSrcPaths(sel as string);
@@ -143,7 +143,6 @@ export function openDir() {
 					e.push(sel);
 					return e;
 				})
-				console.log("srcFiles: ", get(srcFiles));
 			}
 		});
 	} catch (err) {
@@ -156,17 +155,15 @@ async function scanSrcPaths(path: string) {
 
 	//recursive scan src path
 	const entries = await readDir(path, { recursive: true });
-	console.log(entries)
 
 	function processEntries(entries) {
 		entries.forEach((entry, j) => {
-			console.log(`Entry: `, entry.path);
+			console.log(`File: `, entry.path);
 			if (entry.children) {
 				//subfolder
 				processEntries(entry.children);
 			} else if (isAudioFile(entry.path)) {
 				//Audio File
-				console.log("audio File")
 				entry.type = "track";
 				entry.origin = "src";
 				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
@@ -184,11 +181,9 @@ async function scanSrcPaths(path: string) {
 					return items;
 				});
 			} else if (isPlaylistFile(entry.path)) {
-				console.log("Playlist File")
 				playlistFile = entry.path;
 				readTextFile(playlistFile, {})
 				.then((e) => {
-					console.log("load playlist")
 					let obj = JSON.parse(e);
 					playlist.set(obj.playlist);
 					hotkeys.set(obj.hotkeys);
@@ -199,8 +194,6 @@ async function scanSrcPaths(path: string) {
 							e.track = ref;
 						}
 					});
-
-					console.log(get(hotkeys))
 				});
 			} else {}
 		});
@@ -220,8 +213,6 @@ async function scanSrcPaths(path: string) {
 		});
 	}
 	processEntries(await entries);
-
-	console.log(get(srcFiles), get(playlist))
 }
 
 export function savePlaylist() {
