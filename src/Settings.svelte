@@ -5,26 +5,24 @@
 	import { uiPlatform } from "./stores";
 	import { LogicalSize, appWindow, availableMonitors } from "@tauri-apps/api/window";
 	import { afterUpdate, onMount, tick } from "svelte";
-	import Keymap from "./pureUI/components/Keymap.svelte";
+	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
-	import { listen } from "@tauri-apps/api/event";
-	import SettingsOption from "./pureUI/components/SettingsOption.svelte";
+	import { emit, listen } from "@tauri-apps/api/event";
+	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
+	import { loadSettings, saveSettings } from "./utils";
+	import { settings } from "./stores";
 
-	let tab: string = "keymap";
+	let tab: string = "general";
 	let screens = [];
 	let projectorScreen: number = 1;
 	let mainScreen: number = 0;
-	let settings = {
-		show_splash: true,
-		ui_scale: 1.3
-	};
+	loadSettings();
+	console.log($settings)
 
 	onMount(async () => {
 
 		screens = await availableMonitors();
-		console.log(screens);
 
-		setWindowHeight();
 	})
 
 	function setWindowHeight() {
@@ -35,7 +33,8 @@
 	}
 
 	function onChange() {
-
+		saveSettings();
+		emit("reload_settings")
 	}
 
 	afterUpdate(() => {setWindowHeight()});
@@ -112,22 +111,39 @@
 		{#if tab == "general"}
 			<div class="content">
 				<SettingsOption
-					name="Splash Screen:"
-					type="checkbox"
-					bind:value={settings.show_splash}
-					checkboxName="Show on startup"
+					name="Language: "
+					type="select"
+					bind:value={$settings.lang}
+					options={[
+						{value: "en", name: "English"},
+						{value: "de", name: "Deutsch"}
+					]}
 					onChange={onChange}
 				/>
 				<SettingsOption
 					name="UI size:"
-					type="option"
-					bind:value={settings.ui_scale}
+					type="select"
+					bind:value={$settings.ui_scale}
 					options={[
 						{value: 1, name: "Small"},
 						{value: 1.3, name: "Normal"},
 						{value: 1.6, name: "Large"},
 						{value: 2, name: "larger"}
 					]}
+					onChange={onChange}
+				/>
+				<SettingsOption
+					name="Splash Screen:"
+					type="checkbox"
+					bind:value={$settings.show_splash}
+					checkboxName="Show on startup"
+					onChange={onChange}
+				/>
+				<SettingsOption
+					name="Performance: "
+					type="checkbox"
+					bind:value={$settings.performance_mode}
+					checkboxName="Low performance mode"
 					onChange={onChange}
 				/>
 			</div>

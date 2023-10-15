@@ -1,7 +1,9 @@
-import { open, save } from "@tauri-apps/api/dialog";
+import { open } from "@tauri-apps/api/dialog";
 import { get } from "svelte/store";
 import {
 	BaseDirectory,
+	createDir,
+	exists,
 	readDir,
 	readTextFile,
 	writeTextFile,
@@ -12,7 +14,7 @@ import {
 	srcFiles,
 	currentDragging,
 	hotkeys,
-	recent,
+	settings,
 	localFiles,
 } from "./stores";
 import { emit } from "@tauri-apps/api/event";
@@ -141,10 +143,11 @@ export function openDir() {
 				//add to src paths
 				scanSrcPaths(sel as string);
 				playlistPath.set(sel as string)
-				recent.update(e => {
-					e.push(sel);
+				settings.update(e => {
+					e.recent.push(sel);
 					return e;
 				})
+				saveSettings();
 			}
 		});
 	} catch (err) {
@@ -258,18 +261,28 @@ export function savePlaylist() {
 	saveRecent();
 }
 
-export function saveRecent() {
-	console.log("save: ", get(recent));
-	writeTextFile("recent.json", JSON.stringify(get(recent)), {
-		dir: BaseDirectory.Document,
-	});
+export function saveSettings() {
+	exists('Stagetune/', { dir: BaseDirectory.Config})
+	.then(e => {
+		if (!e) {
+			createDir('Stagetune', { dir: BaseDirectory.Config, recursive: true})
+		}
+	})
+	.then(() => {
+		console.log("save: ", get(settings));
+		writeTextFile("Stagetune/settings.json", JSON.stringify(get(settings)), {
+			dir: BaseDirectory.Config,
+		});
+	})
 }
 
-export async function loadRecent() {
-	const obj = await readTextFile("recent.json", {
-		dir: BaseDirectory.Document,
-	});
-	recent.set(JSON.parse(obj));
+export function loadSettings() {
+	readTextFile("Stagetune/settings.json", {
+		dir: BaseDirectory.Config,
+	}).then((e) => {
+		settings.set(JSON.parse(e));
+		console.log("loaded settings", get(settings))
+	})
 }
 
 export function updateProjectorList() {

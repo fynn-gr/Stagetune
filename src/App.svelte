@@ -6,6 +6,7 @@
 	import { confirm } from "@tauri-apps/api/dialog";
 	import { invoke } from "@tauri-apps/api/tauri";
 	import { exit } from "@tauri-apps/api/process";
+	import { appWindow } from "@tauri-apps/api/window";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
@@ -37,8 +38,8 @@
 		createPlaylistTrack,
 		waveformCalc,
 		updateProjectorList,
+		loadSettings,
 	} from "./utils";
-	import { appWindow } from "@tauri-apps/api/window";
 
 	let meterCanvas: HTMLCanvasElement;
 	let meterCtx: CanvasRenderingContext2D;
@@ -48,6 +49,7 @@
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
+	loadSettings();
 
 	const ctx = new AudioContext();
 	const analyser = ctx.createAnalyser();
@@ -167,7 +169,12 @@
 		updateProjectorList();
 	})
 
+	const unlistenUpdateSettings = listen("update_settings", () => {
+		loadSettings(); 
+	}) 
+
 	onMount(() => {
+
 		//shortcuts
 		document.addEventListener("keydown", (e) => {
 			console.log(e)
@@ -308,8 +315,8 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-{#if splashScreen}
-	<Splash bind:splashScreen />
+{#if $settings.show_splash}
+	<Splash bind:splashScreen={$settings.show_splash} />
 {/if}
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->

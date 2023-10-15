@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { recent } from "@/stores";
+	import { settings } from "@/stores";
 	import { onMount } from "svelte";
 	import { dataDir } from "@tauri-apps/api/path";
-	import { loadRecent } from "@/utils";
+	import { loadSettings } from "@/utils";
 
 	export let splashScreen;
 	let recentList = [];
 
 	onMount(async () => {
-		loadRecent();
-		recentList = $recent;
+		loadSettings();
+		recentList = $settings.recent;
 		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
 		console.log(recentList);
 	});

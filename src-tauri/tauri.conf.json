@@ -7,7 +7,7 @@
 		"distDir": "../dist"
 	},
 	"package": {
-		"productName": "pureStage",
+		"productName": "Stagetune",
 		"version": "0.1.0"
 	},
 	"tauri": {
@@ -15,10 +15,11 @@
 			"all": true,
 			"fs": {
 				"scope": [
-					"*/*",
+					"**",
 					"$DESKTOP/*",
 					"$DATA/*",
 					"$APPCONFIG/*",
+					"$CONFIG/**",
 					"$DOCUMENT/*",
 					"$RESOURCE/*"
 				]

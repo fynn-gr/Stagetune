@@ -1,8 +1,11 @@
 import { writable } from "svelte/store";
 
 export const settings = writable({
-	show_splash: true,
+	recent: [],
+	lang: "en",
+	show_splash: false,
 	ui_scale: 1.3,
+	performance_mode: false,
 })
 
 export const currentDragging = writable(null);
@@ -151,5 +154,4 @@ export const localFiles = writable([
 	}
 ]);
 export const playlistPath = writable("");
-export const recent = writable([]);
 export const isEditing = writable(0);

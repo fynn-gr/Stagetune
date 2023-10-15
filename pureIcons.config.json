@@ -3,6 +3,7 @@
         "tb_mac",
         "tb_win",
         "square",
-        "settings_tabs"
+        "settings_tabs",
+        "keys"
     ]
 }
