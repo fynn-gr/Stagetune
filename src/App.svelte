@@ -72,6 +72,7 @@
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 		if ($currentDragging.origin == "playlist") {
+			console.log("drop form playlist", e )
 			let oldPosition = $playlist.indexOf($currentDragging);
 			playlist.update((e) => {
 				e.splice(oldPosition, 1);
@@ -80,6 +81,7 @@
 			$playlist.push($currentDragging);
 			$playlist = $playlist;
 		} else if ($currentDragging.origin == "src") {
+			console.log("drop form src", e )
 			$playlist.push(
 				createPlaylistTrack(
 					"playlist",
@@ -156,7 +158,7 @@
 		} else if (event.payload == "projector") {
 			openVideoWindow(!projector);
 			projector = !projector;
-		} else if (event.payload == "settings"  && $editMode) {
+		} else if (event.payload == "settings" && $editMode) {
 			openSettings();
 		}
 	});
@@ -195,10 +197,17 @@
 							$playlistElements[$selectedItem].stop();
 
 						let toDelete = $selectedItem;
+						//find hotkey
+						if ($playlist[$selectedItem].hotkey != undefined) {
+							let hotkeyRm = $playlist[$selectedItem].hotkey;
+							console.log(hotkeyRm);
+							$hotkeys[hotkeyRm - 1].track = null;
+						}
 						//find new selected item
 						if ($playlist.length - 1 > $selectedItem) $selectedItem++;
 						else if ($selectedItem > 0) $selectedItem--;
 						else $selectedItem = null;
+						//delte from playlist
 						playlist.update((e) => {
 							e.splice(toDelete, 1);
 							return e;
@@ -270,6 +279,9 @@
 			}
 		});
 
+		document.addEventListener("contextmenu", e => {
+			//e.preventDefault();
+		})
 		
 		const interval = setInterval(() => {
 			for (let i = 0; i < $playlistElements.length; i++) {
@@ -307,7 +319,7 @@
 	<!--SideBar-->
 	<div
 		class="side-bar"
-		style={`width: ${sideBar ? "300" : "0"}px;`}
+		class:exposed={sideBar}
 	>
 		{#if $editMode}
 			<div class="trackList">
@@ -319,7 +331,7 @@
 					<TrackListItem entry={l} />
 				{/each}
 			</div>
-		<!--
+			<!--
 			<div class="meter">
 				<canvas
 					class="can-meter"
@@ -330,7 +342,7 @@
 
 				</canvas>
 			</div>
-		-->
+			-->
 		{/if}
 	</div>
 
@@ -468,6 +480,7 @@
 						</div>
 					{/if}
 				{/each}
+				<p class="placeholder">No track playing</p>
 			</div>
 
 			<!--hotkeys-->

@@ -34,6 +34,7 @@ async fn open_settings(handle: tauri::AppHandle, invoke_message: String) {
 		tauri::WindowUrl::App("settings.html".into())
 	)
 	.transparent(true)
+	.theme(Some(tauri::Theme::Dark))
 	.build()
 	.unwrap();
 	settings_window.set_resizable(false);

@@ -119,6 +119,8 @@ export function createPlaylistTrack(
 		state: 0, //seconds playing since start
 		volume: 80, //volume (standart is 80 of 100 max)
 		pan: 0, // -1 to 1
+		repeat: false,
+		autoReset: false,
 		fade: { in: 0, out: 0 }, //fade in and out in seconds
 		edit: { in: 0, out: 0 }, // cut in in seconds (TODO: cutout)
 		annotation: { before: null, after: null },
@@ -209,8 +211,10 @@ async function scanSrcPaths(path: string) {
 				}
 				return 0;
 			});
+			console.log(get(srcFiles))
 			return items;
 		});
+
 	}
 	processEntries(await entries);
 }

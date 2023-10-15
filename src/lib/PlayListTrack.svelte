@@ -19,6 +19,7 @@
 	export let masterGain: GainNode;
 	let loaded = false;
 	let dragging = false;
+	let dragover = false;
 	let missing = false;
 	let inFade = false; //currently in fade, cant start or stop track during fade
 
@@ -34,7 +35,9 @@
 			e.dataTransfer.dropEffect = "copy";
 			e.dataTransfer.setData("text/plain", "placehold");
 			$currentDragging = track;
+			$currentDragging.origin = "playlist";
 			dragging = true;
+			console.log("current dragging: ", $currentDragging)
 		} else {
 			e.preventDefault();
 		}
@@ -49,9 +52,9 @@
 
 	function handleDrop(e) {
 		e.preventDefault();
-		//e.stopPropagation();
+		e.stopPropagation();
 		if ($currentDragging.origin == "playlist") {
-			console.log("drop Track form playlist", e )
+			console.log("drop form playlist", e )
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
 			playlist.update((e) => {
@@ -60,6 +63,7 @@
 				return e;
 			});
 		} else if ($currentDragging.origin == "src") {
+			console.log("drop form src", e )
 			let newPosition = id;
 			playlist.update((e) => {
 				e.splice(
@@ -81,16 +85,11 @@
 	}
 
 	function handleDragEnter(e) {
-		for (let i = 0; i < $playlist.length; i++) {
-			if ($playlist[i].type == "insert") {
-				$playlist.splice(i, 1);
-			}
-		}
-		$playlist.splice(id, 0, { type: "insert"});
+		dragover = true;
 	}
 
 	function handleDragLeave(e) {
-
+		dragover = false;
 	}
 
 	function onEnd() {
@@ -107,7 +106,6 @@
 	}
 
 	function handleSkip(e) {
-		//console.log("handle skip")
 		let rec = e.target.getBoundingClientRect();
 		let x = e.clientX - rec.left;
 		let skipFac = Math.min(Math.max(x / rec.width, 0), 1);
@@ -241,6 +239,7 @@
 		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 		: null;
 	$: waveformData = loaded ? waveformCalc(track.buffer, 300, cutIn / track.length) : undefined
+	$: $currentDragging == null ? dragover = false : null;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -249,16 +248,22 @@
 	class:selected={$selectedItem == id}
 	class:editMode={$editMode}
 	class:missing
+	class:drag-over={dragover}
 	class:loaded={track.buffer != undefined}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
+	on:dragenter={handleDragEnter}
+	on:dragleave={handleDragLeave}
 	on:drop={handleDrop}
 	on:click={(e) => {
 		selectedItem.set(id);
 	}}
 >
-	<div class="border">
+	<div
+		class="border"
+		style={$currentDragging == null ? "" : "pointer-events: none;"}
+	>
 		<!--annotation before-->
 		<Annotation bind:annotation={track.annotation} {id} start={true} />
 
@@ -293,7 +298,7 @@
 					stop(true)
 				}}
 			>
-				<img src="./icons/square/reset.svg" alt="">
+				<img src="./icons/square/reset.svg" alt="" draggable="false" >
 			</button>
 
 			<!--play Button-->
@@ -305,11 +310,11 @@
 				}}
 			>
 				{#if inFade}
-					<img src="./icons/square/fade.svg" alt="" />
+					<img src="./icons/square/fade.svg" alt="" draggable="false" />
 				{:else if track.playing}
-					<img src="./icons/square/pause.svg" alt="" />
+					<img src="./icons/square/pause.svg" alt="" draggable="false" />
 				{:else}
-					<img src="./icons/square/play.svg" alt="" />
+					<img src="./icons/square/play.svg" alt="" draggable="false" />
 				{/if}
 			</button>
 
@@ -341,11 +346,11 @@
 
 			<!--fade icons-->
 			{#if !$editMode && track.fade.in > 0}
-				<img class="option fade-icon" src="./icons/square/fade_in.svg" alt="">
+				<img class="option fade-icon" src="./icons/square/fade_in.svg" alt="" draggable="false">
 			{/if}
 
 			{#if !$editMode && track.fade.out > 0}
-				<img class="option fade-icon" src="./icons/square/fade_out.svg" alt="">
+				<img class="option fade-icon" src="./icons/square/fade_out.svg" alt="" draggable="false">
 			{/if}
 
 			<!--repeat-->
@@ -356,7 +361,7 @@
 					track.repeat = $editMode ? !track.repeat : track.repeat;
 				}}
 			>
-				<img src="./icons/square/repeat.svg" alt="repeat" />
+				<img src="./icons/square/repeat.svg" alt="repeat" draggable="false" />
 			</button>
 
 			<!--auto reset-->
@@ -367,7 +372,7 @@
 					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
 				}}
 			>
-				<img src="./icons/square/auto_reset.svg" alt="auto reset">
+				<img src="./icons/square/auto_reset.svg" alt="auto reset" draggable="false">
 			</button>
 
 			<!--time-->

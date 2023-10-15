@@ -16,6 +16,7 @@
 	export let track: playListItem;
 	export let id: number;
 	let dragging = false;
+	let dragover = false;
 	let missing = false;
 	let unlistenState;
 	let unlistenEnd;
@@ -27,6 +28,7 @@
 			e.dataTransfer.dropEffect = "copy";
 			e.dataTransfer.setData("text/plain", "placehold");
 			$currentDragging = track;
+			$currentDragging.origin = "playlist";
 			dragging = true;
 		} else {
 			e.preventDefault();
@@ -68,6 +70,14 @@
 		} else {
 		}
 		$currentDragging = null;
+	}
+
+	function handleDragEnter(e) {
+		dragover = true;
+	}
+
+	function handleDragLeave(e) {
+		dragover = false;
 	}
 
 	function handleSkip(e) {
@@ -136,6 +146,8 @@
 	onDestroy(() => {
 		unlistenState();
 	})
+
+	$: $currentDragging == null ? dragover = false : null;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -144,15 +156,21 @@
 	class:selected={$selectedItem == id}
 	class:editMode={$editMode}
 	class:missing
+	class:drag-over={dragover}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
+	on:dragenter={handleDragEnter}
+	on:dragleave={handleDragLeave}
 	on:drop={handleDrop}
 	on:click={(e) => {
 		selectedItem.set(id);
 	}}
 >
-	<div class="border">
+	<div
+		class="border"
+		style={$currentDragging == null ? "" : "pointer-events: none;"}
+	>
 		<!--annotation before-->
 		<Annotation bind:annotation={track.annotation} {id} start={true} />
 
@@ -172,7 +190,7 @@
 			/>
 
 			<div class="drag-area">
-				<img src="/icons/square/drag_n_drop.svg" alt="">
+				<img src="/icons/square/drag_n_drop.svg" alt="" draggable="false" >
 			</div>
 
 			<!--reset-btn-->
@@ -183,7 +201,7 @@
 					emit("update_play", { action: "stop" });
 				}}
 			>
-				<img src="./icons/square/reset.svg" alt="">
+				<img src="./icons/square/reset.svg" alt="" draggable="false" >
 			</button>
 
 			<!--play Button-->
@@ -195,9 +213,9 @@
 				}}
 			>
 				{#if track.playing}
-					<img src="./icons/square/pause.svg" alt="" />
+					<img src="./icons/square/pause.svg" alt="" draggable="false" />
 				{:else}
-					<img src="./icons/square/play.svg" alt="" />
+					<img src="./icons/square/play.svg" alt="" draggable="false" />
 				{/if}
 			</button>
 

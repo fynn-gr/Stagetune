@@ -11,6 +11,7 @@
 	export let item: any;
 	export let id: number;
 	let dragging = false;
+	let dragover = false;
 	let editing = false;
 	let inputElement: HTMLInputElement;
 
@@ -21,6 +22,7 @@
 			e.dataTransfer.dropEffect = "copy";
 			e.dataTransfer.setData("text/plain", "placehold");
 			$currentDragging = item;
+			$currentDragging.origin = "playlist";
 			dragging = true;
 		} else {
 			e.preventDefault();
@@ -63,6 +65,14 @@
 		$currentDragging = null;
 	}
 
+	function handleDragEnter(e) {
+		dragover = true;
+	}
+
+	function handleDragLeave(e) {
+		dragover = false;
+	}
+
 	export function update() {}
 </script>
 
@@ -71,24 +81,33 @@
 	class="playlistAnotation"
 	class:selected={$selectedItem == id}
 	class:editMode={$editMode}
+	class:drag-over={dragover}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
 	on:drop={handleDrop}
+	on:dragenter={handleDragEnter}
+	on:dragleave={handleDragLeave}
 	on:click={(e) => {
 		selectedItem.set(id);
 	}}
 >
 	<div class="border">
 		<div class="container">
-			<div class="drag-area"></div>
+			<div class="drag-area">
+				<img src="/icons/square/drag_n_drop.svg" alt="">
+			</div>
 			<input
 				type="text"
 				bind:value={item.text}
 				bind:this={inputElement}
-				on:blur={() => {
-					editing = false;
+				on:focus={() => {
+					isEditing.update((e) => e + 1);
 				}}
+				on:blur={() => {
+					isEditing.update((e) => e - 1);
+				}}
+				disabled={!$editMode || $selectedItem != id}
 			/>
 		</div>
 	</div>

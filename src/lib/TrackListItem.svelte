@@ -15,6 +15,7 @@
 		e.dataTransfer.dropEffect = "copy";
 		e.dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = entry;
+		$currentDragging.origin = "src"
 		dragging = true;
 		//console.log("drag start", e);
 	}
