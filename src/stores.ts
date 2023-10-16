@@ -3,7 +3,7 @@ import { writable } from "svelte/store";
 export const settings = writable({
 	recent: [],
 	lang: "en",
-	show_splash: false,
+	show_splash: true,
 	ui_scale: 1.3,
 	performance_mode: false,
 })

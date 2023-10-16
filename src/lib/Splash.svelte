@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { settings } from "@/stores";
 	import { onMount } from "svelte";
-	import { dataDir } from "@tauri-apps/api/path";
 	import { loadSettings } from "@/utils";
 
 	export let splashScreen;
@@ -30,8 +29,8 @@
 		<img src="./splash.jpg" class="splash-art" />
 		<div class="top">
 			<img src="./splash_icon.png" class="icon" />
-			<h1>cosy <b>Stagetune</b></h1>
-			<p class="version">0.1 Beta</p>
+			<h1><b>Stagetune</b></h1>
+			<p class="version">0.2 Beta</p>
 		</div>
 
 		<div class="container">

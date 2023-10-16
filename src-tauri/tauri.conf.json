@@ -8,7 +8,7 @@
 	},
 	"package": {
 		"productName": "Stagetune",
-		"version": "0.1.0"
+		"version": "0.2.0"
 	},
 	"tauri": {
 		"allowlist": {
@@ -34,8 +34,8 @@
 		"macOSPrivateApi": true,
 		"bundle": {
 			"active": true,
-			"category": "DeveloperTool",
-			"copyright": "Fynn Gr. 2023",
+			"category": "Music",
+			"copyright": "GPL 3.0",
 			"deb": {
 				"depends": []
 			},
@@ -86,7 +86,7 @@
 				"resizable": true,
 				"decorations": false,
 				"transparent": true,
-				"title": "pureStage"
+				"title": "Stagetune"
 			}
 		]
 	}
