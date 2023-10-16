@@ -9,6 +9,7 @@
 	import { openDir } from "@/utils";
 	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 	import ModeSwitch from "./ModeSwitch.svelte";
+	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
 
 	export let sideBar;
 	export let editor;
@@ -186,35 +187,30 @@
 		</div>
 
 		{#if $uiPlatform == "win"}
-			<div class="win-buttons-ms" data-tauri-drag-region>
-				<button
-					on:click={() => {
-						if ($editMode) {
-							appWindow.minimize();
-						}
-					}}
-				>
-					<img src="./icons/winButtonsMSMin.svg" alt="minimize" />
-				</button>
-				<button
-					on:click={() => {
-						if ($editMode) {
-							appWindow.toggleMaximize();
-						}
-					}}
-				>
-					<img src="./icons/winButtonsMSMax.svg" alt="maximise" />
-				</button>
-				<button
-					on:click={() => {
-						if ($editMode) {
-							appWindow.close();
-						}
-					}}
-				>
-					<img src="./icons/winButtonsMSClose.svg" alt="close" />
-				</button>
-			</div>
+			<WinButtonsMs
+				onClose={async () => {
+					if ($editMode) {
+						const confirmed = await confirm("Discard all unsaved changes?", {
+							title: "Quit?",
+							type: "warning",
+							okLabel: "Quit",
+						}).then((isOK) => (isOK ? appWindow.close() : null));
+					}
+				}}
+				onMin={() => {
+					if ($editMode) {
+						appWindow.minimize();
+					}
+				}}
+				onMax={() => {
+					if ($editMode) {
+						appWindow.toggleMaximize();
+					}
+				}}
+				CanMinimize={$editMode}
+				CanMaximise={$editMode}
+				CanClose={$editMode}
+			/>
 		{/if}
 	</div>
 </div>

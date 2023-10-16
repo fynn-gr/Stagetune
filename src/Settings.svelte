@@ -11,6 +11,7 @@
 	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
 	import { loadSettings, saveSettings } from "./utils";
 	import { settings } from "./stores";
+	import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
 
 	let tab: string = "general";
 	let screens = [];
@@ -38,10 +39,6 @@
 	}
 
 	afterUpdate(() => {setWindowHeight()});
-
-	const unlisten = listen("settings", e => {
-		console.log(e.payload)
-	})
 
 </script>
 
@@ -104,6 +101,14 @@
 
 		<div class="spacer" data-tauri-drag-region/>
 
+		{#if $uiPlatform == "win"}
+			<WinButtonsMs 
+				CanMaximise={false}
+				CanMinimize={false}
+				onClose={() => {appWindow.close();}}
+				CloseOnly={true}
+			/>
+		{/if}
 	</div>
 
 	<!-- svelte-ignore empty-block -->
