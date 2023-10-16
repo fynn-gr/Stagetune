@@ -12,10 +12,8 @@ import {
 	playlist,
 	playlistPath,
 	srcFiles,
-	currentDragging,
 	hotkeys,
 	settings,
-	localFiles,
 } from "./stores";
 import { emit } from "@tauri-apps/api/event";
 
@@ -294,4 +292,9 @@ export function updateProjectorList() {
 	})
 
 	emit("updateList", {list})
+}
+
+export function setUIScale(scale: number) {
+	let root: HTMLElement = document.querySelector(':root')
+	root.style.fontSize = `${scale}px`;
 }

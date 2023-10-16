@@ -39,6 +39,7 @@
 		waveformCalc,
 		updateProjectorList,
 		loadSettings,
+		setUIScale,
 	} from "./utils";
 
 	let meterCanvas: HTMLCanvasElement;
@@ -50,6 +51,7 @@
 	let projector = false;
 	let palettes = true;
 	loadSettings();
+	setUIScale($settings.ui_scale);
 
 	const ctx = new AudioContext();
 	const analyser = ctx.createAnalyser();

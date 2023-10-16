@@ -126,9 +126,9 @@
 					bind:value={$settings.ui_scale}
 					options={[
 						{value: 1, name: "Small"},
-						{value: 1.3, name: "Normal"},
+						{value: 1.3, name: "Standart"},
 						{value: 1.6, name: "Large"},
-						{value: 2, name: "larger"}
+						{value: 2, name: "Double"}
 					]}
 					onChange={onChange}
 				/>
