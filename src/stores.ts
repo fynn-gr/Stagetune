@@ -10,7 +10,7 @@ export const settings = writable({
 
 export const currentDragging = writable(null);
 export const editMode = writable(true);
-export const uiPlatform = writable("win");
+export const uiPlatform = writable("mac");
 export const playlist = writable([
 	/*
 	{
