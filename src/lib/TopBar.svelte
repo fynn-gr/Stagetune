@@ -6,10 +6,10 @@
 	import { confirm } from "@tauri-apps/api/dialog";
 
 	import { editMode, playlist, selectedItem, uiPlatform } from "@/stores";
-	import { openDir } from "@/utils";
 	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 	import ModeSwitch from "./ModeSwitch.svelte";
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
+	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
 
 	export let sideBar;
 	export let editor;
@@ -62,7 +62,14 @@
 
 		{#if $uiPlatform == "win"}
 			<AppMenu name="File">
-				<button>Open Playlist</button>
+				<AppMenuItem id="new" name="New Playlist" accelerator="ctrl+N" />
+				<AppMenuItem id="open" name="Open" accelerator="ctrl+O" />
+				<AppMenuItem id="save" name="Save" accelerator="ctrl+S" />
+				<div class="seperator" />
+				<AppMenuItem id="settings" name="Settings" accelerator="ctrl+," />
+			</AppMenu>
+			<AppMenu name="Window">
+				<AppMenuItem id="projector" name="Projector" accelerator="ctrl+P" />
 			</AppMenu>
 		{/if}
 

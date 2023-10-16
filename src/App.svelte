@@ -154,7 +154,6 @@
 				"Do you want to discard all unsaved changes?",
 				{ title: "Quit?", type: "warning", okLabel: "Quit" }
 			).then((isOK) => (isOK ? exit(0) : null));
-		} else if (event.payload == "new" && $editMode) {
 		} else if (event.payload == "open"  && $editMode) {
 			openDir();
 		} else if (event.payload == "save") {
@@ -289,7 +288,7 @@
 		});
 
 		document.addEventListener("contextmenu", e => {
-			//e.preventDefault();
+			e.preventDefault();
 		})
 		
 		const interval = setInterval(() => {
