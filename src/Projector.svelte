@@ -177,6 +177,10 @@
 	.wrapper.edit {
 		overflow: scroll;
 
+		&::-webkit-scrollbar {
+			width: 0px;
+		}
+
 		video {
 			width: 50%;
 			height: auto;
