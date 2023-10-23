@@ -8,6 +8,7 @@
 		isEditing,
 		currentDragging,
 		playlist,
+		playlistPath
 	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
@@ -209,7 +210,7 @@
 	onMount(async () => {
 
 		//load file
-		const response = await fetch(convertFileSrc(track.path));
+		const response = await fetch(convertFileSrc($playlistPath + track.path));
 		const arrayBuffer = await response.arrayBuffer();
 		track.buffer = await ctx.decodeAudioData(arrayBuffer);
 		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });

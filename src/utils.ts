@@ -63,7 +63,7 @@ export function isVideoFile(filename: string): boolean {
 }
 
 export function isPlaylistFile(filename: string): boolean {
-	if (filename.match(/\.(playlist)$/)) {
+	if (filename.match(/\.(Stagetune)$/)) {
 		return true;
 	} else {
 		return false;
@@ -141,6 +141,8 @@ export function openDir() {
 				//add to src paths
 				scanSrcPaths(sel as string);
 				playlistPath.set(sel as string)
+
+				//add to recent
 				settings.update(e => {
 					e.recent.push(sel);
 					return e;
@@ -161,7 +163,7 @@ async function scanSrcPaths(path: string) {
 
 	function processEntries(entries) {
 		entries.forEach((entry, j) => {
-			console.log(`File: `, entry.path);
+			//console.log(`File: `, entry.path);
 			if (entry.children) {
 				//subfolder
 				processEntries(entry.children);
@@ -170,6 +172,9 @@ async function scanSrcPaths(path: string) {
 				entry.type = "track";
 				entry.origin = "src";
 				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
+				let modifiedPath = entry.path.split(path).pop()
+				console.log(modifiedPath)
+				entry.path = modifiedPath;
 				srcFiles.update((items) => {
 					items.push(entry);
 					return items;
@@ -184,6 +189,7 @@ async function scanSrcPaths(path: string) {
 					return items;
 				});
 			} else if (isPlaylistFile(entry.path)) {
+				//is Playlist
 				playlistFile = entry.path;
 				readTextFile(playlistFile, {})
 				.then((e) => {
@@ -212,7 +218,7 @@ async function scanSrcPaths(path: string) {
 				}
 				return 0;
 			});
-			console.log(get(srcFiles))
+			//console.log(get(srcFiles))
 			return items;
 		});
 
@@ -226,7 +232,7 @@ export function savePlaylist() {
 	
 	let saveObj = {
 		meta: {
-			version: "0.1.0",
+			version: "0.2.0",
 			fileVersion: 1
 		},
 		playlist: get(playlist),
@@ -255,8 +261,8 @@ export function savePlaylist() {
 		}
 	})
 
-	writeTextFile(get(playlistPath) + "/playlist.playlist", JSON.stringify(saveObj), {});
-	saveRecent();
+	writeTextFile(get(playlistPath) + "/playlist.Stagetune", JSON.stringify(saveObj), {});
+	saveSettings();
 }
 
 export function saveSettings() {
