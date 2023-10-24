@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
+	import { join } from "@tauri-apps/api/path";
 	import { createPlaylistTrack, secondsToMinutes, waveformCalc } from "@/utils";
 	import {
 		editMode,
@@ -209,7 +210,8 @@
 
 	onMount(async () => {
 		//load file
-		const response = await fetch(convertFileSrc($playlistPath + track.path));
+		const absPath = await join($playlistPath, track.path)
+		const response = await fetch(convertFileSrc(absPath));
 		const arrayBuffer = await response.arrayBuffer();
 		track.buffer = await ctx.decodeAudioData(arrayBuffer);
 		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });

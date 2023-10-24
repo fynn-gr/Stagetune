@@ -165,7 +165,7 @@ async function scanSrcPaths(path: string) {
 				entry.type = "track";
 				entry.origin = "src";
 				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-				let modifiedPath = entry.path.split(path).pop();
+				let modifiedPath = entry.path.split(path).pop().split("/").pop();
 				console.log(modifiedPath);
 				entry.path = modifiedPath;
 				srcFiles.update(items => {
