@@ -16,7 +16,6 @@
 	export let palettes;
 	export let pauseAll;
 	export let resetAll;
-
 </script>
 
 <div class="topbar toolbar" data-tauri-drag-region>
@@ -29,7 +28,7 @@
 							title: "Quit?",
 							type: "warning",
 							okLabel: "Quit",
-						}).then((isOK) => (isOK ? appWindow.close() : null));
+						}).then(isOK => (isOK ? appWindow.close() : null));
 					}
 				}}
 				onMin={() => {
@@ -82,7 +81,7 @@
 				disabled={!$editMode}
 				onClick={() => {
 					if ($selectedItem == null) {
-						playlist.update((e) => {
+						playlist.update(e => {
 							e.push({
 								type: "annotation",
 								origin: "playlist",
@@ -91,7 +90,7 @@
 							return e;
 						});
 					} else {
-						playlist.update((e) => {
+						playlist.update(e => {
 							e.splice($selectedItem + 1, 0, {
 								type: "annotation",
 								origin: "playlist",
@@ -112,8 +111,8 @@
 				active={$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
 					$playlist[$selectedItem].annotation.before != null}
-				onChange={(active) => {
-					playlist.update((items) => {
+				onChange={active => {
+					playlist.update(items => {
 						items[$selectedItem].annotation.before = active ? "Comment" : null;
 						return items;
 					});
@@ -129,8 +128,8 @@
 				active={$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
 					$playlist[$selectedItem].annotation.after != null}
-				onChange={(active) => {
-					playlist.update((items) => {
+				onChange={active => {
+					playlist.update(items => {
 						items[$selectedItem].annotation.after = active ? "Comment" : null;
 						return items;
 					});
@@ -160,13 +159,9 @@
 				toolTip="reset all tracks"
 				onClick={resetAll}
 			/>
-	
+
 			<!--stop all-->
-			<TopBarButton
-				icon="stop"
-				toolTip="pause all tracks"
-				onClick={pauseAll}
-			/>
+			<TopBarButton icon="stop" toolTip="pause all tracks" onClick={pauseAll} />
 		</div>
 
 		<div class="spacer" data-tauri-drag-region="" />
@@ -201,7 +196,7 @@
 							title: "Quit?",
 							type: "warning",
 							okLabel: "Quit",
-						}).then((isOK) => (isOK ? appWindow.close() : null));
+						}).then(isOK => (isOK ? appWindow.close() : null));
 					}
 				}}
 				onMin={() => {

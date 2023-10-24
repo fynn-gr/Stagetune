@@ -18,7 +18,7 @@
 		e.preventDefault();
 
 		if ($currentDragging.origin == "src" && $currentDragging.type == "track") {
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(
 					$playlist.length,
 					0,
@@ -30,9 +30,9 @@
 					)
 				);
 				return e;
-			})
+			});
 			$playlist[$playlist.length - 1].hotkey = key;
-			track = $playlist[$playlist.length -1];
+			track = $playlist[$playlist.length - 1];
 
 			$currentDragging = null;
 		} else if (
@@ -53,13 +53,13 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener("keydown", (e) => {
+		document.addEventListener("keydown", e => {
 			if ($isEditing > 0 || e.ctrlKey || e.code != `Digit${key}`) {
 				return;
 			} else if (!e.altKey && !track.playing) {
 				//play
 				e.preventDefault();
-				console.log($playlist[$playlist.indexOf(track)], track)
+				console.log($playlist[$playlist.indexOf(track)], track);
 				let id = $playlist.indexOf(track);
 				$playlistElements[id].play(null, true);
 			} else if (!e.altKey && track.playing) {
@@ -84,7 +84,7 @@
 <div
 	class="hotkeySlot"
 	class:playing={isPlaying}
-	on:dragover={(e) => {
+	on:dragover={e => {
 		e.preventDefault();
 		return false;
 	}}

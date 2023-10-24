@@ -8,7 +8,7 @@
 		isEditing,
 		currentDragging,
 		playlist,
-		playlistPath
+		playlistPath,
 	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
@@ -38,7 +38,7 @@
 			$currentDragging = track;
 			$currentDragging.origin = "playlist";
 			dragging = true;
-			console.log("current dragging: ", $currentDragging)
+			console.log("current dragging: ", $currentDragging);
 		} else {
 			e.preventDefault();
 		}
@@ -55,18 +55,18 @@
 		e.preventDefault();
 		e.stopPropagation();
 		if ($currentDragging.origin == "playlist") {
-			console.log("drop form playlist", e )
+			console.log("drop form playlist", e);
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(oldPosition, 1);
 				e.splice(newPosition, 0, $currentDragging);
 				return e;
 			});
 		} else if ($currentDragging.origin == "src") {
-			console.log("drop form src", e )
+			console.log("drop form src", e);
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(
 					newPosition,
 					0,
@@ -208,7 +208,6 @@
 	}
 
 	onMount(async () => {
-
 		//load file
 		const response = await fetch(convertFileSrc($playlistPath + track.path));
 		const arrayBuffer = await response.arrayBuffer();
@@ -239,8 +238,10 @@
 	$: gainNode
 		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 		: null;
-	$: waveformData = loaded ? waveformCalc(track.buffer, 300, cutIn / track.length) : undefined
-	$: $currentDragging == null ? dragover = false : null;
+	$: waveformData = loaded
+		? waveformCalc(track.buffer, 300, cutIn / track.length)
+		: undefined;
+	$: $currentDragging == null ? (dragover = false) : null;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -257,7 +258,7 @@
 	on:dragenter={handleDragEnter}
 	on:dragleave={handleDragLeave}
 	on:drop={handleDrop}
-	on:click={(e) => {
+	on:click={e => {
 		selectedItem.set(id);
 	}}
 >
@@ -282,24 +283,20 @@
 						#555 100%
 					);`}
 			/>
-			<Waveform
-				data={waveformData}
-				samples={300}
-				resY={50}
-			/>
+			<Waveform data={waveformData} samples={300} resY={50} />
 
 			<div class="drag-area">
-				<img src="/icons/square/drag_n_drop.svg" alt="">
+				<img src="/icons/square/drag_n_drop.svg" alt="" />
 			</div>
 
 			<!--reset-btn-->
 			<button
 				class="play-btn"
 				on:click={() => {
-					stop(true)
+					stop(true);
 				}}
 			>
-				<img src="./icons/square/reset.svg" alt="" draggable="false" >
+				<img src="./icons/square/reset.svg" alt="" draggable="false" />
 			</button>
 
 			<!--play Button-->
@@ -326,13 +323,13 @@
 						type="text"
 						bind:value={track.name}
 						on:focus={() => {
-							isEditing.update((e) => e + 1);
+							isEditing.update(e => e + 1);
 						}}
 						on:blur={() => {
-							isEditing.update((e) => e - 1);
+							isEditing.update(e => e - 1);
 						}}
 						disabled={!$editMode || $selectedItem != id}
-					>
+					/>
 				</div>
 			{:else}
 				<div class="title"><p>loading...</p></div>
@@ -347,11 +344,21 @@
 
 			<!--fade icons-->
 			{#if !$editMode && track.fade.in > 0}
-				<img class="option fade-icon" src="./icons/square/fade_in.svg" alt="" draggable="false">
+				<img
+					class="option fade-icon"
+					src="./icons/square/fade_in.svg"
+					alt=""
+					draggable="false"
+				/>
 			{/if}
 
 			{#if !$editMode && track.fade.out > 0}
-				<img class="option fade-icon" src="./icons/square/fade_out.svg" alt="" draggable="false">
+				<img
+					class="option fade-icon"
+					src="./icons/square/fade_out.svg"
+					alt=""
+					draggable="false"
+				/>
 			{/if}
 
 			<!--repeat-->
@@ -373,7 +380,11 @@
 					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
 				}}
 			>
-				<img src="./icons/square/auto_reset.svg" alt="auto reset" draggable="false">
+				<img
+					src="./icons/square/auto_reset.svg"
+					alt="auto reset"
+					draggable="false"
+				/>
 			</button>
 
 			<!--time-->
@@ -382,7 +393,6 @@
 				{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
 			</p>
 
-
 			<!--fade-->
 			<span class="fade">
 				<p>Fade in:</p>
@@ -390,10 +400,10 @@
 					type="number"
 					bind:value={track.fade.in}
 					on:focus={() => {
-						isEditing.update((e) => e + 1);
+						isEditing.update(e => e + 1);
 					}}
 					on:blur={() => {
-						isEditing.update((e) => e - 1);
+						isEditing.update(e => e - 1);
 					}}
 					min="0"
 					max={track.length}
@@ -404,10 +414,10 @@
 					type="number"
 					bind:value={track.fade.out}
 					on:focus={() => {
-						isEditing.update((e) => e + 1);
+						isEditing.update(e => e + 1);
 					}}
 					on:blur={() => {
-						isEditing.update((e) => e - 1);
+						isEditing.update(e => e - 1);
 					}}
 					min="0"
 					max={track.length}

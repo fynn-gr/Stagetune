@@ -6,7 +6,7 @@ export const settings = writable({
 	show_splash: true,
 	ui_scale: 1.3,
 	performance_mode: false,
-})
+});
 
 export const currentDragging = writable(null);
 export const editMode = writable(true);
@@ -151,7 +151,7 @@ export const localFiles = writable([
 		path: "/videos/Cutscene 9.mp4",
 		type: "video",
 		origin: "src",
-	}
+	},
 ]);
 export const playlistPath = writable("");
 export const isEditing = writable(0);

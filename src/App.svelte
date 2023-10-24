@@ -76,16 +76,16 @@
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 		if ($currentDragging.origin == "playlist") {
-			console.log("drop form playlist", e )
+			console.log("drop form playlist", e);
 			let oldPosition = $playlist.indexOf($currentDragging);
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(oldPosition, 1);
 				return e;
 			});
 			$playlist.push($currentDragging);
 			$playlist = $playlist;
 		} else if ($currentDragging.origin == "src") {
-			console.log("drop form src", e )
+			console.log("drop form src", e);
 			$playlist.push(
 				createPlaylistTrack(
 					"playlist",
@@ -101,7 +101,7 @@
 	}
 
 	function moveUp() {
-		$selectedItem > 0 ? selectedItem.update((n) => n - 1) : selectedItem.set(0);
+		$selectedItem > 0 ? selectedItem.update(n => n - 1) : selectedItem.set(0);
 		//if (playlist[selectedItem].text != null) {
 		//	moveUp();
 		//}
@@ -109,7 +109,7 @@
 
 	function moveDown() {
 		$selectedItem < $playlist.length - 1
-			? selectedItem.update((n) => n + 1)
+			? selectedItem.update(n => n + 1)
 			: selectedItem;
 		//if (playlist[selectedItem].text != null) {
 		//	moveDown();
@@ -118,13 +118,13 @@
 
 	function pauseAll() {
 		for (let i = 0; i < $playlistElements.length; i++) {
-			$playlistElements[i].stop(false, false)
+			$playlistElements[i].stop(false, false);
 		}
 	}
 
 	function resetAll() {
 		for (let i = 0; i < $playlistElements.length; i++) {
-			$playlistElements[i].stop(true, false)
+			$playlistElements[i].stop(true, false);
 		}
 	}
 
@@ -139,22 +139,27 @@
 		for (let i = 0; i < bufferLength; i++) {
 			const v = dataArray[i] / 128.0;
 			const y = (v * meterCanvas.height) / 1.5;
-			console.log(v, y)
+			console.log(v, y);
 
 			//meterCtx.lineTo(x, y);
 			meterCtx.fillStyle = "rgb(256, 0, 0)";
-			meterCtx.fillRect(0, meterCanvas.height - y, meterCanvas.width, meterCanvas.height)
+			meterCtx.fillRect(
+				0,
+				meterCanvas.height - y,
+				meterCanvas.width,
+				meterCanvas.height
+			);
 		}
 	}
 
-	const unlistenMenus = listen("menu", async (event) => {
+	const unlistenMenus = listen("menu", async event => {
 		console.log(event);
 		if (event.payload == "quit" && $editMode) {
 			const confirmed = await confirm(
 				"Do you want to discard all unsaved changes?",
 				{ title: "Quit?", type: "warning", okLabel: "Quit" }
-			).then((isOK) => (isOK ? exit(0) : null));
-		} else if (event.payload == "open"  && $editMode) {
+			).then(isOK => (isOK ? exit(0) : null));
+		} else if (event.payload == "open" && $editMode) {
 			openDir();
 		} else if (event.payload == "save") {
 			savePlaylist();
@@ -166,19 +171,18 @@
 		}
 	});
 
-	const unlistenProjectorReq = listen("projctorReq", (e) => {
+	const unlistenProjectorReq = listen("projctorReq", e => {
 		updateProjectorList();
-	})
+	});
 
 	const unlistenUpdateSettings = listen("update_settings", () => {
-		loadSettings(); 
-	}) 
+		loadSettings();
+	});
 
 	onMount(() => {
-
 		//shortcuts
-		document.addEventListener("keydown", (e) => {
-			console.log(e)
+		document.addEventListener("keydown", e => {
+			console.log(e);
 
 			if ($isEditing > 0) {
 				return;
@@ -216,7 +220,7 @@
 						else if ($selectedItem > 0) $selectedItem--;
 						else $selectedItem = null;
 						//delte from playlist
-						playlist.update((e) => {
+						playlist.update(e => {
 							e.splice(toDelete, 1);
 							return e;
 						});
@@ -255,7 +259,7 @@
 					!e.metaKey
 				) {
 					e.preventDefault();
-					playlist.update((items) => {
+					playlist.update(items => {
 						$playlistElements[$selectedItem].stop(true);
 						return items;
 					});
@@ -267,9 +271,9 @@
 					!e.metaKey
 				) {
 					e.preventDefault();
-					playlist.update((items) => {
+					playlist.update(items => {
 						$playlistElements[$selectedItem].stop(true);
-						selectedItem.update((n) => n + 1);
+						selectedItem.update(n => n + 1);
 						$playlistElements[$selectedItem].play(0);
 						return items;
 					});
@@ -289,8 +293,8 @@
 
 		document.addEventListener("contextmenu", e => {
 			//e.preventDefault();
-		})
-		
+		});
+
 		const interval = setInterval(() => {
 			for (let i = 0; i < $playlistElements.length; i++) {
 				$playlistElements[i].update();
@@ -299,12 +303,11 @@
 		}, 300);
 
 		return () => clearInterval(interval);
-		
 	});
 
-	$: console.log($isEditing)
-	$: emit("editMode", {edit: $editMode});
-	$: if($editMode) {
+	$: console.log($isEditing);
+	$: emit("editMode", { edit: $editMode });
+	$: if ($editMode) {
 		appWindow.setResizable(true);
 		//appWindow.setMinimizable(true);
 		//appWindow.setClosable(true);
@@ -323,12 +326,8 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
-
 	<!--SideBar-->
-	<div
-		class="side-bar"
-		class:exposed={sideBar}
-	>
+	<div class="side-bar" class:exposed={sideBar}>
 		{#if $editMode}
 			<div class="trackList">
 				{#each $srcFiles as p, i}
@@ -355,13 +354,19 @@
 	</div>
 
 	<!--TopBar-->
-	<TopBar bind:sideBar bind:editor={editorPanel} bind:palettes {pauseAll} {resetAll}/>
+	<TopBar
+		bind:sideBar
+		bind:editor={editorPanel}
+		bind:palettes
+		{pauseAll}
+		{resetAll}
+	/>
 
 	<!--playlist-->
 	<div
 		class="playlist"
 		on:drop={handleDropPlaylist}
-		on:dragover={(e) => {
+		on:dragover={e => {
 			e.preventDefault();
 			return false;
 		}}
@@ -405,10 +410,10 @@
 						type="number"
 						bind:value={$playlist[$selectedItem].edit.in}
 						on:focus={() => {
-							isEditing.update((e) => e + 1);
+							isEditing.update(e => e + 1);
 						}}
 						on:blur={() => {
-							isEditing.update((e) => e - 1);
+							isEditing.update(e => e - 1);
 						}}
 					/>
 					<label>fade in</label>
@@ -416,10 +421,10 @@
 						type="number"
 						bind:value={$playlist[$selectedItem].fade.in}
 						on:focus={() => {
-							isEditing.update((e) => e + 1);
+							isEditing.update(e => e + 1);
 						}}
 						on:blur={() => {
-							isEditing.update((e) => e - 1);
+							isEditing.update(e => e - 1);
 						}}
 					/>
 					<label>fade in</label>
@@ -427,10 +432,10 @@
 						type="number"
 						bind:value={$playlist[$selectedItem].fade.out}
 						on:focus={() => {
-							isEditing.update((e) => e + 1);
+							isEditing.update(e => e + 1);
 						}}
 						on:blur={() => {
-							isEditing.update((e) => e - 1);
+							isEditing.update(e => e - 1);
 						}}
 					/>
 				</div>
@@ -438,7 +443,7 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="track"
-					on:click={(e) => {
+					on:click={e => {
 						let rec = e.target.getBoundingClientRect();
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);
@@ -447,10 +452,10 @@
 					}}
 				>
 					<Waveform
-						data={
-							waveformCalc($playlistElements[$selectedItem].getBuffer(),
-							window.innerWidth)
-						}
+						data={waveformCalc(
+							$playlistElements[$selectedItem].getBuffer(),
+							window.innerWidth
+						)}
 						samples={window.innerWidth}
 						resY={200}
 					/>

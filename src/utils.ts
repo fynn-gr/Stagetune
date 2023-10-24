@@ -8,13 +8,7 @@ import {
 	readTextFile,
 	writeTextFile,
 } from "@tauri-apps/api/fs";
-import {
-	playlist,
-	playlistPath,
-	srcFiles,
-	hotkeys,
-	settings,
-} from "./stores";
+import { playlist, playlistPath, srcFiles, hotkeys, settings } from "./stores";
 import { emit } from "@tauri-apps/api/event";
 
 export interface playListItem {
@@ -101,7 +95,7 @@ export function waveformCalc(
 	}
 
 	const multiplier = Math.pow(Math.max(...filteredData), -1);
-	return filteredData.map((n) => n * multiplier);
+	return filteredData.map(n => n * multiplier);
 }
 
 export function createPlaylistTrack(
@@ -134,19 +128,18 @@ export function openDir() {
 		open({
 			directory: true,
 			multiple: false,
-		}).then(async (sel) => {
+		}).then(async sel => {
 			if (sel == null) {
-
 			} else {
 				//add to src paths
 				scanSrcPaths(sel as string);
-				playlistPath.set(sel as string)
+				playlistPath.set(sel as string);
 
 				//add to recent
 				settings.update(e => {
 					e.recent.push(sel);
 					return e;
-				})
+				});
 				saveSettings();
 			}
 		});
@@ -172,10 +165,10 @@ async function scanSrcPaths(path: string) {
 				entry.type = "track";
 				entry.origin = "src";
 				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-				let modifiedPath = entry.path.split(path).pop()
-				console.log(modifiedPath)
+				let modifiedPath = entry.path.split(path).pop();
+				console.log(modifiedPath);
 				entry.path = modifiedPath;
-				srcFiles.update((items) => {
+				srcFiles.update(items => {
 					items.push(entry);
 					return items;
 				});
@@ -184,15 +177,14 @@ async function scanSrcPaths(path: string) {
 				entry.type = "video";
 				entry.origin = "src";
 				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-				srcFiles.update((items) => {
+				srcFiles.update(items => {
 					items.push(entry);
 					return items;
 				});
 			} else if (isPlaylistFile(entry.path)) {
 				//is Playlist
 				playlistFile = entry.path;
-				readTextFile(playlistFile, {})
-				.then((e) => {
+				readTextFile(playlistFile, {}).then(e => {
 					let obj = JSON.parse(e);
 					playlist.set(obj.playlist);
 					hotkeys.set(obj.hotkeys);
@@ -204,11 +196,12 @@ async function scanSrcPaths(path: string) {
 						}
 					});
 				});
-			} else {}
+			} else {
+			}
 		});
 
 		//sort alphabetically
-		srcFiles.update((items) => {
+		srcFiles.update(items => {
 			items.sort(function (a, b) {
 				if (a.name < b.name) {
 					return -1;
@@ -221,7 +214,6 @@ async function scanSrcPaths(path: string) {
 			//console.log(get(srcFiles))
 			return items;
 		});
-
 	}
 	processEntries(await entries);
 }
@@ -229,14 +221,14 @@ async function scanSrcPaths(path: string) {
 export function savePlaylist() {
 	//save to known path
 	console.log("save to path: ", get(playlistPath));
-	
+
 	let saveObj = {
 		meta: {
 			version: "0.2.0",
-			fileVersion: 1
+			fileVersion: 1,
 		},
 		playlist: get(playlist),
-		hotkeys: []
+		hotkeys: [],
 	};
 
 	saveObj.playlist.forEach(e => {
@@ -245,62 +237,66 @@ export function savePlaylist() {
 		e.startedAt = 0;
 		e.pausedAt = 0;
 		e.buffer = null;
-	})
+	});
 
 	get(hotkeys).forEach(e => {
 		if (e.track != null) {
 			saveObj.hotkeys.push({
 				key: e.key,
-				track: get(playlist).indexOf(e.track)
-			})
+				track: get(playlist).indexOf(e.track),
+			});
 		} else {
 			saveObj.hotkeys.push({
 				key: e.key,
-				track: null
-			})
+				track: null,
+			});
 		}
-	})
+	});
 
-	writeTextFile(get(playlistPath) + "/playlist.Stagetune", JSON.stringify(saveObj), {});
+	writeTextFile(
+		get(playlistPath) + "/playlist.Stagetune",
+		JSON.stringify(saveObj),
+		{}
+	);
 	saveSettings();
 }
 
 export function saveSettings() {
-	exists('Stagetune/', { dir: BaseDirectory.Config})
-	.then(e => {
-		if (!e) {
-			createDir('Stagetune', { dir: BaseDirectory.Config, recursive: true})
-		}
-	})
-	.then(() => {
-		console.log("save: ", get(settings));
-		writeTextFile("Stagetune/settings.json", JSON.stringify(get(settings)), {
-			dir: BaseDirectory.Config,
+	exists("Stagetune/", { dir: BaseDirectory.Config })
+		.then(e => {
+			if (!e) {
+				createDir("Stagetune", { dir: BaseDirectory.Config, recursive: true });
+			}
+		})
+		.then(() => {
+			console.log("save: ", get(settings));
+			writeTextFile("Stagetune/settings.json", JSON.stringify(get(settings)), {
+				dir: BaseDirectory.Config,
+			});
 		});
-	})
 }
 
 export function loadSettings() {
 	readTextFile("Stagetune/settings.json", {
 		dir: BaseDirectory.Config,
-	}).then((e) => {
+	}).then(e => {
 		settings.set(JSON.parse(e));
-		console.log("loaded settings", get(settings))
-	})
+		console.log("loaded settings", get(settings));
+	});
 }
 
 export function updateProjectorList() {
 	let list = [];
 	get(playlist).forEach(e => {
 		if (e.type == "video") {
-			list.push({	name: e.name, url: e.path })
+			list.push({ name: e.name, url: e.path });
 		}
-	})
+	});
 
-	emit("updateList", {list})
+	emit("updateList", { list });
 }
 
 export function setUIScale(scale: number) {
-	let root: HTMLElement = document.querySelector(':root')
+	let root: HTMLElement = document.querySelector(":root");
 	root.style.fontSize = `${scale}px`;
 }

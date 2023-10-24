@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { onDestroy, onMount } from "svelte";
 	import { emit, listen } from "@tauri-apps/api/event";
-	import { createPlaylistTrack, secondsToMinutes, updateProjectorList } from "@/utils";
+	import {
+		createPlaylistTrack,
+		secondsToMinutes,
+		updateProjectorList,
+	} from "@/utils";
 	import {
 		editMode,
 		selectedItem,
@@ -46,14 +50,14 @@
 		if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(oldPosition, 1);
 				e.splice(newPosition, 0, $currentDragging);
 				return e;
 			});
 		} else if ($currentDragging.origin == "src") {
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(
 					newPosition,
 					0,
@@ -103,7 +107,6 @@
 	}
 
 	export function play(resume: boolean) {
-
 		emit("play_video", { name: track.name });
 		track.playing = true;
 	}
@@ -113,8 +116,8 @@
 			emit("update_play", { action: "pause" });
 			track.playing = false;
 			track.state = 0;
-			emit("update_play", { action: "skip", position: 0 })
-			emit("update_play", { action: "stop"})
+			emit("update_play", { action: "skip", position: 0 });
+			emit("update_play", { action: "stop" });
 		} else {
 			emit("update_play", { action: "pause" });
 			track.playing = false;
@@ -125,7 +128,7 @@
 
 	onMount(async () => {
 		unlistenState = await listen("video_state", (e: any) => {
-			console.log(e.payload)
+			console.log(e.payload);
 			if (track.playing && e.payload.name == track.name) {
 				track.state = e.payload.state;
 				track.length = e.payload.duration;
@@ -138,16 +141,16 @@
 				track.playing = false;
 				track.state = 0;
 			}
-		})
+		});
 
 		updateProjectorList();
-	})
+	});
 
 	onDestroy(() => {
 		unlistenState();
-	})
+	});
 
-	$: $currentDragging == null ? dragover = false : null;
+	$: $currentDragging == null ? (dragover = false) : null;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -163,7 +166,7 @@
 	on:dragenter={handleDragEnter}
 	on:dragleave={handleDragLeave}
 	on:drop={handleDrop}
-	on:click={(e) => {
+	on:click={e => {
 		selectedItem.set(id);
 	}}
 >
@@ -184,13 +187,13 @@
 						90deg,
 						var(--secondary) 0%,
 						var(--secondary) calc(100% * ${track.state / track.length || 0}),
-						#555 calc(100% * ${track.state / track.length || 0 }),
+						#555 calc(100% * ${track.state / track.length || 0}),
 						#555 100%
 					);`}
 			/>
 
 			<div class="drag-area">
-				<img src="/icons/square/drag_n_drop.svg" alt="" draggable="false" >
+				<img src="/icons/square/drag_n_drop.svg" alt="" draggable="false" />
 			</div>
 
 			<!--reset-btn-->
@@ -201,7 +204,7 @@
 					emit("update_play", { action: "stop" });
 				}}
 			>
-				<img src="./icons/square/reset.svg" alt="" draggable="false" >
+				<img src="./icons/square/reset.svg" alt="" draggable="false" />
 			</button>
 
 			<!--play Button-->
@@ -225,13 +228,13 @@
 					type="text"
 					bind:value={track.name}
 					on:focus={() => {
-						isEditing.update((e) => e + 1);
+						isEditing.update(e => e + 1);
 					}}
 					on:blur={() => {
-						isEditing.update((e) => e - 1);
+						isEditing.update(e => e - 1);
 					}}
 					disabled={!editMode || $selectedItem != id}
-				>
+				/>
 			</div>
 		</div>
 

@@ -18,7 +18,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="splash"
-	on:click={(e) => {
+	on:click={e => {
 		splashScreen = false;
 	}}
 	on:mousedown={e => {
@@ -35,7 +35,7 @@
 
 		<div class="container">
 			<span>
-				<button class="online" on:click={(e) => {}}
+				<button class="online" on:click={e => {}}
 					><img src="/icons/square/web.svg" />Website</button
 				>
 				<button class="online"><img src="/icons/square/web.svg" />Source</button
@@ -51,7 +51,7 @@
 				{#each recentList as item}
 					<button
 						class="recent"
-						on:click={(e) => {
+						on:click={e => {
 							e.stopPropagation();
 						}}
 					>

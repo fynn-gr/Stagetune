@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	//export let buffer: AudioBuffer;
 	export let data: Array<number>;
 	export let samples: number;
@@ -19,8 +18,8 @@
 		can.clearRect(0, 0, canvas.width, canvas.height);
 		can.globalAlpha = 1;
 		can.beginPath();
-		can.moveTo(resX +1, resY);
-		can.lineTo(resX +1, -1);
+		can.moveTo(resX + 1, resY);
+		can.lineTo(resX + 1, -1);
 		can.lineTo(-1, -1);
 		for (let i = 0; i < data.length; i++) {
 			let x = i * step;
