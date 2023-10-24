@@ -3,7 +3,11 @@
 	import "./style/App.scss";
 	import "./style/settings.scss";
 	import { uiPlatform } from "./stores";
-	import { LogicalSize, appWindow, availableMonitors } from "@tauri-apps/api/window";
+	import {
+		LogicalSize,
+		appWindow,
+		availableMonitors,
+	} from "@tauri-apps/api/window";
 	import { afterUpdate, onMount, tick } from "svelte";
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
@@ -18,37 +22,35 @@
 	let projectorScreen: number = 1;
 	let mainScreen: number = 0;
 	loadSettings();
-	console.log($settings)
+	console.log($settings);
 
 	onMount(async () => {
-
 		screens = await availableMonitors();
-
-	})
+	});
 
 	function setWindowHeight() {
-		let content: HTMLElement = document.querySelector('.content')
+		let content: HTMLElement = document.querySelector(".content");
 		tick();
 		let height = content.offsetHeight;
-		appWindow.setSize(new LogicalSize(800, height + 80))
+		appWindow.setSize(new LogicalSize(800, height + 80));
 	}
 
 	function onChange() {
 		saveSettings();
-		emit("reload_settings")
+		emit("reload_settings");
 	}
 
-	afterUpdate(() => {setWindowHeight()});
-
+	afterUpdate(() => {
+		setWindowHeight();
+	});
 </script>
 
 <main class={"window-body dark " + $uiPlatform}>
 	<div class="topbar tabbar" data-tauri-drag-region>
-
 		<p class="title" data-tauri-drag-region>Settings</p>
 
 		{#if $uiPlatform == "mac"}
-			<WinButtonsMac 
+			<WinButtonsMac
 				CanMaximise={false}
 				CanMinimize={false}
 				onClose={() => {
@@ -57,15 +59,17 @@
 			/>
 		{/if}
 
-		<div class="spacer" data-tauri-drag-region/>
+		<div class="spacer" data-tauri-drag-region />
 
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="tab"
 			class:active={tab == "general"}
-			on:click={() => {tab = "general"}}
+			on:click={() => {
+				tab = "general";
+			}}
 		>
-			<img src="./icons/settings_tabs/general.svg" alt="">
+			<img src="./icons/settings_tabs/general.svg" alt="" />
 			<p>General</p>
 		</div>
 
@@ -73,9 +77,11 @@
 		<div
 			class="tab active"
 			class:active={tab == "keymap"}
-			on:click={() => {tab = "keymap"}}
+			on:click={() => {
+				tab = "keymap";
+			}}
 		>
-			<img src="./icons/settings_tabs/keymap.svg" alt="">
+			<img src="./icons/settings_tabs/keymap.svg" alt="" />
 			<p>Keymap</p>
 		</div>
 
@@ -83,9 +89,11 @@
 		<div
 			class="tab"
 			class:active={tab == "projector"}
-			on:click={() => {tab = "projector"}}
+			on:click={() => {
+				tab = "projector";
+			}}
 		>
-			<img src="./icons/settings_tabs/projector.svg" alt="">
+			<img src="./icons/settings_tabs/projector.svg" alt="" />
 			<p>Projector</p>
 		</div>
 
@@ -93,19 +101,23 @@
 		<div
 			class="tab"
 			class:active={tab == "update"}
-			on:click={() => {tab = "update"}}
+			on:click={() => {
+				tab = "update";
+			}}
 		>
-			<img src="./icons/settings_tabs/update.svg" alt="">
+			<img src="./icons/settings_tabs/update.svg" alt="" />
 			<p>Update</p>
 		</div>
 
-		<div class="spacer" data-tauri-drag-region/>
+		<div class="spacer" data-tauri-drag-region />
 
 		{#if $uiPlatform == "win"}
-			<WinButtonsMs 
+			<WinButtonsMs
 				CanMaximise={false}
 				CanMinimize={false}
-				onClose={() => {appWindow.close();}}
+				onClose={() => {
+					appWindow.close();
+				}}
 				CloseOnly={true}
 			/>
 		{/if}
@@ -120,36 +132,36 @@
 					type="select"
 					bind:value={$settings.lang}
 					options={[
-						{value: "en", name: "English"},
-						{value: "de", name: "Deutsch"}
+						{ value: "en", name: "English" },
+						{ value: "de", name: "Deutsch" },
 					]}
-					onChange={onChange}
+					{onChange}
 				/>
 				<SettingsOption
 					name="UI size:"
 					type="select"
 					bind:value={$settings.ui_scale}
 					options={[
-						{value: 1, name: "Small"},
-						{value: 1.3, name: "Standart"},
-						{value: 1.6, name: "Large"},
-						{value: 2, name: "Double"}
+						{ value: 1, name: "Small" },
+						{ value: 1.3, name: "Standart" },
+						{ value: 1.6, name: "Large" },
+						{ value: 2, name: "Double" },
 					]}
-					onChange={onChange}
+					{onChange}
 				/>
 				<SettingsOption
 					name="Splash Screen:"
 					type="checkbox"
 					bind:value={$settings.show_splash}
 					checkboxName="Show on startup"
-					onChange={onChange}
+					{onChange}
 				/>
 				<SettingsOption
 					name="Performance: "
 					type="checkbox"
 					bind:value={$settings.performance_mode}
 					checkboxName="Low performance mode"
-					onChange={onChange}
+					{onChange}
 				/>
 			</div>
 		{:else if tab == "keymap"}
@@ -178,7 +190,7 @@
 						configCmd={{
 							KeyO: "Open directory",
 							KeyS: "Save playlist",
-							KeyP: "open projector window"
+							KeyP: "open projector window",
 						}}
 						configAlt={{
 							Digit1: "Remove hotkey - 1",
@@ -194,7 +206,7 @@
 						configCtrl={{
 							KeyO: "Open directory",
 							KeyS: "Save playlist",
-							KeyP: "Open projector window"
+							KeyP: "Open projector window",
 						}}
 					/>
 				</div>
@@ -203,24 +215,30 @@
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div class="content">
 				{#each screens as screen, i}
-				<div
-					class="screen"
-					class:active={i == projectorScreen}
-					on:click={() => {
-						
-					}}
-				>
 					<div
-						class="display"
-						style={`aspect-ratio: ${screen.size.width} / ${screen.size.height};`}
+						class="screen"
+						class:active={i == projectorScreen}
+						on:click={() => {}}
 					>
-						<p>{i == projectorScreen ? "Projector" : i == mainScreen ? "Main" : ""}</p>
+						<div
+							class="display"
+							style={`aspect-ratio: ${screen.size.width} / ${screen.size.height};`}
+						>
+							<p>
+								{i == projectorScreen
+									? "Projector"
+									: i == mainScreen
+									? "Main"
+									: ""}
+							</p>
+						</div>
+						<span>
+							<p>{screen.name}</p>
+							<p>
+								{screen.size.width} x {screen.size.height} @{screen.scaleFactor}
+							</p>
+						</span>
 					</div>
-					<span>
-						<p>{screen.name}</p>
-						<p>{screen.size.width} x {screen.size.height} @{screen.scaleFactor}</p>
-					</span>
-				</div>
 				{/each}
 			</div>
 		{:else}

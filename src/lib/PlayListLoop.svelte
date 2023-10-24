@@ -28,14 +28,14 @@
 		if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(oldPosition, 1);
 				e.splice(newPosition, 0, $currentDragging);
 				return e;
 			});
 		} else if ($currentDragging.origin == "src") {
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(newPosition, 0, {
 					type: $currentDragging.type,
 					origin: "playlist",
@@ -66,7 +66,7 @@
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
 	on:drop={handleDrop}
-	on:click={(e) => {
+	on:click={e => {
 		selectedItem.set(id);
 	}}
 >

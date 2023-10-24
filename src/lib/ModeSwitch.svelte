@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+	import { onMount } from "svelte";
 	import { editMode, uiPlatform } from "@/stores";
 
 	export let icon: string;
@@ -11,53 +11,47 @@
 	export let disabled = false;
 
 	let self: HTMLElement;
-    let topBarType;
-    let topBarShort;
+	let topBarType;
+	let topBarShort;
 	let iconPath;
 	let iconPathActive;
 
-    onMount(() => {
-        let cls = self;
-        while (cls.parentElement) {
-            cls = cls.parentElement;
+	onMount(() => {
+		let cls = self;
+		while (cls.parentElement) {
+			cls = cls.parentElement;
 
-            if (cls.classList.contains("toolbar")) {
-                topBarType = "toolbar-button"
-                topBarShort = "tb"
-            } else if (cls.classList.contains("buttonbar")) {
-                topBarType = "buttonbar-button"
-                topBarShort = "bb"
-            }
-        }
+			if (cls.classList.contains("toolbar")) {
+				topBarType = "toolbar-button";
+				topBarShort = "tb";
+			} else if (cls.classList.contains("buttonbar")) {
+				topBarType = "buttonbar-button";
+				topBarShort = "bb";
+			}
+		}
 
-		iconPath = `./icons/${topBarShort}_${$uiPlatform}/${icon}.svg`
+		iconPath = `./icons/${topBarShort}_${$uiPlatform}/${icon}.svg`;
 
 		if (iconActive == null) {
 			iconPathActive = iconPath;
 		} else {
-			iconPathActive = `./icons/${topBarShort}_${$uiPlatform}/${iconActive}.svg`
+			iconPathActive = `./icons/${topBarShort}_${$uiPlatform}/${iconActive}.svg`;
 		}
-    })
-	
+	});
 </script>
 
 <button
 	bind:this={self}
 	class="topbar-button mode-switch"
-	class:disabled={disabled}
+	class:disabled
 	on:click={() => {
-		!disabled ? active = !active : active = active;
+		!disabled ? (active = !active) : (active = active);
 		onChange(active);
 	}}
-	disabled={disabled}
-	style={`background-color: ${active ? activeColor : 'none'};`}
+	{disabled}
+	style={`background-color: ${active ? activeColor : "none"};`}
 >
+	<img src={active ? iconPathActive : iconPath} alt={toolTip} />
 
-	<img
-		src={active ? iconPathActive : iconPath}
-		alt={toolTip}
-	>
-
-    <p>{$editMode ? "Edit" : "Live"}</p>
-
+	<p>{$editMode ? "Edit" : "Live"}</p>
 </button>

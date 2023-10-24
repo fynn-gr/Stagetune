@@ -39,14 +39,14 @@
 		if ($currentDragging.origin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(oldPosition, 1);
 				e.splice(newPosition, 0, $currentDragging);
 				return e;
 			});
 		} else if ($currentDragging.origin == "src") {
 			let newPosition = id;
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(
 					newPosition,
 					0,
@@ -88,24 +88,24 @@
 	on:drop={handleDrop}
 	on:dragenter={handleDragEnter}
 	on:dragleave={handleDragLeave}
-	on:click={(e) => {
+	on:click={e => {
 		selectedItem.set(id);
 	}}
 >
 	<div class="border">
 		<div class="container">
 			<div class="drag-area">
-				<img src="/icons/square/drag_n_drop.svg" alt="">
+				<img src="/icons/square/drag_n_drop.svg" alt="" />
 			</div>
 			<input
 				type="text"
 				bind:value={item.text}
 				bind:this={inputElement}
 				on:focus={() => {
-					isEditing.update((e) => e + 1);
+					isEditing.update(e => e + 1);
 				}}
 				on:blur={() => {
-					isEditing.update((e) => e - 1);
+					isEditing.update(e => e - 1);
 				}}
 				disabled={!$editMode || $selectedItem != id}
 			/>

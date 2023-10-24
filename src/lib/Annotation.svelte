@@ -12,11 +12,11 @@
 			type="text"
 			disabled={!$editMode || $selectedItem != id}
 			on:focus={() => {
-				isEditing.update((e) => e + 1);
+				isEditing.update(e => e + 1);
 				console.log("in focus", $isEditing);
 			}}
 			on:blur={() => {
-				isEditing.update((e) => e - 1);
+				isEditing.update(e => e - 1);
 				console.log("out of focus", $isEditing);
 			}}
 			bind:value={annotation[start ? "before" : "after"]}

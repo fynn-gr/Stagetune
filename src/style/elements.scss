@@ -226,7 +226,7 @@
 	}
 
 	.drag-over::after {
-		content: '';
+		content: "";
 		position: absolute;
 		top: 0;
 		width: 100%;
@@ -252,7 +252,9 @@
 		background-color: var(--panel2);
 		border-radius: 8rem;
 
-		.drag-area > img { display: none; }
+		.drag-area > img {
+			display: none;
+		}
 
 		.title {
 			flex: 1;
@@ -318,7 +320,8 @@
 				background-color: transparent;
 			}
 
-			&.repeat-btn, &.auto-reset-btn {
+			&.repeat-btn,
+			&.auto-reset-btn {
 				display: none;
 			}
 
@@ -442,7 +445,6 @@
 	}
 
 	.editMode {
-
 		.drag-area {
 			cursor: grab;
 			width: 28rem;
@@ -458,7 +460,7 @@
 				height: 10rem;
 				margin: auto;
 				filter: invert(80%);
-				translate: 2rem 0;;
+				translate: 2rem 0;
 			}
 		}
 
@@ -479,7 +481,8 @@
 				background-color: var(--hover);
 			}
 
-			&.repeat-btn, &.auto-reset-btn {
+			&.repeat-btn,
+			&.auto-reset-btn {
 				display: block;
 			}
 

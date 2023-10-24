@@ -21,10 +21,10 @@
 			src = convertFileSrc(event.payload.url);
 		});
 		*/
-		console.log(event)
+		console.log(event);
 		list.forEach((e, i) => {
-			if (e.name ==  event.payload.name) active = i;
-		})
+			if (e.name == event.payload.name) active = i;
+		});
 		listElements[active].play();
 	});
 
@@ -32,25 +32,25 @@
 		console.log(e.payload);
 		if (e.payload.action == "stop") {
 			listElements[active].pause();
-			active = -1
+			active = -1;
 		} else if (e.payload.action == "skip") {
-			listElements[active].currentTime = listElements[active].duration * e.payload.position;
+			listElements[active].currentTime =
+				listElements[active].duration * e.payload.position;
 		} else if (e.payload.action == "pause") {
 			listElements[active].pause();
 		} else if (e.payload.action == "resume") {
-
 			listElements[active].play();
 		}
 	});
 
-	const unlistenUpdateList = listen("updateList", (e) => {
+	const unlistenUpdateList = listen("updateList", e => {
 		console.log(e.payload);
 		list = e.payload.list;
-	})
+	});
 
 	const unlistenEditMode = listen("editMode", e => {
 		editMode = e.payload.edit;
-	})
+	});
 
 	onMount(async () => {
 		//input = ctx.createMediaElementSource(videoElement);
@@ -60,7 +60,7 @@
 		panNode = ctx.createStereoPanner();
 		//input.connect(gainNode).connect(panNode).connect(ctx.destination);
 
-		emit("projctorReq", {})
+		emit("projctorReq", {});
 
 		const interval = setInterval(() => {
 			if (active != -1) {
@@ -111,7 +111,9 @@
 			data-tauri-drag-region
 			class:vis={i == active}
 			bind:this={listElements[i]}
-			on:ended={() => {emit("video_ended", {name: list[active].name})}}
+			on:ended={() => {
+				emit("video_ended", { name: list[active].name });
+			}}
 		/>
 	{/each}
 
@@ -119,7 +121,7 @@
 		<div class="buffers">
 			{#each buffer as b}
 				<div
-					class="bar" 
+					class="bar"
 					style={`
 						background: linear-gradient(
 							90deg,
@@ -135,7 +137,6 @@
 </div>
 
 <style lang="scss">
-
 	.wrapper {
 		display: flex;
 		flex-wrap: wrap;
