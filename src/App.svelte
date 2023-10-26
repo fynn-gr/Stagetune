@@ -299,11 +299,11 @@
 		{#if $editMode}
 			<div class="trackList">
 				{#each $srcFiles as p, i}
-					<TrackListItem entry={p} />
+					<TrackListItem entry={p} {ctx} {masterGain}/>
 				{/each}
 				<p class="category">videos</p>
 				{#each $localFiles as l}
-					<TrackListItem entry={l} />
+					<TrackListItem entry={l} {ctx} {masterGain}/>
 				{/each}
 			</div>
 		{/if}
