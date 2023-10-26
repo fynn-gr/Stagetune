@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { settings } from "@/stores";
 	import { onMount } from "svelte";
-	import { loadSettings } from "@/utils";
+	import { loadSettings } from "@/saveLoad";
 
 	export let splashScreen;
 	let recentList = [];

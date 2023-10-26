@@ -32,20 +32,18 @@
 		settings,
 	} from "./stores";
 	import {
-		savePlaylist,
 		fileNameFromPath,
-		openDir,
 		createPlaylistTrack,
 		waveformCalc,
 		updateProjectorList,
-		loadSettings,
 		setUIScale,
 	} from "./utils";
+	import {
+		savePlaylist,
+		openDir,
+		loadSettings
+	} from "./saveLoad";
 
-	let meterCanvas: HTMLCanvasElement;
-	let meterCtx: CanvasRenderingContext2D;
-
-	let splashScreen = false;
 	let sideBar = true;
 	let editorPanel = false;
 	let projector = false;
@@ -58,12 +56,6 @@
 	const masterGain = ctx.createGain();
 	masterGain.connect(analyser).connect(ctx.destination);
 
-	/*
-	analyser.fftSize = 32;
-	const bufferLength = analyser.frequencyBinCount;
-	const dataArray = new Uint8Array(bufferLength);
-	analyser.getByteTimeDomainData(dataArray);
-	*/
 
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
@@ -125,30 +117,6 @@
 	function resetAll() {
 		for (let i = 0; i < $playlistElements.length; i++) {
 			$playlistElements[i].stop(true, false);
-		}
-	}
-
-	function drawMeter() {
-		//requestAnimationFrame(drawMeter);
-
-		analyser.getByteTimeDomainData(dataArray);
-
-		meterCtx.fillStyle = "rgb(200, 200, 200)";
-		meterCtx.fillRect(0, 0, meterCanvas.width, meterCanvas.height);
-
-		for (let i = 0; i < bufferLength; i++) {
-			const v = dataArray[i] / 128.0;
-			const y = (v * meterCanvas.height) / 1.5;
-			console.log(v, y);
-
-			//meterCtx.lineTo(x, y);
-			meterCtx.fillStyle = "rgb(256, 0, 0)";
-			meterCtx.fillRect(
-				0,
-				meterCanvas.height - y,
-				meterCanvas.width,
-				meterCanvas.height
-			);
 		}
 	}
 
@@ -299,7 +267,6 @@
 			for (let i = 0; i < $playlistElements.length; i++) {
 				$playlistElements[i].update();
 			}
-			//drawMeter()
 		}, 300);
 
 		return () => clearInterval(interval);
@@ -316,6 +283,7 @@
 		//appWindow.setMinimizable(false);
 		//appWindow.setClosable(false);
 	}
+
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -338,18 +306,6 @@
 					<TrackListItem entry={l} />
 				{/each}
 			</div>
-			<!--
-			<div class="meter">
-				<canvas
-					class="can-meter"
-					bind:this={meterCanvas}
-					width="30"
-					height="500"
-				>
-
-				</canvas>
-			</div>
-			-->
 		{/if}
 	</div>
 
@@ -443,7 +399,7 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="track"
-					on:click={e => {
+					on:click={(e) => {
 						let rec = e.target.getBoundingClientRect();
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);

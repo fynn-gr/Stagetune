@@ -13,7 +13,7 @@
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 	import { emit, listen } from "@tauri-apps/api/event";
 	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
-	import { loadSettings, saveSettings } from "./utils";
+	import { loadSettings, saveSettings } from "./saveLoad";
 	import { settings } from "./stores";
 	import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
 
