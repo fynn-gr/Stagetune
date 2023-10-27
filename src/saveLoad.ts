@@ -9,7 +9,7 @@ import {
 	writeTextFile,
 } from "@tauri-apps/api/fs";
 import { isAudioFile, isVideoFile, isPlaylistFile } from "./utils";
-import { playlist, playlistPath, srcFiles, hotkeys, settings } from "./stores";
+import { playlist, playlistPath, srcFiles, hotkeys, settings, uiPlatform } from "./stores";
 
 export function openDir() {
 	try {
@@ -170,5 +170,8 @@ export function loadSettings() {
 	}).then(e => {
 		settings.set(JSON.parse(e));
 		console.log("loaded settings", get(settings));
+
+			//ui Platform
+			uiPlatform.set(get(settings).ui_platform);
 	});
 }

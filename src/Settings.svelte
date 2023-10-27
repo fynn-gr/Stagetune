@@ -8,10 +8,11 @@
 		appWindow,
 		availableMonitors,
 	} from "@tauri-apps/api/window";
+	import { getTauriVersion, getVersion } from '@tauri-apps/api/app';
 	import { afterUpdate, onMount, tick } from "svelte";
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
-	import { emit, listen } from "@tauri-apps/api/event";
+	import { emit } from "@tauri-apps/api/event";
 	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
 	import { loadSettings, saveSettings } from "./saveLoad";
 	import { settings } from "./stores";
@@ -21,11 +22,15 @@
 	let screens = [];
 	let projectorScreen: number = 1;
 	let mainScreen: number = 0;
+	let stagetuneVersion;
+	let tauriVersion;
 	loadSettings();
 	console.log($settings);
 
 	onMount(async () => {
 		screens = await availableMonitors();
+		stagetuneVersion = await getVersion();
+		tauriVersion = await getTauriVersion();
 	});
 
 	function setWindowHeight() {
@@ -38,6 +43,9 @@
 	function onChange() {
 		saveSettings();
 		emit("reload_settings");
+
+		//check uiPlatform
+		$uiPlatform = $settings.ui_platform;
 	}
 
 	afterUpdate(() => {
@@ -107,6 +115,18 @@
 		>
 			<img src="./icons/settings_tabs/update.svg" alt="" />
 			<p>Update</p>
+		</div>
+
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<div
+			class="tab"
+			class:active={tab == "developer"}
+			on:click={() => {
+				tab = "developer";
+			}}
+		>
+			<img src="./icons/settings_tabs/dev.svg" alt="" />
+			<p>Developer</p>
 		</div>
 
 		<div class="spacer" data-tauri-drag-region />
@@ -241,11 +261,32 @@
 					</div>
 				{/each}
 			</div>
-		{:else}
+		{:else if tab == "update"}
 			<div class="content update">
-				<p class="update">Stagetune v0.1.0</p>
-				<p>made by Fynn Gr.</p>
+				<p class="update">Stagetune {stagetuneVersion || ""}</p>
+				<p>Tauri {tauriVersion}</p>
+				<p>created by Fynn Gr.</p>
 				<p>GPL 3.0</p>
+			</div>
+		{:else}
+			<div class="content dev">
+				<SettingsOption
+					name="UI Platform"
+					type="select"
+					bind:value={$settings.ui_platform}
+					options={[
+						{ value: "mac", name: "macOS"},
+						{ value: "win", name: "Windows"}
+					]}
+					{onChange}
+				/>
+				<SettingsOption
+					name="Video"
+					type="checkbox"
+					bind:value={$settings.video}
+					checkboxName="Enable video projector"
+					{onChange}
+				/>
 			</div>
 		{/if}
 	{/if}

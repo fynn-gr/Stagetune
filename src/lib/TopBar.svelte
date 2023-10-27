@@ -117,7 +117,7 @@
 						return items;
 					});
 				}}
-				activeColor="rgb(0, 108, 141)"
+				activeColor="var(--hover)"
 				toolTip="toggle comment before"
 			/>
 
@@ -134,7 +134,7 @@
 						return items;
 					});
 				}}
-				activeColor="rgb(0, 108, 141)"
+				activeColor="var(--hover)"
 				toolTip="toggle comment after"
 			/>
 		</div>
@@ -192,7 +192,7 @@
 			<WinButtonsMs
 				onClose={async () => {
 					if ($editMode) {
-						const confirmed = await confirm("Discard all unsaved changes?", {
+						const confirmed = await confirm("Discard unsaved changes?", {
 							title: "Quit?",
 							type: "warning",
 							okLabel: "Quit",

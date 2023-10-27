@@ -6,11 +6,13 @@ export const settings = writable({
 	show_splash: true,
 	ui_scale: 1.3,
 	performance_mode: false,
+	ui_platform: "mac",
+	video: false,
 });
 
 export const currentDragging = writable(null);
 export const editMode = writable(true);
-export const uiPlatform = writable("win");
+export const uiPlatform = writable("mac");
 export const playlist = writable([
 	/*
 	{

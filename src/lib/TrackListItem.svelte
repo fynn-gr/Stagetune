@@ -31,15 +31,20 @@
 		if (playing) {
 			playing = false;
 			node.stop();
-			node = null
+			node = null;
 		} else {
-			playing = true
-			const response = await fetch(convertFileSrc(await join($playlistPath, entry.path)));
+			playing = true;
+			const response = await fetch(
+				convertFileSrc(await join($playlistPath, entry.path))
+			);
 			const arrayBuffer = await response.arrayBuffer();
 			const buffer = await ctx.decodeAudioData(arrayBuffer);
 			node = new AudioBufferSourceNode(ctx, { buffer: buffer });
 			node.connect(masterGain);
-			node.onended = () => {node = null; playing = false;};
+			node.onended = () => {
+				node = null;
+				playing = false;
+			};
 			node.start(0);
 		}
 	}
@@ -50,8 +55,12 @@
 	class="trackListItem"
 	class:dragging
 	draggable="true"
-	on:mouseenter={() => {hover = true}}
-	on:mouseleave={() => {hover = false}}
+	on:mouseenter={() => {
+		hover = true;
+	}}
+	on:mouseleave={() => {
+		hover = false;
+	}}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
 >
@@ -60,9 +69,9 @@
 	{:else if playing || hover}
 		<button class="play-btn" on:click={handlePlay}>
 			{#if playing}
-				<img src="./icons/square/pause.svg">
+				<img src="./icons/square/pause.svg" />
 			{:else}
-				<img src="./icons/square/play.svg">
+				<img src="./icons/square/play.svg" />
 			{/if}
 		</button>
 	{:else if entry.type == "track"}

@@ -38,24 +38,20 @@
 		updateProjectorList,
 		setUIScale,
 	} from "./utils";
-	import {
-		savePlaylist,
-		openDir,
-		loadSettings
-	} from "./saveLoad";
+	import { savePlaylist, openDir, loadSettings, saveSettings } from "./saveLoad";
 
 	let sideBar = true;
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
 	loadSettings();
+	saveSettings();
 	setUIScale($settings.ui_scale);
 
 	const ctx = new AudioContext();
 	const analyser = ctx.createAnalyser();
 	const masterGain = ctx.createGain();
 	masterGain.connect(analyser).connect(ctx.destination);
-
 
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
@@ -143,7 +139,7 @@
 		updateProjectorList();
 	});
 
-	const unlistenUpdateSettings = listen("update_settings", () => {
+	const unlistenUpdateSettings = listen("reload_settings", () => {
 		loadSettings();
 	});
 
@@ -283,7 +279,6 @@
 		//appWindow.setMinimizable(false);
 		//appWindow.setClosable(false);
 	}
-
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -299,11 +294,11 @@
 		{#if $editMode}
 			<div class="trackList">
 				{#each $srcFiles as p, i}
-					<TrackListItem entry={p} {ctx} {masterGain}/>
+					<TrackListItem entry={p} {ctx} {masterGain} />
 				{/each}
 				<p class="category">videos</p>
 				{#each $localFiles as l}
-					<TrackListItem entry={l} {ctx} {masterGain}/>
+					<TrackListItem entry={l} {ctx} {masterGain} />
 				{/each}
 			</div>
 		{/if}
@@ -383,7 +378,7 @@
 							isEditing.update(e => e - 1);
 						}}
 					/>
-					<label>fade in</label>
+					<label>fade out</label>
 					<input
 						type="number"
 						bind:value={$playlist[$selectedItem].fade.out}
@@ -399,7 +394,7 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="track"
-					on:click={(e) => {
+					on:click={e => {
 						let rec = e.target.getBoundingClientRect();
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);
