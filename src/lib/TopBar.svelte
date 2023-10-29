@@ -5,7 +5,7 @@
 	import { appWindow } from "@tauri-apps/api/window";
 	import { confirm } from "@tauri-apps/api/dialog";
 
-	import { editMode, playlist, selectedItem, uiPlatform } from "@/stores";
+	import { editMode, playlist, selectedItem, settings, uiPlatform } from "@/stores";
 	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 	import ModeSwitch from "./ModeSwitch.svelte";
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
@@ -61,15 +61,17 @@
 
 		{#if $uiPlatform == "win"}
 			<AppMenu name="File">
-				<AppMenuItem id="new" name="New Playlist" accelerator="ctrl+N" />
-				<AppMenuItem id="open" name="Open" accelerator="ctrl+O" />
-				<AppMenuItem id="save" name="Save" accelerator="ctrl+S" />
+				<AppMenuItem id="new" name="New Playlist" accelerator="ctrl N" />
+				<AppMenuItem id="open" name="Open" accelerator="ctrl O" />
+				<AppMenuItem id="save" name="Save" accelerator="ctrl S" />
 				<div class="seperator" />
-				<AppMenuItem id="settings" name="Settings" accelerator="ctrl+," />
+				<AppMenuItem id="settings" name="Settings" accelerator="ctrl ," />
 			</AppMenu>
-			<AppMenu name="Window">
-				<AppMenuItem id="projector" name="Projector" accelerator="ctrl+P" />
-			</AppMenu>
+			{#if $settings.video}
+				<AppMenu name="Window">
+					<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
+				</AppMenu>
+			{/if}
 		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />

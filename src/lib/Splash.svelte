@@ -14,7 +14,8 @@
 		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
 		console.log(recentList);
 
-		version = await getVersion();
+		let fullVersion = (await getVersion());
+		version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
 	});
 </script>
 
@@ -34,7 +35,7 @@
 		<div class="top">
 			<img src="./splash_icon.png" class="icon" />
 			<h1><b>Stagetune</b></h1>
-			<p class="version">{version || ""} Beta</p>
+			<p class="version">{version || ""} Aquädukt</p>
 		</div>
 
 		<div class="container">

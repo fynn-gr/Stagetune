@@ -69,13 +69,13 @@ async function scanSrcPaths(path: string) {
 				});
 			} else if (isVideoFile(entry.path)) {
 				//Video File
-				entry.type = "video";
+				/*entry.type = "video";
 				entry.origin = "src";
 				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
 				srcFiles.update(items => {
 					items.push(entry);
 					return items;
-				});
+				})*/
 			} else if (isPlaylistFile(entry.path)) {
 				//is Playlist
 				playlistFile = entry.path;

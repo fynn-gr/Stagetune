@@ -121,7 +121,7 @@
 		}
 	}
 
-	const unlistenMenus = listen("menu", async event => {
+	const listenerMenus = listen("menu", async event => {
 		console.log(event);
 		if (event.payload == "quit" && $editMode) {
 			const confirmed = await confirm(
@@ -132,7 +132,7 @@
 			openDir();
 		} else if (event.payload == "save") {
 			savePlaylist();
-		} else if (event.payload == "projector") {
+		} else if (event.payload == "projector" && $settings.video) {
 			openVideoWindow(!projector);
 			projector = !projector;
 		} else if (event.payload == "settings" && $editMode) {
@@ -140,11 +140,11 @@
 		}
 	});
 
-	const unlistenProjectorReq = listen("projctorReq", e => {
+	const listenerProjectorReq = listen("projctorReq", e => {
 		updateProjectorList();
 	});
 
-	const unlistenUpdateSettings = listen("reload_settings", () => {
+	const listenerUpdateSettings = listen("reload_settings", () => {
 		loadSettings();
 	});
 
@@ -164,7 +164,7 @@
 					}
 
 					// openVideoWindow
-					else if (e.code == "KeyP" && e.ctrlKey) {
+					else if (e.code == "KeyP" && e.ctrlKey && $settings.video) {
 						e.preventDefault();
 						openVideoWindow(!projector);
 						projector = !projector;
@@ -301,10 +301,12 @@
 				{#each $srcFiles as p, i}
 					<TrackListItem entry={p} {ctx} {masterGain} />
 				{/each}
-				<p class="category">videos</p>
-				{#each $localFiles as l}
-					<TrackListItem entry={l} {ctx} {masterGain} />
-				{/each}
+				{#if $settings.video}
+					<p class="category">videos</p>
+					{#each $localFiles as l}
+						<TrackListItem entry={l} {ctx} {masterGain} />
+					{/each}
+				{/if}
 			</div>
 		{/if}
 	</div>
