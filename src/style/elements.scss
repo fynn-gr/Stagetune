@@ -527,15 +527,16 @@
 			flex-direction: row;
 			flex-wrap: wrap;
 			align-content: flex-start;
-			width: 100rem;
+			width: 58rem;
 			height: 54rem;
 			padding: 0;
 
-			p {
-				width: 60rem;
+			img {
+				width: 18rem;
 				height: 18rem;
 				margin: 6rem 0 0 0;
 				font-size: 12rem;
+				filter: invert(1);
 			}
 
 			input {

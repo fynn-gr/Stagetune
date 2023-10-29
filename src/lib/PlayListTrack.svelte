@@ -401,7 +401,7 @@
 
 			<!--fade-->
 			<span class="fade">
-				<p>Fade in:</p>
+				<img src="./icons/square/fade_in.svg" alt="">
 				<input
 					type="number"
 					bind:value={track.fade.in}
@@ -414,8 +414,9 @@
 					min="0"
 					max={track.length}
 					disabled={!$editMode}
+					title="Fade In"
 				/>
-				<p>Fade out:</p>
+				<img src="./icons/square/fade_out.svg" alt="">
 				<input
 					type="number"
 					bind:value={track.fade.out}
@@ -428,6 +429,7 @@
 					min="0"
 					max={track.length}
 					disabled={!$editMode}
+					title="Fade Out"
 				/>
 			</span>
 
