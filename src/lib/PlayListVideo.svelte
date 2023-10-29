@@ -142,7 +142,7 @@
 				track.state = 0;
 			}
 		});
-
+		
 		updateProjectorList();
 	});
 

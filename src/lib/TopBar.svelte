@@ -54,7 +54,7 @@
 				onClick={() => {
 					sideBar = !sideBar;
 				}}
-				toolTip="sideBar"
+				toolTip="Toggle SideBar"
 				disabled={!$editMode}
 			/>
 		</div>
@@ -103,7 +103,7 @@
 					}
 					console.log($playlist);
 				}}
-				toolTip="add comment"
+				toolTip="Add comment"
 			/>
 
 			<!--Comment Before-->
@@ -120,7 +120,7 @@
 					});
 				}}
 				activeColor="var(--hover)"
-				toolTip="toggle comment before"
+				toolTip="Toggle comment before"
 			/>
 
 			<!--Comment After-->
@@ -137,7 +137,7 @@
 					});
 				}}
 				activeColor="var(--hover)"
-				toolTip="toggle comment after"
+				toolTip="Toggle comment after"
 			/>
 		</div>
 
@@ -149,7 +149,7 @@
 			iconActive="lock_open"
 			bind:active={$editMode}
 			activeColor="var(--secondary)"
-			toolTip="edit Mode"
+			toolTip="Toggle Mode"
 		/>
 
 		<div class="spacer-fix" data-tauri-drag-region="" />
@@ -158,12 +158,12 @@
 			<!--reset all-->
 			<TopBarButton
 				icon="reset"
-				toolTip="reset all tracks"
+				toolTip="Reset all tracks"
 				onClick={resetAll}
 			/>
 
 			<!--stop all-->
-			<TopBarButton icon="stop" toolTip="pause all tracks" onClick={pauseAll} />
+			<TopBarButton icon="stop" toolTip="Stop all tracks" onClick={pauseAll} />
 		</div>
 
 		<div class="spacer" data-tauri-drag-region="" />
@@ -175,7 +175,7 @@
 				onClick={() => {
 					editor = !editor;
 				}}
-				toolTip="Editor"
+				toolTip="Toggle Editor"
 				disabled={!$editMode}
 			/>
 
@@ -185,7 +185,7 @@
 				onClick={() => {
 					palettes = !palettes;
 				}}
-				toolTip="Editor"
+				toolTip="Toggle Palettes"
 				disabled={!$editMode}
 			/>
 		</div>

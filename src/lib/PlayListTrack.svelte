@@ -337,57 +337,61 @@
 				<div class="title"><p>loading...</p></div>
 			{/if}
 
-			<!--Hotkey-->
-			{#if track.hotkey != undefined}
-				<div class="option hotkey">
-					<p>{track.hotkey}</p>
-				</div>
-			{/if}
-
-			<!--fade icons-->
-			{#if !$editMode && track.fade.in > 0}
-				<img
-					class="option fade-icon"
-					src="./icons/square/fade_in.svg"
-					alt=""
-					draggable="false"
-				/>
-			{/if}
-
-			{#if !$editMode && track.fade.out > 0}
-				<img
-					class="option fade-icon"
-					src="./icons/square/fade_out.svg"
-					alt=""
-					draggable="false"
-				/>
-			{/if}
-
-			<!--repeat-->
-			<button
-				class="option repeat-btn"
-				class:active={track.repeat}
-				on:click={() => {
-					track.repeat = $editMode ? !track.repeat : track.repeat;
-				}}
-			>
-				<img src="./icons/square/repeat.svg" alt="repeat" draggable="false" />
-			</button>
-
-			<!--auto reset-->
-			<button
-				class="option auto-reset-btn"
-				class:active={track.autoReset}
-				on:click={() => {
-					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
-				}}
-			>
-				<img
-					src="./icons/square/auto_reset.svg"
-					alt="auto reset"
-					draggable="false"
-				/>
-			</button>
+			<div class="options">
+				<!--Hotkey-->
+				{#if track.hotkey != undefined}
+					<div class="option hotkey">
+						<p>{track.hotkey}</p>
+					</div>
+				{/if}
+	
+				<!--fade icons-->
+				{#if !$editMode && track.fade.in > 0}
+					<img
+						class="option fade-icon"
+						src="./icons/square/fade_in.svg"
+						alt=""
+						draggable="false"
+					/>
+				{/if}
+	
+				{#if !$editMode && track.fade.out > 0}
+					<img
+						class="option fade-icon"
+						src="./icons/square/fade_out.svg"
+						alt=""
+						draggable="false"
+					/>
+				{/if}
+	
+				<!--repeat-->
+				<button
+					class="option repeat-btn"
+					class:active={track.repeat}
+					on:click={() => {
+						track.repeat = $editMode ? !track.repeat : track.repeat;
+					}}
+					title="repeat track"
+				>
+					<img src="./icons/square/repeat.svg" alt="repeat" draggable="false" />
+				</button>
+	
+				<!--auto reset-->
+				<button
+					class="option auto-reset-btn"
+					class:active={track.autoReset}
+					on:click={() => {
+						track.autoReset = $editMode ? !track.autoReset : track.autoReset;
+					}}
+					title="auto reset track on pause"
+				>
+					<img
+						src="./icons/square/auto_reset.svg"
+						alt="auto reset"
+						draggable="false"
+					/>
+				</button>
+			</div>
 
 			<!--time-->
 			<p class="timecode">{secondsToMinutes(track.state)}</p>
