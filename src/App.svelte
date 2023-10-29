@@ -38,7 +38,12 @@
 		updateProjectorList,
 		setUIScale,
 	} from "./utils";
-	import { savePlaylist, openDir, loadSettings, saveSettings } from "./saveLoad";
+	import {
+		savePlaylist,
+		openDir,
+		loadSettings,
+		saveSettings,
+	} from "./saveLoad";
 
 	let sideBar = true;
 	let editorPanel = false;

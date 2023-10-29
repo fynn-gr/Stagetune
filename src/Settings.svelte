@@ -8,7 +8,7 @@
 		appWindow,
 		availableMonitors,
 	} from "@tauri-apps/api/window";
-	import { getTauriVersion, getVersion } from '@tauri-apps/api/app';
+	import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 	import { afterUpdate, onMount, tick } from "svelte";
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
@@ -94,16 +94,18 @@
 		</div>
 
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div
-			class="tab"
-			class:active={tab == "projector"}
-			on:click={() => {
-				tab = "projector";
-			}}
-		>
-			<img src="./icons/settings_tabs/projector.svg" alt="" />
-			<p>Projector</p>
-		</div>
+		{#if $settings.video}
+			<div
+				class="tab"
+				class:active={tab == "projector"}
+				on:click={() => {
+					tab = "projector";
+				}}
+			>
+				<img src="./icons/settings_tabs/projector.svg" alt="" />
+				<p>Projector</p>
+			</div>
+		{/if}
 
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
@@ -275,8 +277,8 @@
 					type="select"
 					bind:value={$settings.ui_platform}
 					options={[
-						{ value: "mac", name: "macOS"},
-						{ value: "win", name: "Windows"}
+						{ value: "mac", name: "macOS" },
+						{ value: "win", name: "Windows" },
 					]}
 					{onChange}
 				/>

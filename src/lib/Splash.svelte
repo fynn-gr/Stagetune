@@ -2,15 +2,19 @@
 	import { settings } from "@/stores";
 	import { onMount } from "svelte";
 	import { loadSettings } from "@/saveLoad";
+	import { getVersion } from "@tauri-apps/api/app";
 
 	export let splashScreen;
 	let recentList = [];
+	let version;
 
 	onMount(async () => {
 		loadSettings();
 		recentList = $settings.recent;
 		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
 		console.log(recentList);
+
+		version = await getVersion();
 	});
 </script>
 
@@ -30,7 +34,7 @@
 		<div class="top">
 			<img src="./splash_icon.png" class="icon" />
 			<h1><b>Stagetune</b></h1>
-			<p class="version">0.2 Beta</p>
+			<p class="version">{version || ""} Beta</p>
 		</div>
 
 		<div class="container">
