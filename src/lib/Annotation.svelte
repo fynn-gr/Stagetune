@@ -2,12 +2,11 @@
 	import { editMode, selectedItem, isEditing } from "@/stores";
 
 	export let id: number;
-	export let annotation: { before: string; after: string };
-	export let start: boolean; //true if before track, false if after
+	export let annotation: string;
 </script>
 
-{#if annotation[start ? "before" : "after"] != null}
-	<div class={start ? "annotationStart" : "annotationEnd"}>
+{#if annotation != null}
+	<div class="annotation-attached">
 		<input
 			type="text"
 			disabled={!$editMode || $selectedItem != id}
@@ -19,7 +18,7 @@
 				isEditing.update(e => e - 1);
 				console.log("out of focus", $isEditing);
 			}}
-			bind:value={annotation[start ? "before" : "after"]}
+			bind:value={annotation}
 		/>
 	</div>
 {/if}

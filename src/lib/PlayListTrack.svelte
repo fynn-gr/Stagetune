@@ -269,7 +269,7 @@
 		style={$currentDragging == null ? "" : "pointer-events: none;"}
 	>
 		<!--annotation before-->
-		<Annotation bind:annotation={track.annotation} {id} start={true} />
+		<Annotation bind:annotation={track.annotation} {id}/>
 
 		<div class="inner">
 			<!--progress-->
@@ -463,8 +463,5 @@
 				</span>
 			</div>
 		</div>
-
-		<!--annotation after-->
-		<Annotation bind:annotation={track.annotation} {id} start={false} />
 	</div>
 </div>

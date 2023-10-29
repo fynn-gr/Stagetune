@@ -46,6 +46,7 @@
 	} from "./saveLoad";
 
 	let sideBar = true;
+	let annotations = true;
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
@@ -295,7 +296,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
-	<div class="side-bar" class:exposed={sideBar}>
+	<div class="side-bar" class:exposed={sideBar && $editMode}>
 		{#if $editMode}
 			<div class="trackList">
 				{#each $srcFiles as p, i}
@@ -316,6 +317,7 @@
 		bind:sideBar
 		bind:editor={editorPanel}
 		bind:palettes
+		bind:annotations
 		{pauseAll}
 		{resetAll}
 	/>
@@ -323,6 +325,7 @@
 	<!--playlist-->
 	<div
 		class="playlist"
+		class:annotations={annotations}
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
@@ -348,7 +351,7 @@
 				{:else if t.type == "annotation"}
 					<PlayListAnotation
 						bind:this={$playlistElements[i]}
-						bind:item={t}
+						bind:track={t}
 						id={i}
 					/>
 				{/if}

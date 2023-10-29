@@ -12,6 +12,7 @@
 	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
 
 	export let sideBar;
+	export let annotations;
 	export let editor;
 	export let palettes;
 	export let pauseAll;
@@ -57,6 +58,16 @@
 				toolTip="Toggle SideBar"
 				disabled={!$editMode}
 			/>
+
+			<!--Annotations-->
+			<TopBarButton
+				icon="comment"
+				onClick={() => {
+					annotations = !annotations;
+				}}
+				toolTip="Toggle Annotations"
+				disabled={false}
+			/>
 		</div>
 
 		{#if $uiPlatform == "win"}
@@ -87,7 +98,7 @@
 							e.push({
 								type: "annotation",
 								origin: "playlist",
-								text: "Comment",
+								annotation: "Annotation",
 							});
 							return e;
 						});
@@ -96,7 +107,7 @@
 							e.splice($selectedItem + 1, 0, {
 								type: "annotation",
 								origin: "playlist",
-								text: "Comment",
+								annotation: "Annotation",
 							});
 							return e;
 						});
@@ -106,38 +117,21 @@
 				toolTip="Add comment"
 			/>
 
-			<!--Comment Before-->
+			<!--Add Attached Annotation-->
 			<TopBarToggle
 				icon="comment_before"
 				disabled={!$editMode}
 				active={$playlist[$selectedItem] != undefined &&
 					$playlist[$selectedItem].type != "annotation" &&
-					$playlist[$selectedItem].annotation.before != null}
+					$playlist[$selectedItem].annotation != null}
 				onChange={active => {
 					playlist.update(items => {
-						items[$selectedItem].annotation.before = active ? "Comment" : null;
+						items[$selectedItem].annotation = active ? "Annotation" : null;
 						return items;
 					});
 				}}
 				activeColor="var(--hover)"
-				toolTip="Toggle comment before"
-			/>
-
-			<!--Comment After-->
-			<TopBarToggle
-				icon="comment_after"
-				disabled={!$editMode}
-				active={$playlist[$selectedItem] != undefined &&
-					$playlist[$selectedItem].type != "annotation" &&
-					$playlist[$selectedItem].annotation.after != null}
-				onChange={active => {
-					playlist.update(items => {
-						items[$selectedItem].annotation.after = active ? "Comment" : null;
-						return items;
-					});
-				}}
-				activeColor="var(--hover)"
-				toolTip="Toggle comment after"
+				toolTip="Toggle Annotation attached"
 			/>
 		</div>
 

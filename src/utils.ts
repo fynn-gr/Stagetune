@@ -6,9 +6,6 @@ export interface playListItem {
 	type: string; //track, video, annotation, loop
 	origin: string;
 
-	//comment
-	text?: string;
-
 	//track, video
 	path?: string;
 	name?: string;
@@ -21,7 +18,7 @@ export interface playListItem {
 	autoReset: boolean;
 	edit?: { in?: number; out?: number };
 	fade?: { in?: number; out?: number };
-	annotation?: { before: string; after: string };
+	annotation?: string;
 	buffer?: AudioBuffer;
 	startedAt?: number;
 	pausedAt?: number;
@@ -108,7 +105,7 @@ export function createPlaylistTrack(
 		autoReset: false,
 		fade: { in: 0, out: 0 }, //fade in and out in seconds
 		edit: { in: 0, out: 0 }, // cut in in seconds (TODO: cutout)
-		annotation: { before: null, after: null },
+		annotation: null,
 		startedAt: 0, //ctx time track started at
 		pausedAt: 0, //track time paused at
 	};

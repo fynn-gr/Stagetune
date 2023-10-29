@@ -7,8 +7,9 @@
 		currentDragging,
 		playlist,
 	} from "../stores";
+	import Annotation from "./Annotation.svelte";
 
-	export let item: any;
+	export let track: any;
 	export let id: number;
 	let dragging = false;
 	let dragover = false;
@@ -93,22 +94,11 @@
 	}}
 >
 	<div class="border">
+		<Annotation bind:annotation={track.annotation} {id}/>
 		<div class="container">
 			<div class="drag-area">
 				<img src="/icons/square/drag_n_drop.svg" alt="" />
 			</div>
-			<input
-				type="text"
-				bind:value={item.text}
-				bind:this={inputElement}
-				on:focus={() => {
-					isEditing.update(e => e + 1);
-				}}
-				on:blur={() => {
-					isEditing.update(e => e - 1);
-				}}
-				disabled={!$editMode || $selectedItem != id}
-			/>
 		</div>
 	</div>
 </div>
