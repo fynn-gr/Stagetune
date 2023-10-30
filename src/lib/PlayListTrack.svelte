@@ -344,7 +344,7 @@
 						<p>{track.hotkey}</p>
 					</div>
 				{/if}
-	
+
 				<!--fade icons-->
 				{#if !$editMode && track.fade.in > 0}
 					<img
@@ -354,7 +354,7 @@
 						draggable="false"
 					/>
 				{/if}
-	
+
 				{#if !$editMode && track.fade.out > 0}
 					<img
 						class="option fade-icon"
@@ -363,7 +363,7 @@
 						draggable="false"
 					/>
 				{/if}
-	
+
 				<!--repeat-->
 				<button
 					class="option repeat-btn"
@@ -375,7 +375,7 @@
 				>
 					<img src="./icons/square/repeat.svg" alt="repeat" draggable="false" />
 				</button>
-	
+
 				<!--auto reset-->
 				<button
 					class="option auto-reset-btn"
@@ -401,7 +401,7 @@
 
 			<!--fade-->
 			<span class="fade">
-				<img src="./icons/square/fade_in.svg" alt="">
+				<img src="./icons/square/fade_in.svg" alt="" />
 				<input
 					type="number"
 					bind:value={track.fade.in}
@@ -416,7 +416,7 @@
 					disabled={!$editMode}
 					title="Fade In"
 				/>
-				<img src="./icons/square/fade_out.svg" alt="">
+				<img src="./icons/square/fade_out.svg" alt="" />
 				<input
 					type="number"
 					bind:value={track.fade.out}

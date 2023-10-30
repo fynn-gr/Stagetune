@@ -5,7 +5,13 @@
 	import { appWindow } from "@tauri-apps/api/window";
 	import { confirm } from "@tauri-apps/api/dialog";
 
-	import { editMode, playlist, selectedItem, settings, uiPlatform } from "@/stores";
+	import {
+		editMode,
+		playlist,
+		selectedItem,
+		settings,
+		uiPlatform,
+	} from "@/stores";
 	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 	import ModeSwitch from "./ModeSwitch.svelte";
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";

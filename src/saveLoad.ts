@@ -17,6 +17,7 @@ import {
 	settings,
 	uiPlatform,
 } from "./stores";
+import { getVersion } from "@tauri-apps/api/app";
 
 export function openDir() {
 	try {
@@ -113,14 +114,13 @@ async function scanSrcPaths(path: string) {
 	processEntries(await entries);
 }
 
-export function savePlaylist() {
+export async function savePlaylist() {
 	//save to known path
 	console.log("save to path: ", get(playlistPath));
 
 	let saveObj = {
 		meta: {
-			version: "0.2.0",
-			fileVersion: 1,
+			version: await getVersion(),
 		},
 		playlist: get(playlist),
 		hotkeys: [],
@@ -157,28 +157,46 @@ export function savePlaylist() {
 }
 
 export function saveSettings() {
-	exists("Stagetune/", { dir: BaseDirectory.Config })
+	let currentVersion;
+	getVersion()
+		.then(v => {
+			currentVersion = v;
+			exists(`Stagetune/${currentVersion}`, { dir: BaseDirectory.Config });
+		})
 		.then(e => {
 			if (!e) {
-				createDir("Stagetune", { dir: BaseDirectory.Config, recursive: true });
+				createDir(`Stagetune/${currentVersion}`, {
+					dir: BaseDirectory.Config,
+					recursive: true,
+				});
 			}
 		})
 		.then(() => {
 			console.log("save: ", get(settings));
-			writeTextFile("Stagetune/settings.json", JSON.stringify(get(settings)), {
-				dir: BaseDirectory.Config,
-			});
+			writeTextFile(
+				`Stagetune/${currentVersion}/settings.json`,
+				JSON.stringify(get(settings)),
+				{
+					dir: BaseDirectory.Config,
+				}
+			);
 		});
 }
 
 export function loadSettings() {
-	readTextFile("Stagetune/settings.json", {
-		dir: BaseDirectory.Config,
-	}).then(e => {
-		settings.set(JSON.parse(e));
-		console.log("loaded settings", get(settings));
+	let currentVersion;
+	getVersion()
+	.then(v => {
+		currentVersion = v;
+		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
+			dir: BaseDirectory.Config,
+		})
+		.then(e => {
+			settings.set(JSON.parse(e));
+			console.log("loaded settings", get(settings));
 
-		//ui Platform
-		uiPlatform.set(get(settings).ui_platform);
-	});
+			//ui Platform
+			uiPlatform.set(get(settings).ui_platform);
+		});
+	})
 }
