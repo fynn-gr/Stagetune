@@ -14,7 +14,7 @@
 		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
 		console.log(recentList);
 
-		let fullVersion = (await getVersion());
+		let fullVersion = await getVersion();
 		version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
 	});
 </script>

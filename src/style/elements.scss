@@ -320,24 +320,24 @@
 				height: 30rem;
 				margin: 6rem 0;
 				background-color: transparent;
-	
+
 				&:hover {
 					background-color: transparent;
 				}
-	
+
 				&.repeat-btn,
 				&.auto-reset-btn {
 					display: none;
 				}
-	
+
 				&.active {
 					display: block;
 				}
-	
+
 				&.fade-icon {
 					filter: invert(100%);
 				}
-	
+
 				&.hotkey {
 					& > p {
 						width: 16rem;
@@ -352,7 +352,7 @@
 						font-weight: 800;
 					}
 				}
-	
+
 				img {
 					width: 30rem;
 					height: 30rem;
@@ -360,7 +360,6 @@
 				}
 			}
 		}
-
 
 		.timecode {
 			position: relative;
@@ -485,16 +484,16 @@
 			.option {
 				margin: 12rem 0;
 				border-radius: 5rem;
-	
+
 				&:hover {
 					background-color: var(--hover);
 				}
-	
+
 				&.repeat-btn,
 				&.auto-reset-btn {
 					display: block;
 				}
-	
+
 				&.active {
 					background-color: var(--secondary);
 				}
@@ -506,13 +505,13 @@
 				&.active + .active {
 					border-radius: 0 5rem 5rem 0;
 				}
-	
+
 				&.hotkey {
 					&:hover {
 						background-color: transparent;
 					}
 				}
-	
+
 				img {
 					filter: invert(90%);
 				}
