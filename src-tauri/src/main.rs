@@ -70,6 +70,11 @@ fn main() {
 			.add_native_item(MenuItem::Minimize)
 			.add_native_item(MenuItem::Zoom)
 			.add_native_item(MenuItem::Separator)
+			.add_item(CustomMenuItem::new("tracklist", "Track List"))
+			.add_item(CustomMenuItem::new("annotations", "Annotations"))
+			.add_item(CustomMenuItem::new("palettes", "Palettes"))
+			.add_item(CustomMenuItem::new("editor", "Editor"))
+			.add_native_item(MenuItem::Separator)
 			.add_item(CustomMenuItem::new("projector", "Projector").accelerator("cmd+P"))))
 		.add_submenu(Submenu::new("Help", Menu::with_items([CustomMenuItem::new("Learn More", "Learn More").into()])));
 

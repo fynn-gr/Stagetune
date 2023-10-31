@@ -142,6 +142,14 @@
 			projector = !projector;
 		} else if (event.payload == "settings" && $editMode) {
 			openSettings();
+		} else if (event.payload == "tracklist" && $editMode) {
+			sideBar = !sideBar;
+		} else if (event.payload == "annotations") {
+			annotations = !annotations;
+		} else if (event.payload == "palettes") {
+			palettes = !palettes;
+		} else if (event.payload == "editor" && $editMode) {
+			editorPanel = !editorPanel;
 		}
 	});
 

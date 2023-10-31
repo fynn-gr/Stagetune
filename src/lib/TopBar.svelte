@@ -84,11 +84,34 @@
 				<div class="seperator" />
 				<AppMenuItem id="settings" name="Settings" accelerator="ctrl ," />
 			</AppMenu>
-			{#if $settings.video}
-				<AppMenu name="Window">
+			<AppMenu name="Window">
+				<AppMenuItem
+					id="tracklist"
+					name="Track List"
+					checked={sideBar ? "true" : "false"}
+					disabled={!$editMode}
+				/>
+				<AppMenuItem
+					id="annotations"
+					name="Annotations"
+					checked={annotations ? "true" : "false"}
+				/>
+				<AppMenuItem
+					id="palettes"
+					name="Palettes"
+					checked={palettes ? "true" : "false"}
+				/>
+				<AppMenuItem
+					id="editor"
+					name="Editor"
+					checked={editor ? "true" : "false"}
+					disabled={!$editMode}
+				/>
+				{#if $settings.video}
+					<div class="seperator" />
 					<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
-				</AppMenu>
-			{/if}
+				{/if}
+			</AppMenu>
 		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />
