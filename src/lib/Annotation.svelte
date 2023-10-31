@@ -1,12 +1,34 @@
 <script lang="ts">
-	import { editMode, selectedItem, isEditing, uiPlatform } from "@/stores";
+	import {
+		editMode,
+		selectedItem,
+		isEditing,
+		uiPlatform,
+		contextMenu,
+	} from "@/stores";
 
 	export let id: number;
 	export let annotation: string;
 </script>
 
 {#if annotation != null}
-	<div class="annotation-attached">
+	<div
+		class="annotation-attached"
+		on:contextmenu={e => {
+			$contextMenu = {
+				position: { x: e.clientX, y: e.clientY },
+				content: [
+					{
+						name: "Remove",
+						action: () => {
+							annotation = null;
+						},
+					},
+				],
+			};
+			console.log($contextMenu, e);
+		}}
+	>
 		<input
 			type="text"
 			disabled={!$editMode || $selectedItem != id}

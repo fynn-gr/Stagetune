@@ -262,7 +262,7 @@ export const settings = writable({
 	ui_platform: "win",
 	video: false,
 });
-
+export const contextMenu = writable(null);
 export const currentDragging = writable(null);
 export const editMode = writable(true);
 export const uiPlatform = writable("win");

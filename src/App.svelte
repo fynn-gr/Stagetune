@@ -30,6 +30,7 @@
 		hotkeys,
 		localFiles,
 		settings,
+		contextMenu,
 	} from "./stores";
 	import {
 		fileNameFromPath,
@@ -44,6 +45,7 @@
 		loadSettings,
 		saveSettings,
 	} from "./saveLoad";
+	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 
 	let playlistEl: HTMLElement;
 	let annotationWidth: number = 200;
@@ -482,6 +484,10 @@
 				{/each}
 			</div>
 		</div>
+	{/if}
+
+	{#if $contextMenu != null}
+		<ContextMenu />
 	{/if}
 
 	<div class="window-rim" />
