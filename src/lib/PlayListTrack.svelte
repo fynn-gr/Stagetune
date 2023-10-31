@@ -248,9 +248,8 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	class="playlistTrack"
+	class="playlist-item playlist-track"
 	class:selected={$selectedItem == id}
-	class:editMode={$editMode}
 	class:missing
 	class:drag-over={dragover}
 	class:loaded={track.buffer != undefined}
@@ -264,13 +263,17 @@
 		selectedItem.set(id);
 	}}
 >
+	<div class="drag-area">
+		<img src="/icons/square/drag_n_drop.svg" alt="" />
+	</div>
+
+	<!--annotation attached-->
+	<Annotation bind:annotation={track.annotation} {id} />
+
 	<div
 		class="border"
 		style={$currentDragging == null ? "" : "pointer-events: none;"}
 	>
-		<!--annotation before-->
-		<Annotation bind:annotation={track.annotation} {id} start={true} />
-
 		<div class="inner">
 			<!--progress-->
 			<div
@@ -286,10 +289,6 @@
 					);`}
 			/>
 			<Waveform data={waveformData} samples={300} resY={50} />
-
-			<div class="drag-area">
-				<img src="/icons/square/drag_n_drop.svg" alt="" />
-			</div>
 
 			<!--reset-btn-->
 			<button
@@ -463,8 +462,5 @@
 				</span>
 			</div>
 		</div>
-
-		<!--annotation after-->
-		<Annotation bind:annotation={track.annotation} {id} start={false} />
 	</div>
 </div>

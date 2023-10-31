@@ -213,7 +213,196 @@
 		border-radius: 4px;
 	}
 
+	&.editMode .playlist-item {
+		.drag-area {
+			cursor: grab;
+			width: 28rem;
+			min-width: 28rem;
+			margin-top: 6rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+
+			& > img {
+				display: block;
+				pointer-events: none;
+				width: 10rem;
+				height: 10rem;
+				margin: auto;
+				filter: invert(80%);
+			}
+		}
+
+		.play-btn {
+			margin: 12rem 0 12rem 0;
+
+			&:first-of-type {
+				margin: 12rem 0 12rem 12rem;
+			}
+		}
+
+		.title {
+			height: 54rem;
+			min-width: 60rem;
+			line-height: 27rem;
+			font-size: 18rem;
+		}
+
+		.options {
+			.option {
+				margin: 12rem 0;
+				border-radius: 5rem;
+
+				&:hover {
+					background-color: var(--hover);
+				}
+
+				&.repeat-btn,
+				&.auto-reset-btn {
+					display: block;
+				}
+
+				&.active {
+					background-color: var(--secondary);
+				}
+
+				&.active:has(+ .active) {
+					border-radius: 5rem 0 0 5rem;
+				}
+
+				&.active + .active {
+					border-radius: 0 5rem 5rem 0;
+				}
+
+				&.hotkey {
+					&:hover {
+						background-color: transparent;
+					}
+				}
+
+				img {
+					filter: invert(90%);
+				}
+			}
+		}
+
+		.timecode {
+			display: none;
+		}
+
+		.length {
+			text-align: right;
+			width: 60rem;
+			height: 54rem;
+			padding: 0 16rem 0 0;
+			line-height: 54rem;
+		}
+
+		.fade {
+			position: relative;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-content: flex-start;
+			width: 58rem;
+			min-width: 58rem;
+			height: 54rem;
+			padding: 0;
+
+			img {
+				width: 18rem;
+				height: 18rem;
+				margin: 6rem 0 0 0;
+				font-size: 12rem;
+				filter: invert(1);
+			}
+
+			input {
+				width: 40rem;
+				height: 18rem;
+				margin: 6rem 0 0 0;
+				border-radius: 4rem;
+				text-align: right;
+				font-size: 10rem;
+				font-weight: 700;
+
+				&:focus {
+					box-shadow: 0 0 0 3rem var(--secondary);
+				}
+			}
+		}
+
+		.volume {
+			position: relative;
+			grid-area: volume;
+			display: flex;
+			flex-direction: column;
+			height: 54rem;
+
+			span {
+				display: flex;
+				flex-direction: row;
+				height: 18rem;
+				margin-top: 6rem;
+			}
+
+			p {
+				width: 20rem;
+				margin: auto 0;
+				text-align: center;
+				font-weight: bold;
+			}
+		}
+
+		.progress {
+			height: 6rem;
+		}
+
+		.waveform {
+			display: none;
+		}
+	}
+
+	&.show-annotations {
+		.playlist-item .annotation-attached {
+			display: block;
+		}
+
+		.playlist-annotation {
+			display: flex;
+		}
+	}
+
+	.annotation-slider {
+		display: block;
+		-webkit-appearance: none;
+		appearance: none;
+		background-color: transparent;
+		inset: 0;
+		margin: 0 calc(10rem + 100px);
+
+		&::-webkit-slider-runnable-track {
+			-webkit-appearance: none;
+			appearance: none;
+			height: 12rem;
+			background-color: rgba(0, 0, 0, 0);
+		}
+
+		&::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			height: 12rem;
+			width: 6rem;
+			border-radius: 0 0 3rem 3rem;
+			background: var(--secondary);
+		}
+	}
+
 	.border {
+		position: relative;
+		flex: 1;
+		display: flex;
+		flex-direction: row;
 		padding: 9rem 9rem 0 9rem;
 	}
 
@@ -237,16 +426,13 @@
 	.inner {
 		position: relative;
 		z-index: 10;
+		flex: 1;
 		height: 60rem;
 		display: flex;
 		flex-direction: row;
 		overflow: hidden;
 		background-color: var(--panel2);
 		border-radius: 8rem;
-
-		.drag-area > img {
-			display: none;
-		}
 
 		.title {
 			flex: 1;
@@ -440,165 +626,21 @@
 		}
 	}
 
-	.editMode {
+	.playlist-item {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+
 		.drag-area {
-			cursor: grab;
-			width: 28rem;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			margin-bottom: 6rem;
-
-			& > img {
-				display: block;
-				pointer-events: none;
-				width: 10rem;
-				height: 10rem;
-				margin: auto;
-				filter: invert(80%);
-				translate: 2rem 0;
-			}
-		}
-
-		.play-btn {
-			margin: 12rem 0 12rem 0;
-		}
-
-		.title {
-			height: 54rem;
-			line-height: 27rem;
-			font-size: 18rem;
-		}
-
-		.options {
-			.option {
-				margin: 12rem 0;
-				border-radius: 5rem;
-
-				&:hover {
-					background-color: var(--hover);
-				}
-
-				&.repeat-btn,
-				&.auto-reset-btn {
-					display: block;
-				}
-
-				&.active {
-					background-color: var(--secondary);
-				}
-
-				&.active:has(+ .active) {
-					border-radius: 5rem 0 0 5rem;
-				}
-
-				&.active + .active {
-					border-radius: 0 5rem 5rem 0;
-				}
-
-				&.hotkey {
-					&:hover {
-						background-color: transparent;
-					}
-				}
-
-				img {
-					filter: invert(90%);
-				}
-			}
-		}
-
-		.timecode {
 			display: none;
-		}
-
-		.length {
-			text-align: right;
-			width: 60rem;
-			height: 54rem;
-			padding: 0 16rem 0 0;
-			line-height: 54rem;
-		}
-
-		.fade {
-			position: relative;
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			align-content: flex-start;
-			width: 58rem;
-			height: 54rem;
-			padding: 0;
 
 			img {
-				width: 18rem;
-				height: 18rem;
-				margin: 6rem 0 0 0;
-				font-size: 12rem;
-				filter: invert(1);
+				display: none;
 			}
-
-			input {
-				width: 40rem;
-				height: 18rem;
-				margin: 6rem 0 0 0;
-				border-radius: 4rem;
-				text-align: right;
-				font-size: 10rem;
-				font-weight: 700;
-
-				&:focus {
-					box-shadow: 0 0 0 3rem var(--secondary);
-				}
-			}
-		}
-
-		.volume {
-			position: relative;
-			grid-area: volume;
-			display: flex;
-			flex-direction: column;
-			height: 54rem;
-
-			span {
-				display: flex;
-				flex-direction: row;
-				height: 18rem;
-				margin-top: 6rem;
-			}
-
-			p {
-				width: 20rem;
-				margin: auto 0;
-				text-align: center;
-				font-weight: bold;
-			}
-		}
-
-		.progress {
-			height: 6rem;
-		}
-
-		.waveform {
-			display: none;
 		}
 	}
 
-	.placeholder {
-		position: relative;
-		z-index: 1;
-		margin: 9rem 9rem 0 9rem;
-		height: 60rem;
-		line-height: 60rem;
-		text-align: center;
-		font-size: 12rem;
-		font-weight: 800;
-		color: gray;
-		border-radius: 8rem;
-		border: dashed 2px gray;
-	}
-
-	.playlistInsert {
+	.playlist-insert {
 		.insert {
 			position: relative;
 			z-index: 1;
@@ -610,8 +652,7 @@
 		}
 	}
 
-	.playlistTrack {
-		position: relative;
+	.playlist-track {
 		z-index: 1;
 		opacity: 40%;
 
@@ -638,8 +679,7 @@
 		}
 	}
 
-	.playlistVideo {
-		position: relative;
+	.playlist-video {
 		z-index: 1;
 		border-radius: 8rem;
 
@@ -710,42 +750,41 @@
 		}
 	}
 
-	.playlistAnotation {
-		position: relative;
+	.playlist-annotation {
 		z-index: 1;
+		display: none;
 		border-radius: 8rem;
 		background-color: transparent;
 
+		.border {
+			padding-left: 0;
+
+			&::after {
+				left: -3rem;
+			}
+		}
+
 		.container {
 			position: relative;
+			flex: 1;
 			display: flex;
 			flex-direction: row;
 			z-index: 10;
+			padding: 5rem 10rem;
 			background-color: var(--annotation);
 			border-radius: 8rem;
 
-			.drag-area {
-				margin-bottom: 0;
-			}
-
 			input {
 				width: 100%;
-				padding: 6rem;
 				font-size: 15rem;
-				line-height: 15rem;
 				text-align: left;
 				color: var(--text);
 				background-color: transparent;
-
-				&:focus {
-					color: var(--secondary);
-				}
 			}
 		}
 	}
 
-	.playlistLoop {
-		position: relative;
+	.playlist-loop {
 		z-index: 1;
 		height: auto;
 		border-radius: 8rem;
@@ -828,44 +867,60 @@
 		}
 	}
 
-	.annotationStart {
-		position: relative;
+	.annotation-attached {
 		z-index: 1;
-		padding: 5rem 10rem 10rem 10rem;
-		margin-bottom: -5rem;
-
-		background-color: var(--annotation);
-		border-radius: 8rem 8rem 0 0;
-
-		input {
-			width: 100%;
-			font-size: 15rem;
-			text-align: left;
-			color: var(--text);
-			background-color: transparent;
-		}
-	}
-
-	.annotationEnd {
-		position: relative;
-		z-index: 1;
-		padding: 10rem 10rem 5rem 10rem;
-		margin-top: -5rem;
-
-		background-color: var(--annotation);
-		border-radius: 0 0 8rem 8rem;
-
-		input {
-			width: 100%;
-			font-size: 15rem;
-			text-align: left;
-			color: var(--text);
-			background-color: transparent;
-		}
-	}
-
-	.drag-area {
 		display: none;
+		width: var(--annotation-width);
+		padding: 5rem 10rem 10rem 10rem;
+		margin: 9rem 0 0 0;
+		background: var(--annotation);
+		border-radius: 8rem;
+
+		input {
+			width: 100%;
+			font-size: 15rem;
+			text-align: left;
+			color: var(--text);
+			background-color: transparent;
+		}
+	}
+
+	.annotation-placeholder {
+		width: var(--annotation-width);
+		margin: 9rem 0 0 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+
+		button {
+			width: 30rem;
+			height: 30rem;
+			margin: auto 0 auto auto;
+			border-radius: 5rem;
+			background-color: transparent;
+
+			&:hover {
+				background-color: var(--hover);
+			}
+
+			img {
+				filter: invert(1);
+			}
+		}
+	}
+
+	.placeholder {
+		position: relative;
+		z-index: 1;
+		margin: 9rem 9rem 0 9rem;
+		height: 60rem;
+		line-height: 60rem;
+		text-align: center;
+		font-size: 12rem;
+		font-weight: 800;
+		color: gray;
+		border-radius: 8rem;
+		border: dashed 2px gray;
 	}
 }
 

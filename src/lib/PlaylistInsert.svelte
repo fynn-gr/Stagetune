@@ -8,7 +8,7 @@
 	}
 </script>
 
-<div class="playlistInsert">
+<div class="playlist-item playlist-insert">
 	<div class="border">
 		<div class="insert" />
 	</div>

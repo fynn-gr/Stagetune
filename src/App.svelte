@@ -30,6 +30,7 @@
 		hotkeys,
 		localFiles,
 		settings,
+		contextMenu,
 	} from "./stores";
 	import {
 		fileNameFromPath,
@@ -44,8 +45,12 @@
 		loadSettings,
 		saveSettings,
 	} from "./saveLoad";
+	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 
+	let playlistEl: HTMLElement;
+	let annotationWidth: number = 200;
 	let sideBar = true;
+	let annotations = true;
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
@@ -261,7 +266,7 @@
 		});
 
 		document.addEventListener("contextmenu", e => {
-			//e.preventDefault();
+			e.preventDefault();
 		});
 
 		const interval = setInterval(() => {
@@ -295,7 +300,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
-	<div class="side-bar" class:exposed={sideBar}>
+	<div class="side-bar" class:exposed={sideBar && $editMode}>
 		{#if $editMode}
 			<div class="trackList">
 				{#each $srcFiles as p, i}
@@ -316,6 +321,7 @@
 		bind:sideBar
 		bind:editor={editorPanel}
 		bind:palettes
+		bind:annotations
 		{pauseAll}
 		{resetAll}
 	/>
@@ -323,12 +329,25 @@
 	<!--playlist-->
 	<div
 		class="playlist"
+		class:show-annotations={annotations}
+		class:editMode={$editMode}
+		style={`--annotation-width: ${annotationWidth}px;`}
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
 			return false;
 		}}
+		bind:this={playlistEl}
 	>
+		{#if $editMode && annotations}
+			<input
+				type="range"
+				class="annotation-slider"
+				min="100"
+				max={playlistEl ? playlistEl.offsetWidth - 140 : 200}
+				bind:value={annotationWidth}
+			/>
+		{/if}
 		{#if $playlist.length > 0}
 			{#each $playlist as t, i}
 				{#if t.type == "track"}
@@ -348,7 +367,7 @@
 				{:else if t.type == "annotation"}
 					<PlayListAnotation
 						bind:this={$playlistElements[i]}
-						bind:item={t}
+						bind:track={t}
 						id={i}
 					/>
 				{/if}
@@ -465,6 +484,10 @@
 				{/each}
 			</div>
 		</div>
+	{/if}
+
+	{#if $contextMenu != null}
+		<ContextMenu />
 	{/if}
 
 	<div class="window-rim" />

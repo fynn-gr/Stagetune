@@ -18,6 +18,7 @@
 	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
 
 	export let sideBar;
+	export let annotations;
 	export let editor;
 	export let palettes;
 	export let pauseAll;
@@ -63,6 +64,16 @@
 				toolTip="Toggle SideBar"
 				disabled={!$editMode}
 			/>
+
+			<!--Annotations-->
+			<TopBarButton
+				icon="comment"
+				onClick={() => {
+					annotations = !annotations;
+				}}
+				toolTip="Toggle Annotations"
+				disabled={false}
+			/>
 		</div>
 
 		{#if $uiPlatform == "win"}
@@ -82,70 +93,34 @@
 
 		<div class="spacer" data-tauri-drag-region="" />
 
-		<div class="toolbar-group">
-			<!--Add Annotation-->
-			<TopBarButton
-				icon="comment"
-				disabled={!$editMode}
-				onClick={() => {
-					if ($selectedItem == null) {
-						playlist.update(e => {
-							e.push({
-								type: "annotation",
-								origin: "playlist",
-								text: "Comment",
-							});
-							return e;
+		<!--Add Annotation-->
+		<TopBarButton
+			icon="comment"
+			disabled={!$editMode}
+			onClick={() => {
+				if ($selectedItem == null) {
+					playlist.update(e => {
+						e.push({
+							type: "annotation",
+							origin: "playlist",
+							annotation: "Annotation",
 						});
-					} else {
-						playlist.update(e => {
-							e.splice($selectedItem + 1, 0, {
-								type: "annotation",
-								origin: "playlist",
-								text: "Comment",
-							});
-							return e;
+						return e;
+					});
+				} else {
+					playlist.update(e => {
+						e.splice($selectedItem + 1, 0, {
+							type: "annotation",
+							origin: "playlist",
+							annotation: "Annotation",
 						});
-					}
-					console.log($playlist);
-				}}
-				toolTip="Add comment"
-			/>
-
-			<!--Comment Before-->
-			<TopBarToggle
-				icon="comment_before"
-				disabled={!$editMode}
-				active={$playlist[$selectedItem] != undefined &&
-					$playlist[$selectedItem].type != "annotation" &&
-					$playlist[$selectedItem].annotation.before != null}
-				onChange={active => {
-					playlist.update(items => {
-						items[$selectedItem].annotation.before = active ? "Comment" : null;
-						return items;
+						return e;
 					});
-				}}
-				activeColor="var(--hover)"
-				toolTip="Toggle comment before"
-			/>
-
-			<!--Comment After-->
-			<TopBarToggle
-				icon="comment_after"
-				disabled={!$editMode}
-				active={$playlist[$selectedItem] != undefined &&
-					$playlist[$selectedItem].type != "annotation" &&
-					$playlist[$selectedItem].annotation.after != null}
-				onChange={active => {
-					playlist.update(items => {
-						items[$selectedItem].annotation.after = active ? "Comment" : null;
-						return items;
-					});
-				}}
-				activeColor="var(--hover)"
-				toolTip="Toggle comment after"
-			/>
-		</div>
+				}
+				console.log($playlist);
+			}}
+			toolTip="Add comment"
+		/>
 
 		<div class="spacer-fix" data-tauri-drag-region="" />
 

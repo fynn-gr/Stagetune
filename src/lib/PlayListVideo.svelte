@@ -155,9 +155,8 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	class="playlistVideo"
+	class="playlist-item playlist-video"
 	class:selected={$selectedItem == id}
-	class:editMode={$editMode}
 	class:missing
 	class:drag-over={dragover}
 	draggable={$editMode}
