@@ -45,6 +45,8 @@
 		saveSettings,
 	} from "./saveLoad";
 
+	let playlistEl: HTMLElement;
+	let annotationWidth: number = 200;
 	let sideBar = true;
 	let annotations = true;
 	let editorPanel = false;
@@ -325,13 +327,25 @@
 	<!--playlist-->
 	<div
 		class="playlist"
-		class:annotations={annotations}
+		class:show-annotations={annotations}
+		class:editMode={$editMode}
+		style={`--annotation-width: ${annotationWidth}px;`}
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
 			return false;
 		}}
+		bind:this={playlistEl}
 	>
+		{#if $editMode && annotations}
+			<input
+				type="range"
+				class="annotation-slider"
+				min="100"
+				max={playlistEl ? playlistEl.offsetWidth - 140 : 200}
+				bind:value={annotationWidth}
+			/>
+		{/if}
 		{#if $playlist.length > 0}
 			{#each $playlist as t, i}
 				{#if t.type == "track"}

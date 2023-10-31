@@ -93,53 +93,34 @@
 
 		<div class="spacer" data-tauri-drag-region="" />
 
-		<div class="toolbar-group">
-			<!--Add Annotation-->
-			<TopBarButton
-				icon="comment"
-				disabled={!$editMode}
-				onClick={() => {
-					if ($selectedItem == null) {
-						playlist.update(e => {
-							e.push({
-								type: "annotation",
-								origin: "playlist",
-								annotation: "Annotation",
-							});
-							return e;
+		<!--Add Annotation-->
+		<TopBarButton
+			icon="comment"
+			disabled={!$editMode}
+			onClick={() => {
+				if ($selectedItem == null) {
+					playlist.update(e => {
+						e.push({
+							type: "annotation",
+							origin: "playlist",
+							annotation: "Annotation",
 						});
-					} else {
-						playlist.update(e => {
-							e.splice($selectedItem + 1, 0, {
-								type: "annotation",
-								origin: "playlist",
-								annotation: "Annotation",
-							});
-							return e;
-						});
-					}
-					console.log($playlist);
-				}}
-				toolTip="Add comment"
-			/>
-
-			<!--Add Attached Annotation-->
-			<TopBarToggle
-				icon="comment_before"
-				disabled={!$editMode}
-				active={$playlist[$selectedItem] != undefined &&
-					$playlist[$selectedItem].type != "annotation" &&
-					$playlist[$selectedItem].annotation != null}
-				onChange={active => {
-					playlist.update(items => {
-						items[$selectedItem].annotation = active ? "Annotation" : null;
-						return items;
+						return e;
 					});
-				}}
-				activeColor="var(--hover)"
-				toolTip="Toggle Annotation attached"
-			/>
-		</div>
+				} else {
+					playlist.update(e => {
+						e.splice($selectedItem + 1, 0, {
+							type: "annotation",
+							origin: "playlist",
+							annotation: "Annotation",
+						});
+						return e;
+					});
+				}
+				console.log($playlist);
+			}}
+			toolTip="Add comment"
+		/>
 
 		<div class="spacer-fix" data-tauri-drag-region="" />
 

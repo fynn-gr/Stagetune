@@ -132,8 +132,6 @@ export function mapRange(value, in_min, in_max, out_min, out_max) {
 }
 
 export function verionCompare(version: string, compareWith): string {
-	let versionBase = version.split(".")
-	let versionCompare = compareWith.split(".")
-
-	
+	let versionBase = version.split(".");
+	let versionCompare = compareWith.split(".");
 }

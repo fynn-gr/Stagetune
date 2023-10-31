@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { editMode, selectedItem, isEditing } from "@/stores";
+	import { editMode, selectedItem, isEditing, uiPlatform } from "@/stores";
 
 	export let id: number;
 	export let annotation: string;
@@ -20,5 +20,16 @@
 			}}
 			bind:value={annotation}
 		/>
+	</div>
+{:else}
+	<div class="annotation-placeholder">
+		<button
+			class="add-annotation"
+			on:click={e => {
+				annotation = "Annotation";
+			}}
+		>
+			<img src={`./icons/tb_${$uiPlatform}/comment.svg`} alt="" />
+		</button>
 	</div>
 {/if}

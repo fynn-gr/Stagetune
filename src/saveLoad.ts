@@ -185,18 +185,16 @@ export function saveSettings() {
 
 export function loadSettings() {
 	let currentVersion;
-	getVersion()
-	.then(v => {
+	getVersion().then(v => {
 		currentVersion = v;
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			dir: BaseDirectory.Config,
-		})
-		.then(e => {
+		}).then(e => {
 			settings.set(JSON.parse(e));
 			console.log("loaded settings", get(settings));
 
 			//ui Platform
 			uiPlatform.set(get(settings).ui_platform);
 		});
-	})
+	});
 }
