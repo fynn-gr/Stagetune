@@ -364,16 +364,13 @@
 	}
 
 	&.show-annotations {
-		.annotation-slider {
-			display: none;
-		}
 
 		.playlist-item .annotation-attached {
-			display: none;
+			display: block;
 		}
 
 		.playlist-annotation {
-			display: none;
+			display: flex;
 		}
 	}
 
@@ -756,6 +753,7 @@
 
 	.playlist-annotation {
 		z-index: 1;
+		display: none;
 		border-radius: 8rem;
 		background-color: transparent;
 
@@ -872,6 +870,7 @@
 
 	.annotation-attached {
 		z-index: 1;
+		display: none;
 		width: var(--annotation-width);
 		padding: 5rem 10rem 10rem 10rem;
 		margin: 9rem 0 0 0;

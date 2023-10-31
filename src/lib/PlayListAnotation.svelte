@@ -81,7 +81,6 @@
 <div
 	class="playlist-item playlist-annotation"
 	class:selected={$selectedItem == id}
-	class:editMode={$editMode}
 	class:drag-over={dragover}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}

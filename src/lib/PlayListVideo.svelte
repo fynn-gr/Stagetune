@@ -157,7 +157,6 @@
 <div
 	class="playlist-item playlist-video"
 	class:selected={$selectedItem == id}
-	class:editMode={$editMode}
 	class:missing
 	class:drag-over={dragover}
 	draggable={$editMode}
