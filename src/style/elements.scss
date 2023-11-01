@@ -415,12 +415,18 @@
 		border-top: 2rem solid var(--secondary);
 	}
 
-	.selected .border::after {
-		content: "";
-		position: absolute;
-		inset: 6rem 6rem -3rem 6rem;
-		background-color: var(--secondary);
-		border-radius: 11rem;
+	.selected {
+		.border::after {
+			content: "";
+			position: absolute;
+			inset: 6rem 6rem -3rem 6rem;
+			background-color: var(--secondary);
+			border-radius: 11rem;
+		}
+
+		.annotation-attached {
+			box-shadow: 0 0 0 3rem var(--secondary);
+		}
 	}
 
 	.inner {
@@ -869,6 +875,7 @@
 
 	.annotation-attached {
 		z-index: 1;
+		position: relative;
 		display: none;
 		width: var(--annotation-width);
 		padding: 5rem 10rem 10rem 10rem;

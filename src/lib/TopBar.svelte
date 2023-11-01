@@ -88,7 +88,7 @@
 				<AppMenuItem
 					id="tracklist"
 					name="Track List"
-					checked={sideBar ? "true" : "false"}
+					checked={sideBar && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
 				<AppMenuItem
@@ -104,7 +104,7 @@
 				<AppMenuItem
 					id="editor"
 					name="Editor"
-					checked={editor ? "true" : "false"}
+					checked={editor && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
 				{#if $settings.video}

@@ -99,19 +99,21 @@
 	}
 
 	function moveUp() {
-		$selectedItem > 0 ? selectedItem.update(n => n - 1) : selectedItem.set(0);
-		//if (playlist[selectedItem].text != null) {
-		//	moveUp();
-		//}
+		for (let i = $selectedItem - 1; i > 0; i--) {
+			if ($playlist[i].type != "annotation") {
+				$selectedItem = i;
+				break;
+			}
+		}
 	}
 
 	function moveDown() {
-		$selectedItem < $playlist.length - 1
-			? selectedItem.update(n => n + 1)
-			: selectedItem;
-		//if (playlist[selectedItem].text != null) {
-		//	moveDown();
-		//}
+		for (let i = $selectedItem + 1; i < $playlist.length; i++) {
+			if ($playlist[i].type != "annotation") {
+				$selectedItem = i;
+				break;
+			}
+		}
 	}
 
 	function pauseAll() {

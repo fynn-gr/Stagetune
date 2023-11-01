@@ -19,7 +19,7 @@
 				position: { x: e.clientX, y: e.clientY },
 				content: [
 					{
-						name: "Remove",
+						name: "Remove Anotation",
 						action: () => {
 							annotation = null;
 						},
