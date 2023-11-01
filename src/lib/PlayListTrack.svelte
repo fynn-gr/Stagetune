@@ -23,7 +23,6 @@
 	let dragging = false;
 	let dragover = false;
 	let missing = false;
-	let inFade = false; //currently in fade, cant start or stop track during fade
 
 	let input: AudioBufferSourceNode;
 	let gainNode: GainNode;
@@ -136,12 +135,12 @@
 	export function play(startTime: number = null, useFade: boolean = false) {
 		//resume track
 
-		if (track.fade.in > 0 && !inFade && useFade) {
-			inFade = true;
+		if (track.fade.in > 0 && !track.inFade && useFade) {
+			track.inFade = true;
 			fadeNode.gain.setValueAtTime(0.01, 0);
 			fadeNode.gain.linearRampToValueAtTime(1, ctx.currentTime + track.fade.in);
 			setTimeout(() => {
-				inFade = false;
+				track.inFade = false;
 			}, track.fade.in);
 		}
 
@@ -172,8 +171,8 @@
 			}
 		};
 		//pause track
-		if (track.fade.out > 0 && track.playing && !inFade && useFade) {
-			inFade = true;
+		if (track.fade.out > 0 && track.playing && !track.inFade && useFade) {
+			track.inFade = true;
 			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
 			fadeNode.gain.linearRampToValueAtTime(
 				0.01,
@@ -186,14 +185,14 @@
 				fadeNode.connect(gainNode);
 				input.connect(fadeNode);
 				end();
-				inFade = false;
+				track.inFade = false;
 				track.playing = false;
 			}, track.fade.out * 1000);
-		} else if (track.playing && !inFade) {
+		} else if (track.playing && !track.inFade) {
 			input.stop();
 			end();
 			track.playing = false;
-		} else if (!inFade) {
+		} else if (!track.inFade) {
 			end();
 		}
 	}
@@ -308,7 +307,7 @@
 					playPause();
 				}}
 			>
-				{#if inFade}
+				{#if track.inFade}
 					<img
 						src="./icons/square/fade.svg"
 						alt=""

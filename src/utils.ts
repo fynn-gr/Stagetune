@@ -22,10 +22,37 @@ export interface playListItem {
 	buffer?: AudioBuffer;
 	startedAt?: number;
 	pausedAt?: number;
+	inFade?: boolean;
 	hotkey?: string;
 
 	//loop
 	tracks?: Array<playListItem>;
+}
+
+export function createPlaylistTrack(
+	origin: string,
+	type: string,
+	path: string,
+	name: string
+): playListItem {
+	return {
+		type: type,
+		origin: origin,
+		path: path,
+		name: name,
+		playing: false,
+		state: 0, //seconds playing since start
+		volume: 80, //volume (standart is 80 of 100 max)
+		pan: 0, // -1 to 1
+		repeat: false,
+		autoReset: false,
+		fade: { in: 0, out: 0 }, //fade in and out in seconds
+		edit: { in: 0, out: 0 }, // cut in in seconds (TODO: cutout)
+		annotation: null,
+		startedAt: 0, //ctx time track started at
+		pausedAt: 0, //track time paused at
+		inFade: false,
+	};
 }
 
 export function isAudioFile(filename: string): boolean {
@@ -84,31 +111,6 @@ export function waveformCalc(
 
 	const multiplier = Math.pow(Math.max(...filteredData), -1);
 	return filteredData.map(n => n * multiplier);
-}
-
-export function createPlaylistTrack(
-	origin: string,
-	type: string,
-	path: string,
-	name: string
-): playListItem {
-	return {
-		type: type,
-		origin: origin,
-		path: path,
-		name: name,
-		playing: false,
-		state: 0, //seconds playing since start
-		volume: 80, //volume (standart is 80 of 100 max)
-		pan: 0, // -1 to 1
-		repeat: false,
-		autoReset: false,
-		fade: { in: 0, out: 0 }, //fade in and out in seconds
-		edit: { in: 0, out: 0 }, // cut in in seconds (TODO: cutout)
-		annotation: null,
-		startedAt: 0, //ctx time track started at
-		pausedAt: 0, //track time paused at
-	};
 }
 
 export function updateProjectorList() {
