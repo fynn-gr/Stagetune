@@ -485,7 +485,7 @@
 									}
 								}}
 							>
-								{#if e.inFade}
+								{#if e.inFade != null}
 									<img
 										src="./icons/square/fade.svg"
 										alt=""

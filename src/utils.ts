@@ -22,7 +22,7 @@ export interface playListItem {
 	buffer?: AudioBuffer;
 	startedAt?: number;
 	pausedAt?: number;
-	inFade?: boolean;
+	inFade?: "in" | "out";
 	hotkey?: string;
 
 	//loop
@@ -51,7 +51,7 @@ export function createPlaylistTrack(
 		annotation: null,
 		startedAt: 0, //ctx time track started at
 		pausedAt: 0, //track time paused at
-		inFade: false,
+		inFade: null,
 	};
 }
 

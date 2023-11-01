@@ -371,6 +371,10 @@
 		.playlist-annotation {
 			display: flex;
 		}
+
+		.annotation-placeholder{
+			display: flex;
+		}
 	}
 
 	.annotation-slider {
@@ -893,9 +897,9 @@
 	}
 
 	.annotation-placeholder {
+		display: none;
 		width: var(--annotation-width);
 		margin: 9rem 0 0 0;
-		display: flex;
 		flex-direction: column;
 		justify-content: center;
 
@@ -1035,6 +1039,10 @@
 		overflow: hidden;
 		border-radius: 5rem;
 
+		&:hover {
+			background-color: var(--hover);
+		}
+
 		.state {
 			position: absolute;
 			height: 32rem;
@@ -1050,6 +1058,7 @@
 		button {
 			width: 32rem;
 			height: 32rem;
+			margin-right: 10rem;
 			background-color: transparent;
 			border-radius: 5rem;
 

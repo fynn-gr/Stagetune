@@ -189,48 +189,7 @@
 		{:else if tab == "keymap"}
 			<div class="content">
 				<div class="keymap-frame">
-					<Keymap
-						configStandart={{
-							KeyW: "Move Up",
-							KeyA: "Reset selected track",
-							KeyS: "Move Down",
-							KeyD: "Skip track",
-							ArrowUp: "Move Up",
-							ArrowLeft: "Reset selected track",
-							ArrowDown: "Move Down",
-							ArrowRight: "Skip track",
-							Digit1: "Hotkey - 1",
-							Digit2: "Hotkey - 2",
-							Digit3: "Hotkey - 3",
-							Digit4: "Hotkey - 4",
-							Digit5: "Hotkey - 5",
-							Digit6: "Hotkey - 6",
-							Digit7: "Hotkey - 7",
-							Digit8: "Hotkey - 8",
-							Digit9: "Hotkey - 9",
-						}}
-						configCmd={{
-							KeyO: "Open directory",
-							KeyS: "Save playlist",
-							KeyP: "open projector window",
-						}}
-						configAlt={{
-							Digit1: "Remove hotkey - 1",
-							Digit2: "Remove hotkey - 2",
-							Digit3: "Remove hotkey - 3",
-							Digit4: "Remove hotkey - 4",
-							Digit5: "Remove hotkey - 5",
-							Digit6: "Remove hotkey - 6",
-							Digit7: "Remove hotkey - 7",
-							Digit8: "Remove hotkey - 8",
-							Digit9: "Remove hotkey - 9",
-						}}
-						configCtrl={{
-							KeyO: "Open directory",
-							KeyS: "Save playlist",
-							KeyP: "Open projector window",
-						}}
-					/>
+					<Keymap	/>
 				</div>
 			</div>
 		{:else if tab == "projector"}

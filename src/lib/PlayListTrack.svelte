@@ -135,12 +135,12 @@
 	export function play(startTime: number = null, useFade: boolean = false) {
 		//resume track
 
-		if (track.fade.in > 0 && !track.inFade && useFade) {
-			track.inFade = true;
+		if (track.fade.in > 0 && track.inFade == null && useFade) {
+			track.inFade = "in";
 			fadeNode.gain.setValueAtTime(0.01, 0);
 			fadeNode.gain.linearRampToValueAtTime(1, ctx.currentTime + track.fade.in);
 			setTimeout(() => {
-				track.inFade = false;
+				track.inFade = null;
 			}, track.fade.in);
 		}
 
@@ -171,8 +171,8 @@
 			}
 		};
 		//pause track
-		if (track.fade.out > 0 && track.playing && !track.inFade && useFade) {
-			track.inFade = true;
+		if (track.fade.out > 0 && track.playing && track.inFade == null && useFade) {
+			track.inFade = "out";
 			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
 			fadeNode.gain.linearRampToValueAtTime(
 				0.01,
@@ -185,14 +185,14 @@
 				fadeNode.connect(gainNode);
 				input.connect(fadeNode);
 				end();
-				track.inFade = false;
+				track.inFade = null;
 				track.playing = false;
 			}, track.fade.out * 1000);
-		} else if (track.playing && !track.inFade) {
+		} else if (track.playing && track.inFade == null) {
 			input.stop();
 			end();
 			track.playing = false;
-		} else if (!track.inFade) {
+		} else if (track.inFade == null) {
 			end();
 		}
 	}
@@ -307,7 +307,7 @@
 					playPause();
 				}}
 			>
-				{#if track.inFade}
+				{#if track.inFade != null}
 					<img
 						src="./icons/square/fade.svg"
 						alt=""
