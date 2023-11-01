@@ -51,7 +51,7 @@
 				annotation = "Annotation";
 			}}
 		>
-			<img src={`./icons/tb_${$uiPlatform}/comment.svg`} alt="" />
+			<img src={`./icons/tb_${$uiPlatform}/plus.svg`} alt="" />
 		</button>
 	</div>
 {/if}

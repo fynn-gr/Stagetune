@@ -155,7 +155,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	class="playlist-item playlist-video"
+	class="playlist-item video"
 	class:selected={$selectedItem == id}
 	class:missing
 	class:drag-over={dragover}
@@ -169,19 +169,22 @@
 		selectedItem.set(id);
 	}}
 >
+	<div class="drag-area">
+		<p>{id}</p>
+	</div>
+
+	<!--annotation before-->
+	<Annotation bind:annotation={track.annotation} {id} />
+
 	<div
-		class="border"
+		class="inner"
 		style={$currentDragging == null ? "" : "pointer-events: none;"}
 	>
-		<!--annotation before-->
-		<Annotation bind:annotation={track.annotation} {id} start={true} />
-
-		<div class="inner">
-			<!--progress-->
-			<div
-				class="progress"
-				on:click={handleSkip}
-				style={`
+		<!--progress-->
+		<div
+			class="progress"
+			on:click={handleSkip}
+			style={`
 					background: linear-gradient(
 						90deg,
 						var(--secondary) 0%,
@@ -189,55 +192,47 @@
 						#555 calc(100% * ${track.state / track.length || 0}),
 						#555 100%
 					);`}
+		/>
+
+		<!--reset-btn-->
+		<button
+			class="play-btn"
+			on:click={() => {
+				track.playing = false;
+				emit("update_play", { action: "stop" });
+			}}
+		>
+			<img src="./icons/square/reset.svg" alt="" draggable="false" />
+		</button>
+
+		<!--play Button-->
+		<button
+			class="play-btn"
+			class:active={track.playing}
+			on:click={() => {
+				playPause();
+			}}
+		>
+			{#if track.playing}
+				<img src="./icons/square/pause.svg" alt="" draggable="false" />
+			{:else}
+				<img src="./icons/square/play.svg" alt="" draggable="false" />
+			{/if}
+		</button>
+
+		<!--Title-->
+		<div class="title">
+			<input
+				type="text"
+				bind:value={track.name}
+				on:focus={() => {
+					isEditing.update(e => e + 1);
+				}}
+				on:blur={() => {
+					isEditing.update(e => e - 1);
+				}}
+				disabled={!editMode || $selectedItem != id}
 			/>
-
-			<div class="drag-area">
-				<img src="/icons/square/drag_n_drop.svg" alt="" draggable="false" />
-			</div>
-
-			<!--reset-btn-->
-			<button
-				class="play-btn"
-				on:click={() => {
-					track.playing = false;
-					emit("update_play", { action: "stop" });
-				}}
-			>
-				<img src="./icons/square/reset.svg" alt="" draggable="false" />
-			</button>
-
-			<!--play Button-->
-			<button
-				class="play-btn"
-				class:active={track.playing}
-				on:click={() => {
-					playPause();
-				}}
-			>
-				{#if track.playing}
-					<img src="./icons/square/pause.svg" alt="" draggable="false" />
-				{:else}
-					<img src="./icons/square/play.svg" alt="" draggable="false" />
-				{/if}
-			</button>
-
-			<!--Title-->
-			<div class="title">
-				<input
-					type="text"
-					bind:value={track.name}
-					on:focus={() => {
-						isEditing.update(e => e + 1);
-					}}
-					on:blur={() => {
-						isEditing.update(e => e - 1);
-					}}
-					disabled={!editMode || $selectedItem != id}
-				/>
-			</div>
 		</div>
-
-		<!--annotation after-->
-		<Annotation bind:annotation={track.annotation} {id} start={false} />
 	</div>
 </div>

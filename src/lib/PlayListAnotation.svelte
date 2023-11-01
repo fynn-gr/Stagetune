@@ -79,7 +79,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	class="playlist-item playlist-annotation"
+	class="playlist-item annotation"
 	class:selected={$selectedItem == id}
 	class:drag-over={dragover}
 	draggable={$editMode}
@@ -93,24 +93,25 @@
 	}}
 >
 	<div class="drag-area">
-		<img src="/icons/square/drag_n_drop.svg" alt="" />
+		<p>{id}</p>
 	</div>
 
-	<div class="border">
-		<div class="container">
-			<input
-				type="text"
-				disabled={!$editMode || $selectedItem != id}
-				on:focus={() => {
-					isEditing.update(e => e + 1);
-					console.log("in focus", $isEditing);
-				}}
-				on:blur={() => {
-					isEditing.update(e => e - 1);
-					console.log("out of focus", $isEditing);
-				}}
-				bind:value={track.annotation}
-			/>
-		</div>
+	<div
+		class="container"
+		style={$currentDragging == null ? "" : "pointer-events: none;"}
+	>
+		<input
+			type="text"
+			disabled={!$editMode || $selectedItem != id}
+			on:focus={() => {
+				isEditing.update(e => e + 1);
+				console.log("in focus", $isEditing);
+			}}
+			on:blur={() => {
+				isEditing.update(e => e - 1);
+				console.log("out of focus", $isEditing);
+			}}
+			bind:value={track.annotation}
+		/>
 	</div>
 </div>

@@ -490,7 +490,7 @@
 										src="./icons/square/fade.svg"
 										alt=""
 										draggable="false"
-										class="fade-icon"
+										class="fade-state-icon"
 									/>
 								{:else if e.playing}
 									<img src="./icons/square/stop.svg" alt="" draggable="false" />

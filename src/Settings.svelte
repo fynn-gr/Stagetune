@@ -189,7 +189,7 @@
 		{:else if tab == "keymap"}
 			<div class="content">
 				<div class="keymap-frame">
-					<Keymap	/>
+					<Keymap />
 				</div>
 			</div>
 		{:else if tab == "projector"}

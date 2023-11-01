@@ -171,7 +171,12 @@
 			}
 		};
 		//pause track
-		if (track.fade.out > 0 && track.playing && track.inFade == null && useFade) {
+		if (
+			track.fade.out > 0 &&
+			track.playing &&
+			track.inFade == null &&
+			useFade
+		) {
 			track.inFade = "out";
 			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
 			fadeNode.gain.linearRampToValueAtTime(
@@ -247,7 +252,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	class="playlist-item playlist-track"
+	class="playlist-item track"
 	class:selected={$selectedItem == id}
 	class:missing
 	class:drag-over={dragover}
@@ -263,22 +268,21 @@
 	}}
 >
 	<div class="drag-area">
-		<img src="/icons/square/drag_n_drop.svg" alt="" />
+		<p>{id}</p>
 	</div>
 
 	<!--annotation attached-->
 	<Annotation bind:annotation={track.annotation} {id} />
 
 	<div
-		class="border"
+		class="inner"
 		style={$currentDragging == null ? "" : "pointer-events: none;"}
 	>
-		<div class="inner">
-			<!--progress-->
-			<div
-				class="progress"
-				on:click={handleSkip}
-				style={`
+		<!--progress-->
+		<div
+			class="progress"
+			on:click={handleSkip}
+			style={`
 					background: linear-gradient(
 						90deg,
 						var(--secondary) 0%,
@@ -286,185 +290,184 @@
 						#555 calc(100% * ${track.state / cutTrackLength}),
 						#555 100%
 					);`}
-			/>
-			<Waveform data={waveformData} samples={300} resY={50} />
+		/>
+		<Waveform data={waveformData} samples={300} resY={50} />
 
-			<!--reset-btn-->
-			<button
-				class="play-btn"
-				on:click={() => {
-					stop(true);
-				}}
-			>
-				<img src="./icons/square/reset.svg" alt="" draggable="false" />
-			</button>
+		<!--reset-btn-->
+		<button
+			class="play-btn"
+			on:click={() => {
+				stop(true);
+			}}
+		>
+			<img src="./icons/square/reset.svg" alt="" draggable="false" />
+		</button>
 
-			<!--play Button-->
-			<button
-				class="play-btn"
-				class:active={track.playing}
-				on:click={() => {
-					playPause();
-				}}
-			>
-				{#if track.inFade != null}
-					<img
-						src="./icons/square/fade.svg"
-						alt=""
-						draggable="false"
-						class="fade-icon"
-					/>
-				{:else if track.playing}
-					<img src="./icons/square/pause.svg" alt="" draggable="false" />
-				{:else}
-					<img src="./icons/square/play.svg" alt="" draggable="false" />
-				{/if}
-			</button>
-
-			<!--name-->
-			{#if track.buffer != undefined}
-				<div class="title">
-					<input
-						type="text"
-						bind:value={track.name}
-						on:focus={() => {
-							isEditing.update(e => e + 1);
-						}}
-						on:blur={() => {
-							isEditing.update(e => e - 1);
-						}}
-						disabled={!$editMode || $selectedItem != id}
-					/>
-				</div>
+		<!--play Button-->
+		<button
+			class="play-btn"
+			class:active={track.playing}
+			on:click={() => {
+				playPause();
+			}}
+		>
+			{#if track.inFade != null}
+				<img
+					src="./icons/square/fade.svg"
+					alt=""
+					draggable="false"
+					class="fade-state-icon"
+				/>
+			{:else if track.playing}
+				<img src="./icons/square/pause.svg" alt="" draggable="false" />
 			{:else}
-				<div class="title"><p>loading...</p></div>
+				<img src="./icons/square/play.svg" alt="" draggable="false" />
+			{/if}
+		</button>
+
+		<!--name-->
+		{#if track.buffer != undefined}
+			<div class="title">
+				<input
+					type="text"
+					bind:value={track.name}
+					on:focus={() => {
+						isEditing.update(e => e + 1);
+					}}
+					on:blur={() => {
+						isEditing.update(e => e - 1);
+					}}
+					disabled={!$editMode || $selectedItem != id}
+				/>
+			</div>
+		{:else}
+			<div class="title"><p>loading...</p></div>
+		{/if}
+
+		<div class="options">
+			<!--Hotkey-->
+			{#if track.hotkey != undefined}
+				<div class="option hotkey">
+					<p>{track.hotkey}</p>
+				</div>
 			{/if}
 
-			<div class="options">
-				<!--Hotkey-->
-				{#if track.hotkey != undefined}
-					<div class="option hotkey">
-						<p>{track.hotkey}</p>
-					</div>
-				{/if}
-
-				<!--fade icons-->
-				{#if !$editMode && track.fade.in > 0}
-					<img
-						class="option fade-icon"
-						src="./icons/square/fade_in.svg"
-						alt=""
-						draggable="false"
-					/>
-				{/if}
-
-				{#if !$editMode && track.fade.out > 0}
-					<img
-						class="option fade-icon"
-						src="./icons/square/fade_out.svg"
-						alt=""
-						draggable="false"
-					/>
-				{/if}
-
-				<!--repeat-->
-				<button
-					class="option repeat-btn"
-					class:active={track.repeat}
-					on:click={() => {
-						track.repeat = $editMode ? !track.repeat : track.repeat;
-					}}
-					title="repeat track"
-				>
-					<img src="./icons/square/repeat.svg" alt="repeat" draggable="false" />
-				</button>
-
-				<!--auto reset-->
-				<button
-					class="option auto-reset-btn"
-					class:active={track.autoReset}
-					on:click={() => {
-						track.autoReset = $editMode ? !track.autoReset : track.autoReset;
-					}}
-					title="auto reset track on pause"
-				>
-					<img
-						src="./icons/square/auto_reset.svg"
-						alt="auto reset"
-						draggable="false"
-					/>
-				</button>
-			</div>
-
-			<!--time-->
-			<p class="timecode">{secondsToMinutes(track.state)}</p>
-			<p class="length">
-				{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
-			</p>
-
-			<!--fade-->
-			<span class="fade">
-				<img src="./icons/square/fade_in.svg" alt="" />
-				<input
-					type="number"
-					bind:value={track.fade.in}
-					on:focus={() => {
-						isEditing.update(e => e + 1);
-					}}
-					on:blur={() => {
-						isEditing.update(e => e - 1);
-					}}
-					min="0"
-					max={track.length}
-					disabled={!$editMode}
-					title="Fade In"
+			<!--fade icons-->
+			{#if !$editMode && track.fade.in > 0}
+				<img
+					class="option fade-icon"
+					src="./icons/square/fade_in.svg"
+					alt=""
+					draggable="false"
 				/>
-				<img src="./icons/square/fade_out.svg" alt="" />
-				<input
-					type="number"
-					bind:value={track.fade.out}
-					on:focus={() => {
-						isEditing.update(e => e + 1);
-					}}
-					on:blur={() => {
-						isEditing.update(e => e - 1);
-					}}
-					min="0"
-					max={track.length}
-					disabled={!$editMode}
-					title="Fade Out"
+			{/if}
+
+			{#if !$editMode && track.fade.out > 0}
+				<img
+					class="option fade-icon"
+					src="./icons/square/fade_out.svg"
+					alt=""
+					draggable="false"
 				/>
+			{/if}
+
+			<!--repeat-->
+			<button
+				class="option repeat-btn"
+				class:active={track.repeat}
+				on:click={() => {
+					track.repeat = $editMode ? !track.repeat : track.repeat;
+				}}
+				title="repeat track"
+			>
+				<img src="./icons/square/repeat.svg" alt="repeat" draggable="false" />
+			</button>
+
+			<!--auto reset-->
+			<button
+				class="option auto-reset-btn"
+				class:active={track.autoReset}
+				on:click={() => {
+					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
+				}}
+				title="auto reset track on pause"
+			>
+				<img
+					src="./icons/square/auto_reset.svg"
+					alt="auto reset"
+					draggable="false"
+				/>
+			</button>
+		</div>
+
+		<!--time-->
+		<p class="timecode">{secondsToMinutes(track.state)}</p>
+		<p class="length">
+			{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
+		</p>
+
+		<!--fade-->
+		<span class="fade">
+			<img src="./icons/square/fade_in.svg" alt="" />
+			<input
+				type="number"
+				bind:value={track.fade.in}
+				on:focus={() => {
+					isEditing.update(e => e + 1);
+				}}
+				on:blur={() => {
+					isEditing.update(e => e - 1);
+				}}
+				min="0"
+				max={track.length}
+				disabled={!$editMode}
+				title="Fade In"
+			/>
+			<img src="./icons/square/fade_out.svg" alt="" />
+			<input
+				type="number"
+				bind:value={track.fade.out}
+				on:focus={() => {
+					isEditing.update(e => e + 1);
+				}}
+				on:blur={() => {
+					isEditing.update(e => e - 1);
+				}}
+				min="0"
+				max={track.length}
+				disabled={!$editMode}
+				title="Fade Out"
+			/>
+		</span>
+
+		<!--volume Pan-->
+		<div class="volume">
+			<span>
+				<p>–</p>
+				<input
+					bind:value={track.volume}
+					type="range"
+					min="0"
+					max="100"
+					step="10"
+					disabled={!$editMode}
+				/>
+				<p>+</p>
 			</span>
 
-			<!--volume Pan-->
-			<div class="volume">
-				<span>
-					<p>–</p>
-					<input
-						bind:value={track.volume}
-						type="range"
-						min="0"
-						max="100"
-						step="10"
-						disabled={!$editMode}
-					/>
-					<p>+</p>
-				</span>
-
-				<span>
-					<p>L</p>
-					<input
-						class="pan"
-						bind:value={track.pan}
-						type="range"
-						min={-1}
-						max={1}
-						step={0.25}
-						disabled={!$editMode}
-					/>
-					<p>R</p>
-				</span>
-			</div>
+			<span>
+				<p>L</p>
+				<input
+					class="pan"
+					bind:value={track.pan}
+					type="range"
+					min={-1}
+					max={1}
+					step={0.25}
+					disabled={!$editMode}
+				/>
+				<p>R</p>
+			</span>
 		</div>
 	</div>
 </div>
