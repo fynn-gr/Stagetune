@@ -1026,16 +1026,14 @@
 
 	.song {
 		position: relative;
+		display: flex;
+		flex-direction: row;
 		height: 32rem;
-		padding: 0 8rem;
+		padding: 0 8rem 0 0 ;
 		line-height: 32rem;
 		font-size: 12rem;
 		overflow: hidden;
 		border-radius: 5rem;
-
-		&:hover {
-			background-color: var(--hover);
-		}
 
 		.state {
 			position: absolute;
@@ -1046,6 +1044,21 @@
 
 			&.playing {
 				background-color: var(--secondary);
+			}
+		}
+
+		button {
+			width: 32rem;
+			height: 32rem;
+			background-color: transparent;
+			border-radius: 5rem;
+
+			&:hover {
+				background-color: var(--hover);
+			}
+
+			img {
+				filter: invert(1);
 			}
 		}
 
@@ -1155,4 +1168,20 @@
 			//height: 45px !important;
 		}
 	}
+}
+
+.fade-icon {
+	@keyframes spin {
+		from {
+			rotate: 0deg;
+		}
+		to {
+			rotate: 359deg;
+		}
+	}
+
+	animation-name: spin;
+	animation-timing-function: linear;
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
 }

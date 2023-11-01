@@ -466,7 +466,7 @@
 		<div class="palettes">
 			<!--current playing-->
 			<div class="current">
-				{#each $playlist as e}
+				{#each $playlist as e, i}
 					{#if e.playing != undefined && e.state != 0}
 						<div class="song">
 							<div
@@ -476,6 +476,32 @@
 									e.state != undefined ? e.state / e.length : 0
 								});`}
 							/>
+							<button
+								on:click={ev => {
+									if (e.playing) {
+										$playlistElements[i].stop(false, false);
+									} else {
+										$playlistElements[i].stop(true, false);
+									}
+								}}
+							>
+								{#if e.inFade}
+									<img
+										src="./icons/square/fade.svg"
+										alt=""
+										draggable="false"
+										class="fade-icon"
+									/>
+								{:else if e.playing}
+									<img src="./icons/square/stop.svg" alt="" draggable="false" />
+								{:else}
+									<img
+										src="./icons/square/reset.svg"
+										alt=""
+										draggable="false"
+									/>
+								{/if}
+							</button>
 							<p>{e.name}</p>
 						</div>
 					{/if}

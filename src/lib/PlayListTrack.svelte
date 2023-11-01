@@ -309,7 +309,12 @@
 				}}
 			>
 				{#if inFade}
-					<img src="./icons/square/fade.svg" alt="" draggable="false" />
+					<img
+						src="./icons/square/fade.svg"
+						alt=""
+						draggable="false"
+						class="fade-icon"
+					/>
 				{:else if track.playing}
 					<img src="./icons/square/pause.svg" alt="" draggable="false" />
 				{:else}
