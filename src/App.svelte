@@ -286,7 +286,6 @@
 		return () => clearInterval(interval);
 	});
 
-	$: console.log($isEditing);
 	$: emit("editMode", { edit: $editMode });
 	$: if ($editMode) {
 		appWindow.setResizable(true);

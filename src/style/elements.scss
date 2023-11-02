@@ -413,12 +413,26 @@
 	}
 
 	.selected {
+		&:has(.annotation-selected) {
+			.inner {
+				box-shadow: none;
+			}
+
+			.annotation-attached {
+				box-shadow: 0 0 0 3rem var(--secondary);
+			}
+		}
+
 		.inner {
 			box-shadow: 0 0 0 3rem var(--secondary);
 		}
 
-		.annotation-attached {
+		.container {
 			box-shadow: 0 0 0 3rem var(--secondary);
+		}
+
+		.annotation-attached {
+			box-shadow: none;
 		}
 	}
 

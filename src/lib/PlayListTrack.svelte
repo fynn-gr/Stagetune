@@ -10,6 +10,7 @@
 		currentDragging,
 		playlist,
 		playlistPath,
+		selectedAttached,
 	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
@@ -265,14 +266,20 @@
 	on:drop={handleDrop}
 	on:click={e => {
 		selectedItem.set(id);
+		selectedAttached.set(false);
+		console.log(e)
 	}}
 >
 	<div class="drag-area">
-		<p>{id +1}</p>
+		<p>{id + 1}</p>
 	</div>
 
 	<!--annotation attached-->
-	<Annotation bind:annotation={track.annotation} {id} />
+	<Annotation
+		bind:annotation={track.annotation}
+		{id}
+		selected={$selectedItem == id && $selectedAttached}
+	/>
 
 	<div
 		class="inner"

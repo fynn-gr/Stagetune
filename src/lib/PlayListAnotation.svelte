@@ -6,8 +6,8 @@
 		isEditing,
 		currentDragging,
 		playlist,
+		selectedAttached,
 	} from "../stores";
-	import Annotation from "./Annotation.svelte";
 
 	export let track: any;
 	export let id: number;
@@ -89,6 +89,7 @@
 	on:dragenter={handleDragEnter}
 	on:dragleave={handleDragLeave}
 	on:click={e => {
+		selectedAttached.set(false);
 		selectedItem.set(id);
 	}}
 >

@@ -5,15 +5,19 @@
 		isEditing,
 		uiPlatform,
 		contextMenu,
+		selectedAttached,
 	} from "@/stores";
 
 	export let id: number;
 	export let annotation: string;
+	export let selected: boolean;
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 {#if annotation != null}
 	<div
 		class="annotation-attached"
+		class:annotation-selected={selected}
 		on:contextmenu={e => {
 			$contextMenu = {
 				position: { x: e.clientX, y: e.clientY },
@@ -27,6 +31,10 @@
 				],
 			};
 			console.log($contextMenu, e);
+		}}
+		on:click={e => {
+			$selectedAttached = true;
+			e.stopPropagation();
 		}}
 	>
 		<input
