@@ -16,6 +16,7 @@
 	import ModeSwitch from "./ModeSwitch.svelte";
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
 	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
+	import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
 
 	export let sideBar;
 	export let annotations;
@@ -112,6 +113,9 @@
 					<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
 				{/if}
 			</AppMenu>
+		{/if}
+		{#if $settings.debug}
+			<AppMenuDev />
 		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />

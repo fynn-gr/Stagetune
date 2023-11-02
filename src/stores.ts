@@ -259,12 +259,14 @@ export const settings = writable({
 			meta: false,
 		},
 	],
+	debug: false,
 	video: false,
 });
 export const contextMenu = writable(null);
 export const currentDragging = writable(null);
 export const editMode = writable(true);
 export const uiPlatform = writable("mac");
+export const theme = writable("dark"); //unused
 export const playlist = writable([
 	/*
 	{
@@ -309,7 +311,7 @@ export const playlist = writable([
 	*/
 ]);
 export const selectedItem = writable(null);
-export const selectedAnnotation = writable(false);
+export const selectedAttached = writable(false);
 export const hotkeys = writable([
 	{
 		key: "1",

@@ -10,12 +10,13 @@
 	} from "@tauri-apps/api/window";
 	import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 	import { afterUpdate, onMount, tick } from "svelte";
-	import Keymap from "./pureUI/components//settings/Keymap.svelte";
-	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 	import { emit } from "@tauri-apps/api/event";
-	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
 	import { loadSettings, saveSettings } from "./saveLoad";
 	import { settings } from "./stores";
+
+	import Keymap from "./pureUI/components//settings/Keymap.svelte";
+	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
+	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
 	import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
 
 	let tab: string = "general";
@@ -43,9 +44,6 @@
 	function onChange() {
 		saveSettings();
 		emit("reload_settings");
-
-		//check uiPlatform
-		$uiPlatform = $settings.ui_platform;
 	}
 
 	afterUpdate(() => {
@@ -232,20 +230,17 @@
 		{:else}
 			<div class="content dev">
 				<SettingsOption
-					name="UI Platform"
-					type="select"
-					bind:value={$settings.ui_platform}
-					options={[
-						{ value: "mac", name: "macOS" },
-						{ value: "win", name: "Windows" },
-					]}
+					name="Debug Mode:"
+					type="checkbox"
+					bind:value={$settings.debug}
+					checkboxName="Enable developer features"
 					{onChange}
 				/>
 				<SettingsOption
-					name="Video"
+					name="Video:"
 					type="checkbox"
 					bind:value={$settings.video}
-					checkboxName="Enable video projector"
+					checkboxName="Enable projector"
 					{onChange}
 				/>
 			</div>

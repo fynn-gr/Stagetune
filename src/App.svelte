@@ -54,9 +54,6 @@
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
-	loadSettings();
-	saveSettings();
-	setUIScale($settings.ui_scale);
 
 	const ctx = new AudioContext();
 	const analyser = ctx.createAnalyser();
@@ -161,6 +158,7 @@
 
 	const listenerUpdateSettings = listen("reload_settings", () => {
 		loadSettings();
+		console.log("reloaded settings", $settings)
 	});
 
 	onMount(() => {
