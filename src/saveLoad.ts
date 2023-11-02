@@ -193,9 +193,6 @@ export function loadSettings() {
 		}).then(e => {
 			settings.set(JSON.parse(e));
 			console.log("loaded settings", get(settings));
-
-			//ui Platform
-			uiPlatform.set(get(settings).ui_platform);
 		});
 	});
 }

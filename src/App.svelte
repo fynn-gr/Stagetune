@@ -349,7 +349,7 @@
 		}}
 		bind:this={playlistEl}
 	>
-		{#if $editMode && annotations}
+		{#if annotations}
 			<input
 				type="range"
 				class="annotation-slider"
