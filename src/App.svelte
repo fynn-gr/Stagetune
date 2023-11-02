@@ -99,7 +99,7 @@
 	}
 
 	function moveUp() {
-		for (let i = $selectedItem - 1; i > 0; i--) {
+		for (let i = $selectedItem -1; i > -1; i--) {
 			if ($playlist[i].type != "annotation") {
 				$selectedItem = i;
 				break;

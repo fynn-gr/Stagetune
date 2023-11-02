@@ -93,7 +93,7 @@
 	}}
 >
 	<div class="drag-area">
-		<p>{id}</p>
+		<p>{id +1}</p>
 	</div>
 
 	<div
