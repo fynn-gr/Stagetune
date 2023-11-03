@@ -340,7 +340,7 @@
 		class="playlist"
 		class:show-annotations={annotations}
 		class:editMode={$editMode}
-		style={`--annotation-width: ${annotationWidth}rem;`}
+		style={`--annotation-width: calc(${annotationWidth}% - 46rem);`}
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
@@ -352,8 +352,8 @@
 			<input
 				type="range"
 				class="annotation-slider"
-				min="140"
-				max={playlistEl ? playlistEl.offsetWidth - (280 * $settings.ui_scale) : 200}
+				min="20"
+				max={80}
 				bind:value={annotationWidth}
 			/>
 		{/if}
