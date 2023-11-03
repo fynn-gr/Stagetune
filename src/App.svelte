@@ -43,7 +43,7 @@
 		savePlaylist,
 		openDir,
 		loadSettings,
-		saveSettings,
+		checkSettingsExist,
 	} from "./saveLoad";
 	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 
@@ -54,6 +54,8 @@
 	let editorPanel = false;
 	let projector = false;
 	let palettes = true;
+
+	checkSettingsExist();
 
 	const ctx = new AudioContext();
 	const analyser = ctx.createAnalyser();
