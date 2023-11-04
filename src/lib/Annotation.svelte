@@ -19,18 +19,20 @@
 		class="annotation-attached"
 		class:annotation-selected={selected}
 		on:contextmenu={e => {
-			$contextMenu = {
-				position: { x: e.clientX, y: e.clientY },
-				content: [
-					{
-						name: "Remove Anotation",
-						action: () => {
-							annotation = null;
+			if ($editMode) {
+				$contextMenu = {
+					position: { x: e.clientX, y: e.clientY },
+					content: [
+						{
+							name: "Remove Anotation",
+							action: () => {
+								annotation = null;
+							},
 						},
-					},
-				],
-			};
-			console.log($contextMenu, e);
+					],
+				};
+				console.log($contextMenu, e);
+			}
 		}}
 		on:click={e => {
 			$selectedAttached = true;
@@ -53,13 +55,16 @@
 	</div>
 {:else}
 	<div class="annotation-placeholder">
-		<button
-			class="add-annotation"
-			on:click={e => {
-				annotation = "Annotation";
-			}}
-		>
-			<img src={`./icons/tb_${$uiPlatform}/plus.svg`} alt="" />
-		</button>
+		{#if $editMode}
+			<button
+				class="add-annotation"
+				title="Add attached anotation"
+				on:click={e => {
+					annotation = "Annotation";
+				}}
+			>
+				<img src={`./icons/tb_${$uiPlatform}/plus.svg`} alt="" />
+			</button>
+		{/if}
 	</div>
 {/if}

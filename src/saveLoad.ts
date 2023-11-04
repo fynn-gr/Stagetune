@@ -160,28 +160,28 @@ export async function savePlaylist() {
 export function saveSettings() {
 	let currentVersion;
 	getVersion()
-	.then(v => {
-		currentVersion = v.slice(0, v.lastIndexOf("."));
-		exists(`Stagetune/${currentVersion}`, { dir: BaseDirectory.Config });
-	})
-	.then(e => {
-		if (!e) {
-			createDir(`Stagetune/${currentVersion}`, {
-				dir: BaseDirectory.Config,
-				recursive: true,
-			});
-		}
-	})
-	.then(() => {
-		console.log("save: ", get(settings));
-		writeTextFile(
-			`Stagetune/${currentVersion}/settings.json`,
-			JSON.stringify(get(settings)),
-			{
-				dir: BaseDirectory.Config,
+		.then(v => {
+			currentVersion = v.slice(0, v.lastIndexOf("."));
+			exists(`Stagetune/${currentVersion}`, { dir: BaseDirectory.Config });
+		})
+		.then(e => {
+			if (!e) {
+				createDir(`Stagetune/${currentVersion}`, {
+					dir: BaseDirectory.Config,
+					recursive: true,
+				});
 			}
-		);
-	});
+		})
+		.then(() => {
+			console.log("save: ", get(settings));
+			writeTextFile(
+				`Stagetune/${currentVersion}/settings.json`,
+				JSON.stringify(get(settings)),
+				{
+					dir: BaseDirectory.Config,
+				}
+			);
+		});
 }
 
 export function loadSettings() {
@@ -200,19 +200,19 @@ export function loadSettings() {
 export function checkSettingsExist() {
 	let currentVersion;
 	getVersion()
-	.then(v => {
-		currentVersion = v.slice(0, v.lastIndexOf("."));
-		exists(`Stagetune/${currentVersion}`, { dir: BaseDirectory.Config });
-	})
-	.then(e => {
-		if (e) {
-			loadSettings();
-		} else {			
-			createDir(`Stagetune/${currentVersion}`, {
-				dir: BaseDirectory.Config,
-				recursive: true,
-			});
-			saveSettings();
-		}
-	})
+		.then(v => {
+			currentVersion = v.slice(0, v.lastIndexOf("."));
+			exists(`Stagetune/${currentVersion}`, { dir: BaseDirectory.Config });
+		})
+		.then(e => {
+			if (e) {
+				loadSettings();
+			} else {
+				createDir(`Stagetune/${currentVersion}`, {
+					dir: BaseDirectory.Config,
+					recursive: true,
+				});
+				saveSettings();
+			}
+		});
 }

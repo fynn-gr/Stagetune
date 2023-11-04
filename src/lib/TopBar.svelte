@@ -18,10 +18,11 @@
 	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
 	import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
 
-	export let sideBar;
-	export let annotations;
-	export let editor;
-	export let palettes;
+	export let showTracklist;
+	export let showAnnotations;
+	export let showEditor;
+	export let showCurrent;
+	export let showHotkeys;
 	export let pauseAll;
 	export let resetAll;
 </script>
@@ -57,21 +58,19 @@
 
 		<div class="group">
 			<!--Sidebar-->
-			<TopBarButton
+			<TopBarToggle
 				icon="sidebar"
-				onClick={() => {
-					sideBar = !sideBar;
-				}}
-				toolTip="Toggle SideBar"
+				bind:active={showTracklist}
+				activeColor="var(--hover)"
+				toolTip="Toggle Tracklist"
 				disabled={!$editMode}
 			/>
 
 			<!--Annotations-->
-			<TopBarButton
+			<TopBarToggle
 				icon="comment"
-				onClick={() => {
-					annotations = !annotations;
-				}}
+				bind:active={showAnnotations}
+				activeColor="var(--hover)"
 				toolTip="Toggle Annotations"
 				disabled={false}
 			/>
@@ -79,33 +78,37 @@
 
 		{#if $uiPlatform == "win"}
 			<AppMenu name="File">
-				<AppMenuItem id="new" name="New Playlist" accelerator="ctrl N" />
 				<AppMenuItem id="open" name="Open" accelerator="ctrl O" />
 				<AppMenuItem id="save" name="Save" accelerator="ctrl S" />
 				<div class="seperator" />
-				<AppMenuItem id="settings" name="Settings" accelerator="ctrl ," />
+				<AppMenuItem id="settings" name="Settings" accelerator="ctrl ," disabled={!$editMode}/>
 			</AppMenu>
 			<AppMenu name="Window">
 				<AppMenuItem
-					id="tracklist"
+					id="showTracklist"
 					name="Track List"
-					checked={sideBar && $editMode ? "true" : "false"}
+					checked={showTracklist && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
 				<AppMenuItem
-					id="annotations"
+					id="showAnnotations"
 					name="Annotations"
-					checked={annotations ? "true" : "false"}
+					checked={showAnnotations ? "true" : "false"}
 				/>
 				<AppMenuItem
-					id="palettes"
-					name="Palettes"
-					checked={palettes ? "true" : "false"}
+					id="showCurrent"
+					name="Tracks playing"
+					checked={showCurrent ? "true" : "false"}
 				/>
 				<AppMenuItem
-					id="editor"
+					id="showHotkeys"
+					name="Hotkeys"
+					checked={showHotkeys ? "true" : "false"}
+				/>
+				<AppMenuItem
+					id="showEditor"
 					name="Editor"
-					checked={editor && $editMode ? "true" : "false"}
+					checked={showEditor && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
 				{#if $settings.video}
@@ -122,7 +125,7 @@
 
 		<!--Add Annotation-->
 		<TopBarButton
-			icon="comment"
+			icon="comment_add"
 			disabled={!$editMode}
 			onClick={() => {
 				if ($selectedItem == null) {
@@ -178,22 +181,29 @@
 
 		<div class="group">
 			<!--editor-->
-			<TopBarButton
+			<TopBarToggle
 				icon="cut"
-				onClick={() => {
-					editor = !editor;
-				}}
-				toolTip="Toggle Editor"
+				bind:active={showEditor}
+				activeColor="var(--hover)"
+				toolTip="Toggle Edior"
 				disabled={!$editMode}
 			/>
 
-			<!--palettes-->
-			<TopBarButton
-				icon="properties"
-				onClick={() => {
-					palettes = !palettes;
-				}}
-				toolTip="Toggle Palettes"
+			<!--current playing-->
+			<TopBarToggle
+				icon="active_play"
+				bind:active={showCurrent}
+				activeColor="var(--hover)"
+				toolTip="Toggle Tracks playing"
+				disabled={!$editMode}
+			/>
+
+			<!--hotkeys-->
+			<TopBarToggle
+				icon="hotkeys"
+				bind:active={showHotkeys}
+				activeColor="var(--hover)"
+				toolTip="Toggle Hotkeys"
 				disabled={!$editMode}
 			/>
 		</div>

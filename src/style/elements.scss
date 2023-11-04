@@ -3,9 +3,9 @@
 	grid-template-columns: auto 1fr auto;
 	grid-template-rows: 54px 1fr auto;
 	grid-template-areas:
-		"topBar  topBar   topBar"
-		"sideBar playList palettes"
-		"sideBar editor   palettes";
+		"topBar    topBar   topBar"
+		"tracklist playList palettes"
+		"tracklist editor   palettes";
 }
 
 .splash {
@@ -116,20 +116,16 @@
 	}
 }
 
-.side-bar {
-	grid-area: sideBar;
+.tracklist {
+	grid-area: tracklist;
 	background-color: var(--topbar-BG);
-	width: 0;
+	width: 300px;
 	padding-top: 0;
 	border-bottom-left-radius: var(--win-corner);
 	border-right: 1px solid var(--grid-gap);
 
-	&.exposed {
-		width: 300px;
-
-		@media (width > 1500px) {
-			width: 400px;
-		}
+	@media (width > 1500px) {
+		width: 400px;
 	}
 
 	.trackList {
@@ -399,7 +395,7 @@
 			height: 12rem;
 			width: 6rem;
 			border-radius: 0 0 3rem 3rem;
-			background: var(--secondary);
+			background: #333;
 		}
 	}
 

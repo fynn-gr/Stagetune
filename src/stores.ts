@@ -265,7 +265,7 @@ export const settings = writable({
 export const contextMenu = writable(null);
 export const currentDragging = writable(null);
 export const editMode = writable(true);
-export const uiPlatform = writable("mac");
+export const uiPlatform = writable("win");
 export const theme = writable("dark"); //unused
 export const playlist = writable([
 	/*

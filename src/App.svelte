@@ -48,12 +48,13 @@
 	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 
 	let playlistEl: HTMLElement;
-	let annotationWidth: number = 200;
-	let sideBar = true;
-	let annotations = true;
-	let editorPanel = false;
+	let annotationWidth: number = 40;
+	let showTracklist = true;
+	let showAnnotations = true;
+	let showEditor = false;
 	let projector = false;
-	let palettes = true;
+	let showCurrent = true;
+	let showHotkeys = true;
 
 	checkSettingsExist();
 
@@ -131,7 +132,7 @@
 		console.log(event);
 		if (event.payload == "quit" && $editMode) {
 			const confirmed = await confirm(
-				"Do you want to discard all unsaved changes?",
+				"Discard all unsaved changes?",
 				{ title: "Quit?", type: "warning", okLabel: "Quit" }
 			).then(isOK => (isOK ? exit(0) : null));
 		} else if (event.payload == "open" && $editMode) {
@@ -143,14 +144,16 @@
 			projector = !projector;
 		} else if (event.payload == "settings" && $editMode) {
 			openSettings();
-		} else if (event.payload == "tracklist" && $editMode) {
-			sideBar = !sideBar;
-		} else if (event.payload == "annotations") {
-			annotations = !annotations;
-		} else if (event.payload == "palettes") {
-			palettes = !palettes;
-		} else if (event.payload == "editor" && $editMode) {
-			editorPanel = !editorPanel;
+		} else if (event.payload == "showTracklist" && $editMode) {
+			showTracklist = !showTracklist;
+		} else if (event.payload == "showAnnotations") {
+			showAnnotations = !showAnnotations;
+		} else if (event.payload == "showCurrent") {
+			showCurrent = !showCurrent;
+		} else if (event.payload == "showHotkeys") {
+			showHotkeys = !showHotkeys;
+		} else if (event.payload == "showEditor" && $editMode) {
+			showEditor = !showEditor;
 		}
 	});
 
@@ -309,8 +312,8 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
-	<div class="side-bar" class:exposed={sideBar && $editMode}>
-		{#if $editMode}
+	{#if $editMode && showTracklist}
+		<div class="tracklist">
 			<div class="trackList">
 				{#each $srcFiles as p, i}
 					<TrackListItem entry={p} {ctx} {masterGain} />
@@ -322,15 +325,18 @@
 					{/each}
 				{/if}
 			</div>
-		{/if}
-	</div>
+		</div>
+	{:else}
+		<div></div>
+	{/if}
 
 	<!--TopBar-->
 	<TopBar
-		bind:sideBar
-		bind:editor={editorPanel}
-		bind:palettes
-		bind:annotations
+		bind:showTracklist
+		bind:showEditor
+		bind:showCurrent
+		bind:showHotkeys
+		bind:showAnnotations
 		{pauseAll}
 		{resetAll}
 	/>
@@ -338,9 +344,9 @@
 	<!--playlist-->
 	<div
 		class="playlist"
-		class:show-annotations={annotations}
+		class:show-annotations={showAnnotations}
 		class:editMode={$editMode}
-		style={`--annotation-width: calc(${annotationWidth}% - 46rem);`}
+		style={`--annotation-width: calc(${annotationWidth}% - ${$editMode ? 46 : 9}rem);`}
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
@@ -348,12 +354,13 @@
 		}}
 		bind:this={playlistEl}
 	>
-		{#if annotations}
+		{#if showAnnotations}
 			<input
 				type="range"
 				class="annotation-slider"
 				min="20"
 				max={80}
+				step="0.2"
 				bind:value={annotationWidth}
 			/>
 		{/if}
@@ -387,7 +394,7 @@
 	</div>
 
 	<!--editor-->
-	{#if editorPanel && $editMode}
+	{#if showEditor && $editMode}
 		<div class="editor">
 			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
 				<div class="prop-bar">
@@ -461,63 +468,67 @@
 	{/if}
 
 	<!--palettes on the right-->
-	{#if palettes || !$editMode}
+	{#if showCurrent || showHotkeys || !$editMode}
 		<div class="palettes">
 			<!--current playing-->
-			<div class="current">
-				{#each $playlist as e, i}
-					{#if e.playing != undefined && e.state != 0}
-						<div class="song">
-							<div
-								class="state"
-								class:playing={e.playing}
-								style={`width: calc(100% * ${
-									e.state != undefined ? e.state / e.length : 0
-								});`}
-							/>
-							<button
-								on:click={ev => {
-									if (e.playing) {
-										$playlistElements[i].stop(false, false);
-									} else {
-										$playlistElements[i].stop(true, false);
-									}
-								}}
-							>
-								{#if e.inFade != null}
-									<img
-										src="./icons/square/fade.svg"
-										alt=""
-										draggable="false"
-										class="fade-state-icon"
-									/>
-								{:else if e.playing}
-									<img src="./icons/square/stop.svg" alt="" draggable="false" />
-								{:else}
-									<img
-										src="./icons/square/reset.svg"
-										alt=""
-										draggable="false"
-									/>
-								{/if}
-							</button>
-							<p>{e.name}</p>
-						</div>
-					{/if}
-				{/each}
-				<p class="placeholder">No track playing</p>
-			</div>
+			{#if showCurrent}
+				<div class="current">
+					{#each $playlist as e, i}
+						{#if e.playing != undefined && e.state != 0}
+							<div class="song">
+								<div
+									class="state"
+									class:playing={e.playing}
+									style={`width: calc(100% * ${
+										e.state != undefined ? e.state / e.length : 0
+									});`}
+								/>
+								<button
+									on:click={ev => {
+										if (e.playing) {
+											$playlistElements[i].stop(false, false);
+										} else {
+											$playlistElements[i].stop(true, false);
+										}
+									}}
+								>
+									{#if e.inFade != null}
+										<img
+											src="./icons/square/fade.svg"
+											alt=""
+											draggable="false"
+											class="fade-state-icon"
+										/>
+									{:else if e.playing}
+										<img src="./icons/square/stop.svg" alt="" draggable="false" />
+									{:else}
+										<img
+											src="./icons/square/reset.svg"
+											alt=""
+											draggable="false"
+										/>
+									{/if}
+								</button>
+								<p>{e.name}</p>
+							</div>
+						{/if}
+					{/each}
+					<p class="placeholder">No track playing</p>
+				</div>
+			{/if}
 
 			<!--hotkeys-->
-			<div class="hotkeys">
-				{#each $hotkeys as a, i}
-					<Hotkey
-						bind:this={$hotkeyElements[i]}
-						bind:track={a.track}
-						key={a.key}
-					/>
-				{/each}
-			</div>
+			{#if showHotkeys}
+				<div class="hotkeys">
+					{#each $hotkeys as a, i}
+						<Hotkey
+							bind:this={$hotkeyElements[i]}
+							bind:track={a.track}
+							key={a.key}
+						/>
+					{/each}
+				</div>
+			{/if}
 		</div>
 	{/if}
 
