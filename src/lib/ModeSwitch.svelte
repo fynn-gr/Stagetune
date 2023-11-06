@@ -49,6 +49,7 @@
 		onChange(active);
 	}}
 	{disabled}
+	title={toolTip}
 	style={`background-color: ${active ? activeColor : "none"};`}
 >
 	<img src={active ? iconPathActive : iconPath} alt={toolTip} />

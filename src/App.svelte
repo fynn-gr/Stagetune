@@ -6,7 +6,6 @@
 	import { confirm } from "@tauri-apps/api/dialog";
 	import { invoke } from "@tauri-apps/api/tauri";
 	import { exit } from "@tauri-apps/api/process";
-	import { appWindow } from "@tauri-apps/api/window";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
@@ -30,40 +29,40 @@
 		hotkeys,
 		localFiles,
 		settings,
+		contextMenu,
+		splash,
 	} from "./stores";
 	import {
-		savePlaylist,
 		fileNameFromPath,
-		openDir,
 		createPlaylistTrack,
 		waveformCalc,
 		updateProjectorList,
-		loadSettings,
 		setUIScale,
 	} from "./utils";
+	import {
+		savePlaylist,
+		openDir,
+		loadSettings,
+		checkSettingsExist,
+	} from "./saveLoad";
+	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
+	import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 
-	let meterCanvas: HTMLCanvasElement;
-	let meterCtx: CanvasRenderingContext2D;
-
-	let splashScreen = false;
-	let sideBar = true;
-	let editorPanel = false;
+	let playlistEl: HTMLElement;
+	let annotationWidth: number = 40;
+	let showTracklist = true;
+	let showAnnotations = true;
+	let showEditor = false;
+	let showCurrent = true;
+	let showHotkeys = true;
 	let projector = false;
-	let palettes = true;
-	loadSettings();
-	setUIScale($settings.ui_scale);
+
+	checkSettingsExist();
 
 	const ctx = new AudioContext();
 	const analyser = ctx.createAnalyser();
 	const masterGain = ctx.createGain();
 	masterGain.connect(analyser).connect(ctx.destination);
-
-	/*
-	analyser.fftSize = 32;
-	const bufferLength = analyser.frequencyBinCount;
-	const dataArray = new Uint8Array(bufferLength);
-	analyser.getByteTimeDomainData(dataArray);
-	*/
 
 	function openVideoWindow(show: boolean) {
 		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
@@ -101,19 +100,21 @@
 	}
 
 	function moveUp() {
-		$selectedItem > 0 ? selectedItem.update(n => n - 1) : selectedItem.set(0);
-		//if (playlist[selectedItem].text != null) {
-		//	moveUp();
-		//}
+		for (let i = $selectedItem - 1; i > -1; i--) {
+			if ($playlist[i].type != "annotation") {
+				$selectedItem = i;
+				break;
+			}
+		}
 	}
 
 	function moveDown() {
-		$selectedItem < $playlist.length - 1
-			? selectedItem.update(n => n + 1)
-			: selectedItem;
-		//if (playlist[selectedItem].text != null) {
-		//	moveDown();
-		//}
+		for (let i = $selectedItem + 1; i < $playlist.length; i++) {
+			if ($playlist[i].type != "annotation") {
+				$selectedItem = i;
+				break;
+			}
+		}
 	}
 
 	function pauseAll() {
@@ -128,55 +129,43 @@
 		}
 	}
 
-	function drawMeter() {
-		//requestAnimationFrame(drawMeter);
-
-		analyser.getByteTimeDomainData(dataArray);
-
-		meterCtx.fillStyle = "rgb(200, 200, 200)";
-		meterCtx.fillRect(0, 0, meterCanvas.width, meterCanvas.height);
-
-		for (let i = 0; i < bufferLength; i++) {
-			const v = dataArray[i] / 128.0;
-			const y = (v * meterCanvas.height) / 1.5;
-			console.log(v, y);
-
-			//meterCtx.lineTo(x, y);
-			meterCtx.fillStyle = "rgb(256, 0, 0)";
-			meterCtx.fillRect(
-				0,
-				meterCanvas.height - y,
-				meterCanvas.width,
-				meterCanvas.height
-			);
-		}
-	}
-
-	const unlistenMenus = listen("menu", async event => {
+	const listenerMenus = listen("menu", async event => {
 		console.log(event);
 		if (event.payload == "quit" && $editMode) {
-			const confirmed = await confirm(
-				"Do you want to discard all unsaved changes?",
-				{ title: "Quit?", type: "warning", okLabel: "Quit" }
-			).then(isOK => (isOK ? exit(0) : null));
+			const confirmed = await confirm("Discard all unsaved changes?", {
+				title: "Quit?",
+				type: "warning",
+				okLabel: "Quit",
+			}).then(isOK => (isOK ? exit(0) : null));
 		} else if (event.payload == "open" && $editMode) {
 			openDir();
 		} else if (event.payload == "save") {
 			savePlaylist();
-		} else if (event.payload == "projector") {
+		} else if (event.payload == "projector" && $settings.video) {
 			openVideoWindow(!projector);
 			projector = !projector;
 		} else if (event.payload == "settings" && $editMode) {
 			openSettings();
+		} else if (event.payload == "showTracklist" && $editMode) {
+			showTracklist = !showTracklist;
+		} else if (event.payload == "showAnnotations") {
+			showAnnotations = !showAnnotations;
+		} else if (event.payload == "showCurrent") {
+			showCurrent = !showCurrent;
+		} else if (event.payload == "showHotkeys") {
+			showHotkeys = !showHotkeys;
+		} else if (event.payload == "showEditor" && $editMode) {
+			showEditor = !showEditor;
 		}
 	});
 
-	const unlistenProjectorReq = listen("projctorReq", e => {
+	const listenerProjectorReq = listen("projctorReq", e => {
 		updateProjectorList();
 	});
 
-	const unlistenUpdateSettings = listen("update_settings", () => {
+	const listenerUpdateSettings = listen("reload_settings", () => {
 		loadSettings();
+		console.log("reloaded settings", $settings);
 	});
 
 	onMount(() => {
@@ -195,7 +184,7 @@
 					}
 
 					// openVideoWindow
-					else if (e.code == "KeyP" && e.ctrlKey) {
+					else if (e.code == "KeyP" && e.ctrlKey && $settings.video) {
 						e.preventDefault();
 						openVideoWindow(!projector);
 						projector = !projector;
@@ -292,72 +281,55 @@
 		});
 
 		document.addEventListener("contextmenu", e => {
-			//e.preventDefault();
+			e.preventDefault();
 		});
 
 		const interval = setInterval(() => {
 			for (let i = 0; i < $playlistElements.length; i++) {
 				$playlistElements[i].update();
 			}
-			//drawMeter()
 		}, 300);
 
 		return () => clearInterval(interval);
 	});
 
-	$: console.log($isEditing);
 	$: emit("editMode", { edit: $editMode });
-	$: if ($editMode) {
-		appWindow.setResizable(true);
-		//appWindow.setMinimizable(true);
-		//appWindow.setClosable(true);
-	} else {
-		appWindow.setResizable(false);
-		//appWindow.setMinimizable(false);
-		//appWindow.setClosable(false);
-	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-{#if $settings.show_splash}
-	<Splash bind:splashScreen={$settings.show_splash} />
+{#if $splash}
+	<Splash bind:splashScreen={$splash} />
 {/if}
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
-	<div class="side-bar" class:exposed={sideBar}>
-		{#if $editMode}
+	{#if $editMode && showTracklist}
+		<div class="tracklist">
 			<div class="trackList">
 				{#each $srcFiles as p, i}
-					<TrackListItem entry={p} />
+					<TrackListItem entry={p} {ctx} {masterGain} />
 				{/each}
-				<p class="category">videos</p>
-				{#each $localFiles as l}
-					<TrackListItem entry={l} />
-				{/each}
+				{#if $settings.video}
+					<p class="category">videos</p>
+					{#each $localFiles as l}
+						<TrackListItem entry={l} {ctx} {masterGain} />
+					{/each}
+				{/if}
 			</div>
-			<!--
-			<div class="meter">
-				<canvas
-					class="can-meter"
-					bind:this={meterCanvas}
-					width="30"
-					height="500"
-				>
-
-				</canvas>
-			</div>
-			-->
-		{/if}
-	</div>
+		</div>
+	{:else}
+		<div />
+	{/if}
 
 	<!--TopBar-->
 	<TopBar
-		bind:sideBar
-		bind:editor={editorPanel}
-		bind:palettes
+		bind:showTracklist
+		bind:showEditor
+		bind:showCurrent
+		bind:showHotkeys
+		bind:showAnnotations
 		{pauseAll}
 		{resetAll}
 	/>
@@ -365,12 +337,28 @@
 	<!--playlist-->
 	<div
 		class="playlist"
+		class:show-annotations={showAnnotations}
+		class:editMode={$editMode}
+		style={`--annotation-width: calc(${annotationWidth}% - ${
+			$editMode ? 46 : 9
+		}rem);`}
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
 			return false;
 		}}
+		bind:this={playlistEl}
 	>
+		{#if showAnnotations}
+			<input
+				type="range"
+				class="annotation-slider"
+				min="20"
+				max={80}
+				step="0.2"
+				bind:value={annotationWidth}
+			/>
+		{/if}
 		{#if $playlist.length > 0}
 			{#each $playlist as t, i}
 				{#if t.type == "track"}
@@ -390,7 +378,7 @@
 				{:else if t.type == "annotation"}
 					<PlayListAnotation
 						bind:this={$playlistElements[i]}
-						bind:item={t}
+						bind:track={t}
 						id={i}
 					/>
 				{/if}
@@ -401,41 +389,24 @@
 	</div>
 
 	<!--editor-->
-	{#if editorPanel && $editMode}
+	{#if showEditor && $editMode}
 		<div class="editor">
 			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
 				<div class="prop-bar">
-					<label>start</label>
-					<input
-						type="number"
+					<label>cut</label>
+					<PropNumber
 						bind:value={$playlist[$selectedItem].edit.in}
-						on:focus={() => {
+						min={0}
+						max={$playlist[$selectedItem].length}
+						step={1}
+						unit="s"
+						onFocus={() => {
 							isEditing.update(e => e + 1);
+							console.log($isEditing);
 						}}
-						on:blur={() => {
+						onBlur={() => {
 							isEditing.update(e => e - 1);
-						}}
-					/>
-					<label>fade in</label>
-					<input
-						type="number"
-						bind:value={$playlist[$selectedItem].fade.in}
-						on:focus={() => {
-							isEditing.update(e => e + 1);
-						}}
-						on:blur={() => {
-							isEditing.update(e => e - 1);
-						}}
-					/>
-					<label>fade in</label>
-					<input
-						type="number"
-						bind:value={$playlist[$selectedItem].fade.out}
-						on:focus={() => {
-							isEditing.update(e => e + 1);
-						}}
-						on:blur={() => {
-							isEditing.update(e => e - 1);
+							console.log($isEditing);
 						}}
 					/>
 				</div>
@@ -448,7 +419,7 @@
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);
 						$playlist[$selectedItem].edit.in =
-							perc * $playlist[$selectedItem].length;
+							Math.round(perc * $playlist[$selectedItem].length * 1000) / 1000;
 					}}
 				>
 					<Waveform
@@ -469,44 +440,82 @@
 					/>
 				</div>
 			{:else}
-				<p>No track selected</p>
+				<p class="placeholder">No track selected</p>
 			{/if}
 		</div>
 	{/if}
 
 	<!--palettes on the right-->
-	{#if palettes || !$editMode}
+	{#if showCurrent || showHotkeys || !$editMode}
 		<div class="palettes">
 			<!--current playing-->
-			<div class="current">
-				{#each $playlist as e}
-					{#if e.playing != undefined && e.state != 0}
-						<div class="song">
-							<div
-								class="state"
-								class:playing={e.playing}
-								style={`width: calc(100% * ${
-									e.state != undefined ? e.state / e.length : 0
-								});`}
-							/>
-							<p>{e.name}</p>
-						</div>
-					{/if}
-				{/each}
-				<p class="placeholder">No track playing</p>
-			</div>
+			{#if showCurrent}
+				<div class="current">
+					{#each $playlist as e, i}
+						{#if e.playing != undefined && e.state != 0}
+							<div class="song">
+								<div
+									class="state"
+									class:playing={e.playing}
+									style={`width: calc(100% * ${
+										e.state != undefined ? e.state / e.length : 0
+									});`}
+								/>
+								<button
+									on:click={ev => {
+										if (e.playing) {
+											$playlistElements[i].stop(false, false);
+										} else {
+											$playlistElements[i].stop(true, false);
+										}
+									}}
+								>
+									{#if e.inFade != null}
+										<img
+											src="./icons/square/fade.svg"
+											alt=""
+											draggable="false"
+											class="fade-state-icon"
+										/>
+									{:else if e.playing}
+										<img
+											src="./icons/square/stop.svg"
+											alt=""
+											draggable="false"
+										/>
+									{:else}
+										<img
+											src="./icons/square/reset.svg"
+											alt=""
+											draggable="false"
+										/>
+									{/if}
+								</button>
+								<p>{e.name}</p>
+							</div>
+						{/if}
+					{/each}
+					<p class="placeholder">No track playing</p>
+				</div>
+			{/if}
 
 			<!--hotkeys-->
-			<div class="hotkeys">
-				{#each $hotkeys as a, i}
-					<Hotkey
-						bind:this={$hotkeyElements[i]}
-						bind:track={a.track}
-						key={a.key}
-					/>
-				{/each}
-			</div>
+			{#if showHotkeys}
+				<div class="hotkeys">
+					{#each $hotkeys as a, i}
+						<Hotkey
+							bind:this={$hotkeyElements[i]}
+							bind:track={a.track}
+							key={a.key}
+						/>
+					{/each}
+				</div>
+			{/if}
 		</div>
+	{/if}
+
+	{#if $contextMenu != null}
+		<ContextMenu />
 	{/if}
 
 	<div class="window-rim" />

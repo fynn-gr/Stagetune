@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { settings } from "@/stores";
 	import { onMount } from "svelte";
-	import { loadSettings } from "@/utils";
+	import { loadSettings } from "@/saveLoad";
+	import { getVersion } from "@tauri-apps/api/app";
+	import { Command } from "@tauri-apps/api/shell";
 
 	export let splashScreen;
 	let recentList = [];
+	let version;
 
 	onMount(async () => {
-		loadSettings();
+		//loadSettings();
 		recentList = $settings.recent;
 		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
 		console.log(recentList);
+
+		let fullVersion = await getVersion();
+		version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
 	});
 </script>
 
@@ -30,13 +36,24 @@
 		<div class="top">
 			<img src="./splash_icon.png" class="icon" />
 			<h1><b>Stagetune</b></h1>
-			<p class="version">0.2 Beta</p>
+			<p class="version">{version || ""} Aquädukt</p>
 		</div>
 
 		<div class="container">
 			<span>
-				<button class="online" on:click={e => {}}
-					><img src="/icons/square/web.svg" />Website</button
+				<button
+					class="online"
+					on:click={e => {
+						e.preventDefault();
+						e.stopPropagation();
+						console.log("website");
+						new Command("powershell", [
+							"/C",
+							"start https://github.com/fynn-g/stagetune",
+						]);
+					}}
+				>
+					<img src="/icons/square/web.svg" />Website</button
 				>
 				<button class="online"><img src="/icons/square/web.svg" />Source</button
 				>

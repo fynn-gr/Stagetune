@@ -1,13 +1,44 @@
 <script lang="ts">
-	import { editMode, selectedItem, isEditing } from "@/stores";
+	import {
+		editMode,
+		selectedItem,
+		isEditing,
+		uiPlatform,
+		contextMenu,
+		selectedAttached,
+	} from "@/stores";
 
 	export let id: number;
-	export let annotation: { before: string; after: string };
-	export let start: boolean; //true if before track, false if after
+	export let annotation: string;
+	export let selected: boolean;
 </script>
 
-{#if annotation[start ? "before" : "after"] != null}
-	<div class={start ? "annotationStart" : "annotationEnd"}>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+{#if annotation != null}
+	<div
+		class="annotation-attached"
+		class:annotation-selected={selected}
+		on:contextmenu={e => {
+			if ($editMode) {
+				$contextMenu = {
+					position: { x: e.clientX, y: e.clientY },
+					content: [
+						{
+							name: "Remove Anotation",
+							action: () => {
+								annotation = null;
+							},
+						},
+					],
+				};
+				console.log($contextMenu, e);
+			}
+		}}
+		on:click={e => {
+			$selectedAttached = true;
+			e.stopPropagation();
+		}}
+	>
 		<input
 			type="text"
 			disabled={!$editMode || $selectedItem != id}
@@ -19,7 +50,21 @@
 				isEditing.update(e => e - 1);
 				console.log("out of focus", $isEditing);
 			}}
-			bind:value={annotation[start ? "before" : "after"]}
+			bind:value={annotation}
 		/>
+	</div>
+{:else}
+	<div class="annotation-placeholder">
+		{#if $editMode}
+			<button
+				class="add-annotation"
+				title="Add attached anotation"
+				on:click={e => {
+					annotation = "Annotation";
+				}}
+			>
+				<img src={`./icons/tb_${$uiPlatform}/plus.svg`} alt="" />
+			</button>
+		{/if}
 	</div>
 {/if}

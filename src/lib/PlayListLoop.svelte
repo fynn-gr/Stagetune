@@ -60,7 +60,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-	class="playlistLoop"
+	class="playlist-item playlist-loop"
 	class:selected={$selectedItem == id}
 	class:editMode={$editMode}
 	on:dragstart={handleDragStart}
