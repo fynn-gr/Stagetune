@@ -6,7 +6,6 @@
 	import { confirm } from "@tauri-apps/api/dialog";
 	import { invoke } from "@tauri-apps/api/tauri";
 	import { exit } from "@tauri-apps/api/process";
-	import { appWindow } from "@tauri-apps/api/window";
 
 	import PlayListTrack from "./lib/PlayListTrack.svelte";
 	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
@@ -31,6 +30,7 @@
 		localFiles,
 		settings,
 		contextMenu,
+		splash,
 	} from "./stores";
 	import {
 		fileNameFromPath,
@@ -52,9 +52,9 @@
 	let showTracklist = true;
 	let showAnnotations = true;
 	let showEditor = false;
-	let projector = false;
 	let showCurrent = true;
 	let showHotkeys = true;
+	let projector = false;
 
 	checkSettingsExist();
 
@@ -292,11 +292,12 @@
 	});
 
 	$: emit("editMode", { edit: $editMode });
+	
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-{#if $settings.show_splash}
-	<Splash bind:splashScreen={$settings.show_splash} />
+{#if $splash}
+	<Splash bind:splashScreen={$splash} />
 {/if}
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->

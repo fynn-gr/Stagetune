@@ -16,6 +16,7 @@ import {
 	hotkeys,
 	settings,
 	uiPlatform,
+	splash,
 } from "./stores";
 import { getVersion } from "@tauri-apps/api/app";
 
@@ -154,7 +155,6 @@ export async function savePlaylist() {
 		JSON.stringify(saveObj),
 		{}
 	);
-	saveSettings();
 }
 
 export function saveSettings() {
@@ -162,15 +162,6 @@ export function saveSettings() {
 	getVersion()
 		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
-			exists(`Stagetune/${currentVersion}`, { dir: BaseDirectory.Config });
-		})
-		.then(e => {
-			if (!e) {
-				createDir(`Stagetune/${currentVersion}`, {
-					dir: BaseDirectory.Config,
-					recursive: true,
-				});
-			}
 		})
 		.then(() => {
 			console.log("save: ", get(settings));
@@ -184,7 +175,7 @@ export function saveSettings() {
 		});
 }
 
-export function loadSettings() {
+export async function loadSettings(activateSplash = false) {
 	let currentVersion;
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
@@ -193,6 +184,7 @@ export function loadSettings() {
 		}).then(e => {
 			settings.set(JSON.parse(e));
 			console.log("loaded settings", get(settings));
+			if (activateSplash) splash.set(get(settings).show_splash)
 		});
 	});
 }
@@ -202,17 +194,18 @@ export function checkSettingsExist() {
 	getVersion()
 		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
-			exists(`Stagetune/${currentVersion}`, { dir: BaseDirectory.Config });
+			exists(`Stagetune/${currentVersion}/settings.json`, { dir: BaseDirectory.Config })
+			.then(e => {
+				if (e) {
+					loadSettings(true)
+				} else {
+					createDir(`Stagetune/${currentVersion}`, {
+						dir: BaseDirectory.Config,
+						recursive: true,
+					});
+					saveSettings();
+				}
+			});
 		})
-		.then(e => {
-			if (e) {
-				loadSettings();
-			} else {
-				createDir(`Stagetune/${currentVersion}`, {
-					dir: BaseDirectory.Config,
-					recursive: true,
-				});
-				saveSettings();
-			}
-		});
+		
 }

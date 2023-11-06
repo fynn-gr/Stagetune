@@ -10,7 +10,7 @@
 	let version;
 
 	onMount(async () => {
-		loadSettings();
+		//loadSettings();
 		recentList = $settings.recent;
 		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
 		console.log(recentList);
