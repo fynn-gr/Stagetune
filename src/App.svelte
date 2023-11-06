@@ -292,15 +292,6 @@
 	});
 
 	$: emit("editMode", { edit: $editMode });
-	$: if ($editMode) {
-		appWindow.setResizable(true);
-		//appWindow.setMinimizable(true);
-		//appWindow.setClosable(true);
-	} else {
-		appWindow.setResizable(false);
-		//appWindow.setMinimizable(false);
-		//appWindow.setClosable(false);
-	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

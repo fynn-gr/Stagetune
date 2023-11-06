@@ -142,7 +142,7 @@
 			fadeNode.gain.linearRampToValueAtTime(1, ctx.currentTime + track.fade.in);
 			setTimeout(() => {
 				track.inFade = null;
-			}, track.fade.in);
+			}, track.fade.in * 1000);
 		}
 
 		if (startTime == null) {
