@@ -184,28 +184,27 @@ export async function loadSettings(activateSplash = false) {
 		}).then(e => {
 			settings.set(JSON.parse(e));
 			console.log("loaded settings", get(settings));
-			if (activateSplash) splash.set(get(settings).show_splash)
+			if (activateSplash) splash.set(get(settings).show_splash);
 		});
 	});
 }
 
 export function checkSettingsExist() {
 	let currentVersion;
-	getVersion()
-		.then(v => {
-			currentVersion = v.slice(0, v.lastIndexOf("."));
-			exists(`Stagetune/${currentVersion}/settings.json`, { dir: BaseDirectory.Config })
-			.then(e => {
-				if (e) {
-					loadSettings(true)
-				} else {
-					createDir(`Stagetune/${currentVersion}`, {
-						dir: BaseDirectory.Config,
-						recursive: true,
-					});
-					saveSettings();
-				}
-			});
-		})
-		
+	getVersion().then(v => {
+		currentVersion = v.slice(0, v.lastIndexOf("."));
+		exists(`Stagetune/${currentVersion}/settings.json`, {
+			dir: BaseDirectory.Config,
+		}).then(e => {
+			if (e) {
+				loadSettings(true);
+			} else {
+				createDir(`Stagetune/${currentVersion}`, {
+					dir: BaseDirectory.Config,
+					recursive: true,
+				});
+				saveSettings();
+			}
+		});
+	});
 }

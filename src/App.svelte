@@ -46,6 +46,7 @@
 		checkSettingsExist,
 	} from "./saveLoad";
 	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
+	import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 
 	let playlistEl: HTMLElement;
 	let annotationWidth: number = 40;
@@ -390,37 +391,20 @@
 		<div class="editor">
 			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
 				<div class="prop-bar">
-					<label>start</label>
-					<input
-						type="number"
+					<label>cut</label>
+					<PropNumber
 						bind:value={$playlist[$selectedItem].edit.in}
-						on:focus={() => {
+						min={0}
+						max={$playlist[$selectedItem].length}
+						step={1}
+						unit="s"
+						onFocus={() => {
 							isEditing.update(e => e + 1);
+							console.log($isEditing)
 						}}
-						on:blur={() => {
+						onBlur={() => {
 							isEditing.update(e => e - 1);
-						}}
-					/>
-					<label>fade in</label>
-					<input
-						type="number"
-						bind:value={$playlist[$selectedItem].fade.in}
-						on:focus={() => {
-							isEditing.update(e => e + 1);
-						}}
-						on:blur={() => {
-							isEditing.update(e => e - 1);
-						}}
-					/>
-					<label>fade out</label>
-					<input
-						type="number"
-						bind:value={$playlist[$selectedItem].fade.out}
-						on:focus={() => {
-							isEditing.update(e => e + 1);
-						}}
-						on:blur={() => {
-							isEditing.update(e => e - 1);
+							console.log($isEditing)
 						}}
 					/>
 				</div>
@@ -432,8 +416,8 @@
 						let rec = e.target.getBoundingClientRect();
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);
-						$playlist[$selectedItem].edit.in =
-							perc * $playlist[$selectedItem].length;
+						$playlist[$selectedItem].edit.in = Math.round(
+							perc * $playlist[$selectedItem].length * 1000) / 1000;
 					}}
 				>
 					<Waveform
@@ -454,7 +438,7 @@
 					/>
 				</div>
 			{:else}
-				<p>No track selected</p>
+				<p class="placeholder">No track selected</p>
 			{/if}
 		</div>
 	{/if}

@@ -925,13 +925,13 @@
 
 .editor {
 	grid-area: editor;
-	height: 200rem;
+	height: 220px;
 	position: relative;
 	background-color: rgb(31, 31, 31);
 	border-top: 1px solid var(--grid-gap);
 
 	.prop-bar {
-		height: 28rem;
+		height: 34px;
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -941,25 +941,29 @@
 		background-color: var(--panel);
 
 		label {
-			height: 28rem;
-			line-height: 28rem;
-			padding: 0 8rem;
-			font-size: 13rem;
+			height: 34px;
+			line-height: 34px;
+			padding: 0 12px;
+			font-size: 14px;
 		}
 
-		input {
-			height: 20rem;
-			width: 50rem;
-			margin: 4rem 2rem;
-			padding: 0 2rem;
-			border-radius: 4rem;
-			font-size: 12rem;
-			text-align: right;
+		.prop-number {
+			width: 120px;
+			margin: 5px 0;
+			background-color: rgb(36, 36, 36);
 
-			&:focus {
+			&:has(:focus) {
 				box-shadow: 0 0 0 2rem var(--secondary);
 			}
 		}
+	}
+
+	.placeholder {
+		margin: auto;
+		text-align: center;
+		line-height: 180px;
+		font-size: 14px;
+		font-weight: 600;
 	}
 
 	.track {
@@ -984,17 +988,6 @@
 			width: 100%;
 			height: 100%;
 		}
-	}
-
-	p {
-		display: block;
-		width: 100%;
-		height: 200rem;
-		line-height: 200rem;
-		font-size: 14rem;
-		font-weight: 600;
-		color: gray;
-		text-align: center;
 	}
 }
 
