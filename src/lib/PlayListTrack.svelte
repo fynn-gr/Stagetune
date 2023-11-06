@@ -267,7 +267,7 @@
 	on:click={e => {
 		selectedItem.set(id);
 		selectedAttached.set(false);
-		console.log(e)
+		console.log(e);
 	}}
 >
 	<div class="drag-area">

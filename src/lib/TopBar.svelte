@@ -81,7 +81,12 @@
 				<AppMenuItem id="open" name="Open" accelerator="ctrl O" />
 				<AppMenuItem id="save" name="Save" accelerator="ctrl S" />
 				<div class="seperator" />
-				<AppMenuItem id="settings" name="Settings" accelerator="ctrl ," disabled={!$editMode}/>
+				<AppMenuItem
+					id="settings"
+					name="Settings"
+					accelerator="ctrl ,"
+					disabled={!$editMode}
+				/>
 			</AppMenu>
 			<AppMenu name="Window">
 				<AppMenuItem

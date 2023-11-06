@@ -3,7 +3,7 @@
 	import { onMount } from "svelte";
 	import { loadSettings } from "@/saveLoad";
 	import { getVersion } from "@tauri-apps/api/app";
-	import { Command } from '@tauri-apps/api/shell';
+	import { Command } from "@tauri-apps/api/shell";
 
 	export let splashScreen;
 	let recentList = [];
@@ -41,12 +41,17 @@
 
 		<div class="container">
 			<span>
-				<button class="online" on:click={e => {
-					e.preventDefault();
-					e.stopPropagation();
-					console.log("website")
-					new Command("powershell", ["/C", "start https://github.com/fynn-g/stagetune"]);
-				}}
+				<button
+					class="online"
+					on:click={e => {
+						e.preventDefault();
+						e.stopPropagation();
+						console.log("website");
+						new Command("powershell", [
+							"/C",
+							"start https://github.com/fynn-g/stagetune",
+						]);
+					}}
 				>
 					<img src="/icons/square/web.svg" />Website</button
 				>

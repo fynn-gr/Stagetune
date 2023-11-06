@@ -100,7 +100,7 @@
 	}
 
 	function moveUp() {
-		for (let i = $selectedItem -1; i > -1; i--) {
+		for (let i = $selectedItem - 1; i > -1; i--) {
 			if ($playlist[i].type != "annotation") {
 				$selectedItem = i;
 				break;
@@ -132,10 +132,11 @@
 	const listenerMenus = listen("menu", async event => {
 		console.log(event);
 		if (event.payload == "quit" && $editMode) {
-			const confirmed = await confirm(
-				"Discard all unsaved changes?",
-				{ title: "Quit?", type: "warning", okLabel: "Quit" }
-			).then(isOK => (isOK ? exit(0) : null));
+			const confirmed = await confirm("Discard all unsaved changes?", {
+				title: "Quit?",
+				type: "warning",
+				okLabel: "Quit",
+			}).then(isOK => (isOK ? exit(0) : null));
 		} else if (event.payload == "open" && $editMode) {
 			openDir();
 		} else if (event.payload == "save") {
@@ -164,7 +165,7 @@
 
 	const listenerUpdateSettings = listen("reload_settings", () => {
 		loadSettings();
-		console.log("reloaded settings", $settings)
+		console.log("reloaded settings", $settings);
 	});
 
 	onMount(() => {
@@ -293,7 +294,6 @@
 	});
 
 	$: emit("editMode", { edit: $editMode });
-	
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -320,7 +320,7 @@
 			</div>
 		</div>
 	{:else}
-		<div></div>
+		<div />
 	{/if}
 
 	<!--TopBar-->
@@ -339,7 +339,9 @@
 		class="playlist"
 		class:show-annotations={showAnnotations}
 		class:editMode={$editMode}
-		style={`--annotation-width: calc(${annotationWidth}% - ${$editMode ? 46 : 9}rem);`}
+		style={`--annotation-width: calc(${annotationWidth}% - ${
+			$editMode ? 46 : 9
+		}rem);`}
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
@@ -400,11 +402,11 @@
 						unit="s"
 						onFocus={() => {
 							isEditing.update(e => e + 1);
-							console.log($isEditing)
+							console.log($isEditing);
 						}}
 						onBlur={() => {
 							isEditing.update(e => e - 1);
-							console.log($isEditing)
+							console.log($isEditing);
 						}}
 					/>
 				</div>
@@ -416,8 +418,8 @@
 						let rec = e.target.getBoundingClientRect();
 						let x = e.clientX - rec.left;
 						let perc = Math.min(Math.max(x / rec.width, 0), 1);
-						$playlist[$selectedItem].edit.in = Math.round(
-							perc * $playlist[$selectedItem].length * 1000) / 1000;
+						$playlist[$selectedItem].edit.in =
+							Math.round(perc * $playlist[$selectedItem].length * 1000) / 1000;
 					}}
 				>
 					<Waveform
@@ -476,7 +478,11 @@
 											class="fade-state-icon"
 										/>
 									{:else if e.playing}
-										<img src="./icons/square/stop.svg" alt="" draggable="false" />
+										<img
+											src="./icons/square/stop.svg"
+											alt=""
+											draggable="false"
+										/>
 									{:else}
 										<img
 											src="./icons/square/reset.svg"
