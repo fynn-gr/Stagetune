@@ -414,13 +414,14 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="track"
-					on:click={e => {
-						let rec = e.target.getBoundingClientRect();
-						let x = e.clientX - rec.left;
-						let perc = Math.min(Math.max(x / rec.width, 0), 1);
-						$playlist[$selectedItem].edit.in =
-							Math.round(perc * $playlist[$selectedItem].length * 1000) / 1000;
-					}}
+					style={`
+						background: linear-gradient(
+							90deg,
+							#111 0%,
+							#111 calc(100% * ${$playlist[$selectedItem].edit.in / $playlist[$selectedItem].length}),
+							#fff calc(100% * ${$playlist[$selectedItem].edit.in /$playlist[$selectedItem].length}),
+							#fff 100%
+						);`}
 				>
 					<Waveform
 						data={waveformCalc(
@@ -430,13 +431,12 @@
 						samples={window.innerWidth}
 						resY={200}
 					/>
-					<div
-						class="resizer"
-						style={`width: ${
-							($playlist[$selectedItem].edit.in /
-								$playlist[$selectedItem].length) *
-							100
-						}%;`}
+					<input
+						type="range"
+						min="0"
+						max={$playlist[$selectedItem].length}
+						step="0.01"
+						bind:value={$playlist[$selectedItem].edit.in}
 					/>
 				</div>
 			{:else}

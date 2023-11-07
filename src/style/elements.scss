@@ -969,24 +969,45 @@
 	.track {
 		position: absolute;
 		inset: 40rem 12rem 12rem 12rem;
-		background-color: white;
 		//overflow: hidden;
 		box-shadow: 0 0 2px black;
-
-		.resizer {
-			pointer-events: none;
-			position: absolute;
-			z-index: 10;
-			width: 60rem;
-			inset: 0 auto 0 0;
-			background-color: rgba(0, 0, 0, 0.422);
-			border-right: 1rem solid var(--secondary);
-		}
 
 		.waveform {
 			pointer-events: none;
 			width: 100%;
 			height: 100%;
+		}
+
+		input {
+			appearance: none;
+			-webkit-appearance: none;
+			position: absolute;
+			inset: 0;
+			background-color: transparent;
+
+			&::-webkit-slider-runnable-track {
+				-webkit-appearance: none;
+				appearance: none;
+				height: 100%;
+				background-color: transparent;
+			}
+
+			&::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				height: 100%;
+				width: 1px;
+				background: var(--secondary);
+
+				&::after {
+					content: "";
+					position: absolute;
+					top: 0;
+					width: 6px;
+					height: 6px;
+					background-color: var(--secondary);
+				}
+			}
 		}
 	}
 }
