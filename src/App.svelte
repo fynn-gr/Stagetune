@@ -368,6 +368,7 @@
 						id={i}
 						{ctx}
 						{masterGain}
+						{showAnnotations}
 					/>
 				{:else if t.type == "video"}
 					<PlayListVideo
@@ -375,7 +376,7 @@
 						bind:track={t}
 						id={i}
 					/>
-				{:else if t.type == "annotation"}
+				{:else if t.type == "annotation" && showAnnotations}
 					<PlayListAnotation
 						bind:this={$playlistElements[i]}
 						bind:track={t}

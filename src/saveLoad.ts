@@ -132,7 +132,7 @@ export async function savePlaylist() {
 		e.state = 0;
 		e.startedAt = 0;
 		e.pausedAt = 0;
-		e.inFade = false;
+		e.inFade = null;
 		e.buffer = null;
 	});
 

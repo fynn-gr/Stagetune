@@ -6,7 +6,6 @@
 		isEditing,
 		currentDragging,
 		playlist,
-		selectedAttached,
 	} from "../stores";
 
 	export let track: any;
@@ -89,7 +88,6 @@
 	on:dragenter={handleDragEnter}
 	on:dragleave={handleDragLeave}
 	on:click={e => {
-		selectedAttached.set(false);
 		selectedItem.set(id);
 	}}
 >

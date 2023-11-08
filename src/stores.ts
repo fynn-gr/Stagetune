@@ -309,7 +309,6 @@ export const playlist = writable([
 	*/
 ]);
 export const selectedItem = writable(null);
-export const selectedAttached = writable(false);
 export const hotkeys = writable([
 	{
 		key: "1",
