@@ -117,6 +117,41 @@
 		}
 	}
 
+	function skip() {
+		for (let i = $selectedItem + 1; i < $playlist.length; i++) {
+			if ($playlist[i].type != "annotation") {
+				$playlistElements[$selectedItem].stop(true);
+				$selectedItem = i;
+				$playlistElements[$selectedItem].play(0);
+				break;
+			}
+		}
+	}
+
+	function deleteTrack() {
+		//stop track if playing
+		if ($playlist[$selectedItem].playing)
+			$playlistElements[$selectedItem].stop();
+
+		let toDelete = $selectedItem;
+		//find hotkey
+		if ($playlist[$selectedItem].hotkey != undefined) {
+			let hotkeyRm = $playlist[$selectedItem].hotkey;
+			console.log(hotkeyRm);
+			$hotkeys[hotkeyRm - 1].track = null;
+		}
+		//find new selected item
+		if ($playlist.length - 1 > $selectedItem) $selectedItem++;
+		else if ($selectedItem > 0) $selectedItem--;
+		else $selectedItem = null;
+		//delte from playlist
+		playlist.update(e => {
+			e.splice(toDelete, 1);
+			return e;
+		});
+		$playlist = $playlist;
+	}
+
 	function pauseAll() {
 		for (let i = 0; i < $playlistElements.length; i++) {
 			$playlistElements[i].stop(false, false);
@@ -193,27 +228,7 @@
 					//delete playlist item
 					else if (e.code == "Backspace" || e.code == "Delete") {
 						e.preventDefault();
-						//stop track if playing
-						if ($playlist[$selectedItem].playing)
-							$playlistElements[$selectedItem].stop();
-
-						let toDelete = $selectedItem;
-						//find hotkey
-						if ($playlist[$selectedItem].hotkey != undefined) {
-							let hotkeyRm = $playlist[$selectedItem].hotkey;
-							console.log(hotkeyRm);
-							$hotkeys[hotkeyRm - 1].track = null;
-						}
-						//find new selected item
-						if ($playlist.length - 1 > $selectedItem) $selectedItem++;
-						else if ($selectedItem > 0) $selectedItem--;
-						else $selectedItem = null;
-						//delte from playlist
-						playlist.update(e => {
-							e.splice(toDelete, 1);
-							return e;
-						});
-						$playlist = $playlist;
+						deleteTrack();
 					}
 
 					//open Preferences
@@ -248,10 +263,7 @@
 					!e.metaKey
 				) {
 					e.preventDefault();
-					playlist.update(items => {
-						$playlistElements[$selectedItem].stop(true);
-						return items;
-					});
+					$playlistElements[$selectedItem].stop(true);
 				}
 				//skip song
 				else if (
@@ -260,14 +272,7 @@
 					!e.metaKey
 				) {
 					e.preventDefault();
-					for (let i = $selectedItem + 1; i < $playlist.length; i++) {
-						if ($playlist[i].type != "annotation") {
-							$playlistElements[$selectedItem].stop(true);
-							$selectedItem = i;
-							$playlistElements[$selectedItem].play(0);
-							break;
-						}
-					}
+					skip();
 				}
 				//play
 				else if (e.code === "Space") {

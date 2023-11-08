@@ -276,10 +276,7 @@
 
 	<!--annotation attached-->
 	{#if showAnnotations}
-		<Annotation
-			bind:annotation={track.annotation}
-			{id}
-		/>
+		<Annotation bind:annotation={track.annotation} {id} />
 	{/if}
 
 	<div
