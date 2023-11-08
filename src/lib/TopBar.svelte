@@ -200,7 +200,6 @@
 				bind:active={showCurrent}
 				activeColor="var(--hover)"
 				toolTip="Toggle Tracks playing"
-				disabled={!$editMode}
 			/>
 
 			<!--hotkeys-->
@@ -209,7 +208,6 @@
 				bind:active={showHotkeys}
 				activeColor="var(--hover)"
 				toolTip="Toggle Hotkeys"
-				disabled={!$editMode}
 			/>
 		</div>
 

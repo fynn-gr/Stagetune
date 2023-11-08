@@ -447,7 +447,7 @@
 	{/if}
 
 	<!--palettes on the right-->
-	{#if showCurrent || showHotkeys || !$editMode}
+	{#if showCurrent || showHotkeys}
 		<div class="palettes">
 			<!--current playing-->
 			{#if showCurrent}
