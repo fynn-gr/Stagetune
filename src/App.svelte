@@ -260,12 +260,14 @@
 					!e.metaKey
 				) {
 					e.preventDefault();
-					playlist.update(items => {
-						$playlistElements[$selectedItem].stop(true);
-						selectedItem.update(n => n + 1);
-						$playlistElements[$selectedItem].play(0);
-						return items;
-					});
+					for (let i = $selectedItem + 1; i < $playlist.length; i++) {
+						if ($playlist[i].type != "annotation") {
+							$playlistElements[$selectedItem].stop(true);
+							$selectedItem = i;
+							$playlistElements[$selectedItem].play(0);
+							break;
+						}
+					}
 				}
 				//play
 				else if (e.code === "Space") {
