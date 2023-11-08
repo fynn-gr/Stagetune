@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount } from "svelte";
+	import { onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { join } from "@tauri-apps/api/path";
 	import { createPlaylistTrack, secondsToMinutes, waveformCalc } from "@/utils";
@@ -10,7 +10,6 @@
 		currentDragging,
 		playlist,
 		playlistPath,
-		selectedAttached,
 	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
@@ -20,10 +19,12 @@
 	export let id: number;
 	export let ctx: AudioContext;
 	export let masterGain: GainNode;
+	export let showAnnotations: boolean;
 	let loaded = false;
 	let dragging = false;
 	let dragover = false;
 	let missing = false;
+	let titleEl: HTMLElement;
 
 	let input: AudioBufferSourceNode;
 	let gainNode: GainNode;
@@ -266,7 +267,6 @@
 	on:drop={handleDrop}
 	on:click={e => {
 		selectedItem.set(id);
-		selectedAttached.set(false);
 		console.log(e);
 	}}
 >
@@ -275,11 +275,12 @@
 	</div>
 
 	<!--annotation attached-->
-	<Annotation
-		bind:annotation={track.annotation}
-		{id}
-		selected={$selectedItem == id && $selectedAttached}
-	/>
+	{#if showAnnotations}
+		<Annotation
+			bind:annotation={track.annotation}
+			{id}
+		/>
+	{/if}
 
 	<div
 		class="inner"
@@ -335,17 +336,20 @@
 		<!--name-->
 		{#if track.buffer != undefined}
 			<div class="title">
-				<input
-					type="text"
-					bind:value={track.name}
+				<div
+					class="input"
+					contenteditable={$selectedItem == id && $editMode}
+					bind:this={titleEl}
 					on:focus={() => {
 						isEditing.update(e => e + 1);
 					}}
 					on:blur={() => {
 						isEditing.update(e => e - 1);
+						track.name = titleEl.innerText;
 					}}
-					disabled={!$editMode || $selectedItem != id}
-				/>
+				>
+					{track.name}
+				</div>
 			</div>
 		{:else}
 			<div class="title"><p>loading...</p></div>

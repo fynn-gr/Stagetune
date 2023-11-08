@@ -1,30 +1,29 @@
 <script lang="ts">
 	import {
 		editMode,
-		selectedItem,
 		isEditing,
 		uiPlatform,
 		contextMenu,
-		selectedAttached,
+		selectedItem,
 	} from "@/stores";
 
 	export let id: number;
 	export let annotation: string;
-	export let selected: boolean;
+
+	let annotationEl: HTMLElement;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 {#if annotation != null}
 	<div
 		class="annotation-attached"
-		class:annotation-selected={selected}
 		on:contextmenu={e => {
 			if ($editMode) {
 				$contextMenu = {
 					position: { x: e.clientX, y: e.clientY },
 					content: [
 						{
-							name: "Remove Anotation",
+							name: "Remove Annotation",
 							action: () => {
 								annotation = null;
 							},
@@ -35,23 +34,23 @@
 			}
 		}}
 		on:click={e => {
-			$selectedAttached = true;
 			e.stopPropagation();
 		}}
 	>
-		<input
-			type="text"
-			disabled={!$editMode || $selectedItem != id}
-			on:focus={() => {
+		<div
+			class="input"
+			contenteditable={$selectedItem == id && $editMode}
+			bind:this={annotationEl}
+			on:focus={e => {
 				isEditing.update(e => e + 1);
-				console.log("in focus", $isEditing);
 			}}
 			on:blur={() => {
 				isEditing.update(e => e - 1);
-				console.log("out of focus", $isEditing);
+				annotation = annotationEl.innerText;
 			}}
-			bind:value={annotation}
-		/>
+		>
+			<p>{annotation}</p>
+		</div>
 	</div>
 {:else}
 	<div class="annotation-placeholder">
