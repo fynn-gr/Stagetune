@@ -359,6 +359,43 @@
 				display: none;
 			}
 		}
+
+		&.video {
+			.inner {
+				.progress {
+					height: 6rem;
+				}
+
+				.play-btn {
+					margin: 6rem 0;
+	
+					&:first-of-type {
+						margin: 6rem 0 6rem 12rem;
+					}
+				}
+
+				.title {
+					height: 42rem;
+					line-height: 42rem;
+				}
+
+				.repeat-btn {
+					visibility: visible;
+
+					&:hover {
+						background-color: var(--hover);
+					}
+
+					&.active {
+						background-color: var(--secondary);
+					}
+
+					img {
+						filter: invert(90%);
+					}
+				}
+			}
+		}
 	}
 
 	&.show-annotations {
@@ -410,7 +447,7 @@
 	}
 
 	.selected {
-		&:has(:focus) {
+		&:has(.input:focus, input[type="number"]:focus) {
 			.inner {
 				box-shadow: 0 0 0 3rem var(--secondary-dim);
 			}
@@ -472,6 +509,11 @@
 					background-color: transparent;
 					font-size: inherit;
 					font-weight: inherit;
+
+					&::selection {
+						color: white;
+						background-color: var(--secondary);
+					}
 				}
 			}
 
@@ -479,7 +521,6 @@
 				position: relative;
 				width: 30rem;
 				height: 30rem;
-				margin: 6rem 0 6rem 6rem;
 				border-radius: 5rem;
 				background-color: transparent;
 
@@ -655,6 +696,16 @@
 		z-index: 1;
 		opacity: 40%;
 
+		.inner {
+			.play-btn {
+				margin: 6rem 0;
+
+				&:first-of-type {
+					margin: 6rem 0 6rem 6rem;
+				}
+			}
+		}
+
 		&.missing {
 			.annotationStart {
 				background-color: #aa0000;
@@ -700,48 +751,17 @@
 			}
 		}
 
-		&.editMode {
-			.inner {
-				.progress {
-					height: 6rem;
-				}
-
-				.play-btn {
-					margin: 7rem 0;
-				}
-
-				.repeat-btn {
-					visibility: visible;
-
-					&:hover {
-						background-color: var(--hover);
-					}
-
-					&.active {
-						background-color: var(--secondary);
-					}
-
-					img {
-						filter: invert(90%);
-					}
-				}
-			}
-		}
-
 		.inner {
-			height: 50rem;
+			height: 48rem;
 
 			.play-btn {
-				margin: 7rem 0 7rem 7rem;
+				margin: 6rem 0;
+
+				&:first-of-type {
+					margin: 6rem 0 6rem 6rem;
+				}
 			}
 
-			.set-btn {
-				margin: 7rem 0;
-			}
-
-			.title {
-				height: 44rem;
-			}
 
 			.progress {
 				height: 6rem;
@@ -875,13 +895,17 @@
 			text-align: left;
 			color: var(--text);
 			background-color: transparent;
+
+			&::selection {
+				color: white;
+				background-color: var(--secondary);
+			}
 		}
 	}
 
 	.annotation-placeholder {
 		display: none;
 		width: var(--annotation-width);
-		margin: 9rem 0 0 0;
 		flex-direction: column;
 		justify-content: center;
 
@@ -1072,6 +1096,16 @@
 	display: flex;
 	flex-direction: column;
 	gap: 4rem;
+	overflow: hidden scroll;
+
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: #222222;
+		border-radius: 4px;
+	}
 
 	.hotkeySlot {
 		height: 32rem;
