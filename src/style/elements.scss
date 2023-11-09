@@ -306,6 +306,10 @@
 				height: 54rem;
 				padding: 0;
 
+				&:last-child {
+					margin-right: 6rem;
+				}
+
 				img {
 					width: 18rem;
 					height: 18rem;

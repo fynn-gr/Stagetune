@@ -351,7 +351,7 @@
 				</div>
 			</div>
 		{:else}
-			<div class="title"><p>loading...</p></div>
+			<div class="title"><p class="input">loading...</p></div>
 		{/if}
 
 		<div class="options">
