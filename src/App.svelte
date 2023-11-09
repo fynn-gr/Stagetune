@@ -133,21 +133,21 @@
 			//stop track if playing
 			if ($playlist[$selectedItem].playing)
 				$playlistElements[$selectedItem].stop();
-	
+
 			let toDelete = $selectedItem;
-	
+
 			//find hotkey
 			if ($playlist[$selectedItem].hotkey != undefined) {
 				let hotkeyRm = $playlist[$selectedItem].hotkey;
 				console.log(hotkeyRm);
 				$hotkeys[hotkeyRm - 1].track = null;
 			}
-	
+
 			//find new selected item
 			if ($playlist.length - 1 > $selectedItem) $selectedItem++;
 			else if ($selectedItem > 0) $selectedItem--;
 			else $selectedItem = null;
-	
+
 			//delte from playlist
 			playlist.update(e => {
 				e.splice(toDelete, 1);
@@ -404,7 +404,7 @@
 	<!--editor-->
 	{#if showEditor && $editMode}
 		<div class="editor">
-			{#if $selectedItem != null && $selectedItem != undefined && $playlist[$selectedItem].type == "track"}
+			{#if $selectedItem != undefined && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type == "track"}
 				<div class="prop-bar">
 					<label>cut</label>
 					<PropNumber
@@ -431,8 +431,14 @@
 						background: linear-gradient(
 							90deg,
 							#111 0%,
-							#111 calc(100% * ${$playlist[$selectedItem].edit.in / $playlist[$selectedItem].length}),
-							#fff calc(100% * ${$playlist[$selectedItem].edit.in /$playlist[$selectedItem].length}),
+							#111 calc(100% * ${
+								$playlist[$selectedItem].edit.in /
+								$playlist[$selectedItem].length
+							}),
+							#fff calc(100% * ${
+								$playlist[$selectedItem].edit.in /
+								$playlist[$selectedItem].length
+							}),
 							#fff 100%
 						);`}
 				>
