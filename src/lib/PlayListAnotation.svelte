@@ -12,8 +12,7 @@
 	export let id: number;
 	let dragging = false;
 	let dragover = false;
-	let editing = false;
-	let inputElement: HTMLInputElement;
+	let annotationEl: HTMLElement;
 
 	function handleDragStart(e) {
 		let rec = e.target.getBoundingClientRect();
@@ -99,18 +98,19 @@
 		class="container"
 		style={$currentDragging == null ? "" : "pointer-events: none;"}
 	>
-		<input
-			type="text"
-			disabled={!$editMode || $selectedItem != id}
-			on:focus={() => {
+		<div
+			class="input"
+			contenteditable={$selectedItem == id && $editMode}
+			bind:this={annotationEl}
+			on:focus={e => {
 				isEditing.update(e => e + 1);
-				console.log("in focus", $isEditing);
 			}}
 			on:blur={() => {
 				isEditing.update(e => e - 1);
-				console.log("out of focus", $isEditing);
+				track.annotation = annotationEl.innerText;
 			}}
-			bind:value={track.annotation}
-		/>
+		>
+			<p>{track.annotation}</p>
+		</div>
 	</div>
 </div>
