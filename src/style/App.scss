@@ -10,6 +10,14 @@
 
 	--annotation: rgb(77, 77, 77);
 	--topBarHeight: 54px;
+
+	main.mac {
+		--topBarHeight: 54px;
+	}
+
+	main.win {
+		--topBarHeight: 44px;
+	}
 }
 
 body {

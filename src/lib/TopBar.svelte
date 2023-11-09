@@ -56,7 +56,7 @@
 			/>
 		{/if}
 
-		<div class="group">
+		<div class="topbar-group">
 			<!--Sidebar-->
 			<TopBarToggle
 				icon="sidebar"
@@ -170,7 +170,7 @@
 
 		<div class="spacer-fix" data-tauri-drag-region="" />
 
-		<div class="group">
+		<div class="topbar-group">
 			<!--reset all-->
 			<TopBarButton
 				icon="reset"
@@ -184,7 +184,7 @@
 
 		<div class="spacer" data-tauri-drag-region="" />
 
-		<div class="group">
+		<div class="topbar-group">
 			<!--editor-->
 			<TopBarToggle
 				icon="cut"

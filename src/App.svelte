@@ -129,27 +129,32 @@
 	}
 
 	function deleteTrack() {
-		//stop track if playing
-		if ($playlist[$selectedItem].playing)
-			$playlistElements[$selectedItem].stop();
-
-		let toDelete = $selectedItem;
-		//find hotkey
-		if ($playlist[$selectedItem].hotkey != undefined) {
-			let hotkeyRm = $playlist[$selectedItem].hotkey;
-			console.log(hotkeyRm);
-			$hotkeys[hotkeyRm - 1].track = null;
+		if ($selectedItem != null) {
+			//stop track if playing
+			if ($playlist[$selectedItem].playing)
+				$playlistElements[$selectedItem].stop();
+	
+			let toDelete = $selectedItem;
+	
+			//find hotkey
+			if ($playlist[$selectedItem].hotkey != undefined) {
+				let hotkeyRm = $playlist[$selectedItem].hotkey;
+				console.log(hotkeyRm);
+				$hotkeys[hotkeyRm - 1].track = null;
+			}
+	
+			//find new selected item
+			if ($playlist.length - 1 > $selectedItem) $selectedItem++;
+			else if ($selectedItem > 0) $selectedItem--;
+			else $selectedItem = null;
+	
+			//delte from playlist
+			playlist.update(e => {
+				e.splice(toDelete, 1);
+				return e;
+			});
+			$playlist = $playlist;
 		}
-		//find new selected item
-		if ($playlist.length - 1 > $selectedItem) $selectedItem++;
-		else if ($selectedItem > 0) $selectedItem--;
-		else $selectedItem = null;
-		//delte from playlist
-		playlist.update(e => {
-			e.splice(toDelete, 1);
-			return e;
-		});
-		$playlist = $playlist;
 	}
 
 	function pauseAll() {

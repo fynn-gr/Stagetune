@@ -1,7 +1,7 @@
 .window-body {
 	display: grid;
 	grid-template-columns: auto 1fr auto;
-	grid-template-rows: 54px 1fr auto;
+	grid-template-rows: var(--topBarHeight) 1fr auto;
 	grid-template-areas:
 		"topBar    topBar   topBar"
 		"tracklist playList palettes"
