@@ -10,6 +10,7 @@
 		currentDragging,
 		playlist,
 		playlistPath,
+		settings,
 	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
@@ -19,7 +20,6 @@
 	export let id: number;
 	export let ctx: AudioContext;
 	export let masterGain: GainNode;
-	export let showAnnotations: boolean;
 	let loaded = false;
 	let dragging = false;
 	let dragover = false;
@@ -109,17 +109,19 @@
 	}
 
 	function handleSkip(e) {
-		let rec = e.target.getBoundingClientRect();
-		let x = e.clientX - rec.left;
-		let skipFac = Math.min(Math.max(x / rec.width, 0), 1);
-
-		if (track.playing) {
-			stop();
-			play(cutTrackLength * skipFac);
-			track.state = cutTrackLength * skipFac;
-		} else {
-			track.pausedAt = cutTrackLength * skipFac;
-			track.state = cutTrackLength * skipFac;
+		if ($settings.allowSkipLive || $editMode) {
+			let rec = e.target.getBoundingClientRect();
+			let x = e.clientX - rec.left;
+			let skipFac = Math.min(Math.max(x / rec.width, 0), 1);
+	
+			if (track.playing) {
+				stop();
+				play(cutTrackLength * skipFac);
+				track.state = cutTrackLength * skipFac;
+			} else {
+				track.pausedAt = cutTrackLength * skipFac;
+				track.state = cutTrackLength * skipFac;
+			}
 		}
 	}
 
@@ -275,7 +277,7 @@
 	</div>
 
 	<!--annotation attached-->
-	{#if showAnnotations}
+	{#if $settings.showAnnotations}
 		<Annotation bind:annotation={track.annotation} {id} />
 	{/if}
 
@@ -415,67 +417,71 @@
 		</p>
 
 		<!--fade-->
-		<span class="fade">
-			<img src="./icons/square/fade_in.svg" alt="" />
-			<input
-				type="number"
-				bind:value={track.fade.in}
-				on:focus={() => {
-					isEditing.update(e => e + 1);
-				}}
-				on:blur={() => {
-					isEditing.update(e => e - 1);
-				}}
-				min="0"
-				max={track.length}
-				disabled={!$editMode}
-				title="Fade In"
-			/>
-			<img src="./icons/square/fade_out.svg" alt="" />
-			<input
-				type="number"
-				bind:value={track.fade.out}
-				on:focus={() => {
-					isEditing.update(e => e + 1);
-				}}
-				on:blur={() => {
-					isEditing.update(e => e - 1);
-				}}
-				min="0"
-				max={track.length}
-				disabled={!$editMode}
-				title="Fade Out"
-			/>
-		</span>
+		{#if $settings.showFadeOptions}
+			<span class="fade">
+				<img src="./icons/square/fade_in.svg" alt="" />
+				<input
+					type="number"
+					bind:value={track.fade.in}
+					on:focus={() => {
+						isEditing.update(e => e + 1);
+					}}
+					on:blur={() => {
+						isEditing.update(e => e - 1);
+					}}
+					min="0"
+					max={track.length}
+					disabled={!$editMode}
+					title="Fade In"
+				/>
+				<img src="./icons/square/fade_out.svg" alt="" />
+				<input
+					type="number"
+					bind:value={track.fade.out}
+					on:focus={() => {
+						isEditing.update(e => e + 1);
+					}}
+					on:blur={() => {
+						isEditing.update(e => e - 1);
+					}}
+					min="0"
+					max={track.length}
+					disabled={!$editMode}
+					title="Fade Out"
+				/>
+			</span>
+		{/if}
 
 		<!--volume Pan-->
-		<div class="volume">
-			<span>
-				<p>–</p>
-				<input
-					bind:value={track.volume}
-					type="range"
-					min="0"
-					max="100"
-					step="10"
-					disabled={!$editMode}
-				/>
-				<p>+</p>
-			</span>
+		{#if $settings.showVolumeOptions}
+			<div class="volume">
+				<span>
+					<p>–</p>
+					<input
+						bind:value={track.volume}
+						type="range"
+						min="0"
+						max="100"
+						step="10"
+						disabled={!$editMode}
+					/>
+					<p>+</p>
+				</span>
 
-			<span>
-				<p>L</p>
-				<input
-					class="pan"
-					bind:value={track.pan}
-					type="range"
-					min={-1}
-					max={1}
-					step={0.25}
-					disabled={!$editMode}
-				/>
-				<p>R</p>
-			</span>
-		</div>
+				<span>
+					<p>L</p>
+					<input
+						class="pan"
+						bind:value={track.pan}
+						type="range"
+						min={-1}
+						max={1}
+						step={0.25}
+						disabled={!$editMode}
+					/>
+					<p>R</p>
+				</span>
+			</div>
+		{/if}
 	</div>
 </div>

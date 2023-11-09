@@ -51,7 +51,6 @@
 	let playlistEl: HTMLElement;
 	let annotationWidth: number = 40;
 	let showTracklist = true;
-	let showAnnotations = true;
 	let showEditor = false;
 	let showCurrent = true;
 	let showHotkeys = true;
@@ -189,7 +188,7 @@
 		} else if (event.payload == "showTracklist" && $editMode) {
 			showTracklist = !showTracklist;
 		} else if (event.payload == "showAnnotations") {
-			showAnnotations = !showAnnotations;
+			$settings.showAnnotations = !$settings.showAnnotations;
 		} else if (event.payload == "showCurrent") {
 			showCurrent = !showCurrent;
 		} else if (event.payload == "showHotkeys") {
@@ -341,7 +340,6 @@
 		bind:showEditor
 		bind:showCurrent
 		bind:showHotkeys
-		bind:showAnnotations
 		{pauseAll}
 		{resetAll}
 	/>
@@ -349,7 +347,7 @@
 	<!--playlist-->
 	<div
 		class="playlist"
-		class:show-annotations={showAnnotations}
+		class:show-annotations={$settings.showAnnotations}
 		class:editMode={$editMode}
 		style={`--annotation-width: calc(${annotationWidth}% - ${
 			$editMode ? 46 : 9
@@ -361,7 +359,7 @@
 		}}
 		bind:this={playlistEl}
 	>
-		{#if showAnnotations}
+		{#if $settings.showAnnotations}
 			<input
 				type="range"
 				class="annotation-slider"
@@ -380,7 +378,6 @@
 						id={i}
 						{ctx}
 						{masterGain}
-						{showAnnotations}
 					/>
 				{:else if t.type == "video"}
 					<PlayListVideo
@@ -388,7 +385,7 @@
 						bind:track={t}
 						id={i}
 					/>
-				{:else if t.type == "annotation" && showAnnotations}
+				{:else if t.type == "annotation" && $settings.showAnnotations}
 					<PlayListAnotation
 						bind:this={$playlistElements[i]}
 						bind:track={t}

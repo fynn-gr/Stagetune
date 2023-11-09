@@ -8,6 +8,11 @@ export const settings = writable({
 	performance_mode: false,
 	debug: false,
 	video: false,
+
+	showAnnotations: true,
+	showFadeOptions: true,
+	showVolumeOptions: true,
+	allowSkipLive: true,
 });
 export const keymap = writable([
 	{

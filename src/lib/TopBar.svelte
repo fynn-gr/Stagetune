@@ -17,9 +17,9 @@
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
 	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
 	import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
+	import TopBarPopover from "@/pureUI/components/TopBarPopover.svelte";
 
 	export let showTracklist;
-	export let showAnnotations;
 	export let showEditor;
 	export let showCurrent;
 	export let showHotkeys;
@@ -56,25 +56,14 @@
 			/>
 		{/if}
 
-		<div class="topbar-group">
-			<!--Sidebar-->
-			<TopBarToggle
-				icon="sidebar"
-				bind:active={showTracklist}
-				activeColor="var(--hover)"
-				toolTip="Toggle Tracklist"
-				disabled={!$editMode}
-			/>
-
-			<!--Annotations-->
-			<TopBarToggle
-				icon="comment"
-				bind:active={showAnnotations}
-				activeColor="var(--hover)"
-				toolTip="Toggle Annotations"
-				disabled={false}
-			/>
-		</div>
+		<!--Sidebar-->
+		<TopBarToggle
+			icon="sidebar"
+			bind:active={showTracklist}
+			activeColor="var(--hover)"
+			toolTip="Toggle Tracklist"
+			disabled={!$editMode}
+		/>
 
 		{#if $uiPlatform == "win"}
 			<AppMenu name="File">
@@ -98,7 +87,7 @@
 				<AppMenuItem
 					id="showAnnotations"
 					name="Annotations"
-					checked={showAnnotations ? "true" : "false"}
+					checked={$settings.showAnnotations ? "true" : "false"}
 				/>
 				<AppMenuItem
 					id="showCurrent"
@@ -127,6 +116,30 @@
 		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />
+
+		<TopBarPopover
+			icon="settings"
+			toolTip="Playlist Settings"
+		>
+			<span>
+				<input type="checkbox" name="" id="" bind:checked={$settings.showAnnotations}>
+				<p>Annotations</p>
+			</span>
+			<span>
+				<input type="checkbox" name="" id="" bind:checked={$settings.showFadeOptions}>
+				<p>Fade Options</p>
+			</span>
+			<span>
+				<input type="checkbox" name="" id="" bind:checked={$settings.showVolumeOptions}>
+				<p>Volume Options</p>
+			</span>
+			<span>
+				<input type="checkbox" name="" id="" bind:checked={$settings.allowSkipLive}>
+				<p>Skip in Live Mode</p>
+			</span>
+		</TopBarPopover>
+
+		<div class="spacer-fix" data-tauri-drag-region="" />
 
 		<!--Add Annotation-->
 		<TopBarButton
