@@ -794,7 +794,7 @@
 				color: var(--text);
 				background-color: transparent;
 
-				&::selection {
+				&::selection, *::selection {
 					color: white;
 					background-color: var(--secondary);
 				}
@@ -903,7 +903,7 @@
 			color: var(--text);
 			background-color: transparent;
 
-			&::selection {
+			&::selection, *::selection {
 				color: white;
 				background-color: var(--secondary);
 			}

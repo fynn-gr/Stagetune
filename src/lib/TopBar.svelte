@@ -138,7 +138,7 @@
 						e.push({
 							type: "annotation",
 							origin: "playlist",
-							annotation: "Annotation",
+							annotation: { text: "Annotation", color: null},
 						});
 						return e;
 					});

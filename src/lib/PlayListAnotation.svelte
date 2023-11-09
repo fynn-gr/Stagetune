@@ -8,6 +8,7 @@
 		playlist,
 		contextMenu,
 	} from "../stores";
+	import { onMount } from "svelte";
 
 	export let track: any;
 	export let id: number;
@@ -74,6 +75,10 @@
 	}
 
 	export function update() {}
+
+	onMount(() => {
+		if (track.annotation != null) annotationEl.innerHTML = track.annotation.text;
+	})
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -88,15 +93,9 @@
 				position: { x: e.clientX, y: e.clientY },
 				content: [
 					{
-						name: "Remove Annotation",
-						action: () => {
-							track.annotation = null;
-						},
-					},
-					{},
-					{
 						name: "gray",
 						icon: "./icons/menu_win/gray.svg",
+						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = null;
 						},
@@ -104,6 +103,7 @@
 					{
 						name: "Red",
 						icon: "./icons/menu_win/red.svg",
+						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(5, 54%, 33%)";
 						},
@@ -111,6 +111,7 @@
 					{
 						name: "Orange",
 						icon: "./icons/menu_win/orange.svg",
+						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(25.4deg 66% 37%)";
 						},
@@ -118,6 +119,7 @@
 					{
 						name: "Green",
 						icon: "./icons/menu_win/green.svg",
+						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(102deg 62% 30%)";
 						},
@@ -125,6 +127,7 @@
 					{
 						name: "Teal",
 						icon: "./icons/menu_win/teal.svg",
+						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(169.44deg 62% 30%)";
 						},
@@ -132,6 +135,7 @@
 					{
 						name: "Blue",
 						icon: "./icons/menu_win/blue.svg",
+						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(205.44deg 62% 30%)";
 						},
@@ -139,6 +143,7 @@
 					{
 						name: "Purple",
 						icon: "./icons/menu_win/purple.svg",
+						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(274.67deg 53.55% 26.67%)";
 						},
@@ -176,7 +181,7 @@
 			}}
 			on:blur={() => {
 				isEditing.update(e => e - 1);
-				track.annotation.text = annotationEl.innerText;
+				track.annotation.text = annotationEl.innerHTML;
 			}}
 		>
 			<p>{track.annotation.text}</p>
