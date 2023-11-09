@@ -18,7 +18,7 @@ export interface playListItem {
 	autoReset: boolean;
 	edit?: { in?: number; out?: number };
 	fade?: { in?: number; out?: number };
-	annotation?: string;
+	annotation?: { text: string; color: string };
 	buffer?: AudioBuffer;
 	startedAt?: number;
 	pausedAt?: number;

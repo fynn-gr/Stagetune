@@ -147,7 +147,7 @@
 						e.splice($selectedItem + 1, 0, {
 							type: "annotation",
 							origin: "playlist",
-							annotation: "Annotation",
+							annotation: { text: "Annotation", color: null },
 						});
 						return e;
 					});
@@ -184,16 +184,16 @@
 
 		<div class="spacer" data-tauri-drag-region="" />
 
-		<div class="topbar-group">
-			<!--editor-->
-			<TopBarToggle
-				icon="cut"
-				bind:active={showEditor}
-				activeColor="var(--hover)"
-				toolTip="Toggle Edior"
-				disabled={!$editMode}
-			/>
+		<!--editor-->
+		<TopBarToggle
+			icon="cut"
+			bind:active={showEditor}
+			activeColor="var(--hover)"
+			toolTip="Toggle Edior"
+			disabled={!$editMode}
+		/>
 
+		<div class="topbar-group">
 			<!--current playing-->
 			<TopBarToggle
 				icon="active_play"

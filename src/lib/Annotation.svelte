@@ -5,10 +5,11 @@
 		uiPlatform,
 		contextMenu,
 		selectedItem,
+		playlist,
 	} from "@/stores";
 
 	export let id: number;
-	export let annotation: string;
+	export let annotation: { text: string; color: string };
 
 	let annotationEl: HTMLElement;
 </script>
@@ -17,6 +18,7 @@
 {#if annotation != null}
 	<div
 		class="annotation-attached"
+		style={`background: ${annotation.color};`}
 		on:contextmenu={e => {
 			if ($editMode) {
 				$contextMenu = {
@@ -26,6 +28,56 @@
 							name: "Remove Annotation",
 							action: () => {
 								annotation = null;
+							},
+						},
+						{},
+						{
+							name: "gray",
+							icon: "./icons/menu_win/gray.svg",
+							action: () => {
+								$playlist[id].annotation.color = null;
+							},
+						},
+						{
+							name: "Red",
+							icon: "./icons/menu_win/red.svg",
+							action: () => {
+								$playlist[id].annotation.color = "hsl(5, 54%, 33%)";
+							},
+						},
+						{
+							name: "Orange",
+							icon: "./icons/menu_win/orange.svg",
+							action: () => {
+								$playlist[id].annotation.color = "hsl(25.4deg 66% 37%)";
+							},
+						},
+						{
+							name: "Green",
+							icon: "./icons/menu_win/green.svg",
+							action: () => {
+								$playlist[id].annotation.color = "hsl(102deg 62% 30%)";
+							},
+						},
+						{
+							name: "Teal",
+							icon: "./icons/menu_win/teal.svg",
+							action: () => {
+								$playlist[id].annotation.color = "hsl(169.44deg 62% 30%)";
+							},
+						},
+						{
+							name: "Blue",
+							icon: "./icons/menu_win/blue.svg",
+							action: () => {
+								$playlist[id].annotation.color = "hsl(205.44deg 62% 30%)";
+							},
+						},
+						{
+							name: "Purple",
+							icon: "./icons/menu_win/purple.svg",
+							action: () => {
+								$playlist[id].annotation.color = "hsl(274.67deg 53.55% 26.67%)";
 							},
 						},
 					],
@@ -46,10 +98,10 @@
 			}}
 			on:blur={() => {
 				isEditing.update(e => e - 1);
-				annotation = annotationEl.innerText;
+				annotation.text = annotationEl.innerText;
 			}}
 		>
-			<p>{annotation}</p>
+			<p>{annotation.text}</p>
 		</div>
 	</div>
 {:else}
@@ -59,7 +111,7 @@
 				class="add-annotation"
 				title="Add attached anotation"
 				on:click={e => {
-					annotation = "Annotation";
+					annotation = { text: "Annotation", color: null };
 				}}
 			>
 				<img src={`./icons/tb_${$uiPlatform}/plus.svg`} alt="" />
