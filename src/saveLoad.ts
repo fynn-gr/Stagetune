@@ -19,6 +19,7 @@ import {
 	splash,
 } from "./stores";
 import { getVersion } from "@tauri-apps/api/app";
+import { basename } from "@tauri-apps/api/path";
 
 export function openDir() {
 	try {
@@ -52,7 +53,7 @@ async function scanSrcPaths(path: string) {
 	const entries = await readDir(path, { recursive: true });
 
 	function processEntries(entries) {
-		entries.forEach((entry, j) => {
+		entries.forEach(async (entry, j) => {
 			//console.log(`File: `, entry.path);
 			if (entry.children) {
 				//subfolder
@@ -62,7 +63,7 @@ async function scanSrcPaths(path: string) {
 				entry.type = "track";
 				entry.origin = "src";
 				entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-				let modifiedPath = entry.path.split(path).pop().split("/").pop();
+				let modifiedPath = await basename(entry.path);
 				console.log(modifiedPath);
 				entry.path = modifiedPath;
 				srcFiles.update(items => {

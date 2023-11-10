@@ -227,6 +227,7 @@
 	onMount(async () => {
 		//load file
 		const absPath = await join($playlistPath, track.path);
+		console.log($playlistPath, track.path, absPath)
 		const response = await fetch(convertFileSrc(absPath));
 		const arrayBuffer = await response.arrayBuffer();
 		track.buffer = await ctx.decodeAudioData(arrayBuffer);
