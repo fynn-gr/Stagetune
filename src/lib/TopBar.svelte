@@ -85,11 +85,6 @@
 					disabled={!$editMode}
 				/>
 				<AppMenuItem
-					id="showAnnotations"
-					name="Annotations"
-					checked={$settings.showAnnotations ? "true" : "false"}
-				/>
-				<AppMenuItem
 					id="showCurrent"
 					name="Tracks playing"
 					checked={showCurrent ? "true" : "false"}

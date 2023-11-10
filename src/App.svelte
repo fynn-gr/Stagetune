@@ -187,8 +187,6 @@
 			openSettings();
 		} else if (event.payload == "showTracklist" && $editMode) {
 			showTracklist = !showTracklist;
-		} else if (event.payload == "showAnnotations") {
-			$settings.showAnnotations = !$settings.showAnnotations;
 		} else if (event.payload == "showCurrent") {
 			showCurrent = !showCurrent;
 		} else if (event.payload == "showHotkeys") {
@@ -299,7 +297,7 @@
 			for (let i = 0; i < $playlistElements.length; i++) {
 				$playlistElements[i].update();
 			}
-		}, 300);
+		}, 100);
 
 		return () => clearInterval(interval);
 	});

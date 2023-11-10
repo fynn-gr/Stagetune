@@ -82,7 +82,7 @@
 	
 			emit("video_buffer", buffer);
 			*/
-		}, 1000);
+		}, 100);
 
 		return () => clearInterval(interval);
 	});

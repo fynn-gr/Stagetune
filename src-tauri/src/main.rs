@@ -70,7 +70,6 @@ fn main() {
 			.add_native_item(MenuItem::Zoom)
 			.add_native_item(MenuItem::Separator)
 			.add_item(CustomMenuItem::new("showTracklist", "Track List"))
-			.add_item(CustomMenuItem::new("showAnnotations", "Annotations"))
 			.add_item(CustomMenuItem::new("showCurrent", "Tracks playing"))
 			.add_item(CustomMenuItem::new("showHotkeys", "Hotkeys"))
 			.add_item(CustomMenuItem::new("showEditor", "Editor"))
