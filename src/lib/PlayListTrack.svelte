@@ -167,7 +167,6 @@
 				onEnd();
 			};
 			if (reset) {
-				console.log("reset song");
 				track.pausedAt = 0;
 				track.state = 0;
 			} else {
@@ -175,12 +174,20 @@
 			}
 		};
 		//pause track
-		if (
+		if (track.playing && track.inFade != null && !useFade) {
+			//stop while in fade
+			track.inFade = null;
+			track.playing = false;
+			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
+			input.stop();
+			end();
+		} else if (
 			track.fade.out > 0 &&
 			track.playing &&
 			track.inFade == null &&
 			useFade
 		) {
+			//fade out
 			track.inFade = "out";
 			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
 			fadeNode.gain.linearRampToValueAtTime(
@@ -198,6 +205,7 @@
 				track.playing = false;
 			}, track.fade.out * 1000);
 		} else if (track.playing && track.inFade == null) {
+			//pause without fade out
 			input.stop();
 			end();
 			track.playing = false;
