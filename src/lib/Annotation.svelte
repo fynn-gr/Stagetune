@@ -99,7 +99,7 @@
 			}
 		}}
 		on:click={e => {
-			e.stopPropagation();
+			//e.stopPropagation();
 		}}
 	>
 		<div
@@ -114,7 +114,7 @@
 				annotation.text = annotationEl.innerHTML;
 			}}
 		>
-			<p>{annotation.text}</p>
+			<p>{@html annotation.text}</p>
 		</div>
 	</div>
 {:else}
