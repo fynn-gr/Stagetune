@@ -38,7 +38,7 @@
 						},
 						{},
 						{
-							name: "gray",
+							name: "Gray",
 							icon: "./icons/menu_win/gray.svg",
 							iconColor: true,
 							action: () => {

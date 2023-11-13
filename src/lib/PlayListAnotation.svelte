@@ -94,7 +94,7 @@
 				position: { x: e.clientX, y: e.clientY },
 				content: [
 					{
-						name: "gray",
+						name: "Gray",
 						icon: "./icons/menu_win/gray.svg",
 						iconColor: true,
 						action: () => {
