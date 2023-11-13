@@ -59,7 +59,7 @@
 			} else if (!e.altKey && !track.playing) {
 				//play
 				e.preventDefault();
-				console.log($playlist[$playlist.indexOf(track)], track);
+				//console.log($playlist[$playlist.indexOf(track)], track);
 				let id = $playlist.indexOf(track);
 				$playlistElements[id].play(null, true);
 			} else if (!e.altKey && track.playing) {

@@ -96,21 +96,26 @@ export function waveformCalc(
 	samples: number,
 	cutInFac: number = 0
 ): Array<any> {
-	let rawData = buffer.getChannelData(0);
-	let cutData = rawData.subarray(Math.floor(rawData.length * cutInFac));
-	const blockSize = Math.floor(cutData.length / samples);
-	const filteredData = [];
-	for (let i = 0; i < samples; i++) {
-		let blockStart = blockSize * i;
-		let sum = 0;
-		for (let j = 0; j < blockSize; j++) {
-			sum = sum + Math.abs(cutData[blockStart + j]);
+	try {
+		let rawData = buffer.getChannelData(0);
+		let cutData = rawData.subarray(Math.floor(rawData.length * cutInFac));
+		const blockSize = Math.floor(cutData.length / samples);
+		const filteredData = [];
+		for (let i = 0; i < samples; i++) {
+			let blockStart = blockSize * i;
+			let sum = 0;
+			for (let j = 0; j < blockSize; j++) {
+				sum = sum + Math.abs(cutData[blockStart + j]);
+			}
+			filteredData.push(sum / blockSize);
 		}
-		filteredData.push(sum / blockSize);
-	}
 
-	const multiplier = Math.pow(Math.max(...filteredData), -1);
-	return filteredData.map(n => n * multiplier);
+		const multiplier = Math.pow(Math.max(...filteredData), -1);
+		return filteredData.map(n => n * multiplier);
+	} catch (err) {
+		console.error(err);
+		return [0];
+	}
 }
 
 export function updateProjectorList() {

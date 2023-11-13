@@ -49,7 +49,7 @@
 	import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 
 	let playlistEl: HTMLElement;
-	let annotationWidth: number = 40;
+	let annotationWidth: number = 25;
 	let showTracklist = true;
 	let showEditor = false;
 	let showCurrent = true;
@@ -208,7 +208,7 @@
 	onMount(() => {
 		//shortcuts
 		document.addEventListener("keydown", e => {
-			console.log(e);
+			//console.log(e);
 
 			if ($isEditing > 0) {
 				return;
@@ -476,6 +476,7 @@
 									});`}
 								/>
 								<button
+									title="current playing"
 									on:click={ev => {
 										if (e.playing) {
 											$playlistElements[i].stop(false, false);

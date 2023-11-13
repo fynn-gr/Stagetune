@@ -200,7 +200,9 @@
 			);
 			setTimeout(() => {
 				console.log("stop");
-				input.stop();
+				try {
+					input.stop();
+				} catch (err) {console.log(err)}
 				fadeNode = ctx.createGain();
 				fadeNode.connect(gainNode);
 				input.connect(fadeNode);
@@ -231,7 +233,7 @@
 	onMount(async () => {
 		//load file
 		const absPath = await join($playlistPath, track.path);
-		console.log($playlistPath, track.path, absPath)
+		console.log($playlistPath, track.path, absPath);
 		const response = await fetch(convertFileSrc(absPath));
 		const arrayBuffer = await response.arrayBuffer();
 		track.buffer = await ctx.decodeAudioData(arrayBuffer);
@@ -316,6 +318,7 @@
 		<!--reset-btn-->
 		<button
 			class="play-btn"
+			title="Reset"
 			on:click={() => {
 				stop(true);
 			}}
@@ -326,6 +329,7 @@
 		<!--play Button-->
 		<button
 			class="play-btn"
+			title="Play"
 			class:active={track.playing}
 			on:click={() => {
 				playPause();
