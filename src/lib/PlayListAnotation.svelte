@@ -77,8 +77,9 @@
 	export function update() {}
 
 	onMount(() => {
-		if (track.annotation != null) annotationEl.innerHTML = track.annotation.text;
-	})
+		if (track.annotation != null)
+			annotationEl.innerHTML = track.annotation.text;
+	});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

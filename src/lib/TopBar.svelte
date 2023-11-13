@@ -16,8 +16,8 @@
 	import ModeSwitch from "./ModeSwitch.svelte";
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
 	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
-	import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
 	import TopBarPopover from "@/pureUI/components/TopBarPopover.svelte";
+	import { test } from "@/test";
 
 	export let showTracklist;
 	export let showEditor;
@@ -107,29 +107,80 @@
 			</AppMenu>
 		{/if}
 		{#if $settings.debug}
-			<AppMenuDev />
+			<AppMenu name="Dev">
+				<button
+					class="app-menu-item"
+					on:click={() => {
+						$uiPlatform = "mac";
+					}}
+				>
+					<p>mac</p>
+				</button>
+				<button
+					class="app-menu-item"
+					on:click={() => {
+						$uiPlatform = "win";
+					}}
+				>
+					<p>Win</p>
+				</button>
+				<div class="seperator" />
+				<button
+					class="app-menu-item"
+					on:click={() => {
+						test(false);
+					}}
+				>
+					<p>Continuous Test</p>
+				</button>
+				<button
+					class="app-menu-item"
+					on:click={() => {
+						test(true);
+					}}
+				>
+					<p>Penetration Test</p>
+				</button>
+			</AppMenu>
 		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />
 
-		<TopBarPopover
-			icon="settings"
-			toolTip="Playlist Settings"
-		>
+		<TopBarPopover icon="settings" toolTip="Playlist Settings">
 			<span>
-				<input type="checkbox" name="" id="" bind:checked={$settings.showAnnotations}>
+				<input
+					type="checkbox"
+					name=""
+					id=""
+					bind:checked={$settings.showAnnotations}
+				/>
 				<p>Annotations</p>
 			</span>
 			<span>
-				<input type="checkbox" name="" id="" bind:checked={$settings.showFadeOptions}>
+				<input
+					type="checkbox"
+					name=""
+					id=""
+					bind:checked={$settings.showFadeOptions}
+				/>
 				<p>Fade Options</p>
 			</span>
 			<span>
-				<input type="checkbox" name="" id="" bind:checked={$settings.showVolumeOptions}>
+				<input
+					type="checkbox"
+					name=""
+					id=""
+					bind:checked={$settings.showVolumeOptions}
+				/>
 				<p>Volume Options</p>
 			</span>
 			<span>
-				<input type="checkbox" name="" id="" bind:checked={$settings.allowSkipLive}>
+				<input
+					type="checkbox"
+					name=""
+					id=""
+					bind:checked={$settings.allowSkipLive}
+				/>
 				<p>Skip in Live Mode</p>
 			</span>
 		</TopBarPopover>
@@ -146,7 +197,7 @@
 						e.push({
 							type: "annotation",
 							origin: "playlist",
-							annotation: { text: "Annotation", color: null},
+							annotation: { text: "Annotation", color: null },
 						});
 						return e;
 					});

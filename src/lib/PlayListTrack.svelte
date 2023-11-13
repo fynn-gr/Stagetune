@@ -113,7 +113,7 @@
 			let rec = e.target.getBoundingClientRect();
 			let x = e.clientX - rec.left;
 			let skipFac = Math.min(Math.max(x / rec.width, 0), 1);
-	
+
 			if (track.playing) {
 				stop();
 				play(cutTrackLength * skipFac);
@@ -152,7 +152,11 @@
 			input.start(0, track.pausedAt + cutIn);
 			track.startedAt = ctx.currentTime - track.pausedAt;
 		} else {
-			input.start(0, startTime + cutIn);
+			try {
+				input.start(0, startTime + cutIn);
+			} catch (err) {
+				console.log(err);
+			}
 			track.startedAt = ctx.currentTime - startTime;
 		}
 
