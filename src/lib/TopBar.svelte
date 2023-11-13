@@ -122,7 +122,7 @@
 						$uiPlatform = "win";
 					}}
 				>
-					<p>Win</p>
+					<p>win</p>
 				</button>
 				<div class="seperator" />
 				<button
