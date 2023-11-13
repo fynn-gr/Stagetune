@@ -1,5 +1,4 @@
 import { playlist, playlistElements, selectedItem } from "@/stores";
-import { emit } from "@tauri-apps/api/event";
 import { get } from "svelte/store";
 
 export function test(pen: boolean) {
@@ -43,12 +42,12 @@ export function test(pen: boolean) {
 			//hotkey
 			console.log("hotkey");
 			document.dispatchEvent(
-				new KeyboardEvent("keypress", { code: "digit" + getRndInteger(0, 3) })
+				new KeyboardEvent("keydown", { code: "Digit" + getRndInteger(1, 2) })
 			);
 			break;
 	}
 
-	let delay = getRndInteger(10, 500);
+	let delay = pen ? getRndInteger(2, 200) : getRndInteger(10, 10000);
 
 	setTimeout(() => {
 		test(pen);

@@ -252,23 +252,21 @@
 			disabled={!$editMode}
 		/>
 
-		<div class="topbar-group">
-			<!--current playing-->
-			<TopBarToggle
-				icon="active_play"
-				bind:active={showCurrent}
-				activeColor="var(--hover)"
-				toolTip="Toggle Tracks playing"
-			/>
+		<!--current playing-->
+		<TopBarToggle
+			icon="active_play"
+			bind:active={showCurrent}
+			activeColor="var(--hover)"
+			toolTip="Toggle Tracks playing"
+		/>
 
-			<!--hotkeys-->
-			<TopBarToggle
-				icon="hotkeys"
-				bind:active={showHotkeys}
-				activeColor="var(--hover)"
-				toolTip="Toggle Hotkeys"
-			/>
-		</div>
+		<!--hotkeys-->
+		<TopBarToggle
+			icon="hotkeys"
+			bind:active={showHotkeys}
+			activeColor="var(--hover)"
+			toolTip="Toggle Hotkeys"
+		/>
 
 		{#if $uiPlatform == "win"}
 			<WinButtonsMs
