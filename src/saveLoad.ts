@@ -124,7 +124,7 @@ export async function savePlaylist() {
 		meta: {
 			version: await getVersion(),
 		},
-		playlist: get(playlist),
+		playlist: JSON.parse(JSON.stringify(get(playlist))),
 		hotkeys: [],
 	};
 
