@@ -185,8 +185,6 @@
 			</span>
 		</TopBarPopover>
 
-		<div class="spacer-fix" data-tauri-drag-region="" />
-
 		<!--Add Annotation-->
 		<TopBarButton
 			icon="comment_add"

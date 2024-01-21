@@ -147,6 +147,7 @@
 	{#if settings != null}
 		{#if tab == "general"}
 			<div class="content">
+				<!--
 				<SettingsOption
 					name="Language: "
 					type="select"
@@ -157,6 +158,7 @@
 					]}
 					{onChange}
 				/>
+				-->
 				<SettingsOption
 					name="UI size:"
 					type="select"
@@ -230,14 +232,14 @@
 		{:else}
 			<div class="content dev">
 				<SettingsOption
-					name="Debug Mode:"
+					name="Developer Features:"
 					type="checkbox"
 					bind:value={$settings.debug}
 					checkboxName="Enable developer features"
 					{onChange}
 				/>
 				<SettingsOption
-					name="Video:"
+					name=""
 					type="checkbox"
 					bind:value={$settings.video}
 					checkboxName="Enable projector"

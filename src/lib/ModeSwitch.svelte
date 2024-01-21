@@ -50,7 +50,7 @@
 	}}
 	{disabled}
 	title={toolTip}
-	style={`background-color: ${active ? "var(--hover)" : "var(--secondary)"};`}
+	style={`background-color: ${active ? "none" : "var(--secondary)"};`}
 >
 	<img src={active ? iconPathActive : iconPath} alt={toolTip} />
 

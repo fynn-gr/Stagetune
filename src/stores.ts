@@ -234,7 +234,7 @@ export const keymap = writable([
 	{
 		operator: "projector",
 		name: "Projector",
-		key: "Spacebar",
+		key: "KeyP",
 		ctrl: true,
 		alt: false,
 		meta: false,
