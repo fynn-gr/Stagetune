@@ -297,7 +297,7 @@
 			for (let i = 0; i < $playlistElements.length; i++) {
 				$playlistElements[i].update();
 			}
-		}, 100);
+		}, 300);
 
 		return () => clearInterval(interval);
 	});

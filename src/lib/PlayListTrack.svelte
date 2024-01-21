@@ -96,9 +96,10 @@
 	}
 
 	function onEnd() {
-		if (ctx.currentTime - track.startedAt >= track.length * 0.96) {
+		if (ctx.currentTime - track.startedAt >= (track.length - cutIn) * 0.96) {
 			//reached end of track
 			console.log("ended");
+			console.log(ctx.currentTime - track.startedAt, track.length * 0.96)
 			if (track.repeat) {
 				stop(true, false);
 				play(0);
