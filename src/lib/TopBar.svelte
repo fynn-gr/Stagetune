@@ -181,7 +181,7 @@
 					id=""
 					bind:checked={$settings.allowSkipLive}
 				/>
-				<p>Skip in Live Mode</p>
+				<p>Scrubbing in Live Mode</p>
 			</span>
 		</TopBarPopover>
 
