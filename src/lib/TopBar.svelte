@@ -29,6 +29,7 @@
 
 <div class="topbar toolbar" data-tauri-drag-region>
 	<div class="topbar-container" data-tauri-drag-region>
+		<!--mac window buttons-->
 		{#if $uiPlatform == "mac"}
 			<WinButtonsMac
 				onClose={async () => {
@@ -65,6 +66,7 @@
 			disabled={!$editMode}
 		/>
 
+		<!--menus on windows-->
 		{#if $uiPlatform == "win"}
 			<AppMenu name="File">
 				<AppMenuItem id="open" name="Open" accelerator="ctrl O" />
@@ -106,6 +108,8 @@
 				{/if}
 			</AppMenu>
 		{/if}
+
+		<!--Debug menu-->
 		{#if $settings.debug}
 			<AppMenu name="Dev">
 				<button
@@ -146,6 +150,7 @@
 
 		<div class="spacer" data-tauri-drag-region="" />
 
+		<!--Playlist options-->
 		<TopBarPopover icon="settings" toolTip="Playlist Settings">
 			<span>
 				<input
@@ -266,6 +271,7 @@
 			toolTip="Toggle Hotkeys"
 		/>
 
+		<!--windows window buttons-->
 		{#if $uiPlatform == "win"}
 			<WinButtonsMs
 				onClose={async () => {
