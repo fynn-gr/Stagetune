@@ -114,7 +114,7 @@
 						$uiPlatform = "mac";
 					}}
 				>
-					<p>mac</p>
+					<p class="name">mac</p>
 				</button>
 				<button
 					class="app-menu-item"
@@ -122,7 +122,7 @@
 						$uiPlatform = "win";
 					}}
 				>
-					<p>win</p>
+					<p class="name">win</p>
 				</button>
 				<div class="seperator" />
 				<button
@@ -131,7 +131,7 @@
 						test(false);
 					}}
 				>
-					<p>Continuous Test</p>
+					<p class="name">Continuous Test</p>
 				</button>
 				<button
 					class="app-menu-item"
@@ -139,7 +139,7 @@
 						test(true);
 					}}
 				>
-					<p>Penetration Test</p>
+					<p class="name">Penetration Test</p>
 				</button>
 			</AppMenu>
 		{/if}
