@@ -193,6 +193,8 @@
 			showHotkeys = !showHotkeys;
 		} else if (event.payload == "showEditor" && $editMode) {
 			showEditor = !showEditor;
+		} else if (event.payload == "showSplash" && $editMode) {
+			$splash = true;
 		}
 	});
 

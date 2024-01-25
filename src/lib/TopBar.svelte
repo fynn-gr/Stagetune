@@ -10,6 +10,7 @@
 		playlist,
 		selectedItem,
 		settings,
+		splash,
 		uiPlatform,
 	} from "@/stores";
 	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
@@ -106,6 +107,11 @@
 					<div class="seperator" />
 					<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
 				{/if}
+				<div class="seperator"></div>
+				<AppMenuItem
+					id="showSplash"
+					name="Splash Screen"
+				/>
 			</AppMenu>
 		{/if}
 
