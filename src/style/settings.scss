@@ -1,35 +1,3 @@
-.topbar {
-	border-radius: var(--win-corner) var(--win-corner) 0 0 !important;
-
-	.win-buttons-mac {
-		position: fixed !important;
-	}
-
-	.win-buttons-ms {
-		position: fixed !important;
-	}
-}
-
-.body {
-	border-radius: var(--win-corner);
-}
-
-.window-body {
-	grid-template-columns: 1fr;
-	grid-template-rows: 80px auto;
-	grid-template-areas:
-		"topBar"
-		"content";
-	background-color: transparent;
-	height: auto;
-}
-
-.content {
-	grid-area: content;
-	display: flex;
-	background-color: var(--properties-BG);
-	border-radius: 0 0 var(--win-corner) var(--win-corner);
-}
 
 .content:has(.screen) {
 	display: flex;
@@ -73,40 +41,6 @@
 			justify-content: center;
 		}
 	}
-}
-
-.content:has(.option) {
-	display: flex;
-	flex-direction: column;
-	padding-bottom: 20px;
-
-	.option {
-		display: flex;
-		flex-direction: row;
-		font-size: 13px;
-		font-weight: 500;
-		margin: 20px 0 0 0;
-
-		.name {
-			width: 282px;
-			margin-right: 8px;
-			text-align: right;
-		}
-
-		input[type="checkbox"] {
-			margin: 2px 8px 2px 0;
-		}
-
-		select {
-			width: 280px;
-		}
-	}
-}
-
-.content:has(.keymap-frame) {
-	padding: 30px 0;
-	height: 500px;
-	overflow-y: scroll;
 }
 
 .content.update {

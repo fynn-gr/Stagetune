@@ -35,10 +35,14 @@
 	});
 
 	function setWindowHeight() {
-		let content: HTMLElement = document.querySelector(".content");
-		tick();
-		let height = content.offsetHeight;
-		appWindow.setSize(new LogicalSize(800, height + 80));
+		if ($uiPlatform == "mac") {
+			let content: HTMLElement = document.querySelector(".content");
+			tick();
+			let height = content.offsetHeight;
+			appWindow.setSize(new LogicalSize(800, height + 80));
+		} else {
+			appWindow.setSize(new LogicalSize(800, 500));
+		}
 	}
 
 	function onChange() {
@@ -51,10 +55,8 @@
 	});
 </script>
 
-<main class={"window-body dark " + $uiPlatform}>
-	<div class="topbar tabbar" data-tauri-drag-region>
-		<p class="title" data-tauri-drag-region>Settings</p>
-
+<main class={"window-body settings dark " + $uiPlatform}>
+	<div class="topbar title-bar" data-tauri-drag-region>
 		{#if $uiPlatform == "mac"}
 			<WinButtonsMac
 				CanMaximise={false}
@@ -65,7 +67,22 @@
 			/>
 		{/if}
 
-		<div class="spacer" data-tauri-drag-region />
+		<p class="window-title" data-tauri-drag-region>Settings</p>
+	
+		{#if $uiPlatform == "win"}
+			<WinButtonsMs
+				CanMaximise={false}
+				CanMinimize={false}
+				onClose={() => {
+					appWindow.close();
+				}}
+				CloseOnly={true}
+			/>
+		{/if}
+	
+	</div>
+
+	<div class="tabs" data-tauri-drag-region>	
 
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
@@ -129,125 +146,117 @@
 			<p>Developer</p>
 		</div>
 
-		<div class="spacer" data-tauri-drag-region />
-
-		{#if $uiPlatform == "win"}
-			<WinButtonsMs
-				CanMaximise={false}
-				CanMinimize={false}
-				onClose={() => {
-					appWindow.close();
-				}}
-				CloseOnly={true}
-			/>
-		{/if}
 	</div>
 
 	<!-- svelte-ignore empty-block -->
-	{#if settings != null}
-		{#if tab == "general"}
-			<div class="content">
-				<!--
-				<SettingsOption
-					name="Language: "
-					type="select"
-					bind:value={$settings.lang}
-					options={[
-						{ value: "en", name: "English" },
-						{ value: "de", name: "Deutsch" },
-					]}
-					{onChange}
-				/>
-				-->
-				<SettingsOption
-					name="UI size:"
-					type="select"
-					bind:value={$settings.ui_scale}
-					options={[
-						{ value: 1, name: "Small" },
-						{ value: 1.3, name: "Standart" },
-						{ value: 1.6, name: "Large" },
-						{ value: 2, name: "Double" },
-					]}
-					{onChange}
-				/>
-				<SettingsOption
-					name="Splash Screen:"
-					type="checkbox"
-					bind:value={$settings.show_splash}
-					checkboxName="Show on startup"
-					{onChange}
-				/>
-				<SettingsOption
-					name="Performance: "
-					type="checkbox"
-					bind:value={$settings.performance_mode}
-					checkboxName="Low performance mode"
-					{onChange}
-				/>
-			</div>
-		{:else if tab == "keymap"}
-			<div class="content">
-				<div class="keymap-frame">
-					<Keymap />
+	<div class="content-wrapper">
+
+		{#if settings != null}
+			{#if tab == "general"}
+				<div class="content">
+					<!--
+					<SettingsOption
+						name="Language: "
+						type="select"
+						bind:value={$settings.lang}
+						options={[
+							{ value: "en", name: "English" },
+							{ value: "de", name: "Deutsch" },
+						]}
+						{onChange}
+					/>
+					-->
+					<SettingsOption
+						name="UI size:"
+						type="select"
+						bind:value={$settings.ui_scale}
+						options={[
+							{ value: 1, name: "Small" },
+							{ value: 1.3, name: "Standart" },
+							{ value: 1.6, name: "Large" },
+							{ value: 2, name: "Double" },
+						]}
+						{onChange}
+					/>
+					<SettingsOption
+						name="Splash Screen:"
+						type="checkbox"
+						bind:value={$settings.show_splash}
+						checkboxName="Show on startup"
+						{onChange}
+					/>
+					<SettingsOption
+						name="Performance: "
+						type="checkbox"
+						bind:value={$settings.performance_mode}
+						checkboxName="Low performance mode"
+						{onChange}
+					/>
 				</div>
-			</div>
-		{:else if tab == "projector"}
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<div class="content">
-				{#each screens as screen, i}
-					<div
-						class="screen"
-						class:active={i == projectorScreen}
-						on:click={() => {}}
-					>
-						<div
-							class="display"
-							style={`aspect-ratio: ${screen.size.width} / ${screen.size.height};`}
-						>
-							<p>
-								{i == projectorScreen
-									? "Projector"
-									: i == mainScreen
-									? "Main"
-									: ""}
-							</p>
-						</div>
-						<span>
-							<p>{screen.name}</p>
-							<p>
-								{screen.size.width} x {screen.size.height} @{screen.scaleFactor}
-							</p>
-						</span>
+			{:else if tab == "keymap"}
+				<div class="content">
+					<div class="keymap-frame">
+						<Keymap />
 					</div>
-				{/each}
-			</div>
-		{:else if tab == "update"}
-			<div class="content update">
-				<p class="update">Stagetune {stagetuneVersion || ""}</p>
-				<p>Tauri {tauriVersion}</p>
-				<p>created by Fynn Gr.</p>
-				<p>GPL 3.0</p>
-			</div>
-		{:else}
-			<div class="content dev">
-				<SettingsOption
-					name="Developer Features:"
-					type="checkbox"
-					bind:value={$settings.debug}
-					checkboxName="Enable developer features"
-					{onChange}
-				/>
-				<SettingsOption
-					name=""
-					type="checkbox"
-					bind:value={$settings.video}
-					checkboxName="Enable projector"
-					{onChange}
-				/>
-			</div>
+				</div>
+			{:else if tab == "projector"}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div class="content">
+					{#each screens as screen, i}
+						<div
+							class="screen"
+							class:active={i == projectorScreen}
+							on:click={() => {}}
+						>
+							<div
+								class="display"
+								style={`aspect-ratio: ${screen.size.width} / ${screen.size.height};`}
+							>
+								<p>
+									{i == projectorScreen
+										? "Projector"
+										: i == mainScreen
+										? "Main"
+										: ""}
+								</p>
+							</div>
+							<span>
+								<p>{screen.name}</p>
+								<p>
+									{screen.size.width} x {screen.size.height} @{screen.scaleFactor}
+								</p>
+							</span>
+						</div>
+					{/each}
+				</div>
+			{:else if tab == "update"}
+				<div class="content update">
+					<p class="update">Stagetune {stagetuneVersion || ""}</p>
+					<p>Tauri {tauriVersion}</p>
+					<p>created by Fynn Gr.</p>
+					<p>GPL 3.0</p>
+				</div>
+			{:else}
+				<div class="content dev">
+					<SettingsOption
+						name="Developer Features:"
+						type="checkbox"
+						bind:value={$settings.debug}
+						checkboxName="Enable developer features"
+						{onChange}
+					/>
+					<SettingsOption
+						name=""
+						type="checkbox"
+						bind:value={$settings.video}
+						checkboxName="Enable projector"
+						{onChange}
+					/>
+				</div>
+			{/if}
 		{/if}
-	{/if}
+		
+	</div>
 
 	<div class="window-rim" />
 </main>
