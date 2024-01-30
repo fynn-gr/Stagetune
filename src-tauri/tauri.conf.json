@@ -73,7 +73,15 @@
 			"csp": "default-src: 'self'; 'unsafe-inline'; media-src 'self' asset:"
 		},
 		"updater": {
-			"active": false
+			"active": true,
+			"endpoints": [
+				"https://gist.github.com/Fynn-G/e9bab277c8a1a0bca2126dfcc84f8068"
+			],
+			"dialog": true,
+			"windows": {
+				"installMode": "basicUi"
+			},
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU3RTZBNDU0ODcxMDE4RDIKUldUU0dCQ0hWS1RtNTd1dkQ3RlBlcXBoMDg3bUlJL00wNG8vZFRwY3Y0eFJPV1ErWmkzQzEyWlkK"
 		},
 		"windows": [
 			{
