@@ -235,6 +235,12 @@
 					<p>Tauri {tauriVersion}</p>
 					<p>created by Fynn Gr.</p>
 					<p>GPL 3.0</p>
+
+					<button
+						on:click={() => {
+							console.log("check for updates")
+							emit("tauri://update")}}
+					>Check for Updates</button>
 				</div>
 			{:else}
 				<div class="content dev">
