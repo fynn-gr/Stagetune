@@ -8,7 +8,7 @@
 	},
 	"package": {
 		"productName": "Stagetune",
-		"version": "1.0.1"
+		"version": "1.0.0"
 	},
 	"tauri": {
 		"allowlist": {
@@ -75,11 +75,11 @@
 		"updater": {
 			"active": true,
 			"endpoints": [
-				"https://gist.githubusercontent.com/Fynn-G/e9bab277c8a1a0bca2126dfcc84f8068/raw/92aa96c703e28691c647eda82a6aaa3f89ad3948/gistfile1.txt"
+				"https://gist.githubusercontent.com/Fynn-G/e9bab277c8a1a0bca2126dfcc84f8068/raw/"
 			],
 			"dialog": true,
 			"windows": {
-				"installMode": "passive"
+				"installMode": "basicUi"
 			},
 			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU3RTZBNDU0ODcxMDE4RDIKUldUU0dCQ0hWS1RtNTd1dkQ3RlBlcXBoMDg3bUlJL00wNG8vZFRwY3Y0eFJPV1ErWmkzQzEyWlkK"
 		},
