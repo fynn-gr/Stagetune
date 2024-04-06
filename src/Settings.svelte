@@ -232,7 +232,7 @@
 			{:else if tab == "update"}
 				<div class="content update">
 					<p class="update">Stagetune {stagetuneVersion || ""}</p>
-					<p>Tauri {tauriVersion}</p>
+					<p>Tauri {tauriVersion}</p><br>
 					<p>created by Fynn Gr.</p>
 					<p>GPL 3.0</p>
 				</div>

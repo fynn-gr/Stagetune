@@ -5,6 +5,7 @@
         "square",
         "settings_tabs",
         "keys",
-        "menu_win"
+        "menu_win",
+        "std"
     ]
 }

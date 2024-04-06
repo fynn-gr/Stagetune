@@ -92,6 +92,6 @@
 >
 	<p class="key">{key}</p>
 	<p class="name" class:placeholder={track == null}>
-		{track ? track.name : ""}
+		{track ? track.name : $currentDragging != null ? "link to Hotkey" : ""}
 	</p>
 </div>
