@@ -111,10 +111,13 @@
 			}}
 			on:blur={() => {
 				isEditing.update(e => e - 1);
+				console.log("old text: ", annotation.text);
+				console.log("inner HTML: ", annotationEl.innerHTML)
 				annotation.text = annotationEl.innerHTML;
+				console.log("new save: ", annotation.text)
 			}}
 		>
-			<p>{@html annotation.text}</p>
+			{@html annotation.text}
 		</div>
 	</div>
 {:else}
