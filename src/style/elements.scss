@@ -700,20 +700,18 @@
 		}
 
 		&.missing {
-			.annotationStart {
-				background-color: #aa0000;
+			opacity: 100%;
+
+			.annotation-attached {
+				background-color: #dd0000;
 			}
 
 			.inner {
 				background-color: #dd0000;
 
-				* {
-					opacity: 70%;
+				& > :not(.title) {
+					opacity: 40%;
 				}
-			}
-
-			.annotationEnd {
-				background-color: #aa0000;
 			}
 		}
 

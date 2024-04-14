@@ -15,6 +15,8 @@
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
 	import type { playListItem } from "@/utils";
+	import { exists } from "@tauri-apps/api/fs";
+	import { message } from "@tauri-apps/api/dialog";
 
 	export let track: playListItem;
 	export let id: number;
@@ -99,7 +101,7 @@
 		if (ctx.currentTime - track.startedAt >= (track.length - cutIn) * 0.96) {
 			//reached end of track
 			console.log("ended");
-			console.log(ctx.currentTime - track.startedAt, track.length * 0.96)
+			console.log(ctx.currentTime - track.startedAt, track.length * 0.96);
 			if (track.repeat) {
 				stop(true, false);
 				play(0);
@@ -203,7 +205,9 @@
 				console.log("stop");
 				try {
 					input.stop();
-				} catch (err) {console.log(err)}
+				} catch (err) {
+					console.log(err);
+				}
 				fadeNode = ctx.createGain();
 				fadeNode.connect(gainNode);
 				input.connect(fadeNode);
@@ -237,12 +241,22 @@
 		console.log($playlistPath);
 		console.log(track.path);
 		console.log(absPath);
-		const response = await fetch(convertFileSrc(absPath));
-		const arrayBuffer = await response.arrayBuffer();
-		track.buffer = await ctx.decodeAudioData(arrayBuffer);
-		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
-		loaded = true;
-		track.length = track.buffer.duration;
+
+		if (await exists(absPath)) {
+			const response = await fetch(convertFileSrc(absPath));
+			const arrayBuffer = await response.arrayBuffer();
+			track.buffer = await ctx.decodeAudioData(arrayBuffer);
+			input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
+			loaded = true;
+			track.length = track.buffer.duration;
+		} else {
+			console.error(convertFileSrc(absPath), "track not found");
+			track.missing = true;
+			message("Media File not found: " + absPath, {
+				title: "File not found",
+				type: "warning",
+			});
+		}
 
 		//track = track
 		console.log(track);
@@ -276,7 +290,7 @@
 <div
 	class="playlist-item track"
 	class:selected={$selectedItem == id}
-	class:missing
+	class:missing={track.missing}
 	class:drag-over={dragover}
 	class:loaded={track.buffer != undefined}
 	draggable={$editMode}
@@ -370,8 +384,10 @@
 					{track.name}
 				</div>
 			</div>
+		{:else if track.missing}
+			<div class="title"><p class="input">Missing File</p></div>
 		{:else}
-			<div class="title"><p class="input">loading...</p></div>
+			<div class="title"><p class="input">Loading...</p></div>
 		{/if}
 
 		<div class="options">

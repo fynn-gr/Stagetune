@@ -24,6 +24,7 @@ export interface playListItem {
 	pausedAt?: number;
 	inFade?: "in" | "out";
 	hotkey?: string;
+	missing: boolean;
 
 	//loop
 	tracks?: Array<playListItem>;
@@ -52,6 +53,7 @@ export function createPlaylistTrack(
 		startedAt: 0, //ctx time track started at
 		pausedAt: 0, //track time paused at
 		inFade: null,
+		missing: false,
 	};
 }
 

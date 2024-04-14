@@ -107,11 +107,8 @@
 					<div class="seperator" />
 					<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
 				{/if}
-				<div class="seperator"></div>
-				<AppMenuItem
-					id="showSplash"
-					name="Splash Screen"
-				/>
+				<div class="seperator" />
+				<AppMenuItem id="showSplash" name="Splash Screen" />
 			</AppMenu>
 		{/if}
 

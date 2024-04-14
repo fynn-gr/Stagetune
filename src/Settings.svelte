@@ -68,7 +68,7 @@
 		{/if}
 
 		<p class="window-title" data-tauri-drag-region>Settings</p>
-	
+
 		{#if $uiPlatform == "win"}
 			<WinButtonsMs
 				CanMaximise={false}
@@ -79,11 +79,9 @@
 				CloseOnly={true}
 			/>
 		{/if}
-	
 	</div>
 
-	<div class="tabs" data-tauri-drag-region>	
-
+	<div class="tabs" data-tauri-drag-region>
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="tab"
@@ -145,12 +143,10 @@
 			<img src="./icons/settings_tabs/dev.svg" alt="" />
 			<p>Developer</p>
 		</div>
-
 	</div>
 
 	<!-- svelte-ignore empty-block -->
 	<div class="content-wrapper">
-
 		{#if settings != null}
 			{#if tab == "general"}
 				<div class="content">
@@ -232,7 +228,8 @@
 			{:else if tab == "update"}
 				<div class="content update">
 					<p class="update">Stagetune {stagetuneVersion || ""}</p>
-					<p>Tauri {tauriVersion}</p><br>
+					<p>Tauri {tauriVersion}</p>
+					<br />
 					<p>created by Fynn Gr.</p>
 					<p>GPL 3.0</p>
 				</div>
@@ -255,7 +252,6 @@
 				</div>
 			{/if}
 		{/if}
-		
 	</div>
 
 	<div class="window-rim" />

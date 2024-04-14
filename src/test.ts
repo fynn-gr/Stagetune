@@ -19,8 +19,8 @@ export function test(pen: boolean) {
 		"repeat track",
 		"auto reset track on pause",
 		"Add attached anotation",
-		"current playing"
-	]
+		"current playing",
+	];
 	document.addEventListener("keydown", e => {
 		if (e.code == "Escape") stop = true;
 	});
@@ -67,14 +67,12 @@ export function test(pen: boolean) {
 				break;
 			case 5: //button press
 				let buttons = document.querySelectorAll("button");
-				let button = buttons[getRndInteger(0, buttons.length - 1)]
+				let button = buttons[getRndInteger(0, buttons.length - 1)];
 				if (allowedButtons.includes(button.title)) {
-					console.log("button press", button.title)
-					button.dispatchEvent(
-						new MouseEvent("click", {})
-					);
+					console.log("button press", button.title);
+					button.dispatchEvent(new MouseEvent("click", {}));
 				} else {
-					console.log("not allowed button")
+					console.log("not allowed button");
 				}
 				break;
 		}
