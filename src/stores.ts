@@ -270,49 +270,7 @@ export const editMode = writable(true);
 export const uiPlatform = writable("win");
 export const theme = writable("dark"); //unused
 export const splash = writable(false);
-export const playlist = writable([
-	/*
-	{
-		type: "loop",
-		name: "Einlass",
-		tracks: [
-			{
-				type: "track",
-				origin: "playlist",
-				path: "/Volumes/T7/Files extern/Alte Schule/Musik/Test/sus.mp3",
-				name: "3",
-				playing: false,
-				state: 0,
-				fade: [0, 0],
-				edit: [0, 0],
-				annotation: [null, null]
-			},
-			{
-				type: "track",
-				origin: "playlist",
-				path: "/Volumes/T7/Files extern/Alte Schule/Musik/Test/sus.mp3",
-				name: "4",
-				playing: false,
-				state: 0,
-				fade: [0, 0],
-				edit: [0, 0],
-				annotation: [null, null]
-			},
-			{
-				type: "track",
-				origin: "playlist",
-				path: "/Volumes/T7/Files extern/Alte Schule/Musik/Test/sus.mp3",
-				name: "4",
-				playing: false,
-				state: 0,
-				fade: [0, 0],
-				edit: [0, 0],
-				annotation: [null, null]
-			},
-		]
-	}
-	*/
-]);
+export const playlist = writable([]);
 export const selectedItem = writable(null);
 export const hotkeys = writable([
 	{

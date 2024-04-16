@@ -3,10 +3,8 @@ import { playlist } from "./stores";
 import { emit } from "@tauri-apps/api/event";
 
 export interface playListItem {
-	type: string; //track, video, annotation, loop
+	type: string; //track, video, annotation
 	origin: string;
-
-	//track, video
 	path?: string;
 	name?: string;
 	length?: number;
@@ -25,9 +23,6 @@ export interface playListItem {
 	inFade?: "in" | "out";
 	hotkey?: string;
 	missing: boolean;
-
-	//loop
-	tracks?: Array<playListItem>;
 }
 
 export function createPlaylistTrack(
