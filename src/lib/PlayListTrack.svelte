@@ -34,8 +34,11 @@
 	let panNode: StereoPannerNode;
 
 	function handleDragStart(e) {
+		//calc pointer position
 		let rec = e.target.getBoundingClientRect();
 		let x = e.clientX - rec.left;
+
+		//drag if pointer on drag area
 		if (x < 80) {
 			e.dataTransfer.dropEffect = "copy";
 			e.dataTransfer.setData("text/plain", "placehold");
@@ -385,7 +388,9 @@
 				</div>
 			</div>
 		{:else if track.missing}
-			<div class="title"><p class="input">{"File not found: " + track.path}</p></div>
+			<div class="title">
+				<p class="input">{"File not found: " + track.path}</p>
+			</div>
 		{:else}
 			<div class="title"><p class="input">Loading...</p></div>
 		{/if}
