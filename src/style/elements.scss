@@ -710,7 +710,7 @@
 				background-color: #dd0000;
 
 				& > :not(.title) {
-					opacity: 40%;
+					display: none;
 				}
 			}
 		}

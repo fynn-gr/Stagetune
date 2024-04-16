@@ -385,7 +385,7 @@
 				</div>
 			</div>
 		{:else if track.missing}
-			<div class="title"><p class="input">Missing File</p></div>
+			<div class="title"><p class="input">{"File not found: " + track.path}</p></div>
 		{:else}
 			<div class="title"><p class="input">Loading...</p></div>
 		{/if}
