@@ -24,8 +24,7 @@
 	export let masterGain: GainNode;
 	let loaded = false;
 	let dragging = false;
-	let dragover = false;
-	let missing = false;
+	let dragover: "top" | "bottom" = null;
 	let titleEl: HTMLElement;
 
 	let input: AudioBufferSourceNode;
@@ -61,18 +60,28 @@
 	function handleDrop(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		console.log("handle drop")
+
+		let newPosition;
+		let rec = e.target.getBoundingClientRect();
+		let y = e.clientY - rec.top;
+		console.log(y > rec.height / 2)
+		if (y > rec.height / 2) {
+			newPosition = id;
+		} else {
+			newPosition = id + 1;
+		}
+
 		if ($currentDragging.origin == "playlist") {
-			console.log("drop form playlist", e);
+			//console.log("drop form playlist", e);
 			let oldPosition = $playlist.indexOf($currentDragging);
-			let newPosition = id;
 			playlist.update(e => {
 				e.splice(oldPosition, 1);
 				e.splice(newPosition, 0, $currentDragging);
 				return e;
 			});
 		} else if ($currentDragging.origin == "src") {
-			console.log("drop form src", e);
-			let newPosition = id;
+			//console.log("drop form src", e);
 			playlist.update(e => {
 				e.splice(
 					newPosition,
@@ -89,15 +98,26 @@
 			$selectedItem = newPosition;
 		} else {
 		}
+
+
 		$currentDragging = null;
 	}
 
 	function handleDragEnter(e) {
-		dragover = true;
+		e.stopPropagation();
+
+		let rec = e.target.getBoundingClientRect();
+		let y = e.clientY - rec.top;
+		//console.log(y,rec.height / 2)
+		if (y > rec.height / 2) {
+			dragover = "top";
+		} else {
+			dragover = "bottom";
+		}
 	}
 
 	function handleDragLeave(e) {
-		dragover = false;
+		dragover = null;
 	}
 
 	function onEnd() {
@@ -286,7 +306,7 @@
 	$: waveformData = loaded
 		? waveformCalc(track.buffer, 300, cutIn / track.length)
 		: undefined;
-	$: $currentDragging == null ? (dragover = false) : null;
+	$: $currentDragging == null ? (dragover = null) : null;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -294,12 +314,13 @@
 	class="playlist-item track"
 	class:selected={$selectedItem == id}
 	class:missing={track.missing}
-	class:drag-over={dragover}
+	class:drag-top={dragover == "bottom"}
+	class:drag-bottom={dragover == "top"}
 	class:loaded={track.buffer != undefined}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
-	on:dragenter={handleDragEnter}
+	on:dragover={handleDragEnter}
 	on:dragleave={handleDragLeave}
 	on:drop={handleDrop}
 	on:click={e => {

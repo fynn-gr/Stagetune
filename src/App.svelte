@@ -55,6 +55,7 @@
 	let showCurrent = true;
 	let showHotkeys = true;
 	let projector = false;
+	let dragOverPlaylist = false;
 
 	checkSettingsExist();
 
@@ -96,6 +97,7 @@
 		} else {
 		}
 		$currentDragging = null;
+		dragOverPlaylist = false;
 	}
 
 	function moveUp() {
@@ -355,7 +357,12 @@
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
+			dragOverPlaylist = true;
 			return false;
+		}}
+		on:dragleave={e => {
+			e.preventDefault();
+			dragOverPlaylist = false;
 		}}
 		bind:this={playlistEl}
 	>
@@ -393,6 +400,9 @@
 					/>
 				{/if}
 			{/each}
+			{#if dragOverPlaylist}
+				<div class="drag-end"></div>
+			{/if}
 		{:else}
 			<p class="placeholder">Drag Track here</p>
 		{/if}
