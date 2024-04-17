@@ -24,8 +24,7 @@
 	export let masterGain: GainNode;
 	let loaded = false;
 	let dragging = false;
-	let dragover = false;
-	let missing = false;
+	let dragover: "top" | "bottom" = null;
 	let titleEl: HTMLElement;
 
 	let input: AudioBufferSourceNode;
@@ -93,11 +92,39 @@
 	}
 
 	function handleDragEnter(e) {
-		dragover = true;
+		let rec = e.target.getBoundingClientRect();
+		let y = e.clientY - rec.top;
+		console.log(y,rec.height / 2)
+
+		if (y > rec.height / 2) {
+			//top half
+			//dragover = "top";
+			playlist.update(e => {
+				for(let i = 0; i < $playlist.length; i++) {
+					if ($playlist[i].type == "dragPreview") {
+						e.splice(i, 1)
+					}
+				}
+				e.splice(id, 0, {type: "dragPreview"})
+				return e;
+			})
+		} else {
+			//bottom half
+			//dragover = "bottom";
+			playlist.update(e => {
+				for(let i = 0; i < $playlist.length; i++) {
+					if ($playlist[i].type == "dragPreview") {
+						e.splice(i, 1)
+					}
+				}
+				e.splice(id - 1, 0, {type: "dragPreview"})
+				return e;
+			})
+		}
 	}
 
 	function handleDragLeave(e) {
-		dragover = false;
+		dragover = null;
 	}
 
 	function onEnd() {
@@ -286,7 +313,7 @@
 	$: waveformData = loaded
 		? waveformCalc(track.buffer, 300, cutIn / track.length)
 		: undefined;
-	$: $currentDragging == null ? (dragover = false) : null;
+	$: $currentDragging == null ? (dragover = null) : null;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -294,12 +321,13 @@
 	class="playlist-item track"
 	class:selected={$selectedItem == id}
 	class:missing={track.missing}
-	class:drag-over={dragover}
+	class:drag-top={dragover == "bottom"}
+	class:drag-bottom={dragover == "top"}
 	class:loaded={track.buffer != undefined}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
-	on:dragenter={handleDragEnter}
+	on:dragover={handleDragEnter}
 	on:dragleave={handleDragLeave}
 	on:drop={handleDrop}
 	on:click={e => {

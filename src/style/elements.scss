@@ -451,6 +451,14 @@
 		border-top: 2rem solid var(--secondary);
 	}
 
+	.drag-preview {
+		.inner {
+			height: 60rem;
+			border: 4rem solid teal;
+			background-color: transparent;
+		}
+	}
+
 	.selected {
 		&:has(.input:focus, input[type="number"]:focus) {
 			.inner {

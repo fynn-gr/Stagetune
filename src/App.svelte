@@ -47,6 +47,7 @@
 	} from "./saveLoad";
 	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 	import PropNumber from "./pureUI/components/props/PropNumber.svelte";
+	import PlaylistDragPreview from "./lib/PlaylistDragPreview.svelte";
 
 	let playlistEl: HTMLElement;
 	let annotationWidth: number = 25;
@@ -391,6 +392,8 @@
 						bind:track={t}
 						id={i}
 					/>
+				{:else if t.type == "dragPreview"}
+					<PlaylistDragPreview />
 				{/if}
 			{/each}
 		{:else}
