@@ -55,6 +55,7 @@
 	let showCurrent = true;
 	let showHotkeys = true;
 	let projector = false;
+	let dragOverPlaylist = false;
 
 	checkSettingsExist();
 
@@ -73,8 +74,9 @@
 
 	function handleDropPlaylist(e) {
 		e.preventDefault();
+
 		if ($currentDragging.origin == "playlist") {
-			console.log("drop form playlist", e);
+			console.log("drop form playlist on Playlist");
 			let oldPosition = $playlist.indexOf($currentDragging);
 			playlist.update(e => {
 				e.splice(oldPosition, 1);
@@ -83,7 +85,7 @@
 			$playlist.push($currentDragging);
 			$playlist = $playlist;
 		} else if ($currentDragging.origin == "src") {
-			console.log("drop form src", e);
+			console.log("drop form src on Playlist");
 			$playlist.push(
 				createPlaylistTrack(
 					"playlist",
@@ -96,6 +98,7 @@
 		} else {
 		}
 		$currentDragging = null;
+		dragOverPlaylist = false;
 	}
 
 	function moveUp() {
@@ -355,7 +358,15 @@
 		on:drop={handleDropPlaylist}
 		on:dragover={e => {
 			e.preventDefault();
-			return false;
+			if (e.target.classList.contains("playlist")) {
+				console.log("dragover Playlist");
+				dragOverPlaylist = true;
+			}
+		}}
+		on:dragleave={e => {
+			console.log("drag leave Playlist");
+			e.preventDefault();
+			dragOverPlaylist = false;
 		}}
 		bind:this={playlistEl}
 	>
@@ -393,6 +404,9 @@
 					/>
 				{/if}
 			{/each}
+			{#if dragOverPlaylist}
+				<div class="drag-end" />
+			{/if}
 		{:else}
 			<p class="placeholder">Drag Track here</p>
 		{/if}

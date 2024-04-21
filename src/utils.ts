@@ -23,6 +23,7 @@ export interface playListItem {
 	inFade?: "in" | "out"; //track is currently in fade or undefined
 	hotkey?: string; //hotkey number assigned, undefined if not assigned
 	missing: boolean; //true if file could not be found
+	loaded: boolean; //if track finished loading
 }
 
 export function createPlaylistTrack(
@@ -37,18 +38,19 @@ export function createPlaylistTrack(
 		path: path,
 		name: name,
 		playing: false,
-		state: 0, //seconds playing since start
-		volume: 80, //volume (standart is 80 of 100 max)
-		pan: 0, // -1 to 1
+		state: 0,
+		volume: 80,
+		pan: 0,
 		repeat: false,
 		autoReset: false,
-		fade: { in: 0, out: 0 }, //fade in and out in seconds
-		edit: { in: 0, out: 0 }, // cut in in seconds (TODO: cutout)
+		fade: { in: 0, out: 0 },
+		edit: { in: 0, out: 0 },
 		annotation: null,
-		startedAt: 0, //ctx time track started at
-		pausedAt: 0, //track time paused at
+		startedAt: 0,
+		pausedAt: 0,
 		inFade: null,
 		missing: false,
+		loaded: false,
 	};
 }
 
