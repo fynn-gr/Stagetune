@@ -22,7 +22,6 @@
 	export let id: number;
 	export let ctx: AudioContext;
 	export let masterGain: GainNode;
-	let loaded = false;
 	let dragging = false;
 	let dragover: "top" | "bottom" = null;
 	let titleEl: HTMLElement;
@@ -44,7 +43,7 @@
 			$currentDragging = track;
 			$currentDragging.origin = "playlist";
 			dragging = true;
-			console.log("current dragging: ", $currentDragging);
+			console.log("start dragging: ", $currentDragging);
 		} else {
 			e.preventDefault();
 		}
@@ -54,26 +53,26 @@
 
 	function handleDragEnd(e) {
 		dragging = false;
-		//console.log("end dragging", e);
+		console.log("end dragging");
 	}
 
 	function handleDrop(e) {
+		console.log("handle drop on Track");
 		e.preventDefault();
 		e.stopPropagation();
-		console.log("handle drop")
 
-		let newPosition;
 		let rec = e.target.getBoundingClientRect();
 		let y = e.clientY - rec.top;
-		console.log(y > rec.height / 2)
+
+		let newPosition;
 		if (y > rec.height / 2) {
-			newPosition = id;
-		} else {
 			newPosition = id + 1;
+		} else {
+			newPosition = id;
 		}
 
 		if ($currentDragging.origin == "playlist") {
-			//console.log("drop form playlist", e);
+			console.log("drop form playlist");
 			let oldPosition = $playlist.indexOf($currentDragging);
 			playlist.update(e => {
 				e.splice(oldPosition, 1);
@@ -81,8 +80,9 @@
 				return e;
 			});
 		} else if ($currentDragging.origin == "src") {
-			//console.log("drop form src", e);
+			console.log("drop form src", $playlist);
 			playlist.update(e => {
+				console.log("current Dragging: ", $currentDragging);
 				e.splice(
 					newPosition,
 					0,
@@ -95,19 +95,19 @@
 				);
 				return e;
 			});
+			console.log($playlist);
 			$selectedItem = newPosition;
 		} else {
 		}
-
 
 		$currentDragging = null;
 	}
 
 	function handleDragEnter(e) {
-		e.stopPropagation();
-
+		//calc mouse position
 		let rec = e.target.getBoundingClientRect();
 		let y = e.clientY - rec.top;
+
 		//console.log(y,rec.height / 2)
 		if (y > rec.height / 2) {
 			dragover = "top";
@@ -149,6 +149,44 @@
 				track.state = cutTrackLength * skipFac;
 			}
 		}
+	}
+
+	async function load() {
+		//load file
+		const absPath = await join($playlistPath, track.path);
+		console.log(absPath);
+
+		//test file exist to throw error if file missing
+		if (await exists(absPath)) {
+			const response = await fetch(convertFileSrc(absPath));
+			const arrayBuffer = await response.arrayBuffer();
+			track.buffer = await ctx.decodeAudioData(arrayBuffer);
+			input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
+			track.loaded = true;
+			track.length = track.buffer.duration;
+		} else {
+			console.error(convertFileSrc(absPath), "track not found");
+			track.missing = true;
+			message("Media File not found: " + absPath, {
+				title: "File not found",
+				type: "warning",
+			});
+		}
+
+		//console.log("track on load: ", $playlist);
+
+		//create audio chain
+		gainNode = ctx.createGain();
+		fadeNode = ctx.createGain();
+		panNode = ctx.createStereoPanner();
+		input
+			.connect(fadeNode)
+			.connect(gainNode)
+			.connect(panNode)
+			.connect(masterGain);
+		input.onended = () => {
+			onEnd();
+		};
 	}
 
 	export function playPause() {
@@ -259,42 +297,7 @@
 	}
 
 	onMount(async () => {
-		//load file
-		const absPath = await join($playlistPath, track.path);
-		console.log($playlistPath);
-		console.log(track.path);
-		console.log(absPath);
-
-		if (await exists(absPath)) {
-			const response = await fetch(convertFileSrc(absPath));
-			const arrayBuffer = await response.arrayBuffer();
-			track.buffer = await ctx.decodeAudioData(arrayBuffer);
-			input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
-			loaded = true;
-			track.length = track.buffer.duration;
-		} else {
-			console.error(convertFileSrc(absPath), "track not found");
-			track.missing = true;
-			message("Media File not found: " + absPath, {
-				title: "File not found",
-				type: "warning",
-			});
-		}
-
-		//track = track
-		console.log(track);
-
-		gainNode = ctx.createGain();
-		fadeNode = ctx.createGain();
-		panNode = ctx.createStereoPanner();
-		input
-			.connect(fadeNode)
-			.connect(gainNode)
-			.connect(panNode)
-			.connect(masterGain);
-		input.onended = () => {
-			onEnd();
-		};
+		load();
 	});
 
 	$: cutIn = track.edit.in;
@@ -303,10 +306,16 @@
 	$: gainNode
 		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 		: null;
-	$: waveformData = loaded
+	$: waveformData = track.loaded
 		? waveformCalc(track.buffer, 300, cutIn / track.length)
 		: undefined;
 	$: $currentDragging == null ? (dragover = null) : null;
+	$: {
+		console.log(track);
+		if (!track.loaded) {
+			load();
+		}
+	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -391,7 +400,7 @@
 		</button>
 
 		<!--name-->
-		{#if track.buffer != undefined}
+		{#if track.buffer}
 			<div class="title">
 				<div
 					class="input"
