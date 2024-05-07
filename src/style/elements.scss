@@ -1132,9 +1132,10 @@
 	border-top-left-radius: var(--win-corner) !important;
 
 	.topbar-button.mode-switch {
-		width: 80px !important;
+		width: auto !important;
 		display: flex;
 		flex-direction: row;
+		padding: 0 4px;
 		line-height: 28px;
 		font-size: 14px;
 		font-weight: 600;
@@ -1142,8 +1143,19 @@
 		color: var(--text);
 		background-color: transparent;
 
-		p {
-			margin: auto 0;
+		div {
+			display: flex;
+			flex-direction: column;
+			height: 200%;
+
+			p {
+				padding: 0 4px;
+				height: 50%;
+
+				&:last-child {
+					translate: 0 -100%;
+				}
+			}
 		}
 	}
 
