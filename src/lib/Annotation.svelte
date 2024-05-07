@@ -127,7 +127,7 @@
 					annotation = { text: "Annotation", color: null };
 				}}
 			>
-				<img src={`./icons/tb_${$uiPlatform}/plus.svg`} alt="" />
+				<img src={`./icons/tool_bar/plus.svg`} alt="" />
 			</button>
 		{/if}
 	</div>
