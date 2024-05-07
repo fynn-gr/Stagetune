@@ -53,15 +53,15 @@
 						]);
 					}}
 				>
-					<img src="/icons/square/web.svg" />Website</button
+					<img src="/icons/std/web.svg" />Website</button
 				>
-				<button class="online"><img src="/icons/square/web.svg" />Source</button
-				>
-				<button class="online"
-					><img src="/icons/square/web.svg" />Bug Tracker</button
+				<button class="online"><img src="/icons/std/web.svg" />Source</button
 				>
 				<button class="online"
-					><img src="/icons/square/web.svg" />License</button
+					><img src="/icons/std/web.svg" />Bug Tracker</button
+				>
+				<button class="online"
+					><img src="/icons/std/web.svg" />License</button
 				>
 			</span>
 			<span>
@@ -72,7 +72,7 @@
 							e.stopPropagation();
 						}}
 					>
-						<img src="/icons/square/file.svg" />
+						<img src="/icons/std/file.svg" />
 						{item.split("\\").pop().split("/").pop()}
 					</button>
 				{/each}

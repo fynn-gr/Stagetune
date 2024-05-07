@@ -23,19 +23,19 @@
 
 			if (cls.classList.contains("toolbar")) {
 				topBarType = "toolbar-button";
-				topBarShort = "tb";
+				topBarShort = "tool_bar";
 			} else if (cls.classList.contains("buttonbar")) {
 				topBarType = "buttonbar-button";
-				topBarShort = "bb";
+				topBarShort = "button_bar";
 			}
 		}
 
-		iconPath = `./icons/${topBarShort}_${$uiPlatform}/${icon}.svg`;
+		iconPath = `./icons/${topBarShort}/${icon}.svg`;
 
 		if (iconActive == null) {
 			iconPathActive = iconPath;
 		} else {
-			iconPathActive = `./icons/${topBarShort}_${$uiPlatform}/${iconActive}.svg`;
+			iconPathActive = `./icons/${topBarShort}/${iconActive}.svg`;
 		}
 	});
 </script>
@@ -54,5 +54,8 @@
 >
 	<img src={active ? iconPathActive : iconPath} alt={toolTip} />
 
-	<p>{$editMode ? "Edit" : "Live"}</p>
+	<div>
+		<p style={`visibility: ${$editMode ? 'visible' : 'hidden'}`}>Edit</p>
+		<p style={`visibility: ${$editMode ? 'hidden' : 'visible'}`}>Live</p>
+	</div>
 </button>
