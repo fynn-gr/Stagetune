@@ -18,7 +18,7 @@
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
 	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
 	import TopBarPopover from "@/pureUI/components/TopBarPopover.svelte";
-	import { test } from "@/test";
+	import { test } from "@/test/Loop.test";
 
 	export let showTracklist;
 	export let showEditor;

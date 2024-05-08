@@ -20,6 +20,7 @@ import {
 } from "./stores";
 import { getVersion } from "@tauri-apps/api/app";
 import { basename } from "@tauri-apps/api/path";
+import { emit } from "@tauri-apps/api/event";
 
 export function openDir() {
 	try {
@@ -173,6 +174,7 @@ export function saveSettings() {
 					dir: BaseDirectory.Config,
 				}
 			);
+			emit("reload_settings");
 		});
 }
 

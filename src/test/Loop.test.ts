@@ -75,6 +75,7 @@ export function test(pen: boolean) {
 					console.log("not allowed button");
 				}
 				break;
+			default:
 		}
 
 		delay = pen ? getRndInteger(2, 200) : getRndInteger(10, 10000);

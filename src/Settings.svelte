@@ -12,19 +12,34 @@
 	import { afterUpdate, onMount, tick } from "svelte";
 	import { emit } from "@tauri-apps/api/event";
 	import { loadSettings, saveSettings } from "./saveLoad";
-	import { settings } from "./stores";
+	import { writable } from "svelte/store";
 
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
 	import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
 
+	const settings = writable({
+		recent: [],
+		lang: "en",
+		show_splash: true,
+		ui_scale: 1.3,
+		performance_mode: false,
+		debug: false,
+		video: false,
+
+		showAnnotations: true,
+		showFadeOptions: true,
+		showVolumeOptions: true,
+		allowSkipLive: true,
+	});
 	let tab: string = "general";
 	let screens = [];
 	let projectorScreen: number = 1;
 	let mainScreen: number = 0;
 	let stagetuneVersion;
 	let tauriVersion;
+	
 	loadSettings();
 	console.log($settings);
 
@@ -47,7 +62,6 @@
 
 	function onChange() {
 		saveSettings();
-		emit("reload_settings");
 	}
 
 	afterUpdate(() => {
@@ -181,6 +195,7 @@
 						checkboxName="Show on startup"
 						{onChange}
 					/>
+					<!--
 					<SettingsOption
 						name="Performance: "
 						type="checkbox"
@@ -188,6 +203,7 @@
 						checkboxName="Low performance mode"
 						{onChange}
 					/>
+					-->
 				</div>
 			{:else if tab == "keymap"}
 				<div class="content">
