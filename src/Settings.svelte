@@ -2,7 +2,6 @@
 	import "../src/pureUI/scss/index.scss";
 	import "./style/App.scss";
 	import "./style/settings.scss";
-	import { uiPlatform } from "./stores";
 	import {
 		LogicalSize,
 		appWindow,
@@ -10,14 +9,16 @@
 	} from "@tauri-apps/api/window";
 	import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 	import { afterUpdate, onMount, tick } from "svelte";
-	import { emit } from "@tauri-apps/api/event";
 	import { loadSettings, saveSettings } from "./saveLoad";
 	import { writable } from "svelte/store";
-
+	
+	import { uiPlatform } from "./stores";
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
 	import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
+	import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
+	import { emit } from "@tauri-apps/api/event";
 
 	const settings = writable({
 		recent: [],
@@ -61,8 +62,27 @@
 	}
 
 	function onChange() {
-		saveSettings();
+		save();
 	}
+
+	function save() {
+	let currentVersion;
+	getVersion()
+		.then(v => {
+			currentVersion = v.slice(0, v.lastIndexOf("."));
+		})
+		.then(() => {
+			console.log("save: ",$settings);
+			writeTextFile(
+				`Stagetune/${currentVersion}/settings.json`,
+				JSON.stringify($settings),
+				{
+					dir: BaseDirectory.Config,
+				}
+			);
+			emit("reload_settings");
+		});
+}
 
 	afterUpdate(() => {
 		setWindowHeight();
@@ -191,7 +211,7 @@
 					<SettingsOption
 						name="Splash Screen:"
 						type="checkbox"
-						bind:value={$settings.show_splash}
+						bind:checked={$settings.show_splash}
 						checkboxName="Show on startup"
 						{onChange}
 					/>
@@ -254,14 +274,14 @@
 					<SettingsOption
 						name="Developer Features:"
 						type="checkbox"
-						bind:value={$settings.debug}
+						bind:checked={$settings.debug}
 						checkboxName="Enable developer features"
 						{onChange}
 					/>
 					<SettingsOption
 						name=""
 						type="checkbox"
-						bind:value={$settings.video}
+						bind:checked={$settings.video}
 						checkboxName="Enable projector"
 						{onChange}
 					/>
