@@ -55,7 +55,7 @@
 	<img src={active ? iconPathActive : iconPath} alt={toolTip} />
 
 	<div>
-		<p style={`visibility: ${$editMode ? 'visible' : 'hidden'}`}>Edit</p>
-		<p style={`visibility: ${$editMode ? 'hidden' : 'visible'}`}>Live</p>
+		<p style={`visibility: ${$editMode ? "visible" : "hidden"}`}>Edit</p>
+		<p style={`visibility: ${$editMode ? "hidden" : "visible"}`}>Live</p>
 	</div>
 </button>

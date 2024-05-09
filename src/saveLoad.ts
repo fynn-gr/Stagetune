@@ -35,11 +35,24 @@ export function openDir() {
 				playlistPath.set(sel as string);
 
 				//add to recent
+				/*
 				settings.update(e => {
-					e.recent.push(sel);
+					if (e.recent[0] == sel) {
+						//e.recent.unshift(sel);
+					} else if (e.recent.indexOf(sel) != -1) {
+						e.recent.splice(e.recent.indexOf(sel), 1);
+						e.recent.unshift(sel);
+					} else {
+						e.recent.unshift(sel);
+					}
+
+					if (e.recent.length > 5) {
+						e.recent.pop();
+					}
 					return e;
 				});
 				saveSettings();
+				*/
 			}
 		});
 	} catch (err) {
@@ -47,7 +60,7 @@ export function openDir() {
 	}
 }
 
-async function scanSrcPaths(path: string) {
+export async function scanSrcPaths(path: string) {
 	let playlistFile: string;
 
 	//recursive scan src path
@@ -119,8 +132,10 @@ async function scanSrcPaths(path: string) {
 
 export async function savePlaylist() {
 	//save to known path
-	console.log("save to path: ", get(playlistPath));
+	let path = get(playlistPath);
+	console.log("save to path: ", path);
 
+	//create Obj with version and playlist
 	let saveObj = {
 		meta: {
 			version: await getVersion(),
@@ -129,6 +144,7 @@ export async function savePlaylist() {
 		hotkeys: [],
 	};
 
+	//remove unwanted atributes, remove Buffer
 	saveObj.playlist.forEach(e => {
 		e.playing = false;
 		e.state = 0;
@@ -138,6 +154,7 @@ export async function savePlaylist() {
 		e.buffer = null;
 	});
 
+	//save every Hotkey slot
 	get(hotkeys).forEach(e => {
 		if (e.track != null) {
 			saveObj.hotkeys.push({
@@ -152,6 +169,7 @@ export async function savePlaylist() {
 		}
 	});
 
+	//write File to disk
 	writeTextFile(
 		get(playlistPath) + "/playlist.Stagetune",
 		JSON.stringify(saveObj),

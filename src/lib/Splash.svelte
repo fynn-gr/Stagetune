@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { settings } from "@/stores";
+	import { playlistPath, settings } from "@/stores";
 	import { onMount } from "svelte";
-	import { loadSettings } from "@/saveLoad";
+	import { loadSettings, openDir, scanSrcPaths } from "@/saveLoad";
 	import { getVersion } from "@tauri-apps/api/app";
 	import { Command } from "@tauri-apps/api/shell";
 
@@ -12,8 +12,7 @@
 	onMount(async () => {
 		//loadSettings();
 		recentList = $settings.recent;
-		if (recentList.length > 4) recentList.splice(4, recentList.length - 4);
-		console.log(recentList);
+		console.log("recent: ", recentList);
 
 		let fullVersion = await getVersion();
 		version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
@@ -55,14 +54,11 @@
 				>
 					<img src="/icons/std/web.svg" />Website</button
 				>
-				<button class="online"><img src="/icons/std/web.svg" />Source</button
-				>
+				<button class="online"><img src="/icons/std/web.svg" />Source</button>
 				<button class="online"
 					><img src="/icons/std/web.svg" />Bug Tracker</button
 				>
-				<button class="online"
-					><img src="/icons/std/web.svg" />License</button
-				>
+				<button class="online"><img src="/icons/std/web.svg" />License</button>
 			</span>
 			<span>
 				{#each recentList as item}
@@ -70,6 +66,8 @@
 						class="recent"
 						on:click={e => {
 							e.stopPropagation();
+							scanSrcPaths(item);
+							playlistPath.set(item);
 						}}
 					>
 						<img src="/icons/std/file.svg" />

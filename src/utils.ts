@@ -95,7 +95,7 @@ export function waveformCalc(
 	samples: number,
 	cutInFac: number = 0
 ): Array<any> {
-	try {
+	if (buffer) {
 		let rawData = buffer.getChannelData(0);
 		let cutData = rawData.subarray(Math.floor(rawData.length * cutInFac));
 		const blockSize = Math.floor(cutData.length / samples);
@@ -111,8 +111,8 @@ export function waveformCalc(
 
 		const multiplier = Math.pow(Math.max(...filteredData), -1);
 		return filteredData.map(n => n * multiplier);
-	} catch (err) {
-		console.error(err);
+	} else {
+		//console.log("cant calc Waveform");
 		return [0];
 	}
 }

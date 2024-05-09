@@ -2,7 +2,11 @@
 	import { onMount } from "svelte";
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
 	import { join } from "@tauri-apps/api/path";
+	import { exists } from "@tauri-apps/api/fs";
+	import { message } from "@tauri-apps/api/dialog";
+
 	import { createPlaylistTrack, secondsToMinutes, waveformCalc } from "@/utils";
+	import type { playListItem } from "@/utils";
 	import {
 		editMode,
 		selectedItem,
@@ -14,9 +18,6 @@
 	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
-	import type { playListItem } from "@/utils";
-	import { exists } from "@tauri-apps/api/fs";
-	import { message } from "@tauri-apps/api/dialog";
 
 	export let track: playListItem;
 	export let id: number;
@@ -154,7 +155,7 @@
 	async function load() {
 		//load file
 		const absPath = await join($playlistPath, track.path);
-		console.log(absPath);
+		console.log("load: ", absPath);
 
 		//test file exist to throw error if file missing
 		if (await exists(absPath)) {
@@ -167,13 +168,11 @@
 		} else {
 			console.error(convertFileSrc(absPath), "track not found");
 			track.missing = true;
-			message("Media File not found: " + absPath, {
+			message("Media File is missing or moved: " + absPath, {
 				title: "File not found",
 				type: "warning",
 			});
 		}
-
-		//console.log("track on load: ", $playlist);
 
 		//create audio chain
 		gainNode = ctx.createGain();
@@ -296,7 +295,7 @@
 		}
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		load();
 	});
 
@@ -306,16 +305,8 @@
 	$: gainNode
 		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 		: null;
-	$: waveformData = track.loaded
-		? waveformCalc(track.buffer, 300, cutIn / track.length)
-		: undefined;
 	$: $currentDragging == null ? (dragover = null) : null;
-	$: {
-		console.log(track);
-		if (!track.loaded) {
-			load();
-		}
-	}
+	$: if (!track.loaded) load();
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -363,7 +354,11 @@
 						#555 100%
 					);`}
 		/>
-		<Waveform data={waveformData} samples={300} resY={50} />
+		<Waveform
+			data={waveformCalc(track.buffer, 300, cutIn / track.length)}
+			samples={300}
+			resY={50}
+		/>
 
 		<!--reset-btn-->
 		<button

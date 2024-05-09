@@ -11,7 +11,7 @@
 	import { afterUpdate, onMount, tick } from "svelte";
 	import { loadSettings, saveSettings } from "./saveLoad";
 	import { writable } from "svelte/store";
-	
+
 	import { uiPlatform } from "./stores";
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
@@ -40,7 +40,7 @@
 	let mainScreen: number = 0;
 	let stagetuneVersion;
 	let tauriVersion;
-	
+
 	loadSettings();
 	console.log($settings);
 
@@ -66,23 +66,23 @@
 	}
 
 	function save() {
-	let currentVersion;
-	getVersion()
-		.then(v => {
-			currentVersion = v.slice(0, v.lastIndexOf("."));
-		})
-		.then(() => {
-			console.log("save: ",$settings);
-			writeTextFile(
-				`Stagetune/${currentVersion}/settings.json`,
-				JSON.stringify($settings),
-				{
-					dir: BaseDirectory.Config,
-				}
-			);
-			emit("reload_settings");
-		});
-}
+		let currentVersion;
+		getVersion()
+			.then(v => {
+				currentVersion = v.slice(0, v.lastIndexOf("."));
+			})
+			.then(() => {
+				console.log("save: ", $settings);
+				writeTextFile(
+					`Stagetune/${currentVersion}/settings.json`,
+					JSON.stringify($settings),
+					{
+						dir: BaseDirectory.Config,
+					}
+				);
+				emit("reload_settings");
+			});
+	}
 
 	afterUpdate(() => {
 		setWindowHeight();
