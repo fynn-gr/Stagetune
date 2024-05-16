@@ -4,7 +4,6 @@ import { emit } from "@tauri-apps/api/event";
 
 export interface playListItem {
 	type: string; //track, video, annotation
-	origin: string;
 	path?: string; //relative path
 	name?: string; //title of the item
 	length?: number; //track duration
@@ -27,14 +26,12 @@ export interface playListItem {
 }
 
 export function createPlaylistTrack(
-	origin: string,
 	type: string,
 	path: string,
 	name: string
 ): playListItem {
 	return {
 		type: type,
-		origin: origin,
 		path: path,
 		name: name,
 		playing: false,

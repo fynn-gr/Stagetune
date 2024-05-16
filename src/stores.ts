@@ -264,12 +264,16 @@ export const keymap = writable([
 		meta: false,
 	},
 ]);
+
 export const contextMenu = writable(null);
+
 export const currentDragging = writable(null);
+export const draggingOrigin = writable(null);
+
 export const editMode = writable(true);
 export const uiPlatform = writable("win");
 export const theme = writable("dark"); //unused
-export const splash = writable(false);
+export const splash = writable(false); //splash screen visible
 export const playlist = writable([]);
 export const selectedItem = writable(null);
 export const hotkeys = writable([
@@ -371,4 +375,4 @@ export const localFiles = writable([
 	},
 ]);
 export const playlistPath = writable("");
-export const isEditing = writable(0);
+export const isEditing = writable(0); //inpus currently in focus

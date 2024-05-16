@@ -7,6 +7,7 @@
 		currentDragging,
 		playlist,
 		contextMenu,
+		draggingOrigin,
 	} from "../stores";
 	import { onMount } from "svelte";
 
@@ -23,7 +24,7 @@
 			e.dataTransfer.dropEffect = "copy";
 			e.dataTransfer.setData("text/plain", "placehold");
 			$currentDragging = track;
-			$currentDragging.origin = "playlist";
+			$draggingOrigin = "playlist";
 			dragging = true;
 		} else {
 			e.preventDefault();
@@ -37,7 +38,7 @@
 
 	function handleDrop(e) {
 		e.preventDefault();
-		if ($currentDragging.origin == "playlist") {
+		if ($draggingOrigin == "playlist") {
 			let oldPosition = $playlist.indexOf($currentDragging);
 			let newPosition = id;
 			playlist.update(e => {
@@ -45,14 +46,14 @@
 				e.splice(newPosition, 0, $currentDragging);
 				return e;
 			});
-		} else if ($currentDragging.origin == "src") {
+		} else if ($draggingOrigin == "src") {
 			let newPosition = id;
+			$draggingOrigin = "playlist";
 			playlist.update(e => {
 				e.splice(
 					newPosition,
 					0,
 					createPlaylistTrack(
-						"playlist",
 						$currentDragging.type,
 						$currentDragging.path,
 						$currentDragging.name

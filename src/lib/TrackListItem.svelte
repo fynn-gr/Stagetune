@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
-	import { currentDragging, playlistPath } from "../stores";
+	import { currentDragging, draggingOrigin, playlistPath } from "../stores";
 	import { join } from "@tauri-apps/api/path";
 
 	export let entry: any;
@@ -17,7 +17,7 @@
 		e.dataTransfer.dropEffect = "copy";
 		e.dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = entry;
-		$currentDragging.origin = "src";
+		$draggingOrigin = "src";
 		dragging = true;
 		//console.log("drag start", e);
 	}

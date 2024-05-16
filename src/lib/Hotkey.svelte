@@ -2,6 +2,7 @@
 	import {
 		hotkeys,
 		currentDragging,
+		draggingOrigin,
 		isEditing,
 		editMode,
 		playlist,
@@ -17,13 +18,13 @@
 	async function handleDropHotkeys(e) {
 		e.preventDefault();
 
-		if ($currentDragging.origin == "src" && $currentDragging.type == "track") {
+		if ($draggingOrigin == "src" && $currentDragging.type == "track") {
+			$draggingOrigin = "playlist";
 			playlist.update(e => {
 				e.splice(
 					$playlist.length,
 					0,
 					createPlaylistTrack(
-						"playlist",
 						$currentDragging.type,
 						$currentDragging.path,
 						$currentDragging.name
@@ -36,7 +37,7 @@
 
 			$currentDragging = null;
 		} else if (
-			$currentDragging.origin == "playlist" &&
+			$draggingOrigin == "playlist" &&
 			$currentDragging.type == "track"
 		) {
 			console.log($currentDragging);

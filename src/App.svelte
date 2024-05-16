@@ -31,6 +31,7 @@
 		settings,
 		contextMenu,
 		splash,
+		draggingOrigin,
 	} from "./stores";
 	import {
 		fileNameFromPath,
@@ -75,7 +76,7 @@
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 
-		if ($currentDragging.origin == "playlist") {
+		if ($draggingOrigin == "playlist") {
 			console.log("drop form playlist on Playlist");
 			let oldPosition = $playlist.indexOf($currentDragging);
 			playlist.update(e => {
@@ -84,11 +85,11 @@
 			});
 			$playlist.push($currentDragging);
 			$playlist = $playlist;
-		} else if ($currentDragging.origin == "src") {
+		} else if ($draggingOrigin == "src") {
 			console.log("drop form src on Playlist");
+			$draggingOrigin = "playlist";
 			$playlist.push(
 				createPlaylistTrack(
-					"playlist",
 					$currentDragging.type,
 					$currentDragging.path,
 					$currentDragging.name

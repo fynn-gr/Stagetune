@@ -15,6 +15,7 @@
 		playlist,
 		playlistPath,
 		settings,
+		draggingOrigin,
 	} from "../stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
@@ -42,7 +43,7 @@
 			e.dataTransfer.dropEffect = "copy";
 			e.dataTransfer.setData("text/plain", "placehold");
 			$currentDragging = track;
-			$currentDragging.origin = "playlist";
+			$draggingOrigin = "playlist";
 			dragging = true;
 			console.log("start dragging: ", $currentDragging);
 		} else {
@@ -72,7 +73,7 @@
 			newPosition = id;
 		}
 
-		if ($currentDragging.origin == "playlist") {
+		if ($draggingOrigin == "playlist") {
 			console.log("drop form playlist");
 			let oldPosition = $playlist.indexOf($currentDragging);
 			playlist.update(e => {
@@ -80,15 +81,15 @@
 				e.splice(newPosition, 0, $currentDragging);
 				return e;
 			});
-		} else if ($currentDragging.origin == "src") {
+		} else if ($draggingOrigin == "src") {
 			console.log("drop form src", $playlist);
 			playlist.update(e => {
 				console.log("current Dragging: ", $currentDragging);
+				$draggingOrigin = "playlist";
 				e.splice(
 					newPosition,
 					0,
 					createPlaylistTrack(
-						"playlist",
 						$currentDragging.type,
 						$currentDragging.path,
 						$currentDragging.name
