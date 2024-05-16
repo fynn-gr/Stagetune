@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { playlistPath, settings } from "@/stores";
 	import { onMount } from "svelte";
-	import { loadSettings, openDir, scanSrcPaths } from "@/saveLoad";
+	import { scanSrcPaths } from "@/saveLoad";
 	import { getVersion } from "@tauri-apps/api/app";
 	import { Command } from "@tauri-apps/api/shell";
 
