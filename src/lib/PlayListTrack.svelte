@@ -5,8 +5,12 @@
 	import { exists } from "@tauri-apps/api/fs";
 	import { message } from "@tauri-apps/api/dialog";
 
-	import { createPlaylistTrack, secondsToMinutes, waveformCalc } from "@/utils";
-	import type { playListItem } from "@/utils";
+	import {
+		createPlaylistTrack,
+		secondsToMinutes,
+		waveformCalc,
+	} from "@/ts/Utils";
+	import type { playListItem } from "@/ts/Types";
 	import {
 		editMode,
 		selectedItem,
@@ -16,7 +20,7 @@
 		playlistPath,
 		settings,
 		draggingOrigin,
-	} from "../stores";
+	} from "../ts/Stores";
 	import Annotation from "./Annotation.svelte";
 	import Waveform from "./Waveform.svelte";
 

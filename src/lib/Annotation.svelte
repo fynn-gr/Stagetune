@@ -6,7 +6,7 @@
 		contextMenu,
 		selectedItem,
 		playlist,
-	} from "@/stores";
+	} from "@/ts/Stores";
 	import { onMount } from "svelte";
 
 	export let id: number;

@@ -11,7 +11,7 @@ async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
 		let video_window = tauri::WindowBuilder::new(
 			&handle,
 			"video_window", /* the unique window label */
-			tauri::WindowUrl::App("video.html".into())
+			tauri::WindowUrl::App("Projector.html".into())
 		)
 		.build()
 		.unwrap();

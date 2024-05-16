@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { convertFileSrc } from "@tauri-apps/api/tauri";
-	import { currentDragging, draggingOrigin, playlistPath } from "../stores";
+	import { currentDragging, draggingOrigin, playlistPath } from "../ts/Stores";
 	import { join } from "@tauri-apps/api/path";
 
 	export let entry: any;

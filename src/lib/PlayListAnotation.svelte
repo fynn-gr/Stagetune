@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createPlaylistTrack } from "@/utils";
+	import { createPlaylistTrack } from "@/ts/Utils";
 	import {
 		editMode,
 		selectedItem,
@@ -8,7 +8,7 @@
 		playlist,
 		contextMenu,
 		draggingOrigin,
-	} from "../stores";
+	} from "../ts/Stores";
 	import { onMount } from "svelte";
 
 	export let track: any;

@@ -9,10 +9,10 @@
 	} from "@tauri-apps/api/window";
 	import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 	import { afterUpdate, onMount, tick } from "svelte";
-	import { loadSettings, saveSettings } from "./saveLoad";
+	import { loadSettings } from "./ts/SaveLoad";
 	import { writable } from "svelte/store";
 
-	import { uiPlatform } from "./stores";
+	import { uiPlatform } from "./ts/Stores";
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
 	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";

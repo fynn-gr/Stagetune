@@ -8,16 +8,15 @@ import {
 	readTextFile,
 	writeTextFile,
 } from "@tauri-apps/api/fs";
-import { isAudioFile, isVideoFile, isPlaylistFile } from "./utils";
+import { isAudioFile, isVideoFile, isPlaylistFile } from "./FileUtils";
 import {
 	playlist,
 	playlistPath,
 	srcFiles,
 	hotkeys,
 	settings,
-	uiPlatform,
 	splash,
-} from "./stores";
+} from "./Stores";
 import { getVersion } from "@tauri-apps/api/app";
 import { basename } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
@@ -198,6 +197,7 @@ export function saveSettings() {
 
 export async function loadSettings(activateSplash = false) {
 	let currentVersion;
+
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
@@ -208,7 +208,9 @@ export async function loadSettings(activateSplash = false) {
 
 			if (activateSplash) splash.set(get(settings).show_splash);
 			console.log("ui sclae. ", get(settings).ui_scale);
-			document.documentElement.style = `font-size: ${get(settings).ui_scale}px`;
+			document.documentElement.style.cssText = `font-size: ${
+				get(settings).ui_scale
+			}px`;
 		});
 	});
 }

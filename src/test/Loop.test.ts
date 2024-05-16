@@ -1,4 +1,4 @@
-import { playlist, playlistElements, selectedItem } from "@/stores";
+import { playlist, playlistElements, selectedItem } from "@/ts/Stores";
 import { get } from "svelte/store";
 
 export function test(pen: boolean) {

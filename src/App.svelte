@@ -32,20 +32,18 @@
 		contextMenu,
 		splash,
 		draggingOrigin,
-	} from "./stores";
+	} from "./ts/Stores";
 	import {
-		fileNameFromPath,
 		createPlaylistTrack,
 		waveformCalc,
 		updateProjectorList,
-		setUIScale,
-	} from "./utils";
+	} from "./ts/Utils";
 	import {
 		savePlaylist,
 		openDir,
 		loadSettings,
 		checkSettingsExist,
-	} from "./saveLoad";
+	} from "./ts/SaveLoad";
 	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 	import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 

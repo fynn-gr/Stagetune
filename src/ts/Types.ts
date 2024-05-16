@@ -19,4 +19,4 @@ export type playListItem = {
 	hotkey?: string; //hotkey number assigned, undefined if not assigned
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
-}
+};

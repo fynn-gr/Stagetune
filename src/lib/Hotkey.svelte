@@ -7,8 +7,8 @@
 		editMode,
 		playlist,
 		playlistElements,
-	} from "@/stores";
-	import { createPlaylistTrack } from "@/utils";
+	} from "@/ts/Stores";
+	import { createPlaylistTrack } from "@/ts/Utils";
 	import { onMount } from "svelte";
 
 	export let key: string;

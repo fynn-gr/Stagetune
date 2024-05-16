@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { editMode, uiPlatform } from "@/stores";
+	import { editMode, uiPlatform } from "@/ts/Stores";
 
 	export let icon: string;
 	export let iconActive: string = null;

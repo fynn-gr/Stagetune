@@ -49,7 +49,7 @@ export default defineConfig(({ command }) => {
 			rollupOptions: {
 				input: {
 					main: resolve(__dirname, "index.html"),
-					nested: resolve(__dirname, "video.html"),
+					nested: resolve(__dirname, "projector.html"),
 					settings: resolve(__dirname, "settings.html"),
 				},
 			},

@@ -5,7 +5,7 @@
 		createPlaylistTrack,
 		secondsToMinutes,
 		updateProjectorList,
-	} from "@/utils";
+	} from "@/ts/Utils";
 	import {
 		editMode,
 		selectedItem,
@@ -13,10 +13,10 @@
 		currentDragging,
 		playlist,
 		draggingOrigin,
-	} from "../stores";
+	} from "../ts/Stores";
 	import Annotation from "./Annotation.svelte";
 
-	import type { playListItem } from "@/utils";
+	import type { playListItem } from "@/ts/Types";
 
 	export let track: playListItem;
 	export let id: number;

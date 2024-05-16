@@ -12,7 +12,7 @@
 		settings,
 		splash,
 		uiPlatform,
-	} from "@/stores";
+	} from "@/ts/Stores";
 	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 	import ModeSwitch from "./ModeSwitch.svelte";
 	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
