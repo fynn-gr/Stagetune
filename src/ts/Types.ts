@@ -20,3 +20,18 @@ export type playListItem = {
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
 };
+
+export type Settings = {
+	recent: Array<string>;
+	lang: string;
+	show_splash: boolean;
+	ui_scale: number;
+	performance_mode: boolean;
+	debug: boolean;
+	video: boolean;
+	
+	showAnnotations: boolean;
+	showFadeOptions: boolean;
+	showVolumeOptions: boolean;
+	allowSkipLive: boolean;
+}

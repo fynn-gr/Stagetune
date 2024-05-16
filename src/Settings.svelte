@@ -11,6 +11,7 @@
 	import { afterUpdate, onMount, tick } from "svelte";
 	import { loadSettings } from "./ts/SaveLoad";
 	import { writable } from "svelte/store";
+	import type { Settings } from "./ts/Types";
 
 	import { uiPlatform } from "./ts/Stores";
 	import Keymap from "./pureUI/components//settings/Keymap.svelte";
@@ -20,7 +21,7 @@
 	import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 	import { emit } from "@tauri-apps/api/event";
 
-	const settings = writable({
+	const settings = writable<Settings>({
 		recent: [],
 		lang: "en",
 		show_splash: true,

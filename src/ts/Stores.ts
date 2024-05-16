@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
+import type { Settings } from "./Types";
 
-export const settings = writable({
+export const settings = writable<Settings>({
 	recent: [],
 	lang: "en",
 	show_splash: true,
@@ -264,7 +265,6 @@ export const keymap = writable([
 		meta: false,
 	},
 ]);
-
 export const contextMenu = writable(null);
 
 export const currentDragging = writable(null);
