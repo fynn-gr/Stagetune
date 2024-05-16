@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { playlist } from "./Stores";
+import { currentDragging, draggingOrigin, playlist, selectedItem } from "./Stores";
 import { emit } from "@tauri-apps/api/event";
 import type { playListItem } from "./Types";
 
@@ -86,4 +86,35 @@ export function mapRange(value, in_min, in_max, out_min, out_max) {
 export function verionCompare(version: string, compareWith) {
 	let versionBase = version.split(".");
 	let versionCompare = compareWith.split(".");
+}
+
+export function handleDrop(newPosition: number) {
+
+	if (get(draggingOrigin) == "playlist") {
+
+		let oldPosition = get(playlist).indexOf(get(currentDragging));
+
+		playlist.update(e => {
+			e.splice(oldPosition, 1);
+			e.splice(newPosition, 0, get(currentDragging));
+			return e;
+		});
+	} else if (get(draggingOrigin) == "src") {
+		playlist.update(e => {
+			e.splice(
+				newPosition,
+				0,
+				createPlaylistTrack(
+					get(currentDragging).type,
+					get(currentDragging).path,
+					get(currentDragging).name
+				)
+			);
+			return e;
+		});
+		selectedItem.set(newPosition);
+	} else {
+	}
+
+	currentDragging.set(null);
 }

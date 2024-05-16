@@ -49,33 +49,19 @@
 	function handleDrop(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		if ($draggingOrigin == "playlist") {
-			let oldPosition = $playlist.indexOf($currentDragging);
-			let newPosition = id;
-			playlist.update(e => {
-				e.splice(oldPosition, 1);
-				e.splice(newPosition, 0, $currentDragging);
-				return e;
-			});
-		} else if ($draggingOrigin == "src") {
-			let newPosition = id;
-			$draggingOrigin = "playlist";
-			playlist.update(e => {
-				e.splice(
-					newPosition,
-					0,
-					createPlaylistTrack(
-						$currentDragging.type,
-						$currentDragging.path,
-						$currentDragging.name
-					)
-				);
-				return e;
-			});
-			$selectedItem = newPosition;
+
+		let rec = e.target.getBoundingClientRect();
+		let y = e.clientY - rec.top;
+
+		let newPosition;
+		if (y > rec.height / 2) {
+			newPosition = id + 1;
 		} else {
+			newPosition = id;
 		}
-		$currentDragging = null;
+
+		handleDrop(newPosition);
+
 	}
 
 	function handleDragEnter(e) {

@@ -19,7 +19,6 @@
 		e.preventDefault();
 
 		if ($draggingOrigin == "src" && $currentDragging.type == "track") {
-			$draggingOrigin = "playlist";
 			playlist.update(e => {
 				e.splice(
 					$playlist.length,

@@ -31,12 +31,12 @@
 		settings,
 		contextMenu,
 		splash,
-		draggingOrigin,
 	} from "./ts/Stores";
 	import {
 		createPlaylistTrack,
 		waveformCalc,
 		updateProjectorList,
+		handleDrop,
 	} from "./ts/Utils";
 	import {
 		savePlaylist,
@@ -74,29 +74,8 @@
 	function handleDropPlaylist(e) {
 		e.preventDefault();
 
-		if ($draggingOrigin == "playlist") {
-			console.log("drop form playlist on Playlist");
-			let oldPosition = $playlist.indexOf($currentDragging);
-			playlist.update(e => {
-				e.splice(oldPosition, 1);
-				return e;
-			});
-			$playlist.push($currentDragging);
-			$playlist = $playlist;
-		} else if ($draggingOrigin == "src") {
-			console.log("drop form src on Playlist");
-			$draggingOrigin = "playlist";
-			$playlist.push(
-				createPlaylistTrack(
-					$currentDragging.type,
-					$currentDragging.path,
-					$currentDragging.name
-				)
-			);
-			playlist.set($playlist);
-		} else {
-		}
-		$currentDragging = null;
+		handleDrop($playlist.length);
+
 		dragOverPlaylist = false;
 	}
 

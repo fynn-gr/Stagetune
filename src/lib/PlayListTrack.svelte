@@ -63,7 +63,6 @@
 	}
 
 	function handleDrop(e) {
-		console.log("handle drop on Track");
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -77,36 +76,7 @@
 			newPosition = id;
 		}
 
-		if ($draggingOrigin == "playlist") {
-			console.log("drop form playlist");
-			let oldPosition = $playlist.indexOf($currentDragging);
-			playlist.update(e => {
-				e.splice(oldPosition, 1);
-				e.splice(newPosition, 0, $currentDragging);
-				return e;
-			});
-		} else if ($draggingOrigin == "src") {
-			console.log("drop form src", $playlist);
-			playlist.update(e => {
-				console.log("current Dragging: ", $currentDragging);
-				$draggingOrigin = "playlist";
-				e.splice(
-					newPosition,
-					0,
-					createPlaylistTrack(
-						$currentDragging.type,
-						$currentDragging.path,
-						$currentDragging.name
-					)
-				);
-				return e;
-			});
-			console.log($playlist);
-			$selectedItem = newPosition;
-		} else {
-		}
-
-		$currentDragging = null;
+		handleDrop(newPosition);
 	}
 
 	function handleDragEnter(e) {
