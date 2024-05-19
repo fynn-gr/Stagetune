@@ -18,7 +18,6 @@
 
 	import {
 		editMode,
-		currentDragging,
 		uiPlatform,
 		playlist,
 		selectedItem,
@@ -33,7 +32,6 @@
 		splash,
 	} from "./ts/Stores";
 	import {
-		createPlaylistTrack,
 		waveformCalc,
 		updateProjectorList,
 		handleDrop,
@@ -272,16 +270,17 @@
 			}
 		});
 
+		//context menu
 		document.addEventListener("contextmenu", e => {
 			e.preventDefault();
 		});
 
+		//update loop
 		const interval = setInterval(() => {
 			for (let i = 0; i < $playlistElements.length; i++) {
 				$playlistElements[i].update();
 			}
 		}, 300);
-
 		return () => clearInterval(interval);
 	});
 

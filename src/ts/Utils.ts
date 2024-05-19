@@ -114,6 +114,7 @@ export function handleDrop(newPosition: number) {
 		});
 		selectedItem.set(newPosition);
 	} else {
+		//other or no drag origin
 	}
 
 	currentDragging.set(null);

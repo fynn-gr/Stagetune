@@ -10,6 +10,7 @@ export const settings = writable<Settings>({
 	debug: false,
 	video: false,
 
+	//Playlist view settings
 	showAnnotations: true,
 	showFadeOptions: true,
 	showVolumeOptions: true,
@@ -267,8 +268,8 @@ export const keymap = writable([
 ]);
 export const contextMenu = writable(null);
 
-export const currentDragging = writable(null);
-export const draggingOrigin = writable(null);
+export const currentDragging = writable(null); //dragging object
+export const draggingOrigin = writable(null); //src / playlist
 
 export const editMode = writable(true);
 export const uiPlatform = writable("win");
@@ -375,4 +376,4 @@ export const localFiles = writable([
 	},
 ]);
 export const playlistPath = writable("");
-export const isEditing = writable(0); //inpus currently in focus
+export const isEditing = writable(0); //input currently in focus counter

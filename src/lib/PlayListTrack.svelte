@@ -6,7 +6,6 @@
 	import { message } from "@tauri-apps/api/dialog";
 
 	import {
-		createPlaylistTrack,
 		secondsToMinutes,
 		waveformCalc,
 	} from "@/ts/Utils";
@@ -16,7 +15,6 @@
 		selectedItem,
 		isEditing,
 		currentDragging,
-		playlist,
 		playlistPath,
 		settings,
 		draggingOrigin,

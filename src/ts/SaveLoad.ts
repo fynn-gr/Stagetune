@@ -207,7 +207,7 @@ export async function loadSettings(activateSplash = false) {
 			console.log("loaded settings", get(settings));
 
 			if (activateSplash) splash.set(get(settings).show_splash);
-			console.log("ui sclae. ", get(settings).ui_scale);
+			console.log("ui scale. ", get(settings).ui_scale);
 			document.documentElement.style.cssText = `font-size: ${
 				get(settings).ui_scale
 			}px`;
