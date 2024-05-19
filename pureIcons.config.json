@@ -1,11 +1,11 @@
 {
-    "folders": [
-        "keys",
-        "menu_win",
-        "native",
-        "settings_tabs",
-        "square",
-        "std",
-        "tool_bar"
-    ]
+	"folders": [
+		"keys",
+		"menu_win",
+		"native",
+		"settings_tabs",
+		"square",
+		"std",
+		"tool_bar"
+	]
 }
