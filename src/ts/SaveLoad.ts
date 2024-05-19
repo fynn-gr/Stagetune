@@ -172,7 +172,7 @@ export async function savePlaylist() {
 	writeTextFile(
 		get(playlistPath) + "/playlist.Stagetune",
 		JSON.stringify(saveObj),
-		{}
+		{},
 	);
 }
 
@@ -189,7 +189,7 @@ export function saveSettings() {
 				JSON.stringify(get(settings)),
 				{
 					dir: BaseDirectory.Config,
-				}
+				},
 			);
 			emit("reload_settings");
 		});

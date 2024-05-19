@@ -1,12 +1,17 @@
 import { get } from "svelte/store";
-import { currentDragging, draggingOrigin, playlist, selectedItem } from "./Stores";
+import {
+	currentDragging,
+	draggingOrigin,
+	playlist,
+	selectedItem,
+} from "./Stores";
 import { emit } from "@tauri-apps/api/event";
 import type { playListItem } from "./Types";
 
 export function createPlaylistTrack(
 	type: string,
 	path: string,
-	name: string
+	name: string,
 ): playListItem {
 	return {
 		type: type,
@@ -39,7 +44,7 @@ export function secondsToMinutes(inp: number) {
 export function waveformCalc(
 	buffer: AudioBuffer,
 	samples: number,
-	cutInFac: number = 0
+	cutInFac: number = 0,
 ): Array<any> {
 	if (buffer) {
 		let rawData = buffer.getChannelData(0);
@@ -89,9 +94,7 @@ export function verionCompare(version: string, compareWith) {
 }
 
 export function handleDrop(newPosition: number) {
-
 	if (get(draggingOrigin) == "playlist") {
-
 		let oldPosition = get(playlist).indexOf(get(currentDragging));
 
 		playlist.update(e => {
@@ -107,8 +110,8 @@ export function handleDrop(newPosition: number) {
 				createPlaylistTrack(
 					get(currentDragging).type,
 					get(currentDragging).path,
-					get(currentDragging).name
-				)
+					get(currentDragging).name,
+				),
 			);
 			return e;
 		});

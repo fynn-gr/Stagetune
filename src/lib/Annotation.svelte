@@ -1,22 +1,22 @@
 <script lang="ts">
-	import {
-		editMode,
-		isEditing,
-		uiPlatform,
-		contextMenu,
-		selectedItem,
-		playlist,
-	} from "@/ts/Stores";
-	import { onMount } from "svelte";
+import {
+	editMode,
+	isEditing,
+	uiPlatform,
+	contextMenu,
+	selectedItem,
+	playlist,
+} from "@/ts/Stores";
+import { onMount } from "svelte";
 
-	export let id: number;
-	export let annotation: { text: string; color: string };
+export let id: number;
+export let annotation: { text: string; color: string };
 
-	let annotationEl: HTMLElement;
+let annotationEl: HTMLElement;
 
-	onMount(() => {
-		if (annotation != null) annotationEl.innerHTML = annotation.text;
-	});
+onMount(() => {
+	if (annotation != null) annotationEl.innerHTML = annotation.text;
+});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

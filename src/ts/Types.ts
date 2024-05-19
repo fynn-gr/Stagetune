@@ -29,9 +29,9 @@ export type Settings = {
 	performance_mode: boolean;
 	debug: boolean;
 	video: boolean;
-	
+
 	showAnnotations: boolean;
 	showFadeOptions: boolean;
 	showVolumeOptions: boolean;
 	allowSkipLive: boolean;
-}
+};

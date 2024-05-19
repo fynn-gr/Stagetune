@@ -1,144 +1,143 @@
 <script lang="ts">
-	import { onDestroy, onMount } from "svelte";
-	import { emit, listen } from "@tauri-apps/api/event";
-	import {
-		createPlaylistTrack,
-		secondsToMinutes,
-		updateProjectorList,
-	} from "@/ts/Utils";
-	import {
-		editMode,
-		selectedItem,
-		isEditing,
-		currentDragging,
-		playlist,
-		draggingOrigin,
-	} from "../ts/Stores";
-	import Annotation from "./Annotation.svelte";
+import { onDestroy, onMount } from "svelte";
+import { emit, listen } from "@tauri-apps/api/event";
+import {
+	createPlaylistTrack,
+	secondsToMinutes,
+	updateProjectorList,
+} from "@/ts/Utils";
+import {
+	editMode,
+	selectedItem,
+	isEditing,
+	currentDragging,
+	playlist,
+	draggingOrigin,
+} from "../ts/Stores";
+import Annotation from "./Annotation.svelte";
 
-	import type { playListItem } from "@/ts/Types";
+import type { playListItem } from "@/ts/Types";
 
-	export let track: playListItem;
-	export let id: number;
-	let dragging = false;
-	let dragover = false;
-	let missing = false;
-	let titleEl: HTMLElement;
-	let unlistenState;
-	let unlistenEnd;
+export let track: playListItem;
+export let id: number;
+let dragging = false;
+let dragover = false;
+let missing = false;
+let titleEl: HTMLElement;
+let unlistenState;
+let unlistenEnd;
 
-	function handleDragStart(e) {
-		let rec = e.target.getBoundingClientRect();
-		let x = e.clientX - rec.left;
-		if (x < 80) {
-			e.dataTransfer.dropEffect = "copy";
-			e.dataTransfer.setData("text/plain", "placehold");
-			$currentDragging = track;
-			$draggingOrigin = "playlist";
-			dragging = true;
-		} else {
-			e.preventDefault();
-		}
-	}
-
-	function handleDragEnd(e) {
-		dragging = false;
-		//console.log("end dragging", e);
-	}
-
-	function handleDrop(e) {
+function handleDragStart(e) {
+	let rec = e.target.getBoundingClientRect();
+	let x = e.clientX - rec.left;
+	if (x < 80) {
+		e.dataTransfer.dropEffect = "copy";
+		e.dataTransfer.setData("text/plain", "placehold");
+		$currentDragging = track;
+		$draggingOrigin = "playlist";
+		dragging = true;
+	} else {
 		e.preventDefault();
-		e.stopPropagation();
+	}
+}
 
-		let rec = e.target.getBoundingClientRect();
-		let y = e.clientY - rec.top;
+function handleDragEnd(e) {
+	dragging = false;
+	//console.log("end dragging", e);
+}
 
-		let newPosition;
-		if (y > rec.height / 2) {
-			newPosition = id + 1;
-		} else {
-			newPosition = id;
-		}
+function handleDrop(e) {
+	e.preventDefault();
+	e.stopPropagation();
 
-		handleDrop(newPosition);
+	let rec = e.target.getBoundingClientRect();
+	let y = e.clientY - rec.top;
 
+	let newPosition;
+	if (y > rec.height / 2) {
+		newPosition = id + 1;
+	} else {
+		newPosition = id;
 	}
 
-	function handleDragEnter(e) {
-		dragover = true;
+	handleDrop(newPosition);
+}
+
+function handleDragEnter(e) {
+	dragover = true;
+}
+
+function handleDragLeave(e) {
+	dragover = false;
+}
+
+function handleSkip(e) {
+	let rec = e.target.getBoundingClientRect();
+	let x = e.clientX - rec.left;
+	let perc = Math.min(Math.max(x / rec.width, 0), 1);
+
+	track.playing = false;
+	emit("update_play", { action: "skip", position: perc });
+}
+
+export function playPause() {
+	if (track.playing) {
+		//pause
+		stop();
+	} else if (track.state > 0) {
+		//resume
+		play(true);
+	} else {
+		//start
+		play(false);
 	}
+}
 
-	function handleDragLeave(e) {
-		dragover = false;
-	}
+export function play(resume: boolean) {
+	emit("play_video", { name: track.name });
+	track.playing = true;
+}
 
-	function handleSkip(e) {
-		let rec = e.target.getBoundingClientRect();
-		let x = e.clientX - rec.left;
-		let perc = Math.min(Math.max(x / rec.width, 0), 1);
-
+export function stop(reset: boolean = false) {
+	if (reset) {
+		emit("update_play", { action: "pause" });
 		track.playing = false;
-		emit("update_play", { action: "skip", position: perc });
+		track.state = 0;
+		emit("update_play", { action: "skip", position: 0 });
+		emit("update_play", { action: "stop" });
+	} else {
+		emit("update_play", { action: "pause" });
+		track.playing = false;
 	}
+}
 
-	export function playPause() {
-		if (track.playing) {
-			//pause
-			stop();
-		} else if (track.state > 0) {
-			//resume
-			play(true);
-		} else {
-			//start
-			play(false);
+export function update() {}
+
+onMount(async () => {
+	unlistenState = await listen("video_state", (e: any) => {
+		console.log(e.payload);
+		if (track.playing && e.payload.name == track.name) {
+			track.state = e.payload.state;
+			track.length = e.payload.duration;
+			console.log(track.state / track.length);
 		}
-	}
+	});
 
-	export function play(resume: boolean) {
-		emit("play_video", { name: track.name });
-		track.playing = true;
-	}
-
-	export function stop(reset: boolean = false) {
-		if (reset) {
-			emit("update_play", { action: "pause" });
+	unlistenEnd = await listen("video_ended", (e: any) => {
+		if (e.payload.name == track.name) {
 			track.playing = false;
 			track.state = 0;
-			emit("update_play", { action: "skip", position: 0 });
-			emit("update_play", { action: "stop" });
-		} else {
-			emit("update_play", { action: "pause" });
-			track.playing = false;
 		}
-	}
-
-	export function update() {}
-
-	onMount(async () => {
-		unlistenState = await listen("video_state", (e: any) => {
-			console.log(e.payload);
-			if (track.playing && e.payload.name == track.name) {
-				track.state = e.payload.state;
-				track.length = e.payload.duration;
-				console.log(track.state / track.length);
-			}
-		});
-
-		unlistenEnd = await listen("video_ended", (e: any) => {
-			if (e.payload.name == track.name) {
-				track.playing = false;
-				track.state = 0;
-			}
-		});
-
-		updateProjectorList();
 	});
 
-	onDestroy(() => {
-		unlistenState();
-	});
+	updateProjectorList();
+});
 
-	$: $currentDragging == null ? (dragover = false) : null;
+onDestroy(() => {
+	unlistenState();
+});
+
+$: $currentDragging == null ? (dragover = false) : null;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

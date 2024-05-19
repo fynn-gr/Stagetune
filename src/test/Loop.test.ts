@@ -62,7 +62,7 @@ export function test(pen: boolean) {
 			case 4: //hotkey
 				console.log("hotkey");
 				document.dispatchEvent(
-					new KeyboardEvent("keydown", { code: "Digit" + getRndInteger(1, 2) })
+					new KeyboardEvent("keydown", { code: "Digit" + getRndInteger(1, 2) }),
 				);
 				break;
 			case 5: //button press

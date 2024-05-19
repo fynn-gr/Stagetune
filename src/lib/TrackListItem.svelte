@@ -1,53 +1,53 @@
 <script lang="ts">
-	import { convertFileSrc } from "@tauri-apps/api/tauri";
-	import { currentDragging, draggingOrigin, playlistPath } from "../ts/Stores";
-	import { join } from "@tauri-apps/api/path";
+import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { currentDragging, draggingOrigin, playlistPath } from "../ts/Stores";
+import { join } from "@tauri-apps/api/path";
 
-	export let entry: any;
-	export let ctx: AudioContext;
-	export let masterGain: GainNode;
+export let entry: any;
+export let ctx: AudioContext;
+export let masterGain: GainNode;
 
-	let self: HTMLElement;
-	let dragging = false;
-	let playing = false;
-	let hover = false;
-	let node = null;
+let self: HTMLElement;
+let dragging = false;
+let playing = false;
+let hover = false;
+let node = null;
 
-	function handleDragStart(e) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
-		$currentDragging = entry;
-		$draggingOrigin = "src";
-		dragging = true;
-		//console.log("drag start", e);
-	}
+function handleDragStart(e) {
+	e.dataTransfer.dropEffect = "copy";
+	e.dataTransfer.setData("text/plain", "placehold");
+	$currentDragging = entry;
+	$draggingOrigin = "src";
+	dragging = true;
+	//console.log("drag start", e);
+}
 
-	function handleDragEnd(e) {
-		dragging = false;
-		//console.log("end dragging", e);
-	}
+function handleDragEnd(e) {
+	dragging = false;
+	//console.log("end dragging", e);
+}
 
-	async function handlePlay(e) {
-		if (playing) {
-			playing = false;
-			node.stop();
+async function handlePlay(e) {
+	if (playing) {
+		playing = false;
+		node.stop();
+		node = null;
+	} else {
+		playing = true;
+		const response = await fetch(
+			convertFileSrc(await join($playlistPath, entry.path)),
+		);
+		const arrayBuffer = await response.arrayBuffer();
+		const buffer = await ctx.decodeAudioData(arrayBuffer);
+		node = new AudioBufferSourceNode(ctx, { buffer: buffer });
+		node.connect(masterGain);
+		node.onended = () => {
 			node = null;
-		} else {
-			playing = true;
-			const response = await fetch(
-				convertFileSrc(await join($playlistPath, entry.path))
-			);
-			const arrayBuffer = await response.arrayBuffer();
-			const buffer = await ctx.decodeAudioData(arrayBuffer);
-			node = new AudioBufferSourceNode(ctx, { buffer: buffer });
-			node.connect(masterGain);
-			node.onended = () => {
-				node = null;
-				playing = false;
-			};
-			node.start(0);
-		}
+			playing = false;
+		};
+		node.start(0);
 	}
+}
 </script>
 
 <div

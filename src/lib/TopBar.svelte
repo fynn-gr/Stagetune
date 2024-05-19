@@ -1,31 +1,31 @@
 <script>
-	import TopBarButton from "../pureUI/components/TopBarButton.svelte";
-	import TopBarToggle from "../pureUI/components/TopBarToggle.svelte";
-	import AppMenu from "../pureUI/components/AppMenu.svelte";
-	import { appWindow } from "@tauri-apps/api/window";
-	import { confirm } from "@tauri-apps/api/dialog";
+import TopBarButton from "../pureUI/components/TopBarButton.svelte";
+import TopBarToggle from "../pureUI/components/TopBarToggle.svelte";
+import AppMenu from "../pureUI/components/AppMenu.svelte";
+import { appWindow } from "@tauri-apps/api/window";
+import { confirm } from "@tauri-apps/api/dialog";
 
-	import {
-		editMode,
-		playlist,
-		selectedItem,
-		settings,
-		splash,
-		uiPlatform,
-	} from "@/ts/Stores";
-	import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
-	import ModeSwitch from "./ModeSwitch.svelte";
-	import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
-	import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
-	import TopBarPopover from "@/pureUI/components/TopBarPopover.svelte";
-	import { test } from "@/test/Loop.test";
+import {
+	editMode,
+	playlist,
+	selectedItem,
+	settings,
+	splash,
+	uiPlatform,
+} from "@/ts/Stores";
+import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
+import ModeSwitch from "./ModeSwitch.svelte";
+import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
+import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
+import TopBarPopover from "@/pureUI/components/TopBarPopover.svelte";
+import { test } from "@/test/Loop.test";
 
-	export let showTracklist;
-	export let showEditor;
-	export let showCurrent;
-	export let showHotkeys;
-	export let pauseAll;
-	export let resetAll;
+export let showTracklist;
+export let showEditor;
+export let showCurrent;
+export let showHotkeys;
+export let pauseAll;
+export let resetAll;
 </script>
 
 <div class="topbar toolbar" data-tauri-drag-region>

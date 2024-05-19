@@ -1,93 +1,93 @@
 <script lang="ts">
-	import "../src/pureUI/scss/index.scss";
-	import "./style/App.scss";
-	import "./style/settings.scss";
-	import {
-		LogicalSize,
-		appWindow,
-		availableMonitors,
-	} from "@tauri-apps/api/window";
-	import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
-	import { afterUpdate, onMount, tick } from "svelte";
-	import { loadSettings } from "./ts/SaveLoad";
-	import { writable } from "svelte/store";
-	import type { Settings } from "./ts/Types";
+import "../src/pureUI/scss/index.scss";
+import "./style/App.scss";
+import "./style/settings.scss";
+import {
+	LogicalSize,
+	appWindow,
+	availableMonitors,
+} from "@tauri-apps/api/window";
+import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
+import { afterUpdate, onMount, tick } from "svelte";
+import { loadSettings } from "./ts/SaveLoad";
+import { writable } from "svelte/store";
+import type { Settings } from "./ts/Types";
 
-	import { uiPlatform } from "./ts/Stores";
-	import Keymap from "./pureUI/components//settings/Keymap.svelte";
-	import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
-	import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
-	import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
-	import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
-	import { emit } from "@tauri-apps/api/event";
+import { uiPlatform } from "./ts/Stores";
+import Keymap from "./pureUI/components//settings/Keymap.svelte";
+import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
+import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
+import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
+import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
+import { emit } from "@tauri-apps/api/event";
 
-	const settings = writable<Settings>({
-		recent: [],
-		lang: "en",
-		show_splash: true,
-		ui_scale: 1.3,
-		performance_mode: false,
-		debug: false,
-		video: false,
+const settings = writable<Settings>({
+	recent: [],
+	lang: "en",
+	show_splash: true,
+	ui_scale: 1.3,
+	performance_mode: false,
+	debug: false,
+	video: false,
 
-		showAnnotations: true,
-		showFadeOptions: true,
-		showVolumeOptions: true,
-		allowSkipLive: true,
-	});
-	let tab: string = "general";
-	let screens = [];
-	let projectorScreen: number = 1;
-	let mainScreen: number = 0;
-	let stagetuneVersion;
-	let tauriVersion;
+	showAnnotations: true,
+	showFadeOptions: true,
+	showVolumeOptions: true,
+	allowSkipLive: true,
+});
+let tab: string = "general";
+let screens = [];
+let projectorScreen: number = 1;
+let mainScreen: number = 0;
+let stagetuneVersion;
+let tauriVersion;
 
-	loadSettings();
-	console.log($settings);
+loadSettings();
+console.log($settings);
 
-	onMount(async () => {
-		screens = await availableMonitors();
-		stagetuneVersion = await getVersion();
-		tauriVersion = await getTauriVersion();
-	});
+onMount(async () => {
+	screens = await availableMonitors();
+	stagetuneVersion = await getVersion();
+	tauriVersion = await getTauriVersion();
+});
 
-	function setWindowHeight() {
-		if ($uiPlatform == "mac") {
-			let content: HTMLElement = document.querySelector(".content");
-			tick();
-			let height = content.offsetHeight;
-			appWindow.setSize(new LogicalSize(800, height + 80));
-		} else {
-			appWindow.setSize(new LogicalSize(800, 500));
-		}
+function setWindowHeight() {
+	if ($uiPlatform == "mac") {
+		let content: HTMLElement = document.querySelector(".content");
+		tick();
+		let height = content.offsetHeight;
+		appWindow.setSize(new LogicalSize(800, height + 80));
+	} else {
+		appWindow.setSize(new LogicalSize(800, 500));
 	}
+}
 
-	function onChange() {
-		save();
-	}
+function onChange() {
+	save();
+}
 
-	function save() {
-		let currentVersion;
-		getVersion()
-			.then(v => {
-				currentVersion = v.slice(0, v.lastIndexOf("."));
-			})
-			.then(() => {
-				console.log("save: ", $settings);
-				writeTextFile(
-					`Stagetune/${currentVersion}/settings.json`,
-					JSON.stringify($settings),
-					{
-						dir: BaseDirectory.Config,
-					}
-				);
-				emit("reload_settings");
-			});
-	}
+function save() {
+	let currentVersion;
+	getVersion()
+		.then(v => {
+			currentVersion = v.slice(0, v.lastIndexOf("."));
+		})
+		.then(() => {
+			console.log("save: ", $settings);
+			writeTextFile(
+				`Stagetune/${currentVersion}/settings.json`,
+				JSON.stringify($settings),
+				{
+					dir: BaseDirectory.Config,
+				},
+			);
+			emit("reload_settings");
+		});
+}
 
-	afterUpdate(() => {
-		setWindowHeight();
-	});
+afterUpdate(() => {
+	setWindowHeight();
+});
 </script>
 
 <main class={"window-body settings dark " + $uiPlatform}>
@@ -249,8 +249,8 @@
 									{i == projectorScreen
 										? "Projector"
 										: i == mainScreen
-										? "Main"
-										: ""}
+											? "Main"
+											: ""}
 								</p>
 							</div>
 							<span>

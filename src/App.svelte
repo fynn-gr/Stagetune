@@ -1,290 +1,286 @@
 <script lang="ts">
-	import "../src/pureUI/scss/index.scss";
-	import "./style/App.scss";
-	import { onMount } from "svelte";
-	import { emit, listen } from "@tauri-apps/api/event";
-	import { confirm } from "@tauri-apps/api/dialog";
-	import { invoke } from "@tauri-apps/api/tauri";
-	import { exit } from "@tauri-apps/api/process";
+import "../src/pureUI/scss/index.scss";
+import "./style/App.scss";
+import { onMount } from "svelte";
+import { emit, listen } from "@tauri-apps/api/event";
+import { confirm } from "@tauri-apps/api/dialog";
+import { invoke } from "@tauri-apps/api/tauri";
+import { exit } from "@tauri-apps/api/process";
 
-	import PlayListTrack from "./lib/PlayListTrack.svelte";
-	import PlayListAnotation from "./lib/PlayListAnotation.svelte";
-	import PlayListVideo from "./lib/PlayListVideo.svelte";
-	import TrackListItem from "./lib/TrackListItem.svelte";
-	import TopBar from "./lib/TopBar.svelte";
-	import Hotkey from "./lib/Hotkey.svelte";
-	import Waveform from "./lib/Waveform.svelte";
-	import Splash from "./lib/Splash.svelte";
+import PlayListTrack from "./lib/PlayListTrack.svelte";
+import PlayListAnotation from "./lib/PlayListAnotation.svelte";
+import PlayListVideo from "./lib/PlayListVideo.svelte";
+import TrackListItem from "./lib/TrackListItem.svelte";
+import TopBar from "./lib/TopBar.svelte";
+import Hotkey from "./lib/Hotkey.svelte";
+import Waveform from "./lib/Waveform.svelte";
+import Splash from "./lib/Splash.svelte";
 
-	import {
-		editMode,
-		uiPlatform,
-		playlist,
-		selectedItem,
-		srcFiles,
-		playlistElements,
-		hotkeyElements,
-		isEditing,
-		hotkeys,
-		localFiles,
-		settings,
-		contextMenu,
-		splash,
-	} from "./ts/Stores";
-	import {
-		waveformCalc,
-		updateProjectorList,
-		handleDrop,
-	} from "./ts/Utils";
-	import {
-		savePlaylist,
-		openDir,
-		loadSettings,
-		checkSettingsExist,
-	} from "./ts/SaveLoad";
-	import ContextMenu from "./pureUI/components/ContextMenu.svelte";
-	import PropNumber from "./pureUI/components/props/PropNumber.svelte";
+import {
+	editMode,
+	uiPlatform,
+	playlist,
+	selectedItem,
+	srcFiles,
+	playlistElements,
+	hotkeyElements,
+	isEditing,
+	hotkeys,
+	localFiles,
+	settings,
+	contextMenu,
+	splash,
+} from "./ts/Stores";
+import { waveformCalc, updateProjectorList, handleDrop } from "./ts/Utils";
+import {
+	savePlaylist,
+	openDir,
+	loadSettings,
+	checkSettingsExist,
+} from "./ts/SaveLoad";
+import ContextMenu from "./pureUI/components/ContextMenu.svelte";
+import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 
-	let playlistEl: HTMLElement;
-	let annotationWidth: number = 25;
-	let showTracklist = true;
-	let showEditor = false;
-	let showCurrent = true;
-	let showHotkeys = true;
-	let projector = false;
-	let dragOverPlaylist = false;
+let playlistEl: HTMLElement;
+let annotationWidth: number = 25;
+let showTracklist = true;
+let showEditor = false;
+let showCurrent = true;
+let showHotkeys = true;
+let projector = false;
+let dragOverPlaylist = false;
 
-	checkSettingsExist();
+checkSettingsExist();
 
-	const ctx = new AudioContext();
-	const analyser = ctx.createAnalyser();
-	const masterGain = ctx.createGain();
-	masterGain.connect(analyser).connect(ctx.destination);
+const ctx = new AudioContext();
+const analyser = ctx.createAnalyser();
+const masterGain = ctx.createGain();
+masterGain.connect(analyser).connect(ctx.destination);
 
-	function openVideoWindow(show: boolean) {
-		invoke("show_projector", { invokeMessage: show ? "true" : "false" });
-	}
+function openVideoWindow(show: boolean) {
+	invoke("show_projector", { invokeMessage: show ? "true" : "false" });
+}
 
-	function openSettings() {
-		invoke("open_settings", { invokeMessage: JSON.stringify($settings) });
-	}
+function openSettings() {
+	invoke("open_settings", { invokeMessage: JSON.stringify($settings) });
+}
 
-	function handleDropPlaylist(e) {
-		e.preventDefault();
+function handleDropPlaylist(e) {
+	e.preventDefault();
 
-		handleDrop($playlist.length);
+	handleDrop($playlist.length);
 
-		dragOverPlaylist = false;
-	}
+	dragOverPlaylist = false;
+}
 
-	function moveUp() {
-		for (let i = $selectedItem - 1; i > -1; i--) {
-			if ($playlist[i].type != "annotation") {
-				$selectedItem = i;
-				break;
-			}
+function moveUp() {
+	for (let i = $selectedItem - 1; i > -1; i--) {
+		if ($playlist[i].type != "annotation") {
+			$selectedItem = i;
+			break;
 		}
 	}
+}
 
-	function moveDown() {
-		for (let i = $selectedItem + 1; i < $playlist.length; i++) {
-			if ($playlist[i].type != "annotation") {
-				$selectedItem = i;
-				break;
-			}
+function moveDown() {
+	for (let i = $selectedItem + 1; i < $playlist.length; i++) {
+		if ($playlist[i].type != "annotation") {
+			$selectedItem = i;
+			break;
 		}
 	}
+}
 
-	function skip() {
-		for (let i = $selectedItem + 1; i < $playlist.length; i++) {
-			if ($playlist[i].type != "annotation") {
+function skip() {
+	for (let i = $selectedItem + 1; i < $playlist.length; i++) {
+		if ($playlist[i].type != "annotation") {
+			$playlistElements[$selectedItem].stop(true);
+			$selectedItem = i;
+			$playlistElements[$selectedItem].play(0);
+			break;
+		}
+	}
+}
+
+function deleteTrack() {
+	if ($selectedItem != null) {
+		//stop track if playing
+		if ($playlist[$selectedItem].playing)
+			$playlistElements[$selectedItem].stop();
+
+		let toDelete = $selectedItem;
+
+		//find hotkey
+		if ($playlist[$selectedItem].hotkey != undefined) {
+			let hotkeyRm = $playlist[$selectedItem].hotkey;
+			console.log(hotkeyRm);
+			$hotkeys[hotkeyRm - 1].track = null;
+		}
+
+		//find new selected item
+		if ($playlist.length - 1 > $selectedItem) $selectedItem++;
+		else if ($selectedItem > 0) $selectedItem--;
+		else $selectedItem = null;
+
+		//delte from playlist
+		playlist.update(e => {
+			e.splice(toDelete, 1);
+			return e;
+		});
+		$playlist = $playlist;
+	}
+}
+
+function pauseAll() {
+	for (let i = 0; i < $playlistElements.length; i++) {
+		$playlistElements[i].stop(false, false);
+	}
+}
+
+function resetAll() {
+	for (let i = 0; i < $playlistElements.length; i++) {
+		$playlistElements[i].stop(true, false);
+	}
+}
+
+const listenerMenus = listen("menu", async event => {
+	console.log(event);
+	if (event.payload == "quit" && $editMode) {
+		const confirmed = await confirm("Discard all unsaved changes?", {
+			title: "Quit?",
+			type: "warning",
+			okLabel: "Quit",
+		}).then(isOK => (isOK ? exit(0) : null));
+	} else if (event.payload == "open" && $editMode) {
+		openDir();
+	} else if (event.payload == "save") {
+		savePlaylist();
+	} else if (event.payload == "projector" && $settings.video) {
+		openVideoWindow(!projector);
+		projector = !projector;
+	} else if (event.payload == "settings" && $editMode) {
+		openSettings();
+	} else if (event.payload == "showTracklist" && $editMode) {
+		showTracklist = !showTracklist;
+	} else if (event.payload == "showCurrent") {
+		showCurrent = !showCurrent;
+	} else if (event.payload == "showHotkeys") {
+		showHotkeys = !showHotkeys;
+	} else if (event.payload == "showEditor" && $editMode) {
+		showEditor = !showEditor;
+	} else if (event.payload == "showSplash" && $editMode) {
+		$splash = true;
+	}
+});
+
+const listenerProjectorReq = listen("projctorReq", e => {
+	updateProjectorList();
+});
+
+const listenerUpdateSettings = listen("reload_settings", () => {
+	loadSettings();
+	console.log("reloaded settings", $settings);
+});
+
+onMount(() => {
+	//shortcuts
+	document.addEventListener("keydown", e => {
+		//console.log(e);
+
+		if ($isEditing > 0) {
+			return;
+		} else {
+			if ($editMode) {
+				//open Playlist
+				if (e.code == "KeyO" && e.ctrlKey) {
+					e.preventDefault();
+					openDir();
+				}
+
+				// openVideoWindow
+				else if (e.code == "KeyP" && e.ctrlKey && $settings.video) {
+					e.preventDefault();
+					openVideoWindow(!projector);
+					projector = !projector;
+				}
+
+				//delete playlist item
+				else if (e.code == "Backspace" || e.code == "Delete") {
+					e.preventDefault();
+					deleteTrack();
+				}
+
+				//open Preferences
+				else if (e.code == "Comma" && e.ctrlKey) {
+					e.preventDefault();
+					openSettings();
+				}
+			}
+
+			//move up
+			if (
+				(e.code === "KeyW" || e.code === "ArrowUp") &&
+				!e.ctrlKey &&
+				!e.metaKey
+			) {
+				e.preventDefault();
+				moveUp();
+			}
+			//move down
+			else if (
+				(e.code === "KeyS" || e.code === "ArrowDown") &&
+				!e.ctrlKey &&
+				!e.metaKey
+			) {
+				e.preventDefault();
+				moveDown();
+			}
+			//reset song
+			else if (
+				(e.code === "KeyA" || e.code === "ArrowLeft") &&
+				!e.ctrlKey &&
+				!e.metaKey
+			) {
+				e.preventDefault();
 				$playlistElements[$selectedItem].stop(true);
-				$selectedItem = i;
-				$playlistElements[$selectedItem].play(0);
-				break;
+			}
+			//skip song
+			else if (
+				(e.code === "KeyD" || e.code === "ArrowRight") &&
+				!e.ctrlKey &&
+				!e.metaKey
+			) {
+				e.preventDefault();
+				skip();
+			}
+			//play
+			else if (e.code === "Space") {
+				e.preventDefault();
+				$playlistElements[$selectedItem].playPause();
+			}
+			//save File
+			else if (e.code == "KeyS" && e.ctrlKey) {
+				e.preventDefault();
+				savePlaylist();
 			}
 		}
-	}
+	});
 
-	function deleteTrack() {
-		if ($selectedItem != null) {
-			//stop track if playing
-			if ($playlist[$selectedItem].playing)
-				$playlistElements[$selectedItem].stop();
+	//context menu
+	document.addEventListener("contextmenu", e => {
+		e.preventDefault();
+	});
 
-			let toDelete = $selectedItem;
-
-			//find hotkey
-			if ($playlist[$selectedItem].hotkey != undefined) {
-				let hotkeyRm = $playlist[$selectedItem].hotkey;
-				console.log(hotkeyRm);
-				$hotkeys[hotkeyRm - 1].track = null;
-			}
-
-			//find new selected item
-			if ($playlist.length - 1 > $selectedItem) $selectedItem++;
-			else if ($selectedItem > 0) $selectedItem--;
-			else $selectedItem = null;
-
-			//delte from playlist
-			playlist.update(e => {
-				e.splice(toDelete, 1);
-				return e;
-			});
-			$playlist = $playlist;
-		}
-	}
-
-	function pauseAll() {
+	//update loop
+	const interval = setInterval(() => {
 		for (let i = 0; i < $playlistElements.length; i++) {
-			$playlistElements[i].stop(false, false);
+			$playlistElements[i].update();
 		}
-	}
+	}, 300);
+	return () => clearInterval(interval);
+});
 
-	function resetAll() {
-		for (let i = 0; i < $playlistElements.length; i++) {
-			$playlistElements[i].stop(true, false);
-		}
-	}
-
-	const listenerMenus = listen("menu", async event => {
-		console.log(event);
-		if (event.payload == "quit" && $editMode) {
-			const confirmed = await confirm("Discard all unsaved changes?", {
-				title: "Quit?",
-				type: "warning",
-				okLabel: "Quit",
-			}).then(isOK => (isOK ? exit(0) : null));
-		} else if (event.payload == "open" && $editMode) {
-			openDir();
-		} else if (event.payload == "save") {
-			savePlaylist();
-		} else if (event.payload == "projector" && $settings.video) {
-			openVideoWindow(!projector);
-			projector = !projector;
-		} else if (event.payload == "settings" && $editMode) {
-			openSettings();
-		} else if (event.payload == "showTracklist" && $editMode) {
-			showTracklist = !showTracklist;
-		} else if (event.payload == "showCurrent") {
-			showCurrent = !showCurrent;
-		} else if (event.payload == "showHotkeys") {
-			showHotkeys = !showHotkeys;
-		} else if (event.payload == "showEditor" && $editMode) {
-			showEditor = !showEditor;
-		} else if (event.payload == "showSplash" && $editMode) {
-			$splash = true;
-		}
-	});
-
-	const listenerProjectorReq = listen("projctorReq", e => {
-		updateProjectorList();
-	});
-
-	const listenerUpdateSettings = listen("reload_settings", () => {
-		loadSettings();
-		console.log("reloaded settings", $settings);
-	});
-
-	onMount(() => {
-		//shortcuts
-		document.addEventListener("keydown", e => {
-			//console.log(e);
-
-			if ($isEditing > 0) {
-				return;
-			} else {
-				if ($editMode) {
-					//open Playlist
-					if (e.code == "KeyO" && e.ctrlKey) {
-						e.preventDefault();
-						openDir();
-					}
-
-					// openVideoWindow
-					else if (e.code == "KeyP" && e.ctrlKey && $settings.video) {
-						e.preventDefault();
-						openVideoWindow(!projector);
-						projector = !projector;
-					}
-
-					//delete playlist item
-					else if (e.code == "Backspace" || e.code == "Delete") {
-						e.preventDefault();
-						deleteTrack();
-					}
-
-					//open Preferences
-					else if (e.code == "Comma" && e.ctrlKey) {
-						e.preventDefault();
-						openSettings();
-					}
-				}
-
-				//move up
-				if (
-					(e.code === "KeyW" || e.code === "ArrowUp") &&
-					!e.ctrlKey &&
-					!e.metaKey
-				) {
-					e.preventDefault();
-					moveUp();
-				}
-				//move down
-				else if (
-					(e.code === "KeyS" || e.code === "ArrowDown") &&
-					!e.ctrlKey &&
-					!e.metaKey
-				) {
-					e.preventDefault();
-					moveDown();
-				}
-				//reset song
-				else if (
-					(e.code === "KeyA" || e.code === "ArrowLeft") &&
-					!e.ctrlKey &&
-					!e.metaKey
-				) {
-					e.preventDefault();
-					$playlistElements[$selectedItem].stop(true);
-				}
-				//skip song
-				else if (
-					(e.code === "KeyD" || e.code === "ArrowRight") &&
-					!e.ctrlKey &&
-					!e.metaKey
-				) {
-					e.preventDefault();
-					skip();
-				}
-				//play
-				else if (e.code === "Space") {
-					e.preventDefault();
-					$playlistElements[$selectedItem].playPause();
-				}
-				//save File
-				else if (e.code == "KeyS" && e.ctrlKey) {
-					e.preventDefault();
-					savePlaylist();
-				}
-			}
-		});
-
-		//context menu
-		document.addEventListener("contextmenu", e => {
-			e.preventDefault();
-		});
-
-		//update loop
-		const interval = setInterval(() => {
-			for (let i = 0; i < $playlistElements.length; i++) {
-				$playlistElements[i].update();
-			}
-		}, 300);
-		return () => clearInterval(interval);
-	});
-
-	$: emit("editMode", { edit: $editMode });
+$: emit("editMode", { edit: $editMode });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -433,7 +429,7 @@
 					<Waveform
 						data={waveformCalc(
 							$playlistElements[$selectedItem].getBuffer(),
-							window.innerWidth
+							window.innerWidth,
 						)}
 						samples={window.innerWidth}
 						resY={200}

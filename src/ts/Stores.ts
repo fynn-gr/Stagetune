@@ -272,7 +272,7 @@ export const currentDragging = writable(null); //dragging object
 export const draggingOrigin = writable(null); //src / playlist
 
 export const editMode = writable(true);
-export const uiPlatform = writable("win");
+export const uiPlatform = writable("mac");
 export const theme = writable("dark"); //unused
 export const splash = writable(false); //splash screen visible
 export const playlist = writable([]);

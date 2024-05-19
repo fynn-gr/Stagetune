@@ -1,77 +1,77 @@
 <script lang="ts">
-	import { emit, listen } from "@tauri-apps/api/event";
-	import { appWindow, LogicalSize } from "@tauri-apps/api/window";
-	import { onMount } from "svelte";
+import { emit, listen } from "@tauri-apps/api/event";
+import { appWindow, LogicalSize } from "@tauri-apps/api/window";
+import { onMount } from "svelte";
 
-	let editMode = true;
-	let list: Array<any> = [];
-	let listElements: Array<HTMLVideoElement> = [];
-	let active = -1;
-	let fullscreen = false;
-	let buffer = [];
+let editMode = true;
+let list: Array<any> = [];
+let listElements: Array<HTMLVideoElement> = [];
+let active = -1;
+let fullscreen = false;
+let buffer = [];
 
-	let ctx = new AudioContext();
-	let input: MediaElementAudioSourceNode;
-	let gainNode: GainNode;
-	let panNode: StereoPannerNode;
+let ctx = new AudioContext();
+let input: MediaElementAudioSourceNode;
+let gainNode: GainNode;
+let panNode: StereoPannerNode;
 
-	const unlistenPlay = listen("play_video", (event: any) => {
-		/*
+const unlistenPlay = listen("play_video", (event: any) => {
+	/*
 		const p = platform().then((e) => {
 			src = convertFileSrc(event.payload.url);
 		});
 		*/
-		console.log(event);
-		list.forEach((e, i) => {
-			if (e.name == event.payload.name) active = i;
-		});
+	console.log(event);
+	list.forEach((e, i) => {
+		if (e.name == event.payload.name) active = i;
+	});
+	listElements[active].play();
+});
+
+const unlistenUpdate = listen("update_play", (e: any) => {
+	console.log(e.payload);
+	if (e.payload.action == "stop") {
+		listElements[active].pause();
+		active = -1;
+	} else if (e.payload.action == "skip") {
+		listElements[active].currentTime =
+			listElements[active].duration * e.payload.position;
+	} else if (e.payload.action == "pause") {
+		listElements[active].pause();
+	} else if (e.payload.action == "resume") {
 		listElements[active].play();
-	});
+	}
+});
 
-	const unlistenUpdate = listen("update_play", (e: any) => {
-		console.log(e.payload);
-		if (e.payload.action == "stop") {
-			listElements[active].pause();
-			active = -1;
-		} else if (e.payload.action == "skip") {
-			listElements[active].currentTime =
-				listElements[active].duration * e.payload.position;
-		} else if (e.payload.action == "pause") {
-			listElements[active].pause();
-		} else if (e.payload.action == "resume") {
-			listElements[active].play();
+const unlistenUpdateList = listen("updateList", e => {
+	console.log(e.payload);
+	list = e.payload.list;
+});
+
+const unlistenEditMode = listen("editMode", e => {
+	editMode = e.payload.edit;
+});
+
+onMount(async () => {
+	//input = ctx.createMediaElementSource(videoElement);
+
+	gainNode = ctx.createGain();
+	gainNode.gain.setValueAtTime(100 / 360, ctx.currentTime);
+	panNode = ctx.createStereoPanner();
+	//input.connect(gainNode).connect(panNode).connect(ctx.destination);
+
+	emit("projctorReq", {});
+
+	const interval = setInterval(() => {
+		if (active != -1) {
+			emit("video_state", {
+				state: listElements[active].currentTime,
+				duration: listElements[active].duration,
+				name: list[active].name,
+			});
 		}
-	});
 
-	const unlistenUpdateList = listen("updateList", e => {
-		console.log(e.payload);
-		list = e.payload.list;
-	});
-
-	const unlistenEditMode = listen("editMode", e => {
-		editMode = e.payload.edit;
-	});
-
-	onMount(async () => {
-		//input = ctx.createMediaElementSource(videoElement);
-
-		gainNode = ctx.createGain();
-		gainNode.gain.setValueAtTime(100 / 360, ctx.currentTime);
-		panNode = ctx.createStereoPanner();
-		//input.connect(gainNode).connect(panNode).connect(ctx.destination);
-
-		emit("projctorReq", {});
-
-		const interval = setInterval(() => {
-			if (active != -1) {
-				emit("video_state", {
-					state: listElements[active].currentTime,
-					duration: listElements[active].duration,
-					name: list[active].name,
-				});
-			}
-
-			/*
+		/*
 			for (let i = 0; i < listElements.length; i++) {
 				buffer[i] = {
 					buffer: listElements[i].buffered.end(0),
@@ -82,10 +82,10 @@
 	
 			emit("video_buffer", buffer);
 			*/
-		}, 100);
+	}, 100);
 
-		return () => clearInterval(interval);
-	});
+	return () => clearInterval(interval);
+});
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
@@ -137,56 +137,56 @@
 </div>
 
 <style lang="scss">
-	.wrapper {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		overflow: hidden;
-		width: 100vw;
-		height: 100vh;
-		margin: 0;
-		padding: 0;
-		background-color: black;
+.wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	overflow: hidden;
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	background-color: black;
 
-		video {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-			margin: auto;
-			opacity: 0;
+	video {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		margin: auto;
+		opacity: 0;
 
-			&.vis {
-				opacity: 1;
-			}
+		&.vis {
+			opacity: 1;
 		}
 	}
+}
 
-	.buffers {
-		position: fixed;
-		inset: auto 0 0 0;
-		background-color: white;
-		display: flex;
-		flex-direction: column;
+.buffers {
+	position: fixed;
+	inset: auto 0 0 0;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
 
-		.bar {
-			height: 6px;
-			width: 100%;
-		}
+	.bar {
+		height: 6px;
+		width: 100%;
+	}
+}
+
+.wrapper.edit {
+	overflow: scroll;
+
+	&::-webkit-scrollbar {
+		width: 0px;
 	}
 
-	.wrapper.edit {
-		overflow: scroll;
-
-		&::-webkit-scrollbar {
-			width: 0px;
-		}
-
-		video {
-			width: 50%;
-			height: auto;
-			position: relative;
-			opacity: 1 !important;
-		}
+	video {
+		width: 50%;
+		height: auto;
+		position: relative;
+		opacity: 1 !important;
 	}
+}
 </style>

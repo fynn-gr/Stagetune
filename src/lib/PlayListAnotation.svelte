@@ -1,72 +1,71 @@
 <script lang="ts">
-	import { createPlaylistTrack } from "@/ts/Utils";
-	import {
-		editMode,
-		selectedItem,
-		isEditing,
-		currentDragging,
-		playlist,
-		contextMenu,
-		draggingOrigin,
-	} from "../ts/Stores";
-	import { onMount } from "svelte";
+import { createPlaylistTrack } from "@/ts/Utils";
+import {
+	editMode,
+	selectedItem,
+	isEditing,
+	currentDragging,
+	playlist,
+	contextMenu,
+	draggingOrigin,
+} from "../ts/Stores";
+import { onMount } from "svelte";
 
-	export let track: any;
-	export let id: number;
-	let dragging = false;
-	let dragover = false;
-	let annotationEl: HTMLElement;
+export let track: any;
+export let id: number;
+let dragging = false;
+let dragover = false;
+let annotationEl: HTMLElement;
 
-	function handleDragStart(e) {
-		let rec = e.target.getBoundingClientRect();
-		let x = e.clientX - rec.left;
-		if (x < 80) {
-			e.dataTransfer.dropEffect = "copy";
-			e.dataTransfer.setData("text/plain", "placehold");
-			$currentDragging = track;
-			$draggingOrigin = "playlist";
-			dragging = true;
-		} else {
-			e.preventDefault();
-		}
-	}
-
-	function handleDragEnd(e) {
-		dragging = false;
-		console.log("end dragging", e);
-	}
-
-	function handleDrop(e) {
+function handleDragStart(e) {
+	let rec = e.target.getBoundingClientRect();
+	let x = e.clientX - rec.left;
+	if (x < 80) {
+		e.dataTransfer.dropEffect = "copy";
+		e.dataTransfer.setData("text/plain", "placehold");
+		$currentDragging = track;
+		$draggingOrigin = "playlist";
+		dragging = true;
+	} else {
 		e.preventDefault();
-		e.stopPropagation();
+	}
+}
 
-		let rec = e.target.getBoundingClientRect();
-		let y = e.clientY - rec.top;
+function handleDragEnd(e) {
+	dragging = false;
+	console.log("end dragging", e);
+}
 
-		let newPosition;
-		if (y > rec.height / 2) {
-			newPosition = id + 1;
-		} else {
-			newPosition = id;
-		}
+function handleDrop(e) {
+	e.preventDefault();
+	e.stopPropagation();
 
-		handleDrop(newPosition);
+	let rec = e.target.getBoundingClientRect();
+	let y = e.clientY - rec.top;
+
+	let newPosition;
+	if (y > rec.height / 2) {
+		newPosition = id + 1;
+	} else {
+		newPosition = id;
 	}
 
-	function handleDragEnter(e) {
-		dragover = true;
-	}
+	handleDrop(newPosition);
+}
 
-	function handleDragLeave(e) {
-		dragover = false;
-	}
+function handleDragEnter(e) {
+	dragover = true;
+}
 
-	export function update() {}
+function handleDragLeave(e) {
+	dragover = false;
+}
 
-	onMount(() => {
-		if (track.annotation != null)
-			annotationEl.innerHTML = track.annotation.text;
-	});
+export function update() {}
+
+onMount(() => {
+	if (track.annotation != null) annotationEl.innerHTML = track.annotation.text;
+});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

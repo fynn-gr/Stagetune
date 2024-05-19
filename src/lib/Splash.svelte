@@ -1,22 +1,22 @@
 <script lang="ts">
-	import { playlistPath, settings } from "@/ts/Stores";
-	import { onMount } from "svelte";
-	import { scanSrcPaths } from "@/ts/SaveLoad";
-	import { getVersion } from "@tauri-apps/api/app";
-	import { Command } from "@tauri-apps/api/shell";
+import { playlistPath, settings } from "@/ts/Stores";
+import { onMount } from "svelte";
+import { scanSrcPaths } from "@/ts/SaveLoad";
+import { getVersion } from "@tauri-apps/api/app";
+import { Command } from "@tauri-apps/api/shell";
 
-	export let splashScreen;
-	let recentList = [];
-	let version;
+export let splashScreen;
+let recentList = [];
+let version;
 
-	onMount(async () => {
-		//loadSettings();
-		recentList = $settings.recent;
-		console.log("recent: ", recentList);
+onMount(async () => {
+	//loadSettings();
+	recentList = $settings.recent;
+	console.log("recent: ", recentList);
 
-		let fullVersion = await getVersion();
-		version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
-	});
+	let fullVersion = await getVersion();
+	version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
+});
 </script>
 
 <!-- svelte-ignore a11y-missing-attribute -->
