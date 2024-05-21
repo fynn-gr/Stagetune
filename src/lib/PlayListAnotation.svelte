@@ -17,7 +17,7 @@ let dragging = false;
 let dragover = false;
 let annotationEl: HTMLElement;
 
-function handleDragStart(e) {
+function handleDragStart(e: any) {
 	let rec = e.target.getBoundingClientRect();
 	let x = e.clientX - rec.left;
 	if (x < 80) {
@@ -31,12 +31,12 @@ function handleDragStart(e) {
 	}
 }
 
-function handleDragEnd(e) {
+function handleDragEnd(e: any) {
 	dragging = false;
 	console.log("end dragging", e);
 }
 
-function handleDrop(e) {
+function handleDrop(e: any) {
 	e.preventDefault();
 	e.stopPropagation();
 
@@ -53,11 +53,11 @@ function handleDrop(e) {
 	handleDrop(newPosition);
 }
 
-function handleDragEnter(e) {
+function handleDragEnter(e: any) {
 	dragover = true;
 }
 
-function handleDragLeave(e) {
+function handleDragLeave(e: any) {
 	dragover = false;
 }
 
@@ -69,6 +69,7 @@ onMount(() => {
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="playlist-item annotation"
 	class:selected={$selectedItem == id}

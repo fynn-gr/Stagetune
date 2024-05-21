@@ -6,6 +6,7 @@ import {
 	LogicalSize,
 	appWindow,
 	availableMonitors,
+	type Monitor,
 } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { afterUpdate, onMount, tick } from "svelte";
@@ -36,11 +37,11 @@ const settings = writable<Settings>({
 	allowSkipLive: true,
 });
 let tab: string = "general";
-let screens = [];
+let screens: Monitor[] = [];
 let projectorScreen: number = 1;
 let mainScreen: number = 0;
-let stagetuneVersion;
-let tauriVersion;
+let stagetuneVersion: string;
+let tauriVersion: string;
 
 loadSettings();
 console.log($settings);
@@ -53,7 +54,7 @@ onMount(async () => {
 
 function setWindowHeight() {
 	if ($uiPlatform == "mac") {
-		let content: HTMLElement = document.querySelector(".content");
+		let content: HTMLElement = document.querySelector(".content")!;
 		tick();
 		let height = content.offsetHeight;
 		appWindow.setSize(new LogicalSize(800, height + 80));
@@ -67,7 +68,7 @@ function onChange() {
 }
 
 function save() {
-	let currentVersion;
+	let currentVersion: string;
 	getVersion()
 		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
@@ -90,6 +91,8 @@ afterUpdate(() => {
 });
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <main class={"window-body settings dark " + $uiPlatform}>
 	<div class="topbar title-bar" data-tauri-drag-region>
 		{#if $uiPlatform == "mac"}
@@ -117,7 +120,6 @@ afterUpdate(() => {
 	</div>
 
 	<div class="tabs" data-tauri-drag-region>
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="tab"
 			class:active={tab == "general"}
@@ -129,7 +131,6 @@ afterUpdate(() => {
 			<p>General</p>
 		</div>
 
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="tab active"
 			class:active={tab == "keymap"}
@@ -141,7 +142,6 @@ afterUpdate(() => {
 			<p>Keymap</p>
 		</div>
 
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		{#if $settings.video}
 			<div
 				class="tab"
@@ -155,7 +155,6 @@ afterUpdate(() => {
 			</div>
 		{/if}
 
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="tab"
 			class:active={tab == "update"}
@@ -167,7 +166,6 @@ afterUpdate(() => {
 			<p>Update</p>
 		</div>
 
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="tab"
 			class:active={tab == "developer"}
@@ -233,7 +231,6 @@ afterUpdate(() => {
 					</div>
 				</div>
 			{:else if tab == "projector"}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div class="content">
 					{#each screens as screen, i}
 						<div

@@ -8,7 +8,7 @@ let list: Array<any> = [];
 let listElements: Array<HTMLVideoElement> = [];
 let active = -1;
 let fullscreen = false;
-let buffer = [];
+let buffer: any[] = [];
 
 let ctx = new AudioContext();
 let input: MediaElementAudioSourceNode;
@@ -52,7 +52,7 @@ const unlistenEditMode = listen("editMode", e => {
 	editMode = e.payload.edit;
 });
 
-onMount(async () => {
+onMount(() => {
 	//input = ctx.createMediaElementSource(videoElement);
 
 	gainNode = ctx.createGain();
@@ -89,6 +89,7 @@ onMount(async () => {
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="wrapper"
 	class:edit={editMode}

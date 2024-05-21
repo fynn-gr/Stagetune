@@ -6,15 +6,13 @@ import {
 	selectedItem,
 } from "./Stores";
 import { emit } from "@tauri-apps/api/event";
-import type { playListItem } from "./Types";
+import type { playListItem, playListTrack } from "./Types";
 
 export function createPlaylistTrack(
-	type: string,
 	path: string,
 	name: string,
-): playListItem {
+): playListTrack {
 	return {
-		type: type,
 		path: path,
 		name: name,
 		playing: false,
@@ -25,10 +23,10 @@ export function createPlaylistTrack(
 		autoReset: false,
 		fade: { in: 0, out: 0 },
 		edit: { in: 0, out: 0 },
-		annotation: undefined,
+		annotation: null,
 		startedAt: 0,
 		pausedAt: 0,
-		inFade: undefined,
+		inFade: null,
 		missing: false,
 		loaded: false,
 	};

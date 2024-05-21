@@ -24,7 +24,7 @@ export let id: number;
 export let ctx: AudioContext;
 export let masterGain: GainNode;
 let dragging = false;
-let dragover: "top" | "bottom" = null;
+let dragover: "top" | "bottom" | null = null;
 let titleEl: HTMLElement;
 
 let input: AudioBufferSourceNode;
@@ -32,7 +32,7 @@ let gainNode: GainNode;
 let fadeNode: GainNode;
 let panNode: StereoPannerNode;
 
-function handleDragStart(e) {
+function handleDragStart(e: any) {
 	//calc pointer position
 	let rec = e.target.getBoundingClientRect();
 	let x = e.clientX - rec.left;
@@ -52,12 +52,12 @@ function handleDragStart(e) {
 	//console.log("drag start", e);
 }
 
-function handleDragEnd(e) {
+function handleDragEnd(e: any) {
 	dragging = false;
 	console.log("end dragging");
 }
 
-function handleDrop(e) {
+function handleDrop(e: any) {
 	e.preventDefault();
 	e.stopPropagation();
 
@@ -74,7 +74,7 @@ function handleDrop(e) {
 	handleDrop(newPosition);
 }
 
-function handleDragEnter(e) {
+function handleDragEnter(e: any) {
 	//calc mouse position
 	let rec = e.target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
@@ -87,7 +87,7 @@ function handleDragEnter(e) {
 	}
 }
 
-function handleDragLeave(e) {
+function handleDragLeave(e: any) {
 	dragover = null;
 }
 
@@ -105,7 +105,7 @@ function onEnd() {
 	}
 }
 
-function handleSkip(e) {
+function handleSkip(e: any) {
 	if ($settings.allowSkipLive || $editMode) {
 		let rec = e.target.getBoundingClientRect();
 		let x = e.clientX - rec.left;
@@ -165,11 +165,11 @@ export function playPause() {
 		stop(track.autoReset, true);
 	} else {
 		//play
-		play(null, true);
+		play(undefined, true);
 	}
 }
 
-export function play(startTime: number = null, useFade: boolean = false) {
+export function play(startTime: number | undefined = undefined, useFade: boolean = false) {
 	//resume track
 
 	if (track.fade.in > 0 && track.inFade == null && useFade) {
@@ -181,7 +181,7 @@ export function play(startTime: number = null, useFade: boolean = false) {
 		}, track.fade.in * 1000);
 	}
 
-	if (startTime == null) {
+	if (!startTime) {
 		input.start(0, track.pausedAt + cutIn);
 		track.startedAt = ctx.currentTime - track.pausedAt;
 	} else {
@@ -279,6 +279,7 @@ $: $currentDragging == null ? (dragover = null) : null;
 $: if (!track.loaded) load();
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="playlist-item track"

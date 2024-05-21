@@ -361,7 +361,7 @@ $: emit("editMode", { edit: $editMode });
 		{/if}
 		{#if $playlist.length > 0}
 			{#each $playlist as t, i}
-				{#if t.type == "track"}
+				{#if typeof t === "PlayListTrack"}
 					<PlayListTrack
 						bind:this={$playlistElements[i]}
 						bind:track={t}
@@ -414,7 +414,6 @@ $: emit("editMode", { edit: $editMode });
 					/>
 				</div>
 
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="track"
 					style={`
@@ -524,9 +523,7 @@ $: emit("editMode", { edit: $editMode });
 		</div>
 	{/if}
 
-	{#if $contextMenu != null}
-		<ContextMenu />
-	{/if}
+	<ContextMenu />
 
 	<div class="window-rim" />
 </main>

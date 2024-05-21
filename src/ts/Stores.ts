@@ -1,6 +1,8 @@
 import { writable } from "svelte/store";
-import type { Hotkey, Operator, Settings, playListItem } from "./Types";
+import type { ContextMenu, Hotkey, Operator, Settings } from "./Types";
 import type { PlaylistElement } from "@/lib/Components";
+import type PlayListVideo from "@/lib/PlayListVideo.svelte";
+import type PlayListAnotation from "@/lib/PlayListAnotation.svelte";
 
 export const settings = writable<Settings>({
 	recent: [],
@@ -267,7 +269,7 @@ export const keymap = writable<Operator[]>([
 		meta: false,
 	},
 ]);
-export const contextMenu = writable(null);
+export const contextMenu = writable<ContextMenu | null>(null);
 
 export const currentDragging = writable<playListItem | null>(null); //dragging object
 export const draggingOrigin = writable<"src" | "playlist" | null>(null);
@@ -276,7 +278,7 @@ export const editMode = writable<boolean>(true);
 export const uiPlatform = writable<"mac" | "win">("mac");
 export const theme = writable("dark"); //unused
 export const splash = writable<boolean>(false); //splash screen visible
-export const playlist = writable<playListItem[]>([]);
+export const playlist = writable<playListTrack | PlayListVideo | PlayListAnotation[]>([]);
 export const selectedItem = writable<number | undefined>(undefined);
 export const hotkeys = writable<Hotkey[]>([
 	{

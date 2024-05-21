@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { mapRange } from "../utils";
+import { mapRange } from "../ts/Utils";
 
 export let analyser: any;
 export let ctx: AudioContext;
@@ -38,7 +38,7 @@ function drawMeter() {
 }
 
 onMount(() => {
-	meterCtx = meterCanvas.getContext("2d");
+	meterCtx = meterCanvas.getContext("2d")!;
 	drawMeter();
 });
 </script>
