@@ -65,39 +65,43 @@ function openSettings() {
 	invoke("open_settings", { invokeMessage: JSON.stringify($settings) });
 }
 
-function handleDropPlaylist(e) {
+function handleDropPlaylist(e: Event) {
 	e.preventDefault();
-
 	handleDrop($playlist.length);
-
 	dragOverPlaylist = false;
 }
 
 function moveUp() {
-	for (let i = $selectedItem - 1; i > -1; i--) {
-		if ($playlist[i].type != "annotation") {
-			$selectedItem = i;
-			break;
+	if (selectedItem) {
+		for (let i = $selectedItem! - 1; i > -1; i--) {
+			if ($playlist[i].type != "annotation") {
+				$selectedItem = i;
+				break;
+			}
 		}
 	}
 }
 
 function moveDown() {
-	for (let i = $selectedItem + 1; i < $playlist.length; i++) {
-		if ($playlist[i].type != "annotation") {
-			$selectedItem = i;
-			break;
+	if (selectedItem) {
+		for (let i = $selectedItem! + 1; i < $playlist.length; i++) {
+			if ($playlist[i].type != "annotation") {
+				$selectedItem = i;
+				break;
+			}
 		}
 	}
 }
 
 function skip() {
-	for (let i = $selectedItem + 1; i < $playlist.length; i++) {
-		if ($playlist[i].type != "annotation") {
-			$playlistElements[$selectedItem].stop(true);
-			$selectedItem = i;
-			$playlistElements[$selectedItem].play(0);
-			break;
+	if (selectedItem) {
+		for (let i = $selectedItem! + 1; i < $playlist.length; i++) {
+			if ($playlist[i].type != "annotation") {
+				$playlistElements[$selectedItem!].stop(true);
+				$selectedItem = i;
+				$playlistElements[$selectedItem].play(0);
+				break;
+			}
 		}
 	}
 }
@@ -111,16 +115,16 @@ function deleteTrack() {
 		let toDelete = $selectedItem;
 
 		//find hotkey
-		if ($playlist[$selectedItem].hotkey != undefined) {
+		if (typeof $playlist[$selectedItem].hotkey === "number") {
 			let hotkeyRm = $playlist[$selectedItem].hotkey;
 			console.log(hotkeyRm);
-			$hotkeys[hotkeyRm - 1].track = null;
+			$hotkeys[(hotkeyRm as number) - 1].track = null;
 		}
 
 		//find new selected item
 		if ($playlist.length - 1 > $selectedItem) $selectedItem++;
 		else if ($selectedItem > 0) $selectedItem--;
-		else $selectedItem = null;
+		else $selectedItem = undefined;
 
 		//delte from playlist
 		playlist.update(e => {
@@ -239,7 +243,8 @@ onMount(() => {
 			else if (
 				(e.code === "KeyA" || e.code === "ArrowLeft") &&
 				!e.ctrlKey &&
-				!e.metaKey
+				!e.metaKey &&
+				$selectedItem
 			) {
 				e.preventDefault();
 				$playlistElements[$selectedItem].stop(true);
@@ -254,7 +259,7 @@ onMount(() => {
 				skip();
 			}
 			//play
-			else if (e.code === "Space") {
+			else if (e.code === "Space" && $selectedItem) {
 				e.preventDefault();
 				$playlistElements[$selectedItem].playPause();
 			}
@@ -284,12 +289,11 @@ $: emit("editMode", { edit: $editMode });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 {#if $splash}
 	<Splash bind:splashScreen={$splash} />
 {/if}
 
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
 	{#if $editMode && showTracklist}
@@ -341,6 +345,8 @@ $: emit("editMode", { edit: $editMode });
 			e.preventDefault();
 			dragOverPlaylist = false;
 		}}
+		role="button"
+		tabindex="0"
 		bind:this={playlistEl}
 	>
 		{#if $settings.showAnnotations}

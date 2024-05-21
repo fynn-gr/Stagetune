@@ -25,10 +25,10 @@ export function createPlaylistTrack(
 		autoReset: false,
 		fade: { in: 0, out: 0 },
 		edit: { in: 0, out: 0 },
-		annotation: null,
+		annotation: undefined,
 		startedAt: 0,
 		pausedAt: 0,
-		inFade: null,
+		inFade: undefined,
 		missing: false,
 		loaded: false,
 	};
@@ -69,10 +69,10 @@ export function waveformCalc(
 }
 
 export function updateProjectorList() {
-	let list = [];
+	let list: { name: string; url: string }[] = [];
 	get(playlist).forEach(e => {
 		if (e.type == "video") {
-			list.push({ name: e.name, url: e.path });
+			list.push({ name: e.name!, url: e.path! });
 		}
 	});
 
@@ -80,17 +80,18 @@ export function updateProjectorList() {
 }
 
 export function setUIScale(scale: number) {
-	let root: HTMLElement = document.querySelector(":root");
+	let root: HTMLElement = document.querySelector(":root")!;
 	root.style.fontSize = `${scale}px`;
 }
 
-export function mapRange(value, in_min, in_max, out_min, out_max) {
+export function mapRange(
+	value: number,
+	in_min: number,
+	in_max: number,
+	out_min: number,
+	out_max: number,
+) {
 	return ((value - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
-}
-
-export function verionCompare(version: string, compareWith) {
-	let versionBase = version.split(".");
-	let versionCompare = compareWith.split(".");
 }
 
 export function handleDrop(newPosition: number) {
@@ -109,8 +110,8 @@ export function handleDrop(newPosition: number) {
 				0,
 				createPlaylistTrack(
 					get(currentDragging).type,
-					get(currentDragging).path,
-					get(currentDragging).name,
+					get(currentDragging).path!,
+					get(currentDragging).name!,
 				),
 			);
 			return e;

@@ -11,11 +11,11 @@ import {
 import { createPlaylistTrack } from "@/ts/Utils";
 import { onMount } from "svelte";
 
-export let key: string;
+export let key: number;
 export let track: any = null;
 let isPlaying = false;
 
-async function handleDropHotkeys(e) {
+async function handleDropHotkeys(e: Event) {
 	e.preventDefault();
 
 	if ($draggingOrigin == "src" && $currentDragging.type == "track") {
@@ -89,6 +89,8 @@ $: if (track != null) {
 		return false;
 	}}
 	on:drop={handleDropHotkeys}
+	role="button"
+	tabindex={key}
 >
 	<p class="key">{key}</p>
 	<p class="name" class:placeholder={track == null}>

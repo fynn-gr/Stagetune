@@ -1,17 +1,12 @@
 <script lang="ts">
 import { onDestroy, onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
-import {
-	createPlaylistTrack,
-	secondsToMinutes,
-	updateProjectorList,
-} from "@/ts/Utils";
+import { updateProjectorList } from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
 	isEditing,
 	currentDragging,
-	playlist,
 	draggingOrigin,
 } from "../ts/Stores";
 import Annotation from "./Annotation.svelte";
@@ -155,6 +150,8 @@ $: $currentDragging == null ? (dragover = false) : null;
 	on:click={e => {
 		selectedItem.set(id);
 	}}
+	role="button"
+	tabindex="0"
 >
 	<div class="drag-area">
 		<p>{id + 1}</p>
@@ -179,6 +176,8 @@ $: $currentDragging == null ? (dragover = false) : null;
 						#555 calc(100% * ${track.state / track.length || 0}),
 						#555 100%
 					);`}
+			role="button"
+			tabindex="0"
 		/>
 
 		<!--reset-btn-->

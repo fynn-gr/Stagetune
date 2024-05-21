@@ -16,7 +16,7 @@ export type playListItem = {
 	startedAt?: number; //track was started at seconds
 	pausedAt?: number; // track was paused at seconds
 	inFade?: "in" | "out"; //track is currently in fade or undefined
-	hotkey?: string; //hotkey number assigned, undefined if not assigned
+	hotkey?: number; //hotkey number assigned, undefined if not assigned
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
 };
@@ -35,3 +35,18 @@ export type Settings = {
 	showVolumeOptions: boolean;
 	allowSkipLive: boolean;
 };
+
+export type Hotkey = {
+	key: number;
+	track: playListItem | null;
+};
+
+//temp Operator declaration till Operators are implemented in UI
+export type Operator = {
+	operator: string;
+	name: string;
+	key: string;
+	ctrl: boolean;
+	alt: boolean;
+	meta: boolean;
+}

@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
-import type { Settings } from "./Types";
+import type { Hotkey, Operator, Settings, playListItem } from "./Types";
+import type { PlaylistElement } from "@/lib/Components";
 
 export const settings = writable<Settings>({
 	recent: [],
@@ -16,7 +17,7 @@ export const settings = writable<Settings>({
 	showVolumeOptions: true,
 	allowSkipLive: true,
 });
-export const keymap = writable([
+export const keymap = writable<Operator[]>([
 	{
 		operator: "play_pause",
 		name: "Play/Pause",
@@ -268,58 +269,58 @@ export const keymap = writable([
 ]);
 export const contextMenu = writable(null);
 
-export const currentDragging = writable(null); //dragging object
-export const draggingOrigin = writable(null); //src / playlist
+export const currentDragging = writable<playListItem | null>(null); //dragging object
+export const draggingOrigin = writable<"src" | "playlist" | null>(null);
 
-export const editMode = writable(true);
-export const uiPlatform = writable("mac");
+export const editMode = writable<boolean>(true);
+export const uiPlatform = writable<"mac" | "win">("mac");
 export const theme = writable("dark"); //unused
-export const splash = writable(false); //splash screen visible
-export const playlist = writable([]);
-export const selectedItem = writable(null);
-export const hotkeys = writable([
+export const splash = writable<boolean>(false); //splash screen visible
+export const playlist = writable<playListItem[]>([]);
+export const selectedItem = writable<number | undefined>(undefined);
+export const hotkeys = writable<Hotkey[]>([
 	{
-		key: "1",
+		key: 1,
 		track: null,
 	},
 	{
-		key: "2",
+		key: 2,
 		track: null,
 	},
 	{
-		key: "3",
+		key: 3,
 		track: null,
 	},
 	{
-		key: "4",
+		key: 4,
 		track: null,
 	},
 	{
-		key: "5",
+		key: 5,
 		track: null,
 	},
 	{
-		key: "6",
+		key: 6,
 		track: null,
 	},
 	{
-		key: "7",
+		key: 7,
 		track: null,
 	},
 	{
-		key: "8",
+		key: 8,
 		track: null,
 	},
 	{
-		key: "9",
+		key: 9,
 		track: null,
 	},
 ]);
-export const hotkeyElements = writable([]);
-export const playlistElements = writable([]);
+export const hotkeyElements = writable<any[]>([]);
+export const playlistElements = writable<PlaylistElement[]>([]);
 
 export const srcFiles = writable([]);
-export const localFiles = writable([
+export const localFiles = writable<any[]>([
 	{
 		name: "cutscene 1",
 		path: "/videos/Cutscene 1.mp4",
@@ -375,5 +376,5 @@ export const localFiles = writable([
 		origin: "src",
 	},
 ]);
-export const playlistPath = writable("");
-export const isEditing = writable(0); //input currently in focus counter
+export const playlistPath = writable<string>("");
+export const isEditing = writable<number>(0); //input currently in focus counter
