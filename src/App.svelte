@@ -28,7 +28,6 @@ import {
 	hotkeys,
 	localFiles,
 	settings,
-	contextMenu,
 	splash,
 } from "./ts/Stores";
 import { waveformCalc, updateProjectorList, handleDrop } from "./ts/Utils";
