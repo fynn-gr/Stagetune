@@ -2,7 +2,6 @@
 import {
 	editMode,
 	isEditing,
-	uiPlatform,
 	contextMenu,
 	selectedItem,
 	playlist,
@@ -10,7 +9,7 @@ import {
 import { onMount } from "svelte";
 
 export let id: number;
-export let annotation: { text: string; color: string };
+export let annotation: { text: string; color: string | null } | null;
 
 let annotationEl: HTMLElement;
 
@@ -20,6 +19,7 @@ onMount(() => {
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if annotation != null}
 	<div
 		class="annotation-attached"

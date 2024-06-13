@@ -70,6 +70,15 @@ function handleDropPlaylist(e: Event) {
 	dragOverPlaylist = false;
 }
 
+function handleDragOverPlaylist(e: DragEvent) {
+	const target = e.target as HTMLElement;
+	e.preventDefault();
+	if (target.classList.contains("playlist")) {
+		console.log("dragover Playlist");
+		dragOverPlaylist = true;
+	}
+}
+
 function moveUp() {
 	if (selectedItem) {
 		for (let i = $selectedItem! - 1; i > -1; i--) {
@@ -147,31 +156,32 @@ function resetAll() {
 }
 
 const listenerMenus = listen("menu", async event => {
+	let id = event.payload;
 	console.log(event);
-	if (event.payload == "quit" && $editMode) {
+	if (id == "quit" && $editMode) {
 		const confirmed = await confirm("Discard all unsaved changes?", {
 			title: "Quit?",
 			type: "warning",
 			okLabel: "Quit",
 		}).then(isOK => (isOK ? exit(0) : null));
-	} else if (event.payload == "open" && $editMode) {
+	} else if (id == "open" && $editMode) {
 		openDir();
-	} else if (event.payload == "save") {
+	} else if (id == "save") {
 		savePlaylist();
-	} else if (event.payload == "projector" && $settings.video) {
+	} else if (id == "projector" && $settings.video) {
 		openVideoWindow(!projector);
 		projector = !projector;
-	} else if (event.payload == "settings" && $editMode) {
+	} else if (id == "settings" && $editMode) {
 		openSettings();
-	} else if (event.payload == "showTracklist" && $editMode) {
+	} else if (id == "showTracklist" && $editMode) {
 		showTracklist = !showTracklist;
-	} else if (event.payload == "showCurrent") {
+	} else if (id == "showCurrent") {
 		showCurrent = !showCurrent;
-	} else if (event.payload == "showHotkeys") {
+	} else if (id == "showHotkeys") {
 		showHotkeys = !showHotkeys;
-	} else if (event.payload == "showEditor" && $editMode) {
+	} else if (id == "showEditor" && $editMode) {
 		showEditor = !showEditor;
-	} else if (event.payload == "showSplash" && $editMode) {
+	} else if (id == "showSplash" && $editMode) {
 		$splash = true;
 	}
 });
@@ -332,13 +342,7 @@ $: emit("editMode", { edit: $editMode });
 			$editMode ? 46 : 9
 		}rem);`}
 		on:drop={handleDropPlaylist}
-		on:dragover={e => {
-			e.preventDefault();
-			if (e.target.classList.contains("playlist")) {
-				console.log("dragover Playlist");
-				dragOverPlaylist = true;
-			}
-		}}
+		on:dragover={handleDragOverPlaylist}
 		on:dragleave={e => {
 			console.log("drag leave Playlist");
 			e.preventDefault();
@@ -360,7 +364,7 @@ $: emit("editMode", { edit: $editMode });
 		{/if}
 		{#if $playlist.length > 0}
 			{#each $playlist as t, i}
-				{#if typeof t === "PlayListTrack"}
+				{#if t.type === "track"}
 					<PlayListTrack
 						bind:this={$playlistElements[i]}
 						bind:track={t}
@@ -368,13 +372,13 @@ $: emit("editMode", { edit: $editMode });
 						{ctx}
 						{masterGain}
 					/>
-				{:else if t.type == "video"}
+				{:else if t.type === "video"}
 					<PlayListVideo
 						bind:this={$playlistElements[i]}
 						bind:track={t}
 						id={i}
 					/>
-				{:else if t.type == "annotation" && $settings.showAnnotations}
+				{:else if t.type === "annotation"}
 					<PlayListAnotation
 						bind:this={$playlistElements[i]}
 						bind:track={t}
@@ -393,7 +397,7 @@ $: emit("editMode", { edit: $editMode });
 	<!--editor-->
 	{#if showEditor && $editMode}
 		<div class="editor">
-			{#if $selectedItem != undefined && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type == "track"}
+			{#if $selectedItem != undefined && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type === "track"}
 				<div class="prop-bar">
 					<label>cut</label>
 					<PropNumber

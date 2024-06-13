@@ -6,13 +6,15 @@ import {
 	selectedItem,
 } from "./Stores";
 import { emit } from "@tauri-apps/api/event";
-import type { playListItem, playListTrack } from "./Types";
+import type { ItemType, PlaylistItem } from "./Types";
 
 export function createPlaylistTrack(
+	type: ItemType,
 	path: string,
 	name: string,
-): playListTrack {
+): PlaylistItem {
 	return {
+		type: type,
 		path: path,
 		name: name,
 		playing: false,
@@ -94,11 +96,13 @@ export function mapRange(
 
 export function handleDrop(newPosition: number) {
 	if (get(draggingOrigin) == "playlist") {
-		let oldPosition = get(playlist).indexOf(get(currentDragging));
+		let oldPosition = get(playlist).indexOf(
+			get(currentDragging) as PlaylistItem,
+		);
 
 		playlist.update(e => {
 			e.splice(oldPosition, 1);
-			e.splice(newPosition, 0, get(currentDragging));
+			e.splice(newPosition, 0, get(currentDragging) as PlaylistItem);
 			return e;
 		});
 	} else if (get(draggingOrigin) == "src") {
@@ -107,9 +111,9 @@ export function handleDrop(newPosition: number) {
 				newPosition,
 				0,
 				createPlaylistTrack(
-					get(currentDragging).type,
-					get(currentDragging).path!,
-					get(currentDragging).name!,
+					get(currentDragging)!.type as ItemType,
+					get(currentDragging)!.path as string,
+					get(currentDragging)!.name as string,
 				),
 			);
 			return e;

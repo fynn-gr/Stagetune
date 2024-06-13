@@ -63,10 +63,10 @@ export async function scanSrcPaths(path: string) {
 	let playlistFile: string;
 
 	//recursive scan src path
-	const entries = await readDir(path, { recursive: true });
+	const entries: any[] = await readDir(path, { recursive: true });
 
-	function processEntries(entries) {
-		entries.forEach(async (entry, j) => {
+	function processEntries(entries: any[]) {
+		entries.forEach(async (entry: any, j) => {
 			//console.log(`File: `, entry.path);
 			if (entry.children) {
 				//subfolder

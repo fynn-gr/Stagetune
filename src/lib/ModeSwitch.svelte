@@ -50,7 +50,7 @@ onMount(() => {
 	}}
 	{disabled}
 	title={toolTip}
-	style={`background-color: ${active ? "none" : "var(--secondary)"};`}
+	style={`background-color: ${active ? "none" : "var(--accent)"};`}
 >
 	<img src={active ? iconPathActive : iconPath} alt={toolTip} />
 

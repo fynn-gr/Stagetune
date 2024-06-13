@@ -171,8 +171,8 @@ $: $currentDragging == null ? (dragover = false) : null;
 			style={`
 					background: linear-gradient(
 						90deg,
-						var(--secondary) 0%,
-						var(--secondary) calc(100% * ${track.state / track.length || 0}),
+						var(--accent) 0%,
+						var(--accent) calc(100% * ${track.state / track.length || 0}),
 						#555 calc(100% * ${track.state / track.length || 0}),
 						#555 100%
 					);`}

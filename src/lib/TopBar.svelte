@@ -229,7 +229,7 @@ export let resetAll;
 			icon="lock"
 			iconActive="lock_open"
 			bind:active={$editMode}
-			activeColor="var(--secondary)"
+			activeColor="var(--accent)"
 			toolTip="Toggle Mode"
 		/>
 

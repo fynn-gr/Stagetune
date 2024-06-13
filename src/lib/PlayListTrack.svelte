@@ -6,7 +6,6 @@ import { exists } from "@tauri-apps/api/fs";
 import { message } from "@tauri-apps/api/dialog";
 
 import { secondsToMinutes, waveformCalc } from "@/ts/Utils";
-import type { playListItem } from "@/ts/Types";
 import {
 	editMode,
 	selectedItem,
@@ -16,10 +15,11 @@ import {
 	settings,
 	draggingOrigin,
 } from "../ts/Stores";
+import type { PlaylistItem } from "@/ts/Types";
 import Annotation from "./Annotation.svelte";
 import Waveform from "./Waveform.svelte";
 
-export let track: playListItem;
+export let track: PlaylistItem;
 export let id: number;
 export let ctx: AudioContext;
 export let masterGain: GainNode;
@@ -113,11 +113,11 @@ function handleSkip(e: any) {
 
 		if (track.playing) {
 			stop();
-			play(cutTrackLength * skipFac);
-			track.state = cutTrackLength * skipFac;
+			play(cutTrackLength! * skipFac);
+			track.state = cutTrackLength! * skipFac;
 		} else {
-			track.pausedAt = cutTrackLength * skipFac;
-			track.state = cutTrackLength * skipFac;
+			track.pausedAt = cutTrackLength! * skipFac;
+			track.state = cutTrackLength! * skipFac;
 		}
 	}
 }
@@ -169,7 +169,10 @@ export function playPause() {
 	}
 }
 
-export function play(startTime: number | undefined = undefined, useFade: boolean = false) {
+export function play(
+	startTime: number | undefined = undefined,
+	useFade: boolean = false,
+) {
 	//resume track
 
 	if (track.fade.in > 0 && track.inFade == null && useFade) {
@@ -256,7 +259,7 @@ export function stop(reset: boolean = false, useFade: boolean = false) {
 }
 
 export function getBuffer(): AudioBuffer {
-	return track.buffer;
+	return track.buffer as AudioBuffer;
 }
 
 export function update() {
@@ -270,7 +273,7 @@ onMount(() => {
 });
 
 $: cutIn = track.edit.in;
-$: cutTrackLength = track.length ? track.length - cutIn : null;
+$: cutTrackLength = track.length ? track.length - cutIn : 0;
 $: panNode ? (panNode.pan.value = track.pan) : null;
 $: gainNode
 	? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
@@ -319,8 +322,8 @@ $: if (!track.loaded) load();
 			style={`
 					background: linear-gradient(
 						90deg,
-						var(--secondary) 0%,
-						var(--secondary) calc(100% * ${track.state / cutTrackLength}),
+						var(--accent) 0%,
+						var(--accent) calc(100% * ${track.state / cutTrackLength}),
 						#555 calc(100% * ${track.state / cutTrackLength}),
 						#555 100%
 					);`}

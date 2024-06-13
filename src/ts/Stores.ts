@@ -1,8 +1,12 @@
-import { writable } from "svelte/store";
-import type { ContextMenu, Hotkey, Operator, Settings } from "./Types";
-import type { PlaylistElement } from "@/lib/Components";
-import type PlayListVideo from "@/lib/PlayListVideo.svelte";
-import type PlayListAnotation from "@/lib/PlayListAnotation.svelte";
+import { readable, writable } from "svelte/store";
+import type {
+	ContextMenu,
+	Hotkey,
+	Operator,
+	Settings,
+	PlaylistItem,
+} from "./Types";
+import { emit } from "@tauri-apps/api/event";
 
 export const settings = writable<Settings>({
 	recent: [],
@@ -271,14 +275,14 @@ export const keymap = writable<Operator[]>([
 ]);
 export const contextMenu = writable<ContextMenu | null>(null);
 
-export const currentDragging = writable<playListItem | null>(null); //dragging object
+export const currentDragging = writable<PlaylistItem | null>(null); //dragging object
 export const draggingOrigin = writable<"src" | "playlist" | null>(null);
 
 export const editMode = writable<boolean>(true);
-export const uiPlatform = writable<"mac" | "win">("mac");
+export const uiPlatform = writable<"mac" | "win">("win");
 export const theme = writable("dark"); //unused
 export const splash = writable<boolean>(false); //splash screen visible
-export const playlist = writable<playListTrack | PlayListVideo | PlayListAnotation[]>([]);
+export const playlist = writable<PlaylistItem[]>([]);
 export const selectedItem = writable<number | undefined>(undefined);
 export const hotkeys = writable<Hotkey[]>([
 	{
@@ -319,7 +323,7 @@ export const hotkeys = writable<Hotkey[]>([
 	},
 ]);
 export const hotkeyElements = writable<any[]>([]);
-export const playlistElements = writable<PlaylistElement[]>([]);
+export const playlistElements = writable<any[]>([]);
 
 export const srcFiles = writable([]);
 export const localFiles = writable<any[]>([
@@ -380,3 +384,8 @@ export const localFiles = writable<any[]>([
 ]);
 export const playlistPath = writable<string>("");
 export const isEditing = writable<number>(0); //input currently in focus counter
+export const Menu = readable({
+	handle(id: string) {
+		emit("menu", id);
+	},
+});

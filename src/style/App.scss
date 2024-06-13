@@ -2,22 +2,12 @@
 @forward "./platforms.scss";
 
 :root {
-	--accent: rgb(0, 108, 141);
-	--secondary: rgb(245, 36, 74);
-	--secondary-filter: invert(20%) sepia(72%) saturate(4109%) hue-rotate(339deg)
+	--accent: rgb(245, 36, 74);
+	--accent-filter: invert(20%) sepia(72%) saturate(4109%) hue-rotate(339deg)
 		brightness(102%) contrast(92%);
-	--secondary-dim: hsl(349, 100%, 30%);
+	--accent-dim: hsl(349, 100%, 30%);
 
 	--annotation: rgb(77, 77, 77);
-	--topBarHeight: 54px;
-
-	main.mac {
-		--topBarHeight: 54px;
-	}
-
-	main.win {
-		--topBarHeight: 44px;
-	}
 }
 
 body {

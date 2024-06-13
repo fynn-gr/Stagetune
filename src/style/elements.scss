@@ -1,9 +1,9 @@
 .window-body {
 	display: grid;
 	grid-template-columns: auto 1fr auto;
-	grid-template-rows: var(--topBarHeight) 1fr auto;
+	grid-template-rows: auto 1fr auto;
 	grid-template-areas:
-		"topBar    topBar   topBar"
+		"topbar    topbar   topbar"
 		"tracklist playList palettes"
 		"tracklist editor   palettes";
 }
@@ -21,7 +21,7 @@
 		width: 536px;
 		height: 536px;
 		margin: auto;
-		background-color: var(--secondary);
+		background-color: var(--accent);
 		//border: 12px solid #FF2D55;
 		border-radius: 28px;
 		box-shadow: 2px 2px 64px rgba(0, 0, 0, 0.585);
@@ -241,7 +241,7 @@
 				font-size: 18rem;
 
 				.input:focus {
-					color: var(--secondary);
+					color: var(--accent);
 				}
 			}
 
@@ -260,7 +260,7 @@
 					}
 
 					&.active {
-						background-color: var(--secondary);
+						background-color: var(--accent);
 					}
 
 					&.active:has(+ .active) {
@@ -328,7 +328,7 @@
 					font-weight: 700;
 
 					&:focus {
-						box-shadow: 0 0 0 3rem var(--secondary);
+						box-shadow: 0 0 0 3rem var(--accent);
 					}
 				}
 			}
@@ -391,7 +391,7 @@
 					}
 
 					&.active {
-						background-color: var(--secondary);
+						background-color: var(--accent);
 					}
 
 					img {
@@ -448,7 +448,7 @@
 		top: 3.5rem;
 		width: 100%;
 		height: 3rem;
-		background-color: var(--secondary);
+		background-color: var(--accent);
 		border-radius: 1rem;
 	}
 
@@ -458,7 +458,7 @@
 		bottom: -6rem;
 		width: 100%;
 		height: 3rem;
-		background-color: var(--secondary);
+		background-color: var(--accent);
 		border-radius: 1rem;
 	}
 
@@ -467,23 +467,23 @@
 		margin-right: 9rem;
 		translate: 0 4rem;
 		height: 3rem;
-		background-color: var(--secondary);
+		background-color: var(--accent);
 		border-radius: 1rem;
 	}
 
 	.selected {
 		&:has(.input:focus, input[type="number"]:focus) {
 			.inner {
-				box-shadow: 0 0 0 3rem var(--secondary-dim);
+				box-shadow: 0 0 0 3rem var(--accent-dim);
 			}
 		}
 
 		.inner {
-			box-shadow: 0 0 0 3rem var(--secondary);
+			box-shadow: 0 0 0 3rem var(--accent);
 		}
 
 		.container {
-			box-shadow: 0 0 0 3rem var(--secondary);
+			box-shadow: 0 0 0 3rem var(--accent);
 		}
 	}
 
@@ -537,7 +537,7 @@
 
 					&::selection {
 						color: white;
-						background-color: var(--secondary);
+						background-color: var(--accent);
 					}
 				}
 			}
@@ -554,7 +554,7 @@
 				}
 
 				&.active {
-					background-color: var(--secondary);
+					background-color: var(--accent);
 				}
 
 				img {
@@ -662,7 +662,7 @@
 					width: 8rem;
 					height: 16rem;
 					border-radius: 4rem;
-					background-color: var(--secondary);
+					background-color: var(--accent);
 					box-shadow: 0px 0px 0 2rem var(--panel2);
 				}
 
@@ -807,7 +807,7 @@
 				&::selection,
 				*::selection {
 					color: white;
-					background-color: var(--secondary);
+					background-color: var(--accent);
 				}
 			}
 		}
@@ -822,7 +822,7 @@
 		border-radius: 8rem;
 
 		&:has(:focus) {
-			box-shadow: 0 0 0 3rem var(--secondary);
+			box-shadow: 0 0 0 3rem var(--accent);
 		}
 
 		.input {
@@ -839,7 +839,7 @@
 			&::selection,
 			*::selection {
 				color: white;
-				background-color: var(--secondary);
+				background-color: var(--accent);
 			}
 		}
 	}
@@ -912,7 +912,7 @@
 			background-color: rgb(36, 36, 36);
 
 			&:has(:focus) {
-				box-shadow: 0 0 0 2rem var(--secondary);
+				box-shadow: 0 0 0 2rem var(--accent);
 			}
 		}
 	}
@@ -956,7 +956,7 @@
 				appearance: none;
 				height: 100%;
 				width: 1px;
-				background: var(--secondary);
+				background: var(--accent);
 
 				&::after {
 					content: "";
@@ -964,7 +964,7 @@
 					top: 0;
 					width: 6px;
 					height: 6px;
-					background-color: var(--secondary);
+					background-color: var(--accent);
 				}
 			}
 		}
@@ -1012,7 +1012,7 @@
 			background-color: #141414;
 
 			&.playing {
-				background-color: var(--secondary);
+				background-color: var(--accent);
 			}
 		}
 
@@ -1076,11 +1076,11 @@
 
 		&.playing {
 			.key {
-				background-color: var(--secondary);
+				background-color: var(--accent);
 			}
 
 			.name {
-				border: solid 3rem var(--secondary);
+				border: solid 3rem var(--accent);
 			}
 		}
 
@@ -1128,7 +1128,6 @@
 }
 
 .topbar.toolbar {
-	min-height: var(--topbar-height);
 	border-top-left-radius: var(--win-corner) !important;
 
 	.topbar-button.mode-switch {
