@@ -1,7 +1,14 @@
 <script lang="ts">
+// Svelte, Tauri
 import { onDestroy, onMount } from "svelte";
-import { emit, listen } from "@tauri-apps/api/event";
+import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
+
+// Components
+import Annotation from "./Annotation.svelte";
+
+// Stores, Utils
 import { DropHandler, updateProjectorList } from "@/ts/Utils";
+import type { PlaylistItem } from "@/ts/Types";
 import {
 	editMode,
 	selectedItem,
@@ -9,17 +16,13 @@ import {
 	currentDragging,
 	draggingOrigin,
 } from "../ts/Stores";
-import Annotation from "./Annotation.svelte";
 
-import type { playListItem } from "@/ts/Types";
-
-export let track: playListItem;
+export let track: PlaylistItem;
 export let id: number;
 let dragging = false;
 let dragover = false;
-let missing = false;
 let titleEl: HTMLElement;
-let unlistenState;
+let unlistenState: UnlistenFn;
 let unlistenEnd;
 
 function handleDragStart(e) {
@@ -36,9 +39,8 @@ function handleDragStart(e) {
 	}
 }
 
-function handleDragEnd(e) {
+function handleDragEnd(e: DragEvent) {
 	dragging = false;
-	//console.log("end dragging", e);
 }
 
 function handleDrop(e) {
@@ -47,22 +49,15 @@ function handleDrop(e) {
 
 	let rec = e.target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
-
-	let newPosition;
-	if (y > rec.height / 2) {
-		newPosition = id + 1;
-	} else {
-		newPosition = id;
-	}
-
+	let newPosition = y > rec.height / 2 ? id + 1 : id;
 	DropHandler(newPosition);
 }
 
-function handleDragEnter(e) {
+function handleDragEnter() {
 	dragover = true;
 }
 
-function handleDragLeave(e) {
+function handleDragLeave() {
 	dragover = false;
 }
 
@@ -76,16 +71,7 @@ function handleSkip(e) {
 }
 
 export function playPause() {
-	if (track.playing) {
-		//pause
-		stop();
-	} else if (track.state > 0) {
-		//resume
-		play(true);
-	} else {
-		//start
-		play(false);
-	}
+	track.playing ? stop() : play(track.state > 0);
 }
 
 export function play(resume: boolean) {
@@ -94,32 +80,26 @@ export function play(resume: boolean) {
 }
 
 export function stop(reset: boolean = false) {
+	emit("update_play", { action: reset ? "pause" : "stop" });
 	if (reset) {
-		emit("update_play", { action: "pause" });
-		track.playing = false;
 		track.state = 0;
 		emit("update_play", { action: "skip", position: 0 });
-		emit("update_play", { action: "stop" });
-	} else {
-		emit("update_play", { action: "pause" });
-		track.playing = false;
 	}
+	track.playing = false;
 }
 
 export function update() {}
 
 onMount(async () => {
 	unlistenState = await listen("video_state", (e: any) => {
-		console.log(e.payload);
-		if (track.playing && e.payload.name == track.name) {
+		if (track.playing && e.payload.name === track.name) {
 			track.state = e.payload.state;
 			track.length = e.payload.duration;
-			console.log(track.state / track.length);
 		}
 	});
 
 	unlistenEnd = await listen("video_ended", (e: any) => {
-		if (e.payload.name == track.name) {
+		if (e.payload.name === track.name) {
 			track.playing = false;
 			track.state = 0;
 		}

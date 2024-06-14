@@ -1,9 +1,16 @@
 <script lang="ts">
+// Svelte, Tauri
 import { onMount } from "svelte";
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 import { join } from "@tauri-apps/api/path";
 import { exists } from "@tauri-apps/api/fs";
 import { message } from "@tauri-apps/api/dialog";
+
+// Components
+import Annotation from "./Annotation.svelte";
+import Waveform from "./Waveform.svelte";
+
+// Stores, Utils
 import { DropHandler, secondsToMinutes, waveformCalc } from "@/ts/Utils";
 import {
 	editMode,
@@ -15,8 +22,6 @@ import {
 	draggingOrigin,
 } from "../ts/Stores";
 import type { PlaylistItem } from "@/ts/Types";
-import Annotation from "./Annotation.svelte";
-import Waveform from "./Waveform.svelte";
 
 export let track: PlaylistItem;
 export let id: number;
@@ -69,7 +74,7 @@ function handleDrop(e: DragEvent) {
 
 function handleDragEnter(e: DragEvent) {
 	const target = e.target as HTMLElement;
-	let rec =  target.getBoundingClientRect();
+	let rec = target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
 	dragover = y > rec.height / 2 ? "top" : "bottom";
 }

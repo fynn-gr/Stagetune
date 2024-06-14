@@ -1,28 +1,16 @@
 export function isAudioFile(filename: string): boolean {
-	if (filename.match(/\.(mp3|ogg|aac|flac|wav|m4a)$/)) {
-		return true;
-	} else {
-		return false;
-	}
+    return /\.(mp3|ogg|aac|flac|wav|m4a)$/.test(filename);
 }
 
 export function isVideoFile(filename: string): boolean {
-	if (filename.match(/\.(mp4|mov|mkv|m4v|mpg|avi|webm)$/)) {
-		return true;
-	} else {
-		return false;
-	}
+    return /\.(mp4|mov|mkv|m4v|mpg|avi|webm)$/.test(filename);
 }
 
 export function isPlaylistFile(filename: string): boolean {
-	if (filename.match(/\.(Stagetune)$/)) {
-		return true;
-	} else {
-		return false;
-	}
+    return /\.(Stagetune)$/.test(filename);
 }
 
-export function fileNameFromPath(filename: string) {
-	let str = filename.substring(filename.lastIndexOf("\\") + 1);
-	return str.substring(str.lastIndexOf("/") + 1);
+export function fileNameFromPath(filepath: string): string {
+    const filename = filepath.split(/[\\/]/).pop(); // Get the last segment after splitting by slash or backslash
+    return filename ? filename : ""; // Return filename if found, otherwise empty string
 }

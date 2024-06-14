@@ -1,11 +1,11 @@
 import { get } from "svelte/store";
+import { emit } from "@tauri-apps/api/event";
 import {
 	currentDragging,
 	draggingOrigin,
 	playlist,
 	selectedItem,
 } from "./Stores";
-import { emit } from "@tauri-apps/api/event";
 import type { ItemType, PlaylistItem } from "./Types";
 
 export function createPlaylistTrack(
@@ -14,9 +14,9 @@ export function createPlaylistTrack(
 	name: string,
 ): PlaylistItem {
 	return {
-		type: type,
-		path: path,
-		name: name,
+		type,
+		path,
+		name,
 		playing: false,
 		state: 0,
 		volume: 80,
@@ -34,7 +34,7 @@ export function createPlaylistTrack(
 	};
 }
 
-export function secondsToMinutes(inp: number) {
+export function secondsToMinutes(inp: number): string {
 	let mins = ~~((inp % 3600) / 60);
 	let secs = ~~inp - mins * 60;
 	let secsFormat = secs < 10 ? "0" + secs : "" + secs;
@@ -42,10 +42,10 @@ export function secondsToMinutes(inp: number) {
 }
 
 export function waveformCalc(
-	buffer: AudioBuffer,
+	buffer: AudioBuffer | null,
 	samples: number,
 	cutInFac: number = 0,
-): Array<any> {
+): number[] {
 	if (buffer) {
 		let rawData = buffer.getChannelData(0);
 		let cutData = rawData.subarray(Math.floor(rawData.length * cutInFac));
@@ -71,8 +71,8 @@ export function waveformCalc(
 export function updateProjectorList() {
 	let list: { name: string; url: string }[] = [];
 	get(playlist).forEach(e => {
-		if (e.type == "video") {
-			list.push({ name: e.name!, url: e.path! });
+		if (e.type === "video" && e.name && e.path) {
+			list.push({ name: e.name, url: e.path });
 		}
 	});
 
@@ -90,37 +90,35 @@ export function mapRange(
 	in_max: number,
 	out_min: number,
 	out_max: number,
-) {
+): number {
 	return ((value - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
 }
 
 export function DropHandler(newPosition: number) {
-	if (get(draggingOrigin) == "playlist") {
-		let oldPosition = get(playlist).indexOf(
-			get(currentDragging) as PlaylistItem,
-		);
+	const dragOrigin = get(draggingOrigin);
+	const currentDrag = get(currentDragging);
 
+	if (dragOrigin === "playlist" && currentDrag) {
+		const oldPosition = get(playlist).indexOf(currentDrag);
 		playlist.update(e => {
 			e.splice(oldPosition, 1);
-			e.splice(newPosition, 0, get(currentDragging) as PlaylistItem);
+			e.splice(newPosition, 0, currentDrag);
 			return e;
 		});
-	} else if (get(draggingOrigin) == "src") {
+	} else if (dragOrigin === "src" && currentDrag) {
 		playlist.update(e => {
 			e.splice(
 				newPosition,
 				0,
 				createPlaylistTrack(
-					get(currentDragging)!.type as ItemType,
-					get(currentDragging)!.path as string,
-					get(currentDragging)!.name as string,
+					currentDrag.type,
+					currentDrag.path!,
+					currentDrag.name!,
 				),
 			);
 			return e;
 		});
 		selectedItem.set(newPosition);
-	} else {
-		//other or no drag origin
 	}
 
 	currentDragging.set(null);

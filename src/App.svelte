@@ -1,16 +1,16 @@
 <script lang="ts">
-// Import styles
+// Styles
 import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
 
-// Import Svelte and Tauri functions
+// Svelte, Tauri
 import { onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
 import { confirm } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api/tauri";
 import { exit } from "@tauri-apps/api/process";
 
-// Import components
+// Components
 import PlayListTrack from "./lib/PlayListTrack.svelte";
 import PlayListAnotation from "./lib/PlayListAnotation.svelte";
 import PlayListVideo from "./lib/PlayListVideo.svelte";
@@ -22,7 +22,7 @@ import Splash from "./lib/Splash.svelte";
 import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 
-// Import stores and utilities
+// Stores, Utils
 import {
 	editMode,
 	uiPlatform,
