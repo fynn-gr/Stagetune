@@ -30,7 +30,7 @@ import {
 	settings,
 	splash,
 } from "./ts/Stores";
-import { waveformCalc, updateProjectorList, handleDrop } from "./ts/Utils";
+import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
 	savePlaylist,
 	openDir,
@@ -66,7 +66,7 @@ function openSettings() {
 
 function handleDropPlaylist(e: Event) {
 	e.preventDefault();
-	handleDrop($playlist.length);
+	DropHandler($playlist.length);
 	dragOverPlaylist = false;
 }
 

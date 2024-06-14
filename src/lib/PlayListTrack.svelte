@@ -5,7 +5,7 @@ import { join } from "@tauri-apps/api/path";
 import { exists } from "@tauri-apps/api/fs";
 import { message } from "@tauri-apps/api/dialog";
 
-import { secondsToMinutes, waveformCalc } from "@/ts/Utils";
+import { DropHandler, secondsToMinutes, waveformCalc } from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
@@ -57,11 +57,12 @@ function handleDragEnd(e: any) {
 	console.log("end dragging");
 }
 
-function handleDrop(e: any) {
+function handleDrop(e: DragEvent) {
 	e.preventDefault();
 	e.stopPropagation();
 
-	let rec = e.target.getBoundingClientRect();
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
 
 	let newPosition;
@@ -71,7 +72,7 @@ function handleDrop(e: any) {
 		newPosition = id;
 	}
 
-	handleDrop(newPosition);
+	DropHandler(newPosition);
 }
 
 function handleDragEnter(e: any) {
@@ -92,10 +93,10 @@ function handleDragLeave(e: any) {
 }
 
 function onEnd() {
-	if (ctx.currentTime - track.startedAt >= (track.length - cutIn) * 0.96) {
+	if (ctx.currentTime - track.startedAt! >= (track.length! - cutIn) * 0.96) {
 		//reached end of track
 		console.log("ended");
-		console.log(ctx.currentTime - track.startedAt, track.length * 0.96);
+		console.log(ctx.currentTime - track.startedAt!, track.length! * 0.96);
 		if (track.repeat) {
 			stop(true, false);
 			play(0);
@@ -124,7 +125,7 @@ function handleSkip(e: any) {
 
 async function load() {
 	//load file
-	const absPath = await join($playlistPath, track.path);
+	const absPath = await join($playlistPath, track.path!);
 	console.log("load: ", absPath);
 
 	//test file exist to throw error if file missing

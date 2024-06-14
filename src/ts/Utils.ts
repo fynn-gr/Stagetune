@@ -94,7 +94,7 @@ export function mapRange(
 	return ((value - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
 }
 
-export function handleDrop(newPosition: number) {
+export function DropHandler(newPosition: number) {
 	if (get(draggingOrigin) == "playlist") {
 		let oldPosition = get(playlist).indexOf(
 			get(currentDragging) as PlaylistItem,

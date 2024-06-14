@@ -1,5 +1,5 @@
 <script lang="ts">
-import { createPlaylistTrack } from "@/ts/Utils";
+import { DropHandler, createPlaylistTrack } from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
@@ -50,7 +50,7 @@ function handleDrop(e: any) {
 		newPosition = id;
 	}
 
-	handleDrop(newPosition);
+	DropHandler(newPosition);
 }
 
 function handleDragEnter(e: any) {

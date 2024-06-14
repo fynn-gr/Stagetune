@@ -1,7 +1,7 @@
 <script lang="ts">
 import { onDestroy, onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
-import { updateProjectorList } from "@/ts/Utils";
+import { DropHandler, updateProjectorList } from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
@@ -55,7 +55,7 @@ function handleDrop(e) {
 		newPosition = id;
 	}
 
-	handleDrop(newPosition);
+	DropHandler(newPosition);
 }
 
 function handleDragEnter(e) {
