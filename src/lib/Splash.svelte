@@ -21,57 +21,30 @@ onMount(async () => {
 
 <!-- svelte-ignore a11y-missing-attribute -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="splash"
 	on:click={e => {
 		splashScreen = false;
 	}}
-	on:mousedown={e => {
-		splashScreen = false;
-	}}
 >
 	<div class="wrapper">
-		<img src="./splash.jpg" class="splash-art" />
+		<img src="./splash.png" class="splash-art" />
 		<div class="top">
-			<img src="./splash_icon.png" class="icon" />
 			<h1><b>Stagetune</b></h1>
 			<p class="version">{version || ""} Aquädukt</p>
 		</div>
 
-		<div class="container">
+		<div class="box">
 			<span>
-				<button
-					class="online"
-					on:click={e => {
-						e.preventDefault();
-						e.stopPropagation();
-						console.log("website");
-						new Command("powershell", [
-							"/C",
-							"start https://github.com/fynn-g/stagetune",
-						]);
-					}}
-				>
-					<img src="/icons/std/web.svg" />Website</button
-				>
-				<button class="online"><img src="/icons/std/web.svg" />Source</button>
-				<button class="online"
-					><img src="/icons/std/web.svg" />Bug Tracker</button
-				>
-				<button class="online"><img src="/icons/std/web.svg" />License</button>
-			</span>
-			<span>
-				{#each recentList as item}
+				{#each ["Licence", "Repository", "Website", "Bug tracker"] as e}
 					<button
-						class="recent"
 						on:click={e => {
 							e.stopPropagation();
-							scanSrcPaths(item);
-							playlistPath.set(item);
 						}}
 					>
-						<img src="/icons/std/file.svg" />
-						{item.split("\\").pop().split("/").pop()}
+						<img src="./icons/std/web.svg" alt="" />
+						<p>{e}</p>
 					</button>
 				{/each}
 			</span>

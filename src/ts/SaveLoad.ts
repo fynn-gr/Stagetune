@@ -25,7 +25,6 @@ import {
 } from "./Stores";
 import type { PlaylistItem } from "./Types";
 
-
 export async function openDir() {
 	try {
 		const sel = await open({
@@ -175,9 +174,13 @@ export function saveSettings() {
 
 	currentVersion.then(() => {
 		console.log("Save:", get(settings));
-		writeTextFile(`Stagetune/${currentVersion}/settings.json`, JSON.stringify(get(settings)), {
-			dir: BaseDirectory.Config,
-		});
+		writeTextFile(
+			`Stagetune/${currentVersion}/settings.json`,
+			JSON.stringify(get(settings)),
+			{
+				dir: BaseDirectory.Config,
+			},
+		);
 		emit("reload_settings");
 	});
 }
