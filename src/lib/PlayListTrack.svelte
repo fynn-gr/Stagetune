@@ -4,7 +4,6 @@ import { convertFileSrc } from "@tauri-apps/api/tauri";
 import { join } from "@tauri-apps/api/path";
 import { exists } from "@tauri-apps/api/fs";
 import { message } from "@tauri-apps/api/dialog";
-
 import { DropHandler, secondsToMinutes, waveformCalc } from "@/ts/Utils";
 import {
 	editMode,
@@ -23,18 +22,21 @@ export let track: PlaylistItem;
 export let id: number;
 export let ctx: AudioContext;
 export let masterGain: GainNode;
+
 let dragging = false;
 let dragover: "top" | "bottom" | null = null;
 let titleEl: HTMLElement;
 
+//Audio
 let input: AudioBufferSourceNode;
 let gainNode: GainNode;
 let fadeNode: GainNode;
 let panNode: StereoPannerNode;
 
-function handleDragStart(e: any) {
+function handleDragStart(e: DragEvent) {
 	//calc pointer position
-	let rec = e.target.getBoundingClientRect();
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
 	let x = e.clientX - rec.left;
 
 	//drag if pointer on drag area
@@ -44,17 +46,13 @@ function handleDragStart(e: any) {
 		$currentDragging = track;
 		$draggingOrigin = "playlist";
 		dragging = true;
-		console.log("start dragging: ", $currentDragging);
 	} else {
 		e.preventDefault();
 	}
-
-	//console.log("drag start", e);
 }
 
-function handleDragEnd(e: any) {
+function handleDragEnd(e: DragEvent) {
 	dragging = false;
-	console.log("end dragging");
 }
 
 function handleDrop(e: DragEvent) {
@@ -64,39 +62,24 @@ function handleDrop(e: DragEvent) {
 	const target = e.target as HTMLElement;
 	let rec = target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
-
-	let newPosition;
-	if (y > rec.height / 2) {
-		newPosition = id + 1;
-	} else {
-		newPosition = id;
-	}
+	let newPosition = y > rec.height / 2 ? id + 1 : id;
 
 	DropHandler(newPosition);
 }
 
-function handleDragEnter(e: any) {
-	//calc mouse position
-	let rec = e.target.getBoundingClientRect();
+function handleDragEnter(e: DragEvent) {
+	const target = e.target as HTMLElement;
+	let rec =  target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
-
-	//console.log(y,rec.height / 2)
-	if (y > rec.height / 2) {
-		dragover = "top";
-	} else {
-		dragover = "bottom";
-	}
+	dragover = y > rec.height / 2 ? "top" : "bottom";
 }
 
-function handleDragLeave(e: any) {
+function handleDragLeave() {
 	dragover = null;
 }
 
 function onEnd() {
 	if (ctx.currentTime - track.startedAt! >= (track.length! - cutIn) * 0.96) {
-		//reached end of track
-		console.log("ended");
-		console.log(ctx.currentTime - track.startedAt!, track.length! * 0.96);
 		if (track.repeat) {
 			stop(true, false);
 			play(0);
@@ -106,9 +89,10 @@ function onEnd() {
 	}
 }
 
-function handleSkip(e: any) {
+function handleSkip(e: MouseEvent) {
 	if ($settings.allowSkipLive || $editMode) {
-		let rec = e.target.getBoundingClientRect();
+		const target = e.target as HTMLElement;
+		let rec = target.getBoundingClientRect();
 		let x = e.clientX - rec.left;
 		let skipFac = Math.min(Math.max(x / rec.width, 0), 1);
 
@@ -126,7 +110,6 @@ function handleSkip(e: any) {
 async function load() {
 	//load file
 	const absPath = await join($playlistPath, track.path!);
-	console.log("load: ", absPath);
 
 	//test file exist to throw error if file missing
 	if (await exists(absPath)) {
@@ -139,13 +122,16 @@ async function load() {
 	} else {
 		console.error(convertFileSrc(absPath), "track not found");
 		track.missing = true;
-		message("Media File is missing or moved: " + absPath, {
+		message(`Media File is missing or moved: ${absPath}`, {
 			title: "File not found",
 			type: "warning",
 		});
 	}
 
-	//create audio chain
+	setupAudioChain();
+}
+
+function setupAudioChain() {
 	gainNode = ctx.createGain();
 	fadeNode = ctx.createGain();
 	panNode = ctx.createStereoPanner();
@@ -154,20 +140,11 @@ async function load() {
 		.connect(gainNode)
 		.connect(panNode)
 		.connect(masterGain);
-	input.onended = () => {
-		onEnd();
-	};
+	input.onended = onEnd;
 }
 
 export function playPause() {
-	//console.log("started at: ", startedAt,"paused at: ", pausedAt)
-	if (track.playing) {
-		//pause
-		stop(track.autoReset, true);
-	} else {
-		//play
-		play(undefined, true);
-	}
+	track.playing ? stop(track.autoReset, true) : play(undefined, true);
 }
 
 export function play(
@@ -184,77 +161,42 @@ export function play(
 			track.inFade = null;
 		}, track.fade.in * 1000);
 	}
-
-	if (!startTime) {
-		input.start(0, track.pausedAt + cutIn);
-		track.startedAt = ctx.currentTime - track.pausedAt;
-	} else {
-		try {
-			input.start(0, startTime + cutIn);
-		} catch (err) {
-			console.log(err);
-		}
-		track.startedAt = ctx.currentTime - startTime;
-	}
-
+	input.start(0, (startTime ?? track.pausedAt) + cutIn);
+	track.startedAt = ctx.currentTime - (startTime ?? track.pausedAt);
 	track.playing = true;
 }
 
 export function stop(reset: boolean = false, useFade: boolean = false) {
 	const end = () => {
 		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
-		input.connect(fadeNode);
-		input.onended = () => {
-			onEnd();
-		};
-		if (reset) {
-			track.pausedAt = 0;
-			track.state = 0;
-		} else {
-			track.pausedAt = ctx.currentTime - track.startedAt;
-		}
+		setupAudioChain();
+		track.pausedAt = reset ? 0 : ctx.currentTime - track.startedAt;
+		track.state = reset ? 0 : track.state;
 	};
-	//pause track
-	if (track.playing && track.inFade != null && !useFade) {
-		//stop while in fade
-		track.inFade = null;
-		track.playing = false;
-		fadeNode.gain.setValueAtTime(1, ctx.currentTime);
-		input.stop();
-		end();
-	} else if (
-		track.fade.out > 0 &&
-		track.playing &&
-		track.inFade == null &&
-		useFade
-	) {
-		//fade out
-		track.inFade = "out";
-		fadeNode.gain.setValueAtTime(1, ctx.currentTime);
-		fadeNode.gain.linearRampToValueAtTime(
-			0.01,
-			ctx.currentTime + track.fade.out,
-		);
-		setTimeout(() => {
-			console.log("stop");
-			try {
-				input.stop();
-			} catch (err) {
-				console.log(err);
-			}
-			fadeNode = ctx.createGain();
-			fadeNode.connect(gainNode);
-			input.connect(fadeNode);
-			end();
+	if (track.playing) {
+		if (track.inFade && !useFade) {
 			track.inFade = null;
+			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
+			input.stop();
+			end();
+		} else if (track.fade.out > 0 && !track.inFade && useFade) {
+			track.inFade = "out";
+			fadeNode.gain.linearRampToValueAtTime(
+				0.01,
+				ctx.currentTime + track.fade.out,
+			);
+			setTimeout(() => {
+				input.stop();
+				end();
+				track.inFade = null;
+				track.playing = false;
+			}, track.fade.out * 1000);
+		} else {
+			input.stop();
+			end();
 			track.playing = false;
-		}, track.fade.out * 1000);
-	} else if (track.playing && track.inFade == null) {
-		//pause without fade out
-		input.stop();
-		end();
-		track.playing = false;
-	} else if (track.inFade == null) {
+		}
+	} else {
 		end();
 	}
 }
@@ -298,10 +240,7 @@ $: if (!track.loaded) load();
 	on:dragover={handleDragEnter}
 	on:dragleave={handleDragLeave}
 	on:drop={handleDrop}
-	on:click={e => {
-		selectedItem.set(id);
-		console.log(e);
-	}}
+	on:click={() => selectedItem.set(id)}
 >
 	<div class="drag-area">
 		<p>{id + 1}</p>
@@ -321,14 +260,15 @@ $: if (!track.loaded) load();
 			class="progress"
 			on:click={handleSkip}
 			style={`
-					background: linear-gradient(
-						90deg,
-						var(--accent) 0%,
-						var(--accent) calc(100% * ${track.state / cutTrackLength}),
-						#555 calc(100% * ${track.state / cutTrackLength}),
-						#555 100%
-					);`}
+				background: linear-gradient(
+					90deg,
+					var(--accent) 0%,
+					var(--accent) calc(100% * ${track.state / cutTrackLength}),
+					#555 calc(100% * ${track.state / cutTrackLength}),
+					#555 100%
+				);`}
 		/>
+
 		<Waveform
 			data={waveformCalc(track.buffer, 300, cutIn / track.length)}
 			samples={300}
@@ -351,9 +291,7 @@ $: if (!track.loaded) load();
 			class="play-btn"
 			title="Play"
 			class:active={track.playing}
-			on:click={() => {
-				playPause();
-			}}
+			on:click={playPause}
 		>
 			{#if track.inFade != null}
 				<img
@@ -376,9 +314,7 @@ $: if (!track.loaded) load();
 					class="input"
 					contenteditable={$selectedItem == id && $editMode}
 					bind:this={titleEl}
-					on:focus={() => {
-						isEditing.update(e => e + 1);
-					}}
+					on:focus={() => isEditing.update(e => e + 1)}
 					on:blur={() => {
 						isEditing.update(e => e - 1);
 						track.name = titleEl.innerText;
@@ -464,12 +400,8 @@ $: if (!track.loaded) load();
 				<input
 					type="number"
 					bind:value={track.fade.in}
-					on:focus={() => {
-						isEditing.update(e => e + 1);
-					}}
-					on:blur={() => {
-						isEditing.update(e => e - 1);
-					}}
+					on:focus={() => isEditing.update(e => e + 1)}
+					on:blur={() => isEditing.update(e => e - 1)}
 					min="0"
 					max={track.length}
 					disabled={!$editMode}
@@ -479,12 +411,8 @@ $: if (!track.loaded) load();
 				<input
 					type="number"
 					bind:value={track.fade.out}
-					on:focus={() => {
-						isEditing.update(e => e + 1);
-					}}
-					on:blur={() => {
-						isEditing.update(e => e - 1);
-					}}
+					on:focus={() => isEditing.update(e => e + 1)}
+					on:blur={() => isEditing.update(e => e - 1)}
 					min="0"
 					max={track.length}
 					disabled={!$editMode}

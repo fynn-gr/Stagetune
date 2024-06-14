@@ -1,12 +1,16 @@
 <script lang="ts">
+// Import styles
 import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
+
+// Import Svelte and Tauri functions
 import { onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
 import { confirm } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api/tauri";
 import { exit } from "@tauri-apps/api/process";
 
+// Import components
 import PlayListTrack from "./lib/PlayListTrack.svelte";
 import PlayListAnotation from "./lib/PlayListAnotation.svelte";
 import PlayListVideo from "./lib/PlayListVideo.svelte";
@@ -15,7 +19,10 @@ import TopBar from "./lib/TopBar.svelte";
 import Hotkey from "./lib/Hotkey.svelte";
 import Waveform from "./lib/Waveform.svelte";
 import Splash from "./lib/Splash.svelte";
+import ContextMenu from "./pureUI/components/ContextMenu.svelte";
+import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 
+// Import stores and utilities
 import {
 	editMode,
 	uiPlatform,
@@ -37,8 +44,6 @@ import {
 	loadSettings,
 	checkSettingsExist,
 } from "./ts/SaveLoad";
-import ContextMenu from "./pureUI/components/ContextMenu.svelte";
-import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = 25;
@@ -51,6 +56,7 @@ let dragOverPlaylist = false;
 
 checkSettingsExist();
 
+// Audio context setup
 const ctx = new AudioContext();
 const analyser = ctx.createAnalyser();
 const masterGain = ctx.createGain();
@@ -116,25 +122,25 @@ function skip() {
 
 function deleteTrack() {
 	if ($selectedItem != null) {
-		//stop track if playing
+		// Stop track if playing
 		if ($playlist[$selectedItem].playing)
 			$playlistElements[$selectedItem].stop();
 
 		let toDelete = $selectedItem;
 
-		//find hotkey
+		// Remove hotkey if present
 		if (typeof $playlist[$selectedItem].hotkey === "number") {
 			let hotkeyRm = $playlist[$selectedItem].hotkey;
 			console.log(hotkeyRm);
 			$hotkeys[(hotkeyRm as number) - 1].track = null;
 		}
 
-		//find new selected item
+		// Find new selected item
 		if ($playlist.length - 1 > $selectedItem) $selectedItem++;
 		else if ($selectedItem > 0) $selectedItem--;
 		else $selectedItem = undefined;
 
-		//delte from playlist
+		// Delete from playlist
 		playlist.update(e => {
 			e.splice(toDelete, 1);
 			return e;
@@ -144,154 +150,125 @@ function deleteTrack() {
 }
 
 function pauseAll() {
-	for (let i = 0; i < $playlistElements.length; i++) {
-		$playlistElements[i].stop(false, false);
+	for (let element of $playlistElements) {
+		element.stop(false, false);
 	}
 }
 
 function resetAll() {
-	for (let i = 0; i < $playlistElements.length; i++) {
-		$playlistElements[i].stop(true, false);
+	for (let element of $playlistElements) {
+		element.stop(true, false);
 	}
 }
 
-const listenerMenus = listen("menu", async event => {
-	let id = event.payload;
-	console.log(event);
-	if (id == "quit" && $editMode) {
-		const confirmed = await confirm("Discard all unsaved changes?", {
-			title: "Quit?",
-			type: "warning",
-			okLabel: "Quit",
-		}).then(isOK => (isOK ? exit(0) : null));
-	} else if (id == "open" && $editMode) {
-		openDir();
-	} else if (id == "save") {
-		savePlaylist();
-	} else if (id == "projector" && $settings.video) {
-		openVideoWindow(!projector);
-		projector = !projector;
-	} else if (id == "settings" && $editMode) {
-		openSettings();
-	} else if (id == "showTracklist" && $editMode) {
-		showTracklist = !showTracklist;
-	} else if (id == "showCurrent") {
-		showCurrent = !showCurrent;
-	} else if (id == "showHotkeys") {
-		showHotkeys = !showHotkeys;
-	} else if (id == "showEditor" && $editMode) {
-		showEditor = !showEditor;
-	} else if (id == "showSplash" && $editMode) {
-		$splash = true;
-	}
-});
+// Event listeners
+const Listeners = () => {
+	listen("menu", async event => {
+		let id = event.payload;
+		console.log(event);
 
-const listenerProjectorReq = listen("projctorReq", e => {
-	updateProjectorList();
-});
-
-const listenerUpdateSettings = listen("reload_settings", () => {
-	loadSettings();
-	console.log("reloaded settings", $settings);
-});
-
-onMount(() => {
-	//shortcuts
-	document.addEventListener("keydown", e => {
-		//console.log(e);
-
-		if ($isEditing > 0) {
-			return;
-		} else {
-			if ($editMode) {
-				//open Playlist
-				if (e.code == "KeyO" && e.ctrlKey) {
-					e.preventDefault();
-					openDir();
-				}
-
-				// openVideoWindow
-				else if (e.code == "KeyP" && e.ctrlKey && $settings.video) {
-					e.preventDefault();
-					openVideoWindow(!projector);
-					projector = !projector;
-				}
-
-				//delete playlist item
-				else if (e.code == "Backspace" || e.code == "Delete") {
-					e.preventDefault();
-					deleteTrack();
-				}
-
-				//open Preferences
-				else if (e.code == "Comma" && e.ctrlKey) {
-					e.preventDefault();
-					openSettings();
-				}
-			}
-
-			//move up
-			if (
-				(e.code === "KeyW" || e.code === "ArrowUp") &&
-				!e.ctrlKey &&
-				!e.metaKey
-			) {
-				e.preventDefault();
-				moveUp();
-			}
-			//move down
-			else if (
-				(e.code === "KeyS" || e.code === "ArrowDown") &&
-				!e.ctrlKey &&
-				!e.metaKey
-			) {
-				e.preventDefault();
-				moveDown();
-			}
-			//reset song
-			else if (
-				(e.code === "KeyA" || e.code === "ArrowLeft") &&
-				!e.ctrlKey &&
-				!e.metaKey &&
-				$selectedItem
-			) {
-				e.preventDefault();
-				$playlistElements[$selectedItem].stop(true);
-			}
-			//skip song
-			else if (
-				(e.code === "KeyD" || e.code === "ArrowRight") &&
-				!e.ctrlKey &&
-				!e.metaKey
-			) {
-				e.preventDefault();
-				skip();
-			}
-			//play
-			else if (e.code === "Space" && $selectedItem) {
-				e.preventDefault();
-				$playlistElements[$selectedItem].playPause();
-			}
-			//save File
-			else if (e.code == "KeyS" && e.ctrlKey) {
-				e.preventDefault();
-				savePlaylist();
-			}
+		if (id == "quit" && $editMode) {
+			const confirmed = await confirm("Discard all unsaved changes?", {
+				title: "Quit?",
+				type: "warning",
+				okLabel: "Quit",
+			}).then(isOK => (isOK ? exit(0) : null));
+		} else if (id == "open" && $editMode) {
+			openDir();
+		} else if (id == "save") {
+			savePlaylist();
+		} else if (id == "projector" && $settings.video) {
+			openVideoWindow(!projector);
+			projector = !projector;
+		} else if (id == "settings" && $editMode) {
+			openSettings();
+		} else if (id == "showTracklist" && $editMode) {
+			showTracklist = !showTracklist;
+		} else if (id == "showCurrent") {
+			showCurrent = !showCurrent;
+		} else if (id == "showHotkeys") {
+			showHotkeys = !showHotkeys;
+		} else if (id == "showEditor" && $editMode) {
+			showEditor = !showEditor;
+		} else if (id == "showSplash" && $editMode) {
+			$splash = true;
 		}
 	});
 
-	//context menu
-	document.addEventListener("contextmenu", e => {
-		e.preventDefault();
+	listen("projctorReq", e => {
+		updateProjectorList();
 	});
 
-	//update loop
-	const interval = setInterval(() => {
-		for (let i = 0; i < $playlistElements.length; i++) {
-			$playlistElements[i].update();
+	listen("reload_settings", () => {
+		loadSettings();
+		console.log("reloaded settings", $settings);
+	});
+};
+
+// Shortcuts
+const Shortcuts = () => {
+	document.addEventListener("keydown", e => {
+		if ($isEditing > 0) return;
+
+		if ($editMode) {
+			switch (e.code) {
+				case "KeyO":
+					if (e.ctrlKey) openDir();
+					break;
+				case "KeyP":
+					if (e.ctrlKey && $settings.video) openVideoWindow(!projector);
+					break;
+				case "Backspace":
+				case "Delete":
+					deleteTrack();
+					break;
+				case "Comma":
+					if (e.ctrlKey) openSettings();
+					break;
+				case "KeyS":
+					if (e.ctrlKey) savePlaylist();
+					break;
+			}
+		}
+
+		switch (e.code) {
+			case "KeyW":
+			case "ArrowUp":
+				moveUp();
+				break;
+			case "KeyS":
+			case "ArrowDown":
+				moveDown();
+				break;
+			case "KeyA":
+			case "ArrowLeft":
+				if ($selectedItem) $playlistElements[$selectedItem].stop(true);
+				break;
+			case "KeyD":
+			case "ArrowRight":
+				skip();
+				break;
+			case "Space":
+				if ($selectedItem) $playlistElements[$selectedItem].playPause();
+				break;
+		}
+	});
+
+	document.addEventListener("contextmenu", e => e.preventDefault());
+};
+
+// On mount lifecycle
+onMount(() => {
+	Listeners();
+	Shortcuts();
+
+	const updateInterval = setInterval(() => {
+		for (let element of $playlistElements) {
+			element.update();
 		}
 	}, 300);
-	return () => clearInterval(interval);
+
+	return () => clearInterval(updateInterval);
 });
 
 $: emit("editMode", { edit: $editMode });
@@ -468,19 +445,11 @@ $: emit("editMode", { edit: $editMode });
 								<div
 									class="state"
 									class:playing={e.playing}
-									style={`width: calc(100% * ${
-										e.state != undefined ? e.state / e.length : 0
-									});`}
+									style={`width: calc(100% * ${e.state != undefined ? e.state / e.length : 0});`}
 								/>
 								<button
 									title="current playing"
-									on:click={ev => {
-										if (e.playing) {
-											$playlistElements[i].stop(false, false);
-										} else {
-											$playlistElements[i].stop(true, false);
-										}
-									}}
+									on:click={() => $playlistElements[i].stop(!e.playing, false)}
 								>
 									{#if e.inFade != null}
 										<img
