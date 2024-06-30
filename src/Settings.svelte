@@ -10,17 +10,17 @@ import {
 } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { afterUpdate, onMount, tick } from "svelte";
-import { loadSettings } from "./ts/SaveLoad";
 import { writable } from "svelte/store";
 import type { Settings } from "./ts/Types";
 
 import { uiPlatform } from "./ts/Stores";
 import Keymap from "./pureUI/components//settings/Keymap.svelte";
 import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
-import SettingsOption from "./pureUI/components/settings/SettingsOption.svelte";
 import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
-import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
+import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { emit } from "@tauri-apps/api/event";
+import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svelte";
+import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
 
 const settings = writable<Settings>({
 	recent: [],
@@ -43,7 +43,7 @@ let mainScreen: number = 0;
 let stagetuneVersion: string;
 let tauriVersion: string;
 
-loadSettings();
+load();
 console.log($settings);
 
 onMount(async () => {
@@ -84,6 +84,20 @@ function save() {
 			);
 			emit("reload_settings");
 		});
+}
+
+export async function load() {
+	let currentVersion;
+
+	getVersion().then(v => {
+		currentVersion = v.slice(0, v.lastIndexOf("."));
+		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
+			dir: BaseDirectory.Config,
+		}).then(e => {
+			$settings = JSON.parse(e);
+			console.log("loaded settings", $settings);
+		});
+	});
 }
 
 afterUpdate(() => {
@@ -184,9 +198,8 @@ afterUpdate(() => {
 			{#if tab == "general"}
 				<div class="content">
 					<!--
-					<SettingsOption
+					<SettingsSelect
 						name="Language: "
-						type="select"
 						bind:value={$settings.lang}
 						options={[
 							{ value: "en", name: "English" },
@@ -195,9 +208,8 @@ afterUpdate(() => {
 						{onChange}
 					/>
 					-->
-					<SettingsOption
+					<SettingsSelect
 						name="UI size:"
-						type="select"
 						bind:value={$settings.ui_scale}
 						options={[
 							{ value: 1, name: "Small" },
@@ -207,9 +219,8 @@ afterUpdate(() => {
 						]}
 						{onChange}
 					/>
-					<SettingsOption
+					<SettingsCheckbox
 						name="Splash Screen:"
-						type="checkbox"
 						bind:checked={$settings.show_splash}
 						checkboxName="Show on startup"
 						{onChange}
@@ -269,16 +280,14 @@ afterUpdate(() => {
 				</div>
 			{:else}
 				<div class="content dev">
-					<SettingsOption
+					<SettingsCheckbox
 						name="Developer Features:"
-						type="checkbox"
 						bind:checked={$settings.debug}
 						checkboxName="Enable developer features"
 						{onChange}
 					/>
-					<SettingsOption
+					<SettingsCheckbox
 						name=""
-						type="checkbox"
 						bind:checked={$settings.video}
 						checkboxName="Enable projector"
 						{onChange}

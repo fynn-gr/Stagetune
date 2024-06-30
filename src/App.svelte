@@ -216,7 +216,11 @@ const Shortcuts = () => {
 					if (e.ctrlKey) openDir();
 					break;
 				case "KeyP":
-					if (e.ctrlKey && $settings.video) openVideoWindow(!projector);
+					console.log($settings.video)
+					if (e.ctrlKey && $settings.video) {
+						e.preventDefault();
+						openVideoWindow(!projector);
+					}
 					break;
 				case "Backspace":
 				case "Delete":

@@ -170,44 +170,49 @@ export async function savePlaylist() {
 }
 
 export function saveSettings() {
-	const currentVersion = getVersion().then(v => v.slice(0, v.lastIndexOf(".")));
-
-	currentVersion.then(() => {
-		console.log("Save:", get(settings));
-		writeTextFile(
-			`Stagetune/${currentVersion}/settings.json`,
-			JSON.stringify(get(settings)),
-			{
-				dir: BaseDirectory.Config,
-			},
-		);
-		emit("reload_settings");
-	});
+	let currentVersion: string;
+	getVersion()
+		.then(v => {
+			currentVersion = v.slice(0, v.lastIndexOf("."));
+		})
+		.then(() => {
+			console.log("save: ", get(settings));
+			writeTextFile(
+				`Stagetune/${currentVersion}/settings.json`,
+				JSON.stringify(get(settings)),
+				{
+					dir: BaseDirectory.Config,
+				},
+			);
+			emit("reload_settings");
+		});
 }
 
 export async function loadSettings(activateSplash = false) {
-	const currentVersion = getVersion().then(v => v.slice(0, v.lastIndexOf(".")));
+	let currentVersion;
 
-	currentVersion.then(() => {
+	getVersion().then(v => {
+		currentVersion = v.slice(0, v.lastIndexOf("."));
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			dir: BaseDirectory.Config,
 		}).then(e => {
 			settings.set(JSON.parse(e));
-			console.log("Loaded settings:", get(settings));
+			console.log("loaded settings", get(settings));
 
-			if (activateSplash) {
-				splash.set(get(settings).show_splash);
-			}
-			console.log("UI scale:", get(settings).ui_scale);
-			document.documentElement.style.cssText = `font-size: ${get(settings).ui_scale}px`;
+			if (activateSplash) splash.set(get(settings).show_splash);
+			console.log("ui scale. ", get(settings).ui_scale);
+			document.documentElement.style.cssText = `font-size: ${
+				get(settings).ui_scale
+			}px`;
 		});
 	});
 }
 
 export function checkSettingsExist() {
-	const currentVersion = getVersion().then(v => v.slice(0, v.lastIndexOf(".")));
+	let currentVersion;
 
-	currentVersion.then(() => {
+	getVersion().then(v => {
+		currentVersion = v.slice(0, v.lastIndexOf("."));
 		exists(`Stagetune/${currentVersion}/settings.json`, {
 			dir: BaseDirectory.Config,
 		}).then(e => {
