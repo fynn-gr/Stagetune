@@ -40,9 +40,17 @@ export type Settings = {
 	allowSkipLive: boolean;
 };
 
+export type SaveFile =  {
+	meta: {
+		version: string; 
+	};
+	playlist: PlaylistItem[];
+	hotkeys: Hotkey[];
+}
+
 export type Hotkey = {
 	key: number;
-	track: PlaylistItem | null;
+	track: number | null;
 };
 
 //temp Operator declaration till Operators are implemented in UI

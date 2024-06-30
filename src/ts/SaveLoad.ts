@@ -23,7 +23,7 @@ import {
 	settings,
 	splash,
 } from "./Stores";
-import type { PlaylistItem } from "./Types";
+import type { PlaylistItem, SaveFile } from "./Types";
 
 export async function openDir() {
 	try {
@@ -34,8 +34,8 @@ export async function openDir() {
 
 		if (!sel) return;
 
-		scanSrcPaths(sel);
-		playlistPath.set(sel);
+		scanSrcPaths(sel as string);
+		playlistPath.set(sel as string);
 
 		//add to recent
 		/*
@@ -132,7 +132,7 @@ export async function savePlaylist() {
 	console.log("Save to path:", path);
 
 	// Create object with version and playlist
-	const saveObj = {
+	const saveObj: SaveFile = {
 		meta: {
 			version: await getVersion(),
 		},
@@ -209,7 +209,7 @@ export async function loadSettings(activateSplash = false) {
 }
 
 export function checkSettingsExist() {
-	let currentVersion;
+	let currentVersion: string;
 
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));

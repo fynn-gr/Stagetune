@@ -6,6 +6,8 @@ import {
 	LogicalSize,
 	appWindow,
 	availableMonitors,
+	currentMonitor,
+	primaryMonitor,
 	type Monitor,
 } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
@@ -50,6 +52,10 @@ onMount(async () => {
 	screens = await availableMonitors();
 	stagetuneVersion = await getVersion();
 	tauriVersion = await getTauriVersion();
+
+	console.log("all av Monitors: ", await availableMonitors())
+	console.log("current Monitor: ", await currentMonitor())
+	console.log("primary Monitor: ", await primaryMonitor())
 });
 
 function setWindowHeight() {
