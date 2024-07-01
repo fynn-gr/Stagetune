@@ -23,6 +23,7 @@ import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { emit } from "@tauri-apps/api/event";
 import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svelte";
 import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
+import { scanMonitors } from "./ts/Utils";
 
 const settings = writable<Settings>({
 	recent: [],
@@ -30,6 +31,7 @@ const settings = writable<Settings>({
 	show_splash: true,
 	ui_scale: 1.3,
 	performance_mode: false,
+	projector_screen: {},
 	debug: false,
 	video: false,
 
@@ -39,24 +41,12 @@ const settings = writable<Settings>({
 	allowSkipLive: true,
 });
 let tab: string = "general";
-let screens: Monitor[] = [];
-let projectorScreen: number = 1;
-let mainScreen: number = 0;
+let monitorConfig: any;
 let stagetuneVersion: string;
 let tauriVersion: string;
 
 load();
 console.log($settings);
-
-onMount(async () => {
-	screens = await availableMonitors();
-	stagetuneVersion = await getVersion();
-	tauriVersion = await getTauriVersion();
-
-	console.log("all av Monitors: ", await availableMonitors())
-	console.log("current Monitor: ", await currentMonitor())
-	console.log("primary Monitor: ", await primaryMonitor())
-});
 
 function setWindowHeight() {
 	if ($uiPlatform == "mac") {
@@ -92,19 +82,30 @@ function save() {
 		});
 }
 
-export async function load() {
+async function load() {
 	let currentVersion;
 
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			dir: BaseDirectory.Config,
-		}).then(e => {
+		}).then(async e => {
 			$settings = JSON.parse(e);
 			console.log("loaded settings", $settings);
+
+			let tempMonitorConfig = await scanMonitors();
 		});
 	});
 }
+
+onMount(async () => {
+	stagetuneVersion = await getVersion();
+	tauriVersion = await getTauriVersion();
+
+	console.log("all av Monitors: ", await availableMonitors());
+	console.log("current Monitor: ", await currentMonitor());
+	console.log("primary Monitor: ", await primaryMonitor());
+});
 
 afterUpdate(() => {
 	setWindowHeight();
@@ -162,6 +163,7 @@ afterUpdate(() => {
 			<p>Keymap</p>
 		</div>
 
+		<!--
 		{#if $settings.video}
 			<div
 				class="tab"
@@ -174,6 +176,7 @@ afterUpdate(() => {
 				<p>Projector</p>
 			</div>
 		{/if}
+		-->
 
 		<div
 			class="tab"
@@ -247,28 +250,29 @@ afterUpdate(() => {
 						<Keymap />
 					</div>
 				</div>
+				<!--
 			{:else if tab == "projector"}
 				<div class="content">
-					{#each screens as screen, i}
+					{#each monitorConfig.monitors as screen, i}
 						<div
 							class="screen"
-							class:active={i == projectorScreen}
-							on:click={() => {}}
+							class:active={monitorConfig.projector.name == screen.name}
+							on:click={() => {
+								monitorConfig.projector = screen;
+								$settings.projector_screen = screen;
+								save();
+							}}
 						>
 							<div
 								class="display"
 								style={`aspect-ratio: ${screen.size.width} / ${screen.size.height};`}
 							>
 								<p>
-									{i == projectorScreen
-										? "Projector"
-										: i == mainScreen
-											? "Main"
-											: ""}
+									{monitorConfig.main.name == screen.name ? "Main" : ""}
 								</p>
 							</div>
 							<span>
-								<p>{screen.name}</p>
+								<b>{screen.name}</b>
 								<p>
 									{screen.size.width} x {screen.size.height} @{screen.scaleFactor}
 								</p>
@@ -276,6 +280,7 @@ afterUpdate(() => {
 						</div>
 					{/each}
 				</div>
+			-->
 			{:else if tab == "update"}
 				<div class="content update">
 					<p class="update">Stagetune {stagetuneVersion || ""}</p>

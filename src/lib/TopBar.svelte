@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
 import TopBarButton from "../pureUI/components/TopBarButton.svelte";
 import TopBarToggle from "../pureUI/components/TopBarToggle.svelte";
 import AppMenu from "../pureUI/components/AppMenu.svelte";
-import { appWindow } from "@tauri-apps/api/window";
+import {
+	appWindow,
+	availableMonitors,
+	primaryMonitor,
+	type Monitor,
+} from "@tauri-apps/api/window";
 import { confirm } from "@tauri-apps/api/dialog";
 
 import {
@@ -10,22 +15,49 @@ import {
 	playlist,
 	selectedItem,
 	settings,
-	splash,
+	showProjector,
 	uiPlatform,
 } from "@/ts/Stores";
 import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 import ModeSwitch from "./ModeSwitch.svelte";
 import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
 import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
-import TopBarPopover from "@/pureUI/components/TopBarPopover.svelte";
+import TopBarDropdown from "@/pureUI/components/TopBarDropdown.svelte";
 import { test } from "@/test/Loop.test";
+import TopBarDropdownItem from "@/pureUI/components/TopBarDropdownItem.svelte";
+import { onMount } from "svelte";
+import { emit } from "@tauri-apps/api/event";
 
-export let showTracklist;
-export let showEditor;
-export let showCurrent;
-export let showHotkeys;
+export let showTracklist: boolean;
+export let showEditor: boolean;
+export let showCurrent: boolean;
+export let showHotkeys: boolean;
 export let pauseAll;
 export let resetAll;
+
+let screens: Monitor[] = [];
+let selectedScreen: number = 0;
+let mainID: number;
+
+onMount(async () => {
+	screens = await availableMonitors();
+	let main = await primaryMonitor();
+	mainID = 0;
+	
+	screens.forEach((e, i) => {
+		if (e.name == main?.name) mainID = i;
+	})
+
+	if (screens.length < 2) {
+		selectedScreen = 0;
+	} else if (screens.length -1 > mainID){
+		selectedScreen = mainID++;
+	} else if (mainID > 0) {
+		selectedScreen = mainID--;
+	} else {
+		selectedScreen = 0;
+	}
+});
 </script>
 
 <div class="topbar toolbar" data-tauri-drag-region>
@@ -154,44 +186,28 @@ export let resetAll;
 		<div class="spacer" data-tauri-drag-region="" />
 
 		<!--Playlist options-->
-		<TopBarPopover icon="settings" toolTip="Playlist Settings">
-			<span>
-				<input
-					type="checkbox"
-					name=""
-					id=""
-					bind:checked={$settings.showAnnotations}
-				/>
-				<p>Annotations</p>
-			</span>
-			<span>
-				<input
-					type="checkbox"
-					name=""
-					id=""
-					bind:checked={$settings.showFadeOptions}
-				/>
-				<p>Fade Options</p>
-			</span>
-			<span>
-				<input
-					type="checkbox"
-					name=""
-					id=""
-					bind:checked={$settings.showVolumeOptions}
-				/>
-				<p>Volume Options</p>
-			</span>
-			<span>
-				<input
-					type="checkbox"
-					name=""
-					id=""
-					bind:checked={$settings.allowSkipLive}
-				/>
-				<p>Scrubbing in Live Mode</p>
-			</span>
-		</TopBarPopover>
+		<TopBarDropdown icon="settings" toolTip="Playlist Settings">
+			<TopBarDropdownItem
+				name="Annotations"
+				bind:checked={$settings.showAnnotations}
+				onChange={() => {}}
+			/>
+			<TopBarDropdownItem
+				name="Fade Options"
+				bind:checked={$settings.showFadeOptions}
+				onChange={() => {}}
+			/>
+			<TopBarDropdownItem
+				name="Volume Options"
+				bind:checked={$settings.showVolumeOptions}
+				onChange={() => {}}
+			/>
+			<TopBarDropdownItem
+				name="Scrubbing in Live Mode"
+				bind:checked={$settings.allowSkipLive}
+				onChange={() => {}}
+			/>
+		</TopBarDropdown>
 
 		<!--Add Annotation-->
 		<TopBarButton
@@ -249,6 +265,30 @@ export let resetAll;
 
 		<div class="spacer" data-tauri-drag-region="" />
 
+		<!--projector-->
+		<div class="topbar-group">
+			<TopBarToggle
+				icon="projector"
+				bind:active={$showProjector}
+				activeColor="var(--hover)"
+				toolTip="Toggle Edior"
+				disabled={!$editMode}
+			/>
+
+			<TopBarDropdown icon={null} toolTip="Projector">
+				{#each screens as screen, i}
+					<TopBarDropdownItem
+						name={i == mainID ? `Main` : `Display ${i + 1}`}
+						checked={selectedScreen == i}
+						onChange={() => {
+							if (selectedScreen != i) selectedScreen = i;
+							emit("projector_set_location", {screen: screen})
+						}}
+					/>
+				{/each}
+			</TopBarDropdown>
+		</div>
+
 		<!--editor-->
 		<TopBarToggle
 			icon="cut"
@@ -258,21 +298,23 @@ export let resetAll;
 			disabled={!$editMode}
 		/>
 
-		<!--current playing-->
-		<TopBarToggle
-			icon="active_play"
-			bind:active={showCurrent}
-			activeColor="var(--hover)"
-			toolTip="Toggle Tracks playing"
-		/>
+		<div class="topbar-group">
+			<!--current playing-->
+			<TopBarToggle
+				icon="active_play"
+				bind:active={showCurrent}
+				activeColor="var(--hover)"
+				toolTip="Toggle Tracks playing"
+			/>
 
-		<!--hotkeys-->
-		<TopBarToggle
-			icon="hotkeys"
-			bind:active={showHotkeys}
-			activeColor="var(--hover)"
-			toolTip="Toggle Hotkeys"
-		/>
+			<!--hotkeys-->
+			<TopBarToggle
+				icon="hotkeys"
+				bind:active={showHotkeys}
+				activeColor="var(--hover)"
+				toolTip="Toggle Hotkeys"
+			/>
+		</div>
 
 		<!--windows window buttons-->
 		{#if $uiPlatform == "win"}

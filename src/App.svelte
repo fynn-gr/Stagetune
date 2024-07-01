@@ -36,6 +36,7 @@ import {
 	localFiles,
 	settings,
 	splash,
+	showProjector,
 } from "./ts/Stores";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -51,7 +52,6 @@ let showTracklist = true;
 let showEditor = false;
 let showCurrent = true;
 let showHotkeys = true;
-let projector = false;
 let dragOverPlaylist = false;
 
 checkSettingsExist();
@@ -61,10 +61,6 @@ const ctx = new AudioContext();
 const analyser = ctx.createAnalyser();
 const masterGain = ctx.createGain();
 masterGain.connect(analyser).connect(ctx.destination);
-
-function openVideoWindow(show: boolean) {
-	invoke("show_projector", { invokeMessage: show ? "true" : "false" });
-}
 
 function openSettings() {
 	invoke("open_settings", { invokeMessage: JSON.stringify($settings) });
@@ -178,8 +174,7 @@ const Listeners = () => {
 		} else if (id == "save") {
 			savePlaylist();
 		} else if (id == "projector" && $settings.video) {
-			openVideoWindow(!projector);
-			projector = !projector;
+			$showProjector = !$showProjector;
 		} else if (id == "settings" && $editMode) {
 			openSettings();
 		} else if (id == "showTracklist" && $editMode) {
@@ -216,10 +211,10 @@ const Shortcuts = () => {
 					if (e.ctrlKey) openDir();
 					break;
 				case "KeyP":
-					console.log($settings.video)
+					console.log($settings.video);
 					if (e.ctrlKey && $settings.video) {
 						e.preventDefault();
-						openVideoWindow(!projector);
+						$showProjector = !$showProjector;
 					}
 					break;
 				case "Backspace":
@@ -276,6 +271,9 @@ onMount(() => {
 });
 
 $: emit("editMode", { edit: $editMode });
+$: invoke("show_projector", {
+	invokeMessage: $showProjector ? "true" : "false",
+});
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

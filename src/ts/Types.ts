@@ -31,6 +31,7 @@ export type Settings = {
 	show_splash: boolean;
 	ui_scale: number;
 	performance_mode: boolean;
+	projector_screen: any;
 	debug: boolean;
 	video: boolean;
 
@@ -40,13 +41,13 @@ export type Settings = {
 	allowSkipLive: boolean;
 };
 
-export type SaveFile =  {
+export type SaveFile = {
 	meta: {
-		version: string; 
+		version: string;
 	};
 	playlist: PlaylistItem[];
 	hotkeys: Hotkey[];
-}
+};
 
 export type Hotkey = {
 	key: number;

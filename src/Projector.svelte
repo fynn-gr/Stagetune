@@ -1,6 +1,6 @@
 <script lang="ts">
 import { emit, listen } from "@tauri-apps/api/event";
-import { appWindow, LogicalSize } from "@tauri-apps/api/window";
+import { appWindow, LogicalSize, PhysicalPosition, PhysicalSize } from "@tauri-apps/api/window";
 import { onMount } from "svelte";
 
 let editMode = true;
@@ -51,6 +51,15 @@ const unlistenUpdateList = listen("updateList", e => {
 const unlistenEditMode = listen("editMode", e => {
 	editMode = e.payload.edit;
 });
+
+const unlistenProjectorLocation = listen("projector_set_location", e => {
+	const pos = e.payload.screen.position;
+	const size = e.payload.screen.size;
+	console.log(e.payload.screen, pos, size);
+	appWindow.setPosition(new PhysicalPosition(pos.x, pos.y))
+	appWindow.setSize(new PhysicalSize(size.width, size.height))
+	appWindow.setFullscreen(true);
+})
 
 onMount(() => {
 	//input = ctx.createMediaElementSource(videoElement);
