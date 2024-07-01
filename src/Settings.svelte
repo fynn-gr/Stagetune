@@ -8,7 +8,6 @@ import {
 	availableMonitors,
 	currentMonitor,
 	primaryMonitor,
-	type Monitor,
 } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { afterUpdate, onMount, tick } from "svelte";
@@ -40,7 +39,6 @@ const settings = writable<Settings>({
 	allowSkipLive: true,
 });
 let tab: string = "general";
-let monitorConfig: any;
 let stagetuneVersion: string;
 let tauriVersion: string;
 
@@ -113,28 +111,30 @@ afterUpdate(() => {
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <main class={"window-body settings dark " + $uiPlatform}>
 	<div class="topbar title-bar" data-tauri-drag-region>
-		{#if $uiPlatform == "mac"}
-			<WinButtonsMac
-				CanMaximise={false}
-				CanMinimize={false}
-				onClose={() => {
-					appWindow.close();
-				}}
-			/>
-		{/if}
+		<div class="topbar-container">
+			{#if $uiPlatform == "mac"}
+				<WinButtonsMac
+					CanMaximise={false}
+					CanMinimize={false}
+					onClose={() => {
+						appWindow.close();
+					}}
+				/>
+			{/if}
 
-		<p class="window-title" data-tauri-drag-region>Settings</p>
+			<p class="window-title" data-tauri-drag-region>Settings</p>
 
-		{#if $uiPlatform == "win"}
-			<WinButtonsMs
-				CanMaximise={false}
-				CanMinimize={false}
-				onClose={() => {
-					appWindow.close();
-				}}
-				CloseOnly={true}
-			/>
-		{/if}
+			{#if $uiPlatform == "win"}
+				<WinButtonsMs
+					CanMaximise={false}
+					CanMinimize={false}
+					onClose={() => {
+						appWindow.close();
+					}}
+					CloseOnly={true}
+				/>
+			{/if}
+		</div>
 	</div>
 
 	<div class="tabs" data-tauri-drag-region>
