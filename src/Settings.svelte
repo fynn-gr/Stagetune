@@ -23,7 +23,6 @@ import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { emit } from "@tauri-apps/api/event";
 import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svelte";
 import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
-import { scanMonitors } from "./ts/Utils";
 
 const settings = writable<Settings>({
 	recent: [],
@@ -92,8 +91,6 @@ async function load() {
 		}).then(async e => {
 			$settings = JSON.parse(e);
 			console.log("loaded settings", $settings);
-
-			let tempMonitorConfig = await scanMonitors();
 		});
 	});
 }

@@ -43,14 +43,14 @@ onMount(async () => {
 	screens = await availableMonitors();
 	let main = await primaryMonitor();
 	mainID = 0;
-	
+
 	screens.forEach((e, i) => {
 		if (e.name == main?.name) mainID = i;
-	})
+	});
 
 	if (screens.length < 2) {
 		selectedScreen = 0;
-	} else if (screens.length -1 > mainID){
+	} else if (screens.length - 1 > mainID) {
 		selectedScreen = mainID++;
 	} else if (mainID > 0) {
 		selectedScreen = mainID--;
@@ -218,7 +218,6 @@ onMount(async () => {
 					playlist.update(e => {
 						e.push({
 							type: "annotation",
-							origin: "playlist",
 							annotation: { text: "Annotation", color: null },
 						});
 						return e;
@@ -227,7 +226,6 @@ onMount(async () => {
 					playlist.update(e => {
 						e.splice($selectedItem + 1, 0, {
 							type: "annotation",
-							origin: "playlist",
 							annotation: { text: "Annotation", color: null },
 						});
 						return e;
@@ -266,28 +264,30 @@ onMount(async () => {
 		<div class="spacer" data-tauri-drag-region="" />
 
 		<!--projector-->
-		<div class="topbar-group">
-			<TopBarToggle
-				icon="projector"
-				bind:active={$showProjector}
-				activeColor="var(--hover)"
-				toolTip="Toggle Edior"
-				disabled={!$editMode}
-			/>
+		{#if $settings.video}
+			<div class="topbar-group">
+				<TopBarToggle
+					icon="projector"
+					bind:active={$showProjector}
+					activeColor="var(--hover)"
+					toolTip="Toggle Edior"
+					disabled={!$editMode}
+				/>
 
-			<TopBarDropdown icon={null} toolTip="Projector">
-				{#each screens as screen, i}
-					<TopBarDropdownItem
-						name={i == mainID ? `Main` : `Display ${i + 1}`}
-						checked={selectedScreen == i}
-						onChange={() => {
-							if (selectedScreen != i) selectedScreen = i;
-							emit("projector_set_location", {screen: screen})
-						}}
-					/>
-				{/each}
-			</TopBarDropdown>
-		</div>
+				<TopBarDropdown icon={null} toolTip="Projector">
+					{#each screens as screen, i}
+						<TopBarDropdownItem
+							name={i == mainID ? `Main` : `Display ${i + 1}`}
+							checked={selectedScreen == i}
+							onChange={() => {
+								if (selectedScreen != i) selectedScreen = i;
+								emit("projector_set_location", { screen: screen });
+							}}
+						/>
+					{/each}
+				</TopBarDropdown>
+			</div>
+		{/if}
 
 		<!--editor-->
 		<TopBarToggle
