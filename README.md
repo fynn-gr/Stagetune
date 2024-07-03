@@ -4,16 +4,15 @@ Free and Open Source music player for stageplays and liveshows
 
 ## Features
 
-Stagetune is made to setup auido and music to play during live shows. It includes:
+Stagetune is made to setup audio and music to play during live shows. It includes:
 
-- Volume and Stereo settings
 - automatic fade in and fade out
 - non destructive editing of audio files
-- keyboard shortcuts for navigating and playing for blind operation
-- placing Tracks on hotkeys
+- keyboard shortcuts for fast navigation and blind operation
+- assigning hotkeys to tracks
 - annotations in the playlist
 
-currently macOS 10.15+ and Windows 10+ are supported. Linux mit work but is unsupported and untested.
+currently macOS 10.15+ and Windows 10+ are supported. Linux might work but is unsupported and untested.
 
 Video playback for Projectors is in development and works technicaly, but is currently only avalible for developers
 
@@ -21,27 +20,27 @@ Video playback for Projectors is in development and works technicaly, but is cur
 
 Install the following dependencies:
 
-- git
-- Rust
-- node.js LTS
+- [git](https://git-scm.com/)
+- [Rust](https://www.rust-lang.org/)
+- [node.js LTS](https://nodejs.org/en)
 
 other recomendet tools:
 
 - vscode
-- svelte for vscode extension
-- event better toml extension
-- prettier extension
-- rust analyser extension
+- Svelte for vscode extension
+- even better toml extension
+- Prettier extension
+- Rust analyser extension
 - Tauri extension
-- pnpm packae manager as a replacement for npm
+- pnpm package manager to replace npm
 
 ## Project setup
 
 clone the Repo from github
 
 ```
-git clone --recurse-submodules https://github.com/Fynn-G/Stagetune.git
-cd Stagetune
+git clone --recursive-submodules https://github.com/fynn-gr/Stagetune.git
+cd stagetune
 ```
 
 install modules
@@ -50,13 +49,13 @@ install modules
 pnpm install
 ```
 
-### Compiles and Hot-reloads for development
+### Compile and Hot-reload for development
 
 ```
 pnpm tauri dev
 ```
 
-### Compiles for Production
+### Compile for Production
 
 ```
 pnpm tauri build
