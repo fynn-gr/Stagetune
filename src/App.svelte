@@ -278,6 +278,7 @@ $: invoke("show_projector", {
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y-label-has-associated-control -->
 {#if $splash}
 	<Splash bind:splashScreen={$splash} />
 {/if}
@@ -376,7 +377,7 @@ $: invoke("show_projector", {
 	<!--editor-->
 	{#if showEditor && $editMode}
 		<div class="editor">
-			{#if $selectedItem != undefined && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type === "track"}
+			{#if $selectedItem && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type === "track"}
 				<div class="prop-bar">
 					<label>cut</label>
 					<PropNumber

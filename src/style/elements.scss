@@ -87,14 +87,16 @@
 				padding: 6px;
 				line-height: 20px;
 				font-size: 18px;
-				font-weight: 400;
+				//font-variation-settings: 'wght' 400;
+				font-weight: 300;
 				text-align: left;
 				color: white;
 				background-color: transparent;
 				border-radius: 6px;
-				transition: 500ms;
+				transition: 200ms;
 
 				&:hover {
+					//font-variation-settings: 'wght' 600;
 					font-weight: 600;
 					background-color: rgba(0, 0, 0, 0.3);
 				}

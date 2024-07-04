@@ -269,6 +269,8 @@ onMount(async () => {
 				<TopBarToggle
 					icon="projector"
 					bind:active={$showProjector}
+					onChange={() => {
+					}}
 					activeColor="var(--hover)"
 					toolTip="Toggle Edior"
 					disabled={!$editMode}
@@ -280,8 +282,10 @@ onMount(async () => {
 							name={i == mainID ? `Main` : `Display ${i + 1}`}
 							checked={selectedScreen == i}
 							onChange={() => {
-								if (selectedScreen != i) selectedScreen = i;
-								emit("projector_set_location", { screen: screen });
+								if (selectedScreen != i) {
+									selectedScreen = i;
+									emit("projector_set_location", { screen: screen });
+								}
 							}}
 						/>
 					{/each}
