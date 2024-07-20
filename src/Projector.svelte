@@ -6,7 +6,7 @@ import {
 	PhysicalPosition,
 	PhysicalSize,
 } from "@tauri-apps/api/window";
-import { onMount } from "svelte";
+import { onDestroy, onMount } from "svelte";
 
 let editMode = true;
 let list: Array<any> = [];
@@ -20,6 +20,7 @@ let input: MediaElementAudioSourceNode;
 let gainNode: GainNode;
 let panNode: StereoPannerNode;
 
+//play call to a video
 const unlistenPlay = listen("play_video", (event: any) => {
 	/*
 		const p = platform().then((e) => {
@@ -33,6 +34,7 @@ const unlistenPlay = listen("play_video", (event: any) => {
 	listElements[active].play();
 });
 
+//skip, pause, stop or resume the active video
 const unlistenUpdate = listen("update_play", (e: any) => {
 	console.log(e.payload);
 	if (e.payload.action == "stop") {
@@ -48,15 +50,18 @@ const unlistenUpdate = listen("update_play", (e: any) => {
 	}
 });
 
+//update the video list
 const unlistenUpdateList = listen("updateList", e => {
 	console.log(e.payload);
 	list = e.payload.list;
 });
 
+//update the edit Mode value
 const unlistenEditMode = listen("editMode", e => {
 	editMode = e.payload.edit;
 });
 
+//set the window to Monitor
 const unlistenProjectorLocation = listen("projector_set_location", e => {
 	const pos = e.payload.screen.position;
 	const size = e.payload.screen.size;
@@ -100,6 +105,7 @@ onMount(() => {
 
 	return () => clearInterval(interval);
 });
+
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
@@ -144,7 +150,8 @@ onMount(() => {
 							red calc(100% * ${b.buffer / b.duration}),
 							#555 calc(100% * ${b.buffer / b.duration}),
 							#555 100%
-						);`}
+						);`
+					}
 				/>
 			{/each}
 		</div>

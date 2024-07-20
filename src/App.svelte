@@ -37,6 +37,8 @@ import {
 	settings,
 	splash,
 	showProjector,
+	screens,
+	selectedScreen,
 } from "./ts/Stores";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -192,6 +194,7 @@ const Listeners = () => {
 
 	listen("projctorReq", e => {
 		updateProjectorList();
+		emit("projector_set_location", { screen: $screens[$selectedScreen] })
 	});
 
 	listen("reload_settings", () => {

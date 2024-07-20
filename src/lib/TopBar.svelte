@@ -13,7 +13,9 @@ import { confirm } from "@tauri-apps/api/dialog";
 import {
 	editMode,
 	playlist,
+	screens,
 	selectedItem,
+	selectedScreen,
 	settings,
 	showProjector,
 	uiPlatform,
@@ -35,27 +37,36 @@ export let showHotkeys: boolean;
 export let pauseAll;
 export let resetAll;
 
-let screens: Monitor[] = [];
-let selectedScreen: number = 0;
 let mainID: number;
 
+function handleProjector(screen: number | null) {
+	if (screen) {
+		console.log($screens[screen])
+		emit("projector_set_location", { screen: $screens[screen] });
+	} else {
+		console.log($screens[$selectedScreen])
+		emit("projector_set_location", { screen: $screens[$selectedScreen] });
+	}
+}
+
+
 onMount(async () => {
-	screens = await availableMonitors();
+	$screens = await availableMonitors();
 	let main = await primaryMonitor();
 	mainID = 0;
 
-	screens.forEach((e, i) => {
+	$screens.forEach((e, i) => {
 		if (e.name == main?.name) mainID = i;
 	});
 
-	if (screens.length < 2) {
-		selectedScreen = 0;
-	} else if (screens.length - 1 > mainID) {
-		selectedScreen = mainID++;
+	if ($screens.length < 2) {
+		$selectedScreen = 0;
+	} else if ($screens.length - 1 > mainID) {
+		$selectedScreen = mainID++;
 	} else if (mainID > 0) {
-		selectedScreen = mainID--;
+		$selectedScreen = mainID--;
 	} else {
-		selectedScreen = 0;
+		$selectedScreen = 0;
 	}
 });
 </script>
@@ -270,6 +281,7 @@ onMount(async () => {
 					icon="projector"
 					bind:active={$showProjector}
 					onChange={() => {
+						handleProjector(null)
 					}}
 					activeColor="var(--hover)"
 					toolTip="Toggle Edior"
@@ -277,15 +289,13 @@ onMount(async () => {
 				/>
 
 				<TopBarDropdown icon={null} toolTip="Projector">
-					{#each screens as screen, i}
+					{#each $screens as screen, i}
 						<TopBarDropdownItem
 							name={i == mainID ? `Main` : `Display ${i + 1}`}
-							checked={selectedScreen == i}
+							checked={$selectedScreen == i}
 							onChange={() => {
-								if (selectedScreen != i) {
-									selectedScreen = i;
-									emit("projector_set_location", { screen: screen });
-								}
+								$selectedScreen = i;
+								handleProjector(i);
 							}}
 						/>
 					{/each}

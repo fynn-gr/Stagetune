@@ -25,7 +25,6 @@ async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
 
 }
 
-
 #[tauri::command]
 async fn open_settings(handle: tauri::AppHandle, invoke_message: String) {
 	let settings_window = tauri::WindowBuilder::new(

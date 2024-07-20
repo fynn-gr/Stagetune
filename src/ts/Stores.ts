@@ -7,6 +7,7 @@ import type {
 	PlaylistItem,
 } from "./Types";
 import { emit } from "@tauri-apps/api/event";
+import type { Monitor } from "@tauri-apps/api/window";
 
 export const settings = writable<Settings>({
 	recent: [],
@@ -25,6 +26,9 @@ export const settings = writable<Settings>({
 	allowSkipLive: true,
 });
 export const showProjector = writable<boolean>(false);
+export const screens = writable<Monitor[]>([]);
+export const selectedScreen = writable<number>(0);
+export const mainScreenID = writable<number>(0);
 export const keymap = writable<Operator[]>([
 	{
 		operator: "play_pause",

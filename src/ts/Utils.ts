@@ -7,11 +7,6 @@ import {
 	selectedItem,
 } from "./Stores";
 import type { ItemType, PlaylistItem } from "./Types";
-import {
-	availableMonitors,
-	primaryMonitor,
-	type Monitor,
-} from "@tauri-apps/api/window";
 
 export function createPlaylistTrack(
 	type: ItemType,
