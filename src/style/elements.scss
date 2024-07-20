@@ -595,13 +595,14 @@
 					&.hotkey {
 						& > p {
 							width: 16rem;
+							height: 16rem;
 							aspect-ratio: 1;
 							margin: 6rem;
 							color: var(--panel2);
 							background-color: var(--text);
 							border-radius: 4rem;
 							text-align: center;
-							line-height: 16rem;
+							line-height: 17rem;
 							font-size: 12rem;
 							font-weight: 800;
 						}
@@ -1111,7 +1112,7 @@
 			flex: 1;
 			padding: 0 10rem;
 			font-size: 14rem;
-			line-height: 29rem;
+			line-height: 27rem;
 			overflow: hidden;
 			background-color: rgb(15, 15, 15);
 			border: solid 3rem rgb(15, 15, 15);

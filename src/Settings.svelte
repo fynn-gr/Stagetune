@@ -124,7 +124,7 @@ afterUpdate(() => {
 
 			<p class="window-title" data-tauri-drag-region>Settings</p>
 
-			{#if $uiPlatform == "win"}
+			{#if $uiPlatform == "win"}	
 				<WinButtonsMs
 					CanMaximise={false}
 					CanMinimize={false}

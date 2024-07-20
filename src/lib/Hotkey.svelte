@@ -7,6 +7,7 @@ import {
 	editMode,
 	playlist,
 	playlistElements,
+	contextMenu,
 } from "@/ts/Stores";
 import { createPlaylistTrack } from "@/ts/Utils";
 import { onMount } from "svelte";
@@ -59,7 +60,6 @@ onMount(async () => {
 		} else if (!e.altKey && !track.playing) {
 			//play
 			e.preventDefault();
-			//console.log($playlist[$playlist.indexOf(track)], track);
 			let id = $playlist.indexOf(track);
 			$playlistElements[id].play(null, true);
 		} else if (!e.altKey && track.playing) {
@@ -89,6 +89,36 @@ $: if (track != null) {
 		return false;
 	}}
 	on:drop={handleDropHotkeys}
+	on:contextmenu={e => {
+		if ($editMode) {
+			$contextMenu = {
+				position: { x: e.clientX, y: e.clientY },
+				content: [
+					{
+						name: "Play",
+						icon: "",
+						iconColor: false,
+						accelerator: `${key}`,
+						action: () => {
+							let id = $playlist.indexOf(track);
+							$playlistElements[id].play(null, true);
+						},
+					},
+					{
+						name: "Delete Hotkey",
+						icon: "./icons/menu_win/x.svg",
+						iconColor: false,
+						accelerator: `alt+${key}`,
+						action: () => {
+							track.key = undefined;
+							track = null;
+						},
+					},
+				],
+			};
+			console.log($contextMenu, e);
+		}
+	}}
 	role="button"
 	tabindex={key}
 >
