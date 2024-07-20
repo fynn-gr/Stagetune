@@ -7,7 +7,7 @@ import { Command } from "@tauri-apps/api/shell";
 
 export let splashScreen;
 let recentList = [];
-let version;
+let version: string;
 
 onMount(async () => {
 	//loadSettings();
@@ -24,6 +24,7 @@ onMount(async () => {
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="splash"
+	data-tauri-drag-region
 	on:click={e => {
 		splashScreen = false;
 	}}
