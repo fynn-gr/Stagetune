@@ -204,22 +204,30 @@ onMount(async () => {
 			<TopBarDropdownItem
 				name="Annotations"
 				bind:checked={$settings.showAnnotations}
-				onChange={() => {}}
+				onChange={() => {
+					$settings.showAnnotations = !$settings.showAnnotations;
+				}}
 			/>
 			<TopBarDropdownItem
 				name="Fade Options"
 				bind:checked={$settings.showFadeOptions}
-				onChange={() => {}}
+				onChange={() => {
+					$settings.showFadeOptions = !$settings.showFadeOptions;
+				}}
 			/>
 			<TopBarDropdownItem
 				name="Volume Options"
 				bind:checked={$settings.showVolumeOptions}
-				onChange={() => {}}
+				onChange={() => {
+					$settings.showVolumeOptions = !$settings.showVolumeOptions;
+				}}
 			/>
 			<TopBarDropdownItem
 				name="Scrubbing in Live Mode"
 				bind:checked={$settings.allowSkipLive}
-				onChange={() => {}}
+				onChange={() => {
+					$settings.allowSkipLive = !$settings.allowSkipLive;
+				}}
 			/>
 		</TopBarDropdown>
 
