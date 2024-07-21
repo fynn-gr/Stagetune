@@ -51,7 +51,7 @@ export type SaveFile = {
 
 export type Hotkey = {
 	key: number;
-	track: number | null;
+	track: PlaylistItem | null;
 };
 
 //temp Operator declaration till Operators are implemented in UI

@@ -19,15 +19,16 @@ let isPlaying = false;
 async function handleDropHotkeys(e: Event) {
 	e.preventDefault();
 
-	if ($draggingOrigin == "src" && $currentDragging.type == "track") {
+	if ($draggingOrigin == "src" && $currentDragging!.type == "track") {
+		checkOtherHotkeys();
 		playlist.update(e => {
 			e.splice(
 				$playlist.length,
 				0,
 				createPlaylistTrack(
-					$currentDragging.type,
-					$currentDragging.path,
-					$currentDragging.name,
+					$currentDragging!.type,
+					$currentDragging!.path!,
+					$currentDragging!.name!,
 				),
 			);
 			return e;
@@ -38,11 +39,13 @@ async function handleDropHotkeys(e: Event) {
 		$currentDragging = null;
 	} else if (
 		$draggingOrigin == "playlist" &&
-		$currentDragging.type == "track"
+		$currentDragging!.type == "track"
 	) {
 		console.log($currentDragging);
+		checkOtherHotkeys();
 
-		$currentDragging.hotkey = key;
+		$currentDragging!.hotkey = key;
+		$playlist = $playlist;
 		track = $currentDragging;
 
 		$currentDragging = null;
@@ -51,6 +54,17 @@ async function handleDropHotkeys(e: Event) {
 	}
 
 	console.log("hotkeys", $hotkeys);
+}
+
+//check there are no other Hotkeys for the same track an if, delete them
+function checkOtherHotkeys() {
+	$hotkeys.forEach(e => {
+		if (e.track === $currentDragging) {
+			console.log("track exists", e.track)
+			e.track!.hotkey = undefined;
+			e.track = null;
+		}
+	})
 }
 
 onMount(async () => {
@@ -70,7 +84,7 @@ onMount(async () => {
 		} else if (e.altKey && $editMode) {
 			//deleting hotkey
 			e.preventDefault();
-			track.key = undefined;
+			track.hotkey = undefined;
 			track = null;
 		}
 	});

@@ -46,8 +46,9 @@ function handleDragStart(e: DragEvent) {
 
 	//drag if pointer on drag area
 	if (x < 80) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
+		const dataTransfer = e.dataTransfer as DataTransfer;
+		dataTransfer.dropEffect = "copy";
+		dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = track;
 		$draggingOrigin = "playlist";
 		dragging = true;

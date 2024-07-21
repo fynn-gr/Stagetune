@@ -58,6 +58,9 @@ onMount(async () => {
 	$screens.forEach((e, i) => {
 		if (e.name == main?.name) mainID = i;
 	});
+	console.log("screens", $screens)
+	console.log("main", main)
+	console.log("main ID", mainID)
 
 	if ($screens.length < 2) {
 		$selectedScreen = 0;
