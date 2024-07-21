@@ -86,6 +86,8 @@ onMount(async () => {
 			e.preventDefault();
 			track.hotkey = undefined;
 			track = null;
+
+			$playlist = $playlist
 		}
 	});
 });
