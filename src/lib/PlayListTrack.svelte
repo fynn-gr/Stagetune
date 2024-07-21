@@ -118,6 +118,7 @@ async function load() {
 
 	//test file exist to throw error if file missing
 	if (await exists(absPath)) {
+		console.log(convertFileSrc(absPath))
 		const response = await fetch(convertFileSrc(absPath));
 		const arrayBuffer = await response.arrayBuffer();
 		track.buffer = await ctx.decodeAudioData(arrayBuffer);

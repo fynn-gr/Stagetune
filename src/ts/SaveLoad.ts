@@ -76,7 +76,6 @@ export async function scanSrcPaths(path: string) {
 				} else if (isAudioFile(entry.path)) {
 					// Audio File
 					entry.type = "track";
-					entry.origin = "src";
 					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
 					const modifiedPath = await basename(entry.path);
 					console.log(modifiedPath);
@@ -87,13 +86,14 @@ export async function scanSrcPaths(path: string) {
 					});
 				} else if (isVideoFile(entry.path)) {
 					// Video File
-					/*entry.type = "video";
-					entry.origin = "src";
+					entry.type = "video";
 					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
+					const modifiedPath = await basename(entry.path);
+					console.log(modifiedPath);
 					srcFiles.update(items => {
 						items.push(entry);
 						return items;
-					})*/
+					})
 				} else if (isPlaylistFile(entry.path)) {
 					// Playlist File
 					playlistFile = entry.path;

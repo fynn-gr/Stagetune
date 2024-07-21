@@ -24,8 +24,7 @@ onMount(async () => {
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	class="splash"
-	data-tauri-drag-region
-	on:click={e => {
+	on:mousedown={e => {
 		splashScreen = false;
 	}}
 >

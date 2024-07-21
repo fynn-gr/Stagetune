@@ -1,12 +1,13 @@
 <script lang="ts">
 import { emit, listen } from "@tauri-apps/api/event";
+import { convertFileSrc } from "@tauri-apps/api/tauri";
 import {
 	appWindow,
 	LogicalSize,
 	PhysicalPosition,
 	PhysicalSize,
 } from "@tauri-apps/api/window";
-import { onDestroy, onMount } from "svelte";
+import { onMount } from "svelte";
 
 let editMode = true;
 let list: Array<any> = [];
@@ -16,7 +17,6 @@ let fullscreen = false;
 let buffer: any[] = [];
 
 let ctx = new AudioContext();
-let input: MediaElementAudioSourceNode;
 let gainNode: GainNode;
 let panNode: StereoPannerNode;
 
@@ -127,7 +127,7 @@ onMount(() => {
 		<video
 			id="video"
 			controls={editMode}
-			src={video.url}
+			src={convertFileSrc(video.url)}
 			preload="auto"
 			data-tauri-drag-region
 			class:vis={i == active}

@@ -15,19 +15,25 @@ import {
 	isEditing,
 	currentDragging,
 	draggingOrigin,
+	settings,
 } from "../ts/Stores";
 
 export let track: PlaylistItem;
 export let id: number;
+
 let dragging = false;
-let dragover = false;
+let dragover: "top" | "bottom" | null = null;
 let titleEl: HTMLElement;
 let unlistenState: UnlistenFn;
 let unlistenEnd;
 
-function handleDragStart(e) {
-	let rec = e.target.getBoundingClientRect();
+function handleDragStart(e: DragEvent) {
+	//calc pointer position
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
 	let x = e.clientX - rec.left;
+
+	//drag if pointer on drag area
 	if (x < 80) {
 		e.dataTransfer.dropEffect = "copy";
 		e.dataTransfer.setData("text/plain", "placehold");
@@ -43,31 +49,38 @@ function handleDragEnd(e: DragEvent) {
 	dragging = false;
 }
 
-function handleDrop(e) {
+function handleDrop(e: DragEvent) {
 	e.preventDefault();
 	e.stopPropagation();
 
-	let rec = e.target.getBoundingClientRect();
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
 	let newPosition = y > rec.height / 2 ? id + 1 : id;
+
 	DropHandler(newPosition);
 }
 
-function handleDragEnter() {
-	dragover = true;
+function handleDragEnter(e: DragEvent) {
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
+	let y = e.clientY - rec.top;
+	dragover = y > rec.height / 2 ? "top" : "bottom";
 }
 
 function handleDragLeave() {
-	dragover = false;
+	dragover = null;
 }
 
-function handleSkip(e) {
-	let rec = e.target.getBoundingClientRect();
-	let x = e.clientX - rec.left;
-	let perc = Math.min(Math.max(x / rec.width, 0), 1);
-
-	track.playing = false;
-	emit("update_play", { action: "skip", position: perc });
+function handleSkip(e: MouseEvent) {
+	if ($settings.allowSkipLive || $editMode) {
+		const target = e.target as HTMLElement;
+		let rec = target.getBoundingClientRect();
+		let x = e.clientX - rec.left;
+		let skipFac = Math.min(Math.max(x / rec.width, 0), 1);
+		track.playing = false;
+		emit("update_play", { action: "skip", position: skipFac });
+	}
 }
 
 export function playPause() {
@@ -112,15 +125,17 @@ onDestroy(() => {
 	unlistenState();
 });
 
-$: $currentDragging == null ? (dragover = false) : null;
+$: $currentDragging == null ? (dragover = null) : null;
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="playlist-item video"
 	class:selected={$selectedItem == id}
-	class:missing
-	class:drag-over={dragover}
+	class:missing={track.missing}
+	class:drag-top={dragover == "bottom"}
+	class:drag-bottom={dragover == "top"}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
@@ -137,8 +152,10 @@ $: $currentDragging == null ? (dragover = false) : null;
 		<p>{id + 1}</p>
 	</div>
 
-	<!--annotation before-->
-	<Annotation bind:annotation={track.annotation} {id} />
+	<!--annotation attached-->
+	{#if $settings.showAnnotations}
+		<Annotation bind:annotation={track.annotation} {id} />
+	{/if}
 
 	<div
 		class="inner"
@@ -163,10 +180,8 @@ $: $currentDragging == null ? (dragover = false) : null;
 		<!--reset-btn-->
 		<button
 			class="play-btn"
-			on:click={() => {
-				track.playing = false;
-				emit("update_play", { action: "stop" });
-			}}
+			title="Reset"
+			on:click={() => {stop(true)}}
 		>
 			<img src="./icons/square/reset.svg" alt="" draggable="false" />
 		</button>
@@ -174,10 +189,9 @@ $: $currentDragging == null ? (dragover = false) : null;
 		<!--play Button-->
 		<button
 			class="play-btn"
+			title="Play"
 			class:active={track.playing}
-			on:click={() => {
-				playPause();
-			}}
+			on:click={playPause}
 		>
 			{#if track.playing}
 				<img src="./icons/square/pause.svg" alt="" draggable="false" />
