@@ -33,7 +33,6 @@ import {
 	hotkeyElements,
 	isEditing,
 	hotkeys,
-	localFiles,
 	settings,
 	splash,
 	showProjector,
@@ -294,12 +293,6 @@ $: invoke("show_projector", {
 				{#each $srcFiles as p, i}
 					<TrackListItem entry={p} {ctx} {masterGain} />
 				{/each}
-				{#if $settings.video}
-					<p class="category">videos</p>
-					{#each $localFiles as l}
-						<TrackListItem entry={l} {ctx} {masterGain} />
-					{/each}
-				{/if}
 			</div>
 		</div>
 	{:else}

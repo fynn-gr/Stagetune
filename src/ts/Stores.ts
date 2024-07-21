@@ -332,62 +332,6 @@ export const hotkeyElements = writable<any[]>([]);
 export const playlistElements = writable<any[]>([]);
 
 export const srcFiles = writable([]);
-export const localFiles = writable<any[]>([
-	{
-		name: "cutscene 1",
-		path: "/videos/Cutscene 1.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 2",
-		path: "/videos/Cutscene 2.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 3",
-		path: "/videos/Cutscene 3.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 4",
-		path: "/videos/Cutscene 4.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 5",
-		path: "/videos/Cutscene 5.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 6",
-		path: "/videos/Cutscene 6.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 7",
-		path: "/videos/Cutscene 7.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 8",
-		path: "/videos/Cutscene 8.mp4",
-		type: "video",
-		origin: "src",
-	},
-	{
-		name: "cutscene 9",
-		path: "/videos/Cutscene 9.mp4",
-		type: "video",
-		origin: "src",
-	},
-]);
 export const playlistPath = writable<string>("");
 export const isEditing = writable<number>(0); //input currently in focus counter
 export const Menu = readable({
