@@ -127,7 +127,7 @@ onMount(() => {
 					annotation = { text: "Annotation", color: null };
 				}}
 			>
-				<img src={`./icons/tool_bar/plus.svg`} alt="" />
+				<img src={`./icons/tool_bar/write.svg`} alt="" />
 			</button>
 		{/if}
 	</div>

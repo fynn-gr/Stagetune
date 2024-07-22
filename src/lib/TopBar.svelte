@@ -226,7 +226,7 @@ onMount(async () => {
 				name="Scrubbing in Live Mode"
 				bind:checked={$settings.allowSkipLive}
 				onChange={() => {
-					$settings.allowSkipLive = !$settings.allowSkipLive;
+					$settings.allowSkipLive = !$settings.allowSkipLive;  
 				}}
 			/>
 		</TopBarDropdown>
