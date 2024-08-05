@@ -2,13 +2,9 @@
 import TopBarButton from "../pureUI/components/TopBarButton.svelte";
 import TopBarToggle from "../pureUI/components/TopBarToggle.svelte";
 import AppMenu from "../pureUI/components/AppMenu.svelte";
-import {
-	appWindow,
-	availableMonitors,
-	primaryMonitor,
-	type Monitor,
-} from "@tauri-apps/api/window";
-import { confirm } from "@tauri-apps/api/dialog";
+import { availableMonitors, primaryMonitor } from "@tauri-apps/api/window";
+import { confirm } from "@tauri-apps/plugin-dialog";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 import {
 	editMode,
@@ -39,29 +35,30 @@ export let pauseAll;
 export let resetAll;
 
 let mainID: number;
+let window;
 
 function handleProjector(screen: number | null) {
 	if (screen) {
-		console.log($screens[screen])
+		console.log($screens[screen]);
 		emit("projector_set_location", { screen: $screens[screen] });
 	} else {
-		console.log($screens[$selectedScreen])
+		console.log($screens[$selectedScreen]);
 		emit("projector_set_location", { screen: $screens[$selectedScreen] });
 	}
 }
 
-
 onMount(async () => {
 	$screens = await availableMonitors();
+	window = await getCurrentWindow();
 	let main = await primaryMonitor();
 	mainID = 0;
 
 	$screens.forEach((e, i) => {
 		if (e.name == main?.name) mainID = i;
 	});
-	console.log("screens", $screens)
-	console.log("main", main)
-	console.log("main ID", mainID)
+	console.log("screens", $screens);
+	console.log("main", main);
+	console.log("main ID", mainID);
 
 	if ($screens.length < 2) {
 		$selectedScreen = 0;
@@ -86,17 +83,19 @@ onMount(async () => {
 							title: "Quit?",
 							type: "warning",
 							okLabel: "Quit",
-						}).then(isOK => (isOK ? appWindow.close() : null));
+						}).then(async isOK =>
+							isOK ? await getCurrentWindow().close() : null,
+						);
 					}
 				}}
-				onMin={() => {
+				onMin={async () => {
 					if ($editMode) {
-						appWindow.minimize();
+						await getCurrentWindow().minimize();
 					}
 				}}
-				onMax={() => {
+				onMax={async () => {
 					if ($editMode) {
-						appWindow.toggleMaximize();
+						await getCurrentWindow().toggleMaximize();
 					}
 				}}
 				CanMinimize={$editMode}
@@ -162,7 +161,6 @@ onMount(async () => {
 		<!--Debug menu-->
 		{#if $settings.debug}
 			<AppMenuDev platforms={["mac", "win"]} themes={false}>
-				
 				<div class="seperator" />
 				<button
 					class="app-menu-item"
@@ -212,7 +210,7 @@ onMount(async () => {
 				name="Scrubbing in Live Mode"
 				bind:checked={$settings.allowSkipLive}
 				onChange={() => {
-					$settings.allowSkipLive = !$settings.allowSkipLive;  
+					$settings.allowSkipLive = !$settings.allowSkipLive;
 				}}
 			/>
 		</TopBarDropdown>
@@ -278,7 +276,7 @@ onMount(async () => {
 					icon="projector"
 					bind:active={$showProjector}
 					onChange={() => {
-						handleProjector(null)
+						handleProjector(null);
 					}}
 					activeColor="var(--hover)"
 					toolTip="Toggle Edior"
@@ -339,14 +337,14 @@ onMount(async () => {
 						}).then(isOK => (isOK ? appWindow.close() : null));
 					}
 				}}
-				onMin={() => {
+				onMin={async () => {
 					if ($editMode) {
-						appWindow.minimize();
+						await getCurrentWindow().minimize();
 					}
 				}}
-				onMax={() => {
+				onMax={async () => {
 					if ($editMode) {
-						appWindow.toggleMaximize();
+						await getCurrentWindow().toggleMaximize();
 					}
 				}}
 				CanMinimize={$editMode}

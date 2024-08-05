@@ -1,8 +1,8 @@
 {
 	"plugins": ["prettier-plugin-svelte"],
+	"useTabs": true,
 	"tabWidth": 2,
 	"printWidth": 80,
-	"useTabs": true,
 	"semi": true,
 	"arrowParens": "avoid",
 	"svelteIndentScriptAndStyle": false

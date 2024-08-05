@@ -60,11 +60,11 @@ async function handleDropHotkeys(e: Event) {
 function checkOtherHotkeys() {
 	$hotkeys.forEach(e => {
 		if (e.track === $currentDragging) {
-			console.log("track exists", e.track)
+			console.log("track exists", e.track);
 			e.track!.hotkey = undefined;
 			e.track = null;
 		}
-	})
+	});
 }
 
 onMount(async () => {
@@ -87,7 +87,7 @@ onMount(async () => {
 			track.hotkey = undefined;
 			track = null;
 
-			$playlist = $playlist
+			$playlist = $playlist;
 		}
 	});
 });

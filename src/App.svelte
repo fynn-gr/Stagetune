@@ -6,9 +6,9 @@ import "./style/App.scss";
 // Svelte, Tauri
 import { onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
-import { confirm } from "@tauri-apps/api/dialog";
-import { invoke } from "@tauri-apps/api/tauri";
-import { exit } from "@tauri-apps/api/process";
+import { confirm } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
+import { exit } from "@tauri-apps/plugin-process";
 
 // Components
 import PlayListTrack from "./lib/PlayListTrack.svelte";
@@ -193,7 +193,7 @@ const Listeners = () => {
 
 	listen("projctorReq", e => {
 		updateProjectorList();
-		emit("projector_set_location", { screen: $screens[$selectedScreen] })
+		emit("projector_set_location", { screen: $screens[$selectedScreen] });
 	});
 
 	listen("reload_settings", () => {

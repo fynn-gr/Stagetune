@@ -1168,6 +1168,11 @@
 }
 
 .fade-state-icon {
+	animation-name: spin;
+	animation-timing-function: linear;
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
+
 	@keyframes spin {
 		from {
 			rotate: 0deg;
@@ -1176,9 +1181,4 @@
 			rotate: 359deg;
 		}
 	}
-
-	animation-name: spin;
-	animation-timing-function: linear;
-	animation-duration: 1s;
-	animation-iteration-count: infinite;
 }

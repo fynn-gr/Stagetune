@@ -1,8 +1,8 @@
 <script lang="ts">
 import { emit, listen } from "@tauri-apps/api/event";
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
-	appWindow,
 	LogicalSize,
 	PhysicalPosition,
 	PhysicalSize,
@@ -62,13 +62,13 @@ const unlistenEditMode = listen("editMode", e => {
 });
 
 //set the window to Monitor
-const unlistenProjectorLocation = listen("projector_set_location", e => {
+const unlistenProjectorLocation = listen("projector_set_location", async e => {
 	const pos = e.payload.screen.position;
 	const size = e.payload.screen.size;
 	console.log(e.payload.screen, pos, size);
-	appWindow.setPosition(new PhysicalPosition(pos.x, pos.y));
-	appWindow.setSize(new PhysicalSize(size.width, size.height));
-	appWindow.setFullscreen(true);
+	await getCurrentWindow().setPosition(new PhysicalPosition(pos.x, pos.y));
+	await getCurrentWindow().setSize(new PhysicalSize(size.width, size.height));
+	await getCurrentWindow().setFullscreen(true);
 });
 
 onMount(() => {
@@ -105,7 +105,6 @@ onMount(() => {
 
 	return () => clearInterval(interval);
 });
-
 </script>
 
 <!-- svelte-ignore a11y-media-has-caption -->
@@ -114,12 +113,12 @@ onMount(() => {
 	class="wrapper"
 	class:edit={editMode}
 	data-tauri-drag-region
-	on:dblclick={() => {
+	on:dblclick={async () => {
 		if (fullscreen) {
-			appWindow.setFullscreen(false);
-			appWindow.setSize(new LogicalSize(720, 480));
+			await getCurrentWindow().setFullscreen(false);
+			await getCurrentWindow().setSize(new LogicalSize(720, 480));
 		} else {
-			appWindow.setFullscreen(true);
+			await getCurrentWindow().setFullscreen(true);
 		}
 	}}
 >
@@ -150,8 +149,7 @@ onMount(() => {
 							red calc(100% * ${b.buffer / b.duration}),
 							#555 calc(100% * ${b.buffer / b.duration}),
 							#555 100%
-						);`
-					}
+						);`}
 				/>
 			{/each}
 		</div>

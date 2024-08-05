@@ -1,16 +1,16 @@
 //Tauri
-import { open } from "@tauri-apps/api/dialog";
+import { open } from "@tauri-apps/plugin-dialog";
 import { getVersion } from "@tauri-apps/api/app";
 import { basename } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
 import {
 	BaseDirectory,
-	createDir,
+	mkdir,
 	exists,
 	readDir,
 	readTextFile,
 	writeTextFile,
-} from "@tauri-apps/api/fs";
+} from "@tauri-apps/plugin-fs";
 
 // Stores, Utils
 import { isAudioFile, isVideoFile, isPlaylistFile } from "./FileUtils";
@@ -93,7 +93,7 @@ export async function scanSrcPaths(path: string) {
 					srcFiles.update(items => {
 						items.push(entry);
 						return items;
-					})
+					});
 				} else if (isPlaylistFile(entry.path)) {
 					// Playlist File
 					playlistFile = entry.path;
@@ -181,7 +181,7 @@ export function saveSettings() {
 				`Stagetune/${currentVersion}/settings.json`,
 				JSON.stringify(get(settings)),
 				{
-					dir: BaseDirectory.Config,
+					baseDir: BaseDirectory.Config,
 				},
 			);
 			emit("reload_settings");
@@ -194,7 +194,7 @@ export async function loadSettings(activateSplash = false) {
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
-			dir: BaseDirectory.Config,
+			baseDir: BaseDirectory.Config,
 		}).then(e => {
 			settings.set(JSON.parse(e));
 			console.log("loaded settings", get(settings));
@@ -214,12 +214,12 @@ export function checkSettingsExist() {
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		exists(`Stagetune/${currentVersion}/settings.json`, {
-			dir: BaseDirectory.Config,
+			baseDirir: BaseDirectory.Config,
 		}).then(e => {
 			if (e) {
 				loadSettings(true);
 			} else {
-				createDir(`Stagetune/${currentVersion}`, {
+				mkdir(`Stagetune/${currentVersion}`, {
 					dir: BaseDirectory.Config,
 					recursive: true,
 				});

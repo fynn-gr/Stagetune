@@ -1,5 +1,5 @@
 <script lang="ts">
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { currentDragging, draggingOrigin, playlistPath } from "../ts/Stores";
 import { join } from "@tauri-apps/api/path";
 

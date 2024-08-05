@@ -7,7 +7,7 @@ import type {
 	PlaylistItem,
 } from "./Types";
 import { emit } from "@tauri-apps/api/event";
-import type { Monitor } from "@tauri-apps/api/window";
+import type { Monitor } from "@tauri-apps/api/webviewWindow";
 
 export const settings = writable<Settings>({
 	recent: [],

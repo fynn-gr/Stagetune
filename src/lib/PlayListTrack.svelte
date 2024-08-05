@@ -1,10 +1,10 @@
 <script lang="ts">
 // Svelte, Tauri
 import { onMount } from "svelte";
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { join } from "@tauri-apps/api/path";
-import { exists } from "@tauri-apps/api/fs";
-import { message } from "@tauri-apps/api/dialog";
+import { exists } from "@tauri-apps/plugin-fs";
+import { message } from "@tauri-apps/plugin-dialog";
 
 // Components
 import Annotation from "./Annotation.svelte";
@@ -119,7 +119,7 @@ async function load() {
 
 	//test file exist to throw error if file missing
 	if (await exists(absPath)) {
-		console.log(convertFileSrc(absPath))
+		console.log(convertFileSrc(absPath));
 		const response = await fetch(convertFileSrc(absPath));
 		const arrayBuffer = await response.arrayBuffer();
 		track.buffer = await ctx.decodeAudioData(arrayBuffer);

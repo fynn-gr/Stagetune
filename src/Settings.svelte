@@ -4,11 +4,11 @@ import "./style/App.scss";
 import "./style/settings.scss";
 import {
 	LogicalSize,
-	appWindow,
 	availableMonitors,
 	currentMonitor,
 	primaryMonitor,
 } from "@tauri-apps/api/window";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { afterUpdate, onMount, tick } from "svelte";
 import { writable } from "svelte/store";
@@ -18,7 +18,11 @@ import { uiPlatform } from "./ts/Stores";
 import Keymap from "./pureUI/components//settings/Keymap.svelte";
 import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
-import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import {
+	BaseDirectory,
+	readTextFile,
+	writeTextFile,
+} from "@tauri-apps/plugin-fs";
 import { emit } from "@tauri-apps/api/event";
 import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svelte";
 import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
@@ -45,14 +49,14 @@ let tauriVersion: string;
 load();
 console.log($settings);
 
-function setWindowHeight() {
+async function setWindowHeight() {
 	if ($uiPlatform == "mac") {
 		let content: HTMLElement = document.querySelector(".content")!;
 		tick();
 		let height = content.offsetHeight;
-		appWindow.setSize(new LogicalSize(800, height + 80));
+		await getCurrentWindow().setSize(new LogicalSize(800, height + 80));
 	} else {
-		appWindow.setSize(new LogicalSize(800, 500));
+		await getCurrentWindow().setSize(new LogicalSize(800, 500));
 	}
 }
 
@@ -72,7 +76,7 @@ function save() {
 				`Stagetune/${currentVersion}/settings.json`,
 				JSON.stringify($settings),
 				{
-					dir: BaseDirectory.Config,
+					baseDir: BaseDirectory.Config,
 				},
 			);
 			emit("reload_settings");
@@ -85,7 +89,7 @@ async function load() {
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
-			dir: BaseDirectory.Config,
+			baseDir: BaseDirectory.Config,
 		}).then(async e => {
 			$settings = JSON.parse(e);
 			console.log("loaded settings", $settings);
@@ -124,7 +128,7 @@ afterUpdate(() => {
 
 			<p class="window-title" data-tauri-drag-region>Settings</p>
 
-			{#if $uiPlatform == "win"}	
+			{#if $uiPlatform == "win"}
 				<WinButtonsMs
 					CanMaximise={false}
 					CanMinimize={false}
