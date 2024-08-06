@@ -29,15 +29,15 @@ onMount(async () => {
 	}}
 >
 	<div class="wrapper">
-		<img src="./splash.png" class="splash-art" />
-		<div class="top">
+		<img src={`./splash_dark.png`} class="splash-art" />
+		<!-- <div class="top">
 			<h1><b>Stagetune</b></h1>
 			<p class="version">{version || ""} Aquädukt</p>
-		</div>
+		</div> -->
 
 		<div class="box">
 			<span>
-				{#each ["Licence", "Repository", "Website", "Bug tracker"] as e}
+				{#each ["Website", "Repository", "Licence", "Bug tracker", "About", "Contribute"] as e}
 					<button
 						on:click={e => {
 							e.stopPropagation();
