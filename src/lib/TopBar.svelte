@@ -29,6 +29,7 @@ import { test } from "@/test/Loop.test";
 import TopBarDropdownItem from "@/pureUI/components/TopBarDropdownItem.svelte";
 import { onMount } from "svelte";
 import { emit } from "@tauri-apps/api/event";
+import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
 
 export let showTracklist: boolean;
 export let showEditor: boolean;
@@ -160,23 +161,8 @@ onMount(async () => {
 
 		<!--Debug menu-->
 		{#if $settings.debug}
-			<AppMenu name="Dev">
-				<button
-					class="app-menu-item"
-					on:click={() => {
-						$uiPlatform = "mac";
-					}}
-				>
-					<p class="name">mac</p>
-				</button>
-				<button
-					class="app-menu-item"
-					on:click={() => {
-						$uiPlatform = "win";
-					}}
-				>
-					<p class="name">win</p>
-				</button>
+			<AppMenuDev platforms={["mac", "win"]} themes={false}>
+				
 				<div class="seperator" />
 				<button
 					class="app-menu-item"
@@ -194,7 +180,7 @@ onMount(async () => {
 				>
 					<p class="name">Penetration Test</p>
 				</button>
-			</AppMenu>
+			</AppMenuDev>
 		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />
