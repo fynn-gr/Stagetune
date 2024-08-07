@@ -16,16 +16,16 @@ import {
 	showProjector,
 	uiPlatform,
 } from "@/ts/Stores";
-import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
-import ModeSwitch from "./ModeSwitch.svelte";
-import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
-import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
-import TopBarDropdown from "@/pureUI/components/TopBarDropdown.svelte";
-import { test } from "@/test/Loop.test";
+import WinButtonsMac      from "@/pureUI/components/WinButtonsMac.svelte";
+import ModeSwitch         from "./ModeSwitch.svelte";
+import WinButtonsMs       from "@/pureUI/components/WinButtonsMS.svelte";
+import AppMenuItem        from "@/pureUI/components/AppMenuItem.svelte";
+import TopBarDropdown     from "@/pureUI/components/TopBarDropdown.svelte";
+import { test }           from "@/test/Loop.test";
 import TopBarDropdownItem from "@/pureUI/components/TopBarDropdownItem.svelte";
-import { onMount } from "svelte";
-import { emit } from "@tauri-apps/api/event";
-import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
+import { onMount }        from "svelte";
+import { emit }           from "@tauri-apps/api/event";
+import AppMenuDev         from "@/pureUI/components/AppMenuDev.svelte";
 
 export let showTracklist: boolean;
 export let showEditor: boolean;

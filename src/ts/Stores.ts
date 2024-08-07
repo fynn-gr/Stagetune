@@ -285,7 +285,7 @@ export const currentDragging = writable<PlaylistItem | null>(null); //dragging o
 export const draggingOrigin = writable<"src" | "playlist" | null>(null);
 
 export const editMode = writable<boolean>(true);
-export const uiPlatform = writable<"mac" | "win">("mac");
+export const uiPlatform = writable<"mac" | "win">("win");
 export const theme = writable("dark"); //unused
 export const splash = writable<boolean>(false); //splash screen visible
 export const playlist = writable<PlaylistItem[]>([]);
@@ -334,7 +334,7 @@ export const playlistElements = writable<any[]>([]);
 export const srcFiles = writable([]);
 export const playlistPath = writable<string>("");
 export const isEditing = writable<number>(0); //input currently in focus counter
-export const Menu = readable({
+export const menuHandler = readable({
 	handle(id: string) {
 		emit("menu", id);
 	},

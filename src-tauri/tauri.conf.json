@@ -46,7 +46,7 @@
 				"minWidth": 1280,
 				"minHeight": 720,
 				"resizable": true,
-				"decorations": false,
+				"decorations": true,
 				"transparent": true,
 				"title": "Stagetune"
 			}

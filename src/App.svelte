@@ -39,7 +39,7 @@ import {
 	screens,
 	selectedScreen,
 } from "./ts/Stores";
-import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
+import { waveformCalc, updateProjectorList, DropHandler, createMenus } from "./ts/Utils";
 import {
 	savePlaylist,
 	openDir,
@@ -262,6 +262,7 @@ const Shortcuts = () => {
 onMount(() => {
 	Listeners();
 	Shortcuts();
+	createMenus();
 
 	const updateInterval = setInterval(() => {
 		for (let element of $playlistElements) {
