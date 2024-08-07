@@ -1,6 +1,6 @@
 [package]
-name = "pureFrame"
-version = "0.0.0"
+name = "Stagetune"
+version = "1.0.0"
 description = "A Tauri App"
 authors = ["Fynn Gr."]
 license = "GPL 3.0"

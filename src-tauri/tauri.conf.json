@@ -34,8 +34,7 @@
 			"signingIdentity": null
 		},
 		"resources": [],
-		"shortDescription": "",
-		"createUpdaterArtifacts": "v1Compatible"
+		"shortDescription": ""
 	},
 	"plugins": {},
 	"app": {
