@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { MenuItemOptions, MenuItem } from "@tauri-apps/api/menu";
 // Styles
 import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
@@ -39,13 +40,16 @@ import {
 	screens,
 	selectedScreen,
 } from "./ts/Stores";
-import { waveformCalc, updateProjectorList, DropHandler, createMenus } from "./ts/Utils";
+import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
 	savePlaylist,
 	openDir,
 	loadSettings,
 	checkSettingsExist,
 } from "./ts/SaveLoad";
+import { Submenu, type SubmenuOptions } from "@tauri-apps/api/menu/submenu";
+import { Menu } from "@tauri-apps/api/menu/menu";
+import { createNativeMenu } from "./ts/Menus";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = 25;
@@ -54,6 +58,9 @@ let showEditor = false;
 let showCurrent = true;
 let showHotkeys = true;
 let dragOverPlaylist = false;
+
+let menu: any;
+let submenu: Submenu;
 
 checkSettingsExist();
 
@@ -262,7 +269,7 @@ const Shortcuts = () => {
 onMount(() => {
 	Listeners();
 	Shortcuts();
-	createMenus();
+	createNativeMenu();
 
 	const updateInterval = setInterval(() => {
 		for (let element of $playlistElements) {

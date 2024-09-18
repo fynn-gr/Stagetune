@@ -124,16 +124,3 @@ export function DropHandler(newPosition: number) {
 
 	currentDragging.set(null);
 }
-
-export async function createMenus() {
-	const menu = await Menu.new({
-		items: [
-			await MenuItem.new({
-				text: "test",
-				action: () => {
-					console.log("test")
-				}
-			})
-		]
-	})
-}
