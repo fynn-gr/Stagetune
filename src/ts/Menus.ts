@@ -1,4 +1,4 @@
-import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
+import { Menu, MenuItem, PredefinedMenuItem, type AboutMetadata } from "@tauri-apps/api/menu";
 import { Submenu } from "@tauri-apps/api/menu/submenu";
 
 export function createNativeMenu() {
@@ -12,6 +12,8 @@ export function createNativeMenu() {
 	async function createSubmenu() {
     
     // App
+		let meta: AboutMetadata = { license: "GPL 3.0", authors: ["Fyn Gr."]}
+		let about = await PredefinedMenuItem.new({ item: { About: { license: "GPL 3.0", authors: ["Fyn Gr."]} }, text: "About Stagetune"});
 		let sep = await PredefinedMenuItem.new({ item: "Separator" });
 		let settings = await MenuItem.new({
 			id: "settings",
@@ -31,6 +33,7 @@ export function createNativeMenu() {
 		subMain = await Submenu.new({
 			text: "app",
 			items: [
+				about,
 				sep,
 				settings,
 				sep,
