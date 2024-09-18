@@ -1,12 +1,5 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]
 
-use tauri::menu::AboutMetadata;
-use tauri::menu::CheckMenuItem;
-use tauri::menu::Menu;
-use tauri::menu::MenuItem;
-use tauri::menu::MenuItemBuilder;
-use tauri::menu::Submenu;
-use tauri::menu::{MenuBuilder, SubmenuBuilder};
 use tauri::Emitter;
 use tauri::Manager;
 
@@ -61,7 +54,10 @@ pub fn run() {
 		.plugin(tauri_plugin_fs::init())
 		//setup
 		.setup(|app| {
-
+			app.on_menu_event(move |app, event| {
+				let event_name = event.id();
+				app.emit("menu", event_name);
+			});
 			Ok(())
 		})
 		.invoke_handler(tauri::generate_handler![show_projector, open_settings])
