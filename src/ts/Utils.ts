@@ -7,7 +7,6 @@ import {
 	selectedItem,
 } from "./Stores";
 import type { ItemType, PlaylistItem } from "./Types";
-import { Menu, MenuItem } from "@tauri-apps/api/menu";
 
 export function createPlaylistTrack(
 	type: ItemType,
@@ -98,6 +97,7 @@ export function mapRange(
 export function DropHandler(newPosition: number) {
 	const dragOrigin = get(draggingOrigin);
 	const currentDrag = get(currentDragging);
+	console.log(currentDrag)
 
 	if (dragOrigin === "playlist" && currentDrag) {
 		const oldPosition = get(playlist).indexOf(currentDrag);
@@ -107,6 +107,7 @@ export function DropHandler(newPosition: number) {
 			return e;
 		});
 	} else if (dragOrigin === "src" && currentDrag) {
+		console.log("drag form src to playlist: ", currentDrag)
 		playlist.update(e => {
 			e.splice(
 				newPosition,

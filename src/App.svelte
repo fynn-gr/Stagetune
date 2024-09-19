@@ -39,6 +39,7 @@ import {
 	showProjector,
 	screens,
 	selectedScreen,
+	currentDragging,
 } from "./ts/Stores";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -75,6 +76,7 @@ function openSettings() {
 }
 
 function handleDropPlaylist(e: Event) {
+	console.log("to playlist", $currentDragging);
 	e.preventDefault();
 	DropHandler($playlist.length);
 	dragOverPlaylist = false;
@@ -301,6 +303,7 @@ $: invoke("show_projector", {
 				{#each $srcFiles as p, i}
 					<TrackListItem entry={p} {ctx} {masterGain} />
 				{/each}
+				<TrackListItem entry={{ type: "song", path: "/test/", title: "TesT"}} {ctx} {masterGain}/>
 			</div>
 		</div>
 	{:else}

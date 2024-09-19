@@ -1,7 +1,7 @@
 //Tauri
 import { open } from "@tauri-apps/plugin-dialog";
 import { getVersion } from "@tauri-apps/api/app";
-import { basename } from "@tauri-apps/api/path";
+import { basename, join } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
 import {
 	BaseDirectory,
@@ -10,11 +10,12 @@ import {
 	readDir,
 	readTextFile,
 	writeTextFile,
+	type DirEntry,
 } from "@tauri-apps/plugin-fs";
 
 // Stores, Utils
 import { isAudioFile, isVideoFile, isPlaylistFile } from "./FileUtils";
-import { get, writable } from "svelte/store";
+import { get } from "svelte/store";
 import {
 	playlist,
 	playlistPath,
@@ -61,42 +62,47 @@ export async function openDir() {
 	}
 }
 
-export async function scanSrcPaths(path: string) {
+export async function scanSrcPaths(selPath: string) {
 	try {
 		let playlistFile: string;
 
 		// Recursive scan of src path
-		const entries = await readDir(path, { recursive: true });
+		async function processDirRecursive(path: string) {
+			const entries = await readDir(path);
+			console.log(entries);
 
-		function processEntries(entries: any[]) {
-			entries.forEach(async (entry: any, j) => {
-				if (entry.children) {
+			//loop over entries
+			entries.forEach(async (entry: DirEntry) => {
+				if (entry.isDirectory) {
 					// Subfolder
-					processEntries(entry.children);
-				} else if (isAudioFile(entry.path)) {
+					processDirRecursive(await join(selPath, entry.name));
+				} else if (isAudioFile(entry.name)) {
 					// Audio File
-					entry.type = "track";
-					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-					const modifiedPath = await basename(entry.path);
-					console.log(modifiedPath);
-					entry.path = modifiedPath;
+					const modifiedPath = await basename(entry.name);
+					const obj = {
+						type: "track",
+						title: entry.name.replace(/\.[^.]+$/gm, ""),
+						path: modifiedPath,
+					};
 					srcFiles.update(items => {
-						items.push(entry);
+						items.push(obj);
 						return items;
 					});
-				} else if (isVideoFile(entry.path)) {
+				} else if (isVideoFile(entry.name)) {
 					// Video File
-					entry.type = "video";
-					entry.name = entry.name.replace(/\.[^.]+$/gm, "");
-					const modifiedPath = await basename(entry.path);
-					console.log(modifiedPath);
+					const modifiedPath = await basename(entry.name);
+					const obj = {
+						type: "video",
+						title: entry.name.replace(/\.[^.]+$/gm, ""),
+						path: modifiedPath,
+					};
 					srcFiles.update(items => {
-						items.push(entry);
+						items.push(obj);
 						return items;
 					});
-				} else if (isPlaylistFile(entry.path)) {
+				} else if (isPlaylistFile(entry.name)) {
 					// Playlist File
-					playlistFile = entry.path;
+					playlistFile = entry.name;
 					readTextFile(playlistFile, {}).then(e => {
 						const obj = JSON.parse(e);
 						playlist.set(obj.playlist);
@@ -116,12 +122,12 @@ export async function scanSrcPaths(path: string) {
 
 			// Sort alphabetically
 			srcFiles.update(items => {
-				items.sort((a, b) => a.name.localeCompare(b.name));
+				items.sort((a, b) => a.title.localeCompare(b.title));
 				return items;
 			});
 		}
 
-		processEntries(entries);
+		processDirRecursive(selPath);
 	} catch (err) {
 		console.error(err);
 	}

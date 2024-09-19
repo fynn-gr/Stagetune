@@ -1,12 +1,13 @@
 {
-	"identifier": "migrated",
-	"description": "permissions that were migrated from v1",
+	"identifier": "main",
+	"description": "general permissions",
 	"local": true,
 	"windows": ["main"],
 	"permissions": [
 		"core:default",
 		"fs:allow-read-file",
 		"fs:allow-write-file",
+		"fs:allow-write-text-file",
 		"fs:allow-read-dir",
 		"fs:allow-copy-file",
 		"fs:allow-mkdir",
@@ -15,7 +16,7 @@
 		"fs:allow-rename",
 		"fs:allow-exists",
 		{
-			"identifier": "fs:scope",
+			"identifier": "fs:scope", 
 			"allow": [
 				"**",
 				"$DESKTOP/*",
@@ -26,6 +27,7 @@
 				"$RESOURCE/*"
 			]
 		},
+		"core:window:default",
 		"core:window:allow-create",
 		"core:window:allow-center",
 		"core:window:allow-request-user-attention",
@@ -58,6 +60,7 @@
 		"core:window:allow-set-cursor-position",
 		"core:window:allow-set-ignore-cursor-events",
 		"core:window:allow-start-dragging",
+		"core:window:allow-start-resize-dragging",
 		"core:webview:allow-print",
 		"shell:allow-execute",
 		"shell:allow-execute",
