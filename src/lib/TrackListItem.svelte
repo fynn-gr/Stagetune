@@ -1,7 +1,8 @@
 <script lang="ts">
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { currentDragging, draggingOrigin, playlistPath } from "../ts/Stores";
 import { join } from "@tauri-apps/api/path";
+import { onMount } from "svelte";
 
 export let entry: any;
 export let ctx: AudioContext;
@@ -11,26 +12,26 @@ let self: HTMLElement;
 let dragging = false;
 let playing = false;
 let hover = false;
-let node = null;
+let node: AudioBufferSourceNode | null = null;
 
-function handleDragStart(e) {
+function handleDragStart(e: any) {
 	e.dataTransfer.dropEffect = "copy";
 	e.dataTransfer.setData("text/plain", "placehold");
 	$currentDragging = entry;
 	$draggingOrigin = "src";
 	dragging = true;
-	//console.log("drag start", e);
+	//console.log("drag start", $currentDragging);
 }
 
-function handleDragEnd(e) {
+function handleDragEnd(e: any) {
 	dragging = false;
 	//console.log("end dragging", e);
 }
 
-async function handlePlay(e) {
+async function handlePlay(e: any) {
 	if (playing) {
 		playing = false;
-		node.stop();
+		node!.stop();
 		node = null;
 	} else {
 		playing = true;
@@ -48,8 +49,14 @@ async function handlePlay(e) {
 		node.start(0);
 	}
 }
+
+onMount(() => {
+	console.log(entry)
+})
 </script>
 
+<!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	bind:this={self}
 	class="trackListItem"
@@ -77,5 +84,5 @@ async function handlePlay(e) {
 	{:else if entry.type == "track"}
 		<img src="./icons/square/music.svg" alt="" />
 	{/if}
-	<p>{entry.name}</p>
+	<p>{entry.title}</p>
 </div>

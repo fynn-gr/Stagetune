@@ -5,6 +5,9 @@ import sveltePreprocess from "svelte-preprocess";
 import * as path from "path";
 import { processIcons } from "./src/pureUI/modules/pureIconPlugin";
 
+// @ts-expect-error process is a nodejs global
+const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
 	return {
@@ -41,6 +44,17 @@ export default defineConfig(({ command }) => {
 		server: {
 			port: 1420,
 			strictPort: true,
+			host: mobile ? "0.0.0.0" : false,
+			hmr: mobile
+				? {
+						protocol: "ws",
+						port: 1421,
+					}
+				: undefined,
+			watch: {
+				// 3. tell vite to ignore watching `src-tauri`
+				ignored: ["**/src-tauri/**"],
+			},
 		},
 		// to make use of `TAURI_DEBUG` and other env variables
 		// https://tauri.studio/v1/api/config#buildconfig.beforedevcommand

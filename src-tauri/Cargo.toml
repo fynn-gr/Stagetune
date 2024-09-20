@@ -1,23 +1,31 @@
 [package]
-name = "pureFrame"
-version = "0.0.0"
+name = "Stagetune"
+version = "1.0.0"
 description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+authors = ["Fynn Gr."]
+license = "GPL 3.0"
+repository = "https://github.com/fynn-gr/stagetune"
 edition = "2021"
 rust-version = "1.57"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.4", features = [] }
+tauri-build = { version = "2.0.0-rc", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.5.2", features = ["api-all", "macos-private-api"] }
+tauri = { version = "2.0.0-rc", features = [ "protocol-asset", "macos-private-api"] }
 window-vibrancy = "0.3.2"
+tauri-plugin-dialog = "2.0.0-rc.0"
+tauri-plugin-fs = "2.0.0-rc.0"
+tauri-plugin-process = "2.0.0-rc.0"
+tauri-plugin-clipboard-manager = "2.1.0-beta.7"
+tauri-plugin-os = "2.0.0-rc.0"
+tauri-plugin-http = "2.0.0-rc.0"
+tauri-plugin-shell = "2.0.0-rc.0"
+tauri-plugin-notification = "2.0.0-rc.0"
 
 [features]
 # by default Tauri runs in production mode
@@ -26,3 +34,10 @@ default = ["custom-protocol"]
 # this feature is used used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
 custom-protocol = ["tauri/custom-protocol"]
+
+[lib]
+name = "stagetune_lib"
+crate-type = ["staticlib", "cdylib", "lib"]
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-global-shortcut = "2.0.0-rc.0"

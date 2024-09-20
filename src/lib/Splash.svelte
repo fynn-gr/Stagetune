@@ -3,7 +3,7 @@ import { playlistPath, settings } from "@/ts/Stores";
 import { onMount } from "svelte";
 import { scanSrcPaths } from "@/ts/SaveLoad";
 import { getVersion } from "@tauri-apps/api/app";
-import { Command } from "@tauri-apps/api/shell";
+import { Command } from "@tauri-apps/plugin-shell";
 
 export let splashScreen;
 let recentList = [];

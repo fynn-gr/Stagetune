@@ -1,82 +1,47 @@
 {
 	"$schema": "..\\node_modules/@tauri-apps/cli\\schema.json",
+	"productName": "Stagetune",
+	"version": "1.0.0",
+	"identifier": "com.fynn.gr",
 	"build": {
 		"beforeBuildCommand": "npm run build",
 		"beforeDevCommand": "npm run dev",
-		"devPath": "http://localhost:1420",
-		"distDir": "../dist"
+		"frontendDist": "../dist",
+		"devUrl": "http://localhost:1420"
 	},
-	"package": {
-		"productName": "Stagetune",
-		"version": "1.0.0"
+	"bundle": {
+		"active": true,
+		"targets": "all",
+		"icon": [
+			"icons/32x32.png",
+			"icons/128x128.png",
+			"icons/128x128@2x.png",
+			"icons/icon.icns",
+			"icons/icon.ico"
+		],
+		"windows": {
+			"certificateThumbprint": null,
+			"digestAlgorithm": "sha256",
+			"timestampUrl": ""
+		},
+		"longDescription": "",
+		"macOS": {
+			"entitlements": null,
+			"minimumSystemVersion": "11.0",
+			"exceptionDomain": "",
+			"frameworks": [],
+			"providerShortName": null,
+			"signingIdentity": null
+		},
+		"resources": [],
+		"shortDescription": ""
 	},
-	"tauri": {
-		"allowlist": {
-			"all": true,
-			"fs": {
-				"scope": [
-					"**",
-					"$DESKTOP/*",
-					"$DATA/*",
-					"$APPCONFIG/*",
-					"$CONFIG/**",
-					"$DOCUMENT/*",
-					"$RESOURCE/*"
-				]
-			},
-			"protocol": {
-				"asset": true,
-				"assetScope": ["**"]
-			}
-		},
-		"macOSPrivateApi": true,
-		"bundle": {
-			"active": true,
-			"category": "Music",
-			"copyright": "GPL 3.0",
-			"deb": {
-				"depends": []
-			},
-			"appimage": {
-				"bundleMediaFramework": true
-			},
-			"externalBin": [],
-			"icon": [
-				"icons/32x32.png",
-				"icons/128x128.png",
-				"icons/128x128@2x.png",
-				"icons/icon.icns",
-				"icons/icon.ico"
-			],
-			"identifier": "com.fynn.gr",
-			"longDescription": "",
-			"macOS": {
-				"entitlements": null,
-				"minimumSystemVersion": "11.0",
-				"exceptionDomain": "",
-				"frameworks": [],
-				"providerShortName": null,
-				"signingIdentity": null
-			},
-			"resources": [],
-			"shortDescription": "",
-			"targets": "all",
-			"windows": {
-				"certificateThumbprint": null,
-				"digestAlgorithm": "sha256",
-				"timestampUrl": ""
-			}
-		},
-		"security": {
-			"csp": "default-src: 'self'; 'unsafe-inline'; media-src 'self' asset:"
-		},
-		"updater": {
-			"active": false
-		},
+	"plugins": {},
+	"app": {
 		"windows": [
 			{
-				"fileDropEnabled": false,
 				"fullscreen": false,
+				"dragDropEnabled": false,
 				"width": 1920,
 				"height": 1080,
 				"minWidth": 1280,
@@ -86,6 +51,14 @@
 				"transparent": true,
 				"title": "Stagetune"
 			}
-		]
+		],
+		"macOSPrivateApi": true,
+		"security": {
+			"assetProtocol": {
+				"scope": ["**"],
+				"enable": true
+			},
+			"csp": "default-src: 'self'; 'unsafe-inline'; media-src 'self' asset:; connect-src ipc: http://ipc.localhost"
+		}
 	}
 }

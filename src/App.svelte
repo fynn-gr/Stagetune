@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { MenuItemOptions, MenuItem } from "@tauri-apps/api/menu";
 // Styles
 import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
@@ -6,9 +7,9 @@ import "./style/App.scss";
 // Svelte, Tauri
 import { onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
-import { confirm } from "@tauri-apps/api/dialog";
-import { invoke } from "@tauri-apps/api/tauri";
-import { exit } from "@tauri-apps/api/process";
+import { confirm } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
+import { exit } from "@tauri-apps/plugin-process";
 
 // Components
 import PlayListTrack from "./lib/PlayListTrack.svelte";
@@ -38,6 +39,7 @@ import {
 	showProjector,
 	screens,
 	selectedScreen,
+	currentDragging,
 } from "./ts/Stores";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -46,6 +48,9 @@ import {
 	loadSettings,
 	checkSettingsExist,
 } from "./ts/SaveLoad";
+import { Submenu, type SubmenuOptions } from "@tauri-apps/api/menu/submenu";
+import { Menu } from "@tauri-apps/api/menu/menu";
+import { createNativeMenu } from "./ts/Menus";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = 25;
@@ -54,6 +59,9 @@ let showEditor = false;
 let showCurrent = true;
 let showHotkeys = true;
 let dragOverPlaylist = false;
+
+let menu: any;
+let submenu: Submenu;
 
 checkSettingsExist();
 
@@ -68,6 +76,7 @@ function openSettings() {
 }
 
 function handleDropPlaylist(e: Event) {
+	console.log("to playlist", $currentDragging);
 	e.preventDefault();
 	DropHandler($playlist.length);
 	dragOverPlaylist = false;
@@ -193,7 +202,7 @@ const Listeners = () => {
 
 	listen("projctorReq", e => {
 		updateProjectorList();
-		emit("projector_set_location", { screen: $screens[$selectedScreen] })
+		emit("projector_set_location", { screen: $screens[$selectedScreen] });
 	});
 
 	listen("reload_settings", () => {
@@ -262,6 +271,7 @@ const Shortcuts = () => {
 onMount(() => {
 	Listeners();
 	Shortcuts();
+	createNativeMenu();
 
 	const updateInterval = setInterval(() => {
 		for (let element of $playlistElements) {

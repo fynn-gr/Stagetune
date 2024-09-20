@@ -7,7 +7,7 @@ import type {
 	PlaylistItem,
 } from "./Types";
 import { emit } from "@tauri-apps/api/event";
-import type { Monitor } from "@tauri-apps/api/window";
+import type { Monitor } from "@tauri-apps/api/webviewWindow";
 
 export const settings = writable<Settings>({
 	recent: [],
@@ -334,7 +334,7 @@ export const playlistElements = writable<any[]>([]);
 export const srcFiles = writable([]);
 export const playlistPath = writable<string>("");
 export const isEditing = writable<number>(0); //input currently in focus counter
-export const Menu = readable({
+export const menuHandler = readable({
 	handle(id: string) {
 		emit("menu", id);
 	},

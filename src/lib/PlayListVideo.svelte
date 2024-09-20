@@ -181,7 +181,9 @@ $: $currentDragging == null ? (dragover = null) : null;
 		<button
 			class="play-btn"
 			title="Reset"
-			on:click={() => {stop(true)}}
+			on:click={() => {
+				stop(true);
+			}}
 		>
 			<img src="./icons/square/reset.svg" alt="" draggable="false" />
 		</button>
