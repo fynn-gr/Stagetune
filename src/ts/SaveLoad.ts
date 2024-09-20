@@ -103,7 +103,8 @@ export async function scanSrcPaths(selPath: string) {
 				} else if (isPlaylistFile(entry.name)) {
 					// Playlist File
 					playlistFile = entry.name;
-					readTextFile(playlistFile, {}).then(e => {
+					console.log(playlistFile)
+					readTextFile(await join(selPath, playlistFile), {}).then(e => {
 						const obj = JSON.parse(e);
 						playlist.set(obj.playlist);
 						hotkeys.set(obj.hotkeys);
@@ -220,13 +221,13 @@ export function checkSettingsExist() {
 	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		exists(`Stagetune/${currentVersion}/settings.json`, {
-			baseDirir: BaseDirectory.Config,
+			baseDir: BaseDirectory.Config,
 		}).then(e => {
 			if (e) {
 				loadSettings(true);
 			} else {
 				mkdir(`Stagetune/${currentVersion}`, {
-					dir: BaseDirectory.Config,
+					baseDir: BaseDirectory.Config,
 					recursive: true,
 				});
 				saveSettings();

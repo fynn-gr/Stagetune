@@ -303,7 +303,6 @@ $: invoke("show_projector", {
 				{#each $srcFiles as p, i}
 					<TrackListItem entry={p} {ctx} {masterGain} />
 				{/each}
-				<TrackListItem entry={{ type: "song", path: "/test/", title: "TesT"}} {ctx} {masterGain}/>
 			</div>
 		</div>
 	{:else}
