@@ -41,6 +41,7 @@
 		"windows": [
 			{
 				"fullscreen": false,
+				"dragDropEnabled": false,
 				"width": 1920,
 				"height": 1080,
 				"minWidth": 1280,
