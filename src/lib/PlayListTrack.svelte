@@ -131,7 +131,7 @@ async function load() {
 		track.missing = true;
 		message(`Media File is missing or moved: ${absPath}`, {
 			title: "File not found",
-			type: "warning",
+			kind: "warning",
 		});
 	}
 

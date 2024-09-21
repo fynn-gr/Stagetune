@@ -13,7 +13,7 @@ export const settings = writable<Settings>({
 	recent: [],
 	lang: "en",
 	show_splash: true,
-	ui_scale: 1.3,
+	ui_scale: 1,
 	performance_mode: false,
 	projector_screen: {},
 	debug: false,
@@ -285,7 +285,7 @@ export const currentDragging = writable<PlaylistItem | null>(null); //dragging o
 export const draggingOrigin = writable<"src" | "playlist" | null>(null);
 
 export const editMode = writable<boolean>(true);
-export const uiPlatform = writable<"mac" | "win">("mac");
+export const uiPlatform = writable<"mac" | "win">("win");
 export const theme = writable("dark"); //unused
 export const splash = writable<boolean>(false); //splash screen visible
 export const playlist = writable<PlaylistItem[]>([]);

@@ -31,7 +31,7 @@ const settings = writable<Settings>({
 	recent: [],
 	lang: "en",
 	show_splash: true,
-	ui_scale: 1.3,
+	ui_scale: 1,
 	performance_mode: false,
 	projector_screen: {},
 	debug: false,

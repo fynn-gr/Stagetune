@@ -81,7 +81,7 @@ export async function scanSrcPaths(selPath: string) {
 					const modifiedPath = await basename(entry.name);
 					const obj = {
 						type: "track",
-						title: entry.name.replace(/\.[^.]+$/gm, ""),
+						name: entry.name.replace(/\.[^.]+$/gm, ""),
 						path: modifiedPath,
 					};
 					srcFiles.update(items => {
@@ -93,7 +93,7 @@ export async function scanSrcPaths(selPath: string) {
 					const modifiedPath = await basename(entry.name);
 					const obj = {
 						type: "video",
-						title: entry.name.replace(/\.[^.]+$/gm, ""),
+						name: entry.name.replace(/\.[^.]+$/gm, ""),
 						path: modifiedPath,
 					};
 					srcFiles.update(items => {
