@@ -48,8 +48,7 @@ import {
 	loadSettings,
 	checkSettingsExist,
 } from "./ts/SaveLoad";
-import { Submenu, type SubmenuOptions } from "@tauri-apps/api/menu/submenu";
-import { Menu } from "@tauri-apps/api/menu/menu";
+import { Submenu } from "@tauri-apps/api/menu/submenu";
 import { createNativeMenu } from "./ts/Menus";
 
 let playlistEl: HTMLElement;
@@ -59,9 +58,6 @@ let showEditor = false;
 let showCurrent = true;
 let showHotkeys = true;
 let dragOverPlaylist = false;
-
-let menu: any;
-let submenu: Submenu;
 
 checkSettingsExist();
 

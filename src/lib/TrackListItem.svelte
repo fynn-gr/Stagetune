@@ -84,5 +84,5 @@ onMount(() => {
 	{:else if entry.type == "track"}
 		<img src="./icons/square/music.svg" alt="" />
 	{/if}
-	<p>{entry.title}</p>
+	<p>{entry.name}</p>
 </div>
