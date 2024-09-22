@@ -4,12 +4,12 @@
 // 	}
 // }
 
-// main.win {
-// 	.topbar .topbar-container {
-// 		padding-left: 6px;
-
-// 		.topbar-button.mode-switch {
-// 			line-height: 32px;
-// 		}
-// 	}
-// }
+main.mac {
+	.topbar .topbar-container {
+		.topbar-button.mode-switch {
+			div p {
+				padding: 0 10px 0 0;
+			}
+		}
+	}
+}

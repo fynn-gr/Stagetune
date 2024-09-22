@@ -8,18 +8,17 @@ export let slider: boolean = true;
 
 function handleVolumeDrag(e: any) {
 	e.preventDefault();
-  e.stopPropagation();
-  track.volume -= Math.round(e.movementY * 0.4);
-  track.volume = Math.max(0, Math.min(track.volume, 100));
+	e.stopPropagation();
+	track.volume -= Math.round(e.movementY * 0.4);
+	track.volume = Math.max(0, Math.min(track.volume, 100));
 }
 
 function handlePanDrag(e: any) {
-  e.preventDefault();
-  e.stopPropagation();
-  track.pan -= e.movementY * 0.01;
-  track.pan = Math.max(-1, Math.min(track.pan, 1));
+	e.preventDefault();
+	e.stopPropagation();
+	track.pan -= e.movementY * 0.01;
+	track.pan = Math.max(-1, Math.min(track.pan, 1));
 }
-
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -55,7 +54,7 @@ function handlePanDrag(e: any) {
 		<!--Volume-->
 		<span
 			on:mousedown={e => {
-        console.log("start drag")
+				console.log("start drag");
 				document.addEventListener("mousemove", handleVolumeDrag);
 				document.addEventListener("mouseup", f => {
 					document.removeEventListener("mousemove", handleVolumeDrag);
@@ -83,14 +82,14 @@ function handlePanDrag(e: any) {
 
 		<!--Pan-->
 		<span
-      on:mousedown={e => {
-        console.log("start drag")
-        document.addEventListener("mousemove", handlePanDrag);
-        document.addEventListener("mouseup", f => {
-          document.removeEventListener("mousemove", handlePanDrag);
-        });
-      }}
-    >
+			on:mousedown={e => {
+				console.log("start drag");
+				document.addEventListener("mousemove", handlePanDrag);
+				document.addEventListener("mouseup", f => {
+					document.removeEventListener("mousemove", handlePanDrag);
+				});
+			}}
+		>
 			<div
 				class="arch"
 				style={track.pan == 0

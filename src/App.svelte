@@ -317,7 +317,7 @@ $: invoke("show_projector", {
 	<div
 		class="playlist"
 		class:show-annotations={$settings.showAnnotations}
-		class:editMode={$editMode}
+		class:edit-mode={$editMode}
 		style={`--annotation-width: calc(${annotationWidth}% - ${
 			$editMode ? 46 : 9
 		}rem);`}

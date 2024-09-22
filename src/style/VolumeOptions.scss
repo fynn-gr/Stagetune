@@ -1,4 +1,4 @@
-.playlist.editMode .playlist-item .inner {
+.playlist.edit-mode .playlist-item .inner {
 	.volume.slider {
 		position: relative;
 		grid-area: volume;
@@ -17,7 +17,7 @@
 		p {
 			width: 30rem;
 			height: 16rem;
-			margin: 0 0;
+			margin: 0 0 0 4rem;
 			text-align: center;
 			font-weight: bold;
 		}
@@ -35,33 +35,37 @@
 			height: 64rem;
 			width: 64rem;
 
+			&:first-child {
+				margin-right: -12rem;
+			}
+
 			.knob {
-        pointer-events: none;
+				pointer-events: none;
 				position: absolute;
-				width: 32rem;
-				height: 32rem;
-				margin: 16rem;
+				width: 30rem;
+				height: 30rem;
+				margin: 17rem;
 				background-color: gray;
 				border-radius: 50%;
 
 				.mark {
-          pointer-events: none;
+					pointer-events: none;
 					position: absolute;
 					width: 4rem;
 					height: 16rem;
-					left: 14rem;
-					top: -2rem;
+					left: 13rem;
+					top: -1rem;
 					border-radius: 2rem;
-					background-color: rgb(77, 77, 77);
+					background-color: rgb(255, 255, 255);
 				}
 			}
 
 			.arch {
-        pointer-events: none;
+				pointer-events: none;
 				position: absolute;
-				width: 44rem;
-				height: 44rem;
-				margin: 10rem;
+				width: 38rem;
+				height: 38rem;
+				margin: 13rem;
 				border-radius: 50%;
 			}
 		}

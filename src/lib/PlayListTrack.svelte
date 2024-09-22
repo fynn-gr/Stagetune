@@ -20,6 +20,7 @@ import {
 	playlistPath,
 	settings,
 	draggingOrigin,
+	hotkeys,
 } from "../ts/Stores";
 import type { PlaylistItem } from "@/ts/Types";
 import VolumeControl from "./VolumeControl.svelte";
@@ -29,6 +30,7 @@ export let id: number;
 export let ctx: AudioContext;
 export let masterGain: GainNode;
 
+let hotkeySelect: number | undefined;
 let dragging = false;
 let dragover: "top" | "bottom" | null = null;
 let titleEl: HTMLElement;
@@ -83,6 +85,29 @@ function handleDragEnter(e: DragEvent) {
 
 function handleDragLeave() {
 	dragover = null;
+}
+
+function handleHotkeySelect(e: any) {
+	console.log(hotkeySelect);
+	if (hotkeySelect != undefined) {
+		//selected Number
+		if ($hotkeys[hotkeySelect - 1].track != null) {
+			//remove old track at hotkey
+			$hotkeys[hotkeySelect - 1].track.hotkey = null;
+			$hotkeys[hotkeySelect - 1].track = null;
+		}
+		if (track.hotkey != undefined) {
+			//remove old hotkey from current track first
+			$hotkeys[track.hotkey].track = null;
+		}
+		//set new hotkey
+		track.hotkey = hotkeySelect;
+		$hotkeys[hotkeySelect - 1].track = track;
+	} else {
+		//selected undefined
+		$hotkeys[track.hotkey].track = null;
+		track.hotkey = null;
+	}
 }
 
 function onEnd() {
@@ -339,32 +364,57 @@ $: if (!track.loaded) load();
 			<div class="title"><p class="input">Loading...</p></div>
 		{/if}
 
+		<!--Hotkey Display-->
+		{#if track.hotkey != undefined}
+			<div class="hotkey-display">
+				<p>{track.hotkey}</p>
+			</div>
+		{/if}
+
+		<!--fade icons-->
+		{#if !$editMode && track.fade.in > 0}
+			<img
+				class="option fade-icon"
+				src="./icons/square/fade_in.svg"
+				alt=""
+				draggable="false"
+			/>
+		{/if}
+
+		{#if !$editMode && track.fade.out > 0}
+			<img
+				class="option fade-icon"
+				src="./icons/square/fade_out.svg"
+				alt=""
+				draggable="false"
+			/>
+		{/if}
+
+		<!--time-->
+		<p class="timecode">{secondsToMinutes(track.state)}</p>
+		<p class="length">
+			{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
+		</p>
+
 		<div class="options">
 			<!--Hotkey-->
-			{#if track.hotkey != undefined}
-				<div class="option hotkey">
+			<div class="option hotkey" class:assigned={track.hotkey != undefined}>
+				<select bind:value={hotkeySelect} on:change={handleHotkeySelect}>
+					<option value={undefined}>none</option>
+					<option value={1}>1</option>
+					<option value={2}>2</option>
+					<option value={3}>3</option>
+					<option value={4}>4</option>
+					<option value={5}>5</option>
+					<option value={6}>6</option>
+					<option value={7}>7</option>
+					<option value={8}>8</option>
+					<option value={9}>9</option>
+				</select>
+				{#if track.hotkey != undefined}
 					<p>{track.hotkey}</p>
-				</div>
-			{/if}
-
-			<!--fade icons-->
-			{#if !$editMode && track.fade.in > 0}
-				<img
-					class="option fade-icon"
-					src="./icons/square/fade_in.svg"
-					alt=""
-					draggable="false"
-				/>
-			{/if}
-
-			{#if !$editMode && track.fade.out > 0}
-				<img
-					class="option fade-icon"
-					src="./icons/square/fade_out.svg"
-					alt=""
-					draggable="false"
-				/>
-			{/if}
+				{/if}
+			</div>
 
 			<!--repeat-->
 			<button
@@ -394,12 +444,6 @@ $: if (!track.loaded) load();
 				/>
 			</button>
 		</div>
-
-		<!--time-->
-		<p class="timecode">{secondsToMinutes(track.state)}</p>
-		<p class="length">
-			{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
-		</p>
 
 		<!--fade-->
 		{#if $settings.showFadeOptions}
@@ -431,7 +475,7 @@ $: if (!track.loaded) load();
 
 		<!--volume Pan-->
 		{#if $settings.showVolumeOptions}
-			<VolumeControl bind:track slider={false} />
+			<VolumeControl bind:track slider={true} />
 		{/if}
 	</div>
 </div>

@@ -19,8 +19,8 @@ export type PlaylistItem = {
 	buffer?: AudioBuffer; //audio buffer
 	startedAt?: number; //track was started at seconds
 	pausedAt?: number; // track was paused at seconds
-	inFade?: "in" | "out" | null; //track is currently in fade or undefined
-	hotkey?: number | null; //hotkey number assigned, undefined if not assigned
+	inFade?: "in" | "out" | null; //track is currently in fade or null
+	hotkey?: number | null; //hotkey number assigned, null if not assigned
 	missing?: boolean; //true if file could not be found
 	loaded?: boolean; //if track finished loading
 };
