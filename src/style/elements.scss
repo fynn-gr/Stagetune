@@ -236,10 +236,10 @@
 			}
 
 			.title {
-				height: 54rem;
+				height: 60rem;
 				min-width: 60rem;
-				line-height: 27rem;
-				font-size: 23rem;
+				line-height: 30rem;
+				font-size: 19rem;
 
 				.input:focus {
 					color: var(--accent);
@@ -291,9 +291,9 @@
 			.length {
 				text-align: right;
 				width: 60rem;
-				height: 54rem;
+				height: 64rem;
 				padding: 0 16rem 0 0;
-				line-height: 54rem;
+				line-height: 64rem;
 			}
 
 			.fade {
@@ -314,7 +314,7 @@
 				img {
 					width: 18rem;
 					height: 18rem;
-					margin: 6rem 0 0 0;
+					margin: 9rem 0 0 0;
 					font-size: 12rem;
 					filter: invert(1);
 				}
@@ -322,11 +322,12 @@
 				input {
 					width: 40rem;
 					height: 18rem;
-					margin: 6rem 0 0 0;
+					margin: 9rem 0 0 0;
 					border-radius: 4rem;
 					text-align: right;
 					font-size: 10rem;
 					font-weight: 700;
+					background-color: rgb(150, 150, 150);
 
 					&:focus {
 						box-shadow: 0 0 0 3rem var(--accent);
@@ -334,30 +335,8 @@
 				}
 			}
 
-			.volume {
-				position: relative;
-				grid-area: volume;
-				display: flex;
-				flex-direction: column;
-				height: 54rem;
-
-				span {
-					display: flex;
-					flex-direction: row;
-					height: 18rem;
-					margin-top: 6rem;
-				}
-
-				p {
-					width: 20rem;
-					margin: auto 0;
-					text-align: center;
-					font-weight: bold;
-				}
-			}
-
 			.progress {
-				height: 6rem;
+				height: 8rem;
 			}
 
 			.waveform {
@@ -507,7 +486,7 @@
 			position: relative;
 			z-index: 10;
 			flex: 1;
-			height: 78rem;
+			height: 72rem;
 			display: flex;
 			flex-direction: row;
 			overflow: hidden;
@@ -648,44 +627,6 @@
 
 			.volume {
 				display: none;
-			}
-
-			input[type="range"] {
-				-webkit-appearance: none;
-				appearance: none;
-				outline: none;
-				width: calc(100% - 40rem);
-				height: 16rem;
-				border-radius: 8rem;
-
-				&::-webkit-slider-thumb {
-					-webkit-appearance: none;
-					appearance: none;
-					width: 16rem;
-					height: 16rem;
-					border-radius: 8rem;
-					background-color: var(--accent);
-					//box-shadow: 0px 0px 0 2rem var(--panel2);
-				}
-
-				&::-webkit-slider-runnable-track {
-					height: 16rem;
-					background: linear-gradient(
-						90deg,
-						hsl(0, 0%, 100%),
-						hsl(0, 0%, 67%) 80%,
-						rgb(105, 105, 105) 80%
-					);
-					border-radius: 8rem;
-				}
-
-				&.pan::-webkit-slider-runnable-track {
-					background: linear-gradient(
-						270deg,
-						hsl(0, 0%, 62%) 50%,
-						rgb(255, 255, 255) 50%
-					);
-				}
 			}
 
 			.progress {
@@ -1059,7 +1000,7 @@
 	//flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap:6rem;
+	gap: 6rem;
 	overflow: hidden scroll;
 	background-color: var(--properties-BG);
 

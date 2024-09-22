@@ -22,6 +22,7 @@ import {
 	draggingOrigin,
 } from "../ts/Stores";
 import type { PlaylistItem } from "@/ts/Types";
+import VolumeControl from "./VolumeControl.svelte";
 
 export let track: PlaylistItem;
 export let id: number;
@@ -430,34 +431,7 @@ $: if (!track.loaded) load();
 
 		<!--volume Pan-->
 		{#if $settings.showVolumeOptions}
-			<div class="volume">
-				<span>
-					<p>–</p>
-					<input
-						bind:value={track.volume}
-						type="range"
-						min="0"
-						max="100"
-						step="10"
-						disabled={!$editMode}
-					/>
-					<p>+</p>
-				</span>
-
-				<span>
-					<p>L</p>
-					<input
-						class="pan"
-						bind:value={track.pan}
-						type="range"
-						min={-1}
-						max={1}
-						step={0.25}
-						disabled={!$editMode}
-					/>
-					<p>R</p>
-				</span>
-			</div>
+			<VolumeControl bind:track slider={false} />
 		{/if}
 	</div>
 </div>

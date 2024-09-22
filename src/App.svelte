@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { MenuItemOptions, MenuItem } from "@tauri-apps/api/menu";
 // Styles
 import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
@@ -48,7 +47,6 @@ import {
 	loadSettings,
 	checkSettingsExist,
 } from "./ts/SaveLoad";
-import { Submenu } from "@tauri-apps/api/menu/submenu";
 import { createNativeMenu } from "./ts/Menus";
 
 let playlistEl: HTMLElement;

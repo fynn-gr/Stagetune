@@ -51,8 +51,8 @@ async function handlePlay(e: any) {
 }
 
 onMount(() => {
-	console.log(entry)
-})
+	console.log(entry);
+});
 </script>
 
 <!-- svelte-ignore a11y-missing-attribute -->

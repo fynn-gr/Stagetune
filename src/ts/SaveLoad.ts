@@ -103,7 +103,7 @@ export async function scanSrcPaths(selPath: string) {
 				} else if (isPlaylistFile(entry.name)) {
 					// Playlist File
 					playlistFile = entry.name;
-					console.log(playlistFile)
+					console.log(playlistFile);
 					readTextFile(await join(selPath, playlistFile), {}).then(e => {
 						const obj = JSON.parse(e);
 						playlist.set(obj.playlist);

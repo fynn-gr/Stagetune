@@ -16,7 +16,7 @@
 		"fs:allow-rename",
 		"fs:allow-exists",
 		{
-			"identifier": "fs:scope", 
+			"identifier": "fs:scope",
 			"allow": [
 				"**",
 				"$DESKTOP/*",

@@ -97,7 +97,7 @@ export function mapRange(
 export function DropHandler(newPosition: number) {
 	const dragOrigin = get(draggingOrigin);
 	const currentDrag = get(currentDragging);
-	console.log(currentDrag)
+	console.log(currentDrag);
 
 	if (dragOrigin === "playlist" && currentDrag) {
 		const oldPosition = get(playlist).indexOf(currentDrag);
@@ -107,7 +107,7 @@ export function DropHandler(newPosition: number) {
 			return e;
 		});
 	} else if (dragOrigin === "src" && currentDrag) {
-		console.log("drag form src to playlist: ", currentDrag)
+		console.log("drag form src to playlist: ", currentDrag);
 		playlist.update(e => {
 			e.splice(
 				newPosition,
