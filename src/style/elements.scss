@@ -734,6 +734,10 @@
 						display: block;
 						position: relative;
 
+						&:hover {
+							background-color: transparent;
+						}
+
 						p {
 							pointer-events: none;
 							position: absolute;
@@ -748,20 +752,23 @@
 							line-height: 20rem;
 							font-size: 14rem;
 							font-weight: 800;
+
+							&.unset {
+								line-height: 16rem;
+								font-size: 12rem;
+								font-weight: 600;
+								color: rgb(133, 133, 133);
+								background-color: var(--panel2);
+								border: 2rem solid rgb(133, 133, 133);
+							}
 						}
 
 						select {
 							width: 50%;
 							height: 50%;
 							margin: 10rem;
-							color: rgb(133, 133, 133);
-							background-color: transparent;
-							border: 2rem solid rgb(133, 133, 133);
 							border-radius: 6rem;
-							text-align: center;
-							line-height: 16rem;
-							font-size: 12rem;
-							font-weight: 600;
+							background-color: transparent;
 						}
 					}
 

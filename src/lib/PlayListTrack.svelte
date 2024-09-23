@@ -411,9 +411,7 @@ $: if (!track.loaded) load();
 					<option value={8}>8</option>
 					<option value={9}>9</option>
 				</select>
-				{#if track.hotkey != undefined}
-					<p>{track.hotkey}</p>
-				{/if}
+				<p class:unset={track.hotkey == undefined}>{track.hotkey || "?"}</p>
 			</div>
 
 			<!--repeat-->
