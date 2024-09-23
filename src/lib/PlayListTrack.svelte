@@ -24,6 +24,7 @@ import {
 } from "../ts/Stores";
 import type { PlaylistItem } from "@/ts/Types";
 import VolumeControl from "./VolumeControl.svelte";
+import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 
 export let track: PlaylistItem;
 export let id: number;
@@ -446,7 +447,7 @@ $: if (!track.loaded) load();
 		<!--fade-->
 		{#if $settings.showFadeOptions}
 			<span class="fade">
-				<img src="./icons/square/fade_in.svg" alt="" />
+				<img class="fade-icon" src="./icons/square/fade_in.svg" alt="" />
 				<input
 					type="number"
 					bind:value={track.fade.in}
@@ -457,16 +458,17 @@ $: if (!track.loaded) load();
 					disabled={!$editMode}
 					title="Fade In"
 				/>
-				<img src="./icons/square/fade_out.svg" alt="" />
-				<input
-					type="number"
+				<img class="fade-icon" src="./icons/square/fade_out.svg" alt="" />
+				<PropNumber
 					bind:value={track.fade.out}
-					on:focus={() => isEditing.update(e => e + 1)}
-					on:blur={() => isEditing.update(e => e - 1)}
-					min="0"
+					onFocus={() => isEditing.update(e => e + 1)}
+					onBlur={() => isEditing.update(e => e - 1)}
+					min={0}
 					max={track.length}
+					decimalDisplay={0}
+					unit="s"
 					disabled={!$editMode}
-					title="Fade Out"
+					title="Fade out"
 				/>
 			</span>
 		{/if}

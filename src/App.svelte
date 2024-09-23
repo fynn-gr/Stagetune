@@ -394,6 +394,7 @@ $: invoke("show_projector", {
 							isEditing.update(e => e - 1);
 							console.log($isEditing);
 						}}
+						title="cut in"
 					/>
 				</div>
 
