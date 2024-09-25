@@ -379,7 +379,7 @@ $: invoke("show_projector", {
 		<div class="editor">
 			{#if $selectedItem && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type === "track"}
 				<div class="prop-bar">
-					<label>cut</label>
+					<label>cut start</label>
 					<PropNumber
 						bind:value={$playlist[$selectedItem].edit.in}
 						min={0}
@@ -398,37 +398,43 @@ $: invoke("show_projector", {
 					/>
 				</div>
 
-				<div
-					class="track"
-					style={`
-						background: linear-gradient(
-							90deg,
-							#111 0%,
-							#111 calc(100% * ${
-								$playlist[$selectedItem].edit.in /
-								$playlist[$selectedItem].length
-							}),
-							#fff calc(100% * ${
-								$playlist[$selectedItem].edit.in /
-								$playlist[$selectedItem].length
-							}),
-							#fff 100%
-						);`}
-				>
-					<Waveform
-						data={waveformCalc(
-							$playlistElements[$selectedItem].getBuffer(),
-							window.innerWidth,
-						)}
-						samples={window.innerWidth}
-						resY={200}
-					/>
-					<input
-						type="range"
-						min="0"
-						max={$playlist[$selectedItem].length}
-						step="0.01"
-						bind:value={$playlist[$selectedItem].edit.in}
+				<div class="track-wrapper">
+					<div
+						class="track"
+						style={`
+							background: linear-gradient(
+								90deg,
+								#111 0%,
+								#111 calc(100% * ${
+									$playlist[$selectedItem].edit.in /
+									$playlist[$selectedItem].length
+								}),
+								#fff calc(100% * ${
+									$playlist[$selectedItem].edit.in /
+									$playlist[$selectedItem].length
+								}),
+								#fff 100%
+							);`}
+					>
+						<Waveform
+							data={waveformCalc(
+								$playlistElements[$selectedItem].getBuffer(),
+								window.innerWidth,
+							)}
+							samples={window.innerWidth}
+							resY={200}
+						/>
+						<input
+							type="range"
+							min="0"
+							max={$playlist[$selectedItem].length}
+							step="0.01"
+							bind:value={$playlist[$selectedItem].edit.in}
+						/>
+					</div>
+					<div
+						class="border"
+						style={`left: ${$playlist[$selectedItem].edit.in / $playlist[$selectedItem].length * 100}%;`}
 					/>
 				</div>
 			{:else}
