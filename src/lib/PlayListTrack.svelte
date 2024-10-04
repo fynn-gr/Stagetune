@@ -372,10 +372,30 @@ $: if (!track.loaded) load();
 			</div>
 		{/if}
 
-		<!--fade icons-->
+		<!--Display Repeat-->
+		{#if track.repeat && !$editMode}
+			<img
+				class="option-display"
+				src="./icons/square/repeat.svg"
+				alt=""
+				draggable="false"
+			/>
+		{/if}
+
+		<!--Display Reset-->
+		{#if track.autoReset && !$editMode}
+			<img
+				class="option-display"
+				src="./icons/square/reset.svg"
+				alt=""
+				draggable="false"
+			/>
+		{/if}
+
+		<!--fade Display-->
 		{#if !$editMode && track.fade.in > 0}
 			<img
-				class="option fade-icon"
+				class="fade-display"
 				src="./icons/square/fade_in.svg"
 				alt=""
 				draggable="false"
@@ -384,7 +404,7 @@ $: if (!track.loaded) load();
 
 		{#if !$editMode && track.fade.out > 0}
 			<img
-				class="option fade-icon"
+				class="fade-display"
 				src="./icons/square/fade_out.svg"
 				alt=""
 				draggable="false"
