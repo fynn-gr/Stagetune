@@ -448,13 +448,14 @@ $: if (!track.loaded) load();
 		{#if $settings.showFadeOptions}
 			<span class="fade">
 				<img class="fade-icon" src="./icons/square/fade_in.svg" alt="" />
-				<input
-					type="number"
+				<PropNumber
 					bind:value={track.fade.in}
-					on:focus={() => isEditing.update(e => e + 1)}
-					on:blur={() => isEditing.update(e => e - 1)}
-					min="0"
+					onFocus={() => isEditing.update(e => e + 1)}
+					onBlur={() => isEditing.update(e => e - 1)}
+					min={0}
 					max={track.length}
+					decimalDisplay={0}
+					unit="s"
 					disabled={!$editMode}
 					title="Fade In"
 				/>

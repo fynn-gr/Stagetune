@@ -796,7 +796,7 @@
 				flex-direction: row;
 				flex-wrap: wrap;
 				align-content: flex-start;
-				width: 58rem;
+				width: 75rem;
 				min-width: 58rem;
 				height: 54rem;
 				padding: 0;
@@ -813,19 +813,16 @@
 					filter: invert(1);
 				}
 
-				input {
-					width: 40rem;
-					height: 18rem;
-					margin: 9rem 0 0 0;
-					border-radius: 4rem;
-					text-align: right;
-					font-size: 10rem;
-					font-weight: 700;
-					color: var(--text);
-					background-color: #1b1b1b;
+				.prop-number {
+					margin-top: 8rem;
 
-					&:focus {
-						box-shadow: 0 0 0 3rem var(--accent);
+					input {
+						width: 40rem;
+						color: var(--text);
+	
+						&:focus {
+							box-shadow: 0 0 0 3rem var(--accent);
+						}
 					}
 				}
 			}
