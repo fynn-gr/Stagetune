@@ -434,7 +434,7 @@ $: invoke("show_projector", {
 					</div>
 					<div
 						class="border"
-						style={`left: ${$playlist[$selectedItem].edit.in / $playlist[$selectedItem].length * 100}%;`}
+						style={`left: ${($playlist[$selectedItem].edit.in / $playlist[$selectedItem].length) * 100}%;`}
 					/>
 				</div>
 			{:else}
