@@ -16,10 +16,6 @@ let active = -1;
 let fullscreen = false;
 let buffer: any[] = [];
 
-let ctx = new AudioContext();
-let gainNode: GainNode;
-let panNode: StereoPannerNode;
-
 //play call to a video
 const unlistenPlay = listen("play_video", (event: any) => {
 	/*
@@ -72,12 +68,6 @@ const unlistenProjectorLocation = listen("projector_set_location", async e => {
 });
 
 onMount(() => {
-	//input = ctx.createMediaElementSource(videoElement);
-
-	gainNode = ctx.createGain();
-	gainNode.gain.setValueAtTime(100 / 360, ctx.currentTime);
-	panNode = ctx.createStereoPanner();
-	//input.connect(gainNode).connect(panNode).connect(ctx.destination);
 
 	emit("projctorReq", {});
 
