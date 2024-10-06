@@ -278,7 +278,7 @@ onMount(() => {
 
 $: emit("editMode", { edit: $editMode });
 $: invoke("show_projector", {
-	invokeMessage: $showProjector ? "true" : "false",
+	show: $showProjector ? true : false,
 });
 </script>
 

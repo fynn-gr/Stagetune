@@ -48,7 +48,7 @@ const unlistenUpdate = listen("update_play", (e: any) => {
 
 //update the video list
 const unlistenUpdateList = listen("updateList", e => {
-	console.log(e.payload);
+	console.log("update List", e.payload);
 	list = e.payload.list;
 });
 
@@ -68,7 +68,6 @@ const unlistenProjectorLocation = listen("projector_set_location", async e => {
 });
 
 onMount(() => {
-
 	emit("projctorReq", {});
 
 	const interval = setInterval(() => {

@@ -4,9 +4,11 @@ import {
 	currentDragging,
 	draggingOrigin,
 	playlist,
+	playlistPath,
 	selectedItem,
 } from "./Stores";
 import type { ItemType, PlaylistItem } from "./Types";
+import { join } from "@tauri-apps/api/path";
 
 export function createPlaylistTrack(
 	type: ItemType,
@@ -68,14 +70,21 @@ export function waveformCalc(
 	}
 }
 
-export function updateProjectorList() {
+export async function updateProjectorList() {
 	let list: { name: string; url: string }[] = [];
-	get(playlist).forEach(e => {
+
+	const promises = get(playlist).map(async e => {
 		if (e.type === "video" && e.name && e.path) {
-			list.push({ name: e.name, url: e.path });
+			const path = await join(get(playlistPath), e.path);
+			console.log("path: ", path);
+			list.push({ name: e.name, url: path });
 		}
 	});
 
+	// Wait for all the promises to resolve
+	await Promise.all(promises);
+
+	// Emit after the forEach is finished
 	emit("updateList", { list });
 }
 

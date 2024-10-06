@@ -4,8 +4,8 @@ use tauri::Emitter;
 use tauri::Manager;
 
 #[tauri::command]
-async fn show_projector(handle: tauri::AppHandle, invoke_message: String) {
-	if invoke_message == "true" {
+async fn show_projector(handle: tauri::AppHandle, show: bool) {
+	if show == true {
 		let video_window = tauri::WebviewWindowBuilder::new(
 			&handle,
 			"video_window", /* the unique window label */
