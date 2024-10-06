@@ -26,9 +26,13 @@ export const settings = writable<Settings>({
 	allowSkipLive: true,
 });
 export const showProjector = writable<boolean>(false);
+
+// screens for projector
 export const screens = writable<Monitor[]>([]);
 export const selectedScreen = writable<number>(0);
 export const mainScreenID = writable<number>(0);
+
+// Keymap currently only for display in settings
 export const keymap = writable<Operator[]>([
 	{
 		operator: "play_pause",
@@ -279,17 +283,21 @@ export const keymap = writable<Operator[]>([
 		meta: false,
 	},
 ]);
+
+// context menu content
 export const contextMenu = writable<ContextMenu | null>(null);
 
+// dargging of items
 export const currentDragging = writable<PlaylistItem | null>(null); //dragging object
 export const draggingOrigin = writable<"src" | "playlist" | null>(null);
 
 export const editMode = writable<boolean>(true);
 export const uiPlatform = writable<"mac" | "win">("win");
-export const theme = writable("dark"); //unused
+export const theme = writable("dark"); //unused, just for compatibility with pure UI
 export const splash = writable<boolean>(false); //splash screen visible
-export const playlist = writable<PlaylistItem[]>([]);
+
 export const selectedItem = writable<number | undefined>(undefined);
+export const playlist = writable<PlaylistItem[]>([]);
 export const hotkeys = writable<Hotkey[]>([
 	{
 		key: 1,
@@ -328,8 +336,8 @@ export const hotkeys = writable<Hotkey[]>([
 		track: null,
 	},
 ]);
-export const hotkeyElements = writable<any[]>([]);
 export const playlistElements = writable<any[]>([]);
+export const hotkeyElements = writable<any[]>([]);
 
 export const srcFiles = writable([]);
 export const playlistPath = writable<string>("");

@@ -4,7 +4,7 @@ import TopBarToggle from "../pureUI/components/TopBarToggle.svelte";
 import AppMenu from "../pureUI/components/AppMenu.svelte";
 import { availableMonitors, primaryMonitor } from "@tauri-apps/api/window";
 import { confirm } from "@tauri-apps/plugin-dialog";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 import {
 	editMode,
@@ -34,6 +34,7 @@ export let showHotkeys: boolean;
 export let pauseAll;
 export let resetAll;
 
+const appWindow = getCurrentWindow();
 let mainID: number;
 let window;
 
@@ -49,7 +50,6 @@ function handleProjector(screen: number | null) {
 
 onMount(async () => {
 	$screens = await availableMonitors();
-	window = await getCurrentWindow();
 	let main = await primaryMonitor();
 	mainID = 0;
 
@@ -84,18 +84,18 @@ onMount(async () => {
 							kind: "warning",
 							okLabel: "Quit",
 						}).then(async isOK =>
-							isOK ? await getCurrentWindow().close() : null,
+							isOK ? appWindow.close() : null,
 						);
 					}
 				}}
 				onMin={async () => {
 					if ($editMode) {
-						await getCurrentWindow().minimize();
+						appWindow.minimize();
 					}
 				}}
 				onMax={async () => {
 					if ($editMode) {
-						await getCurrentWindow().toggleMaximize();
+						appWindow.toggleMaximize();
 					}
 				}}
 				CanMinimize={$editMode}
@@ -168,7 +168,7 @@ onMount(async () => {
 						test(false);
 					}}
 				>
-					<p class="name">Continuous Test</p>
+					<p class="name">Continous Test</p>
 				</button>
 				<button
 					class="app-menu-item"
@@ -176,7 +176,7 @@ onMount(async () => {
 						test(true);
 					}}
 				>
-					<p class="name">Penetration Test</p>
+					<p class="name">Stress Test</p>
 				</button>
 			</AppMenuDev>
 		{/if}
@@ -339,12 +339,12 @@ onMount(async () => {
 				}}
 				onMin={async () => {
 					if ($editMode) {
-						await getCurrentWindow().minimize();
+						appWindow.minimize();
 					}
 				}}
 				onMax={async () => {
 					if ($editMode) {
-						await getCurrentWindow().toggleMaximize();
+						appWindow.toggleMaximize();
 					}
 				}}
 				CanMinimize={$editMode}

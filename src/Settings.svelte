@@ -42,6 +42,7 @@ const settings = writable<Settings>({
 	showVolumeOptions: true,
 	allowSkipLive: true,
 });
+const appWindow = getCurrentWindow();
 let tab: string = "general";
 let stagetuneVersion: string;
 let tauriVersion: string;
@@ -164,21 +165,6 @@ afterUpdate(() => {
 			<p>Keymap</p>
 		</div>
 
-		<!--
-		{#if $settings.video}
-			<div
-				class="tab"
-				class:active={tab == "projector"}
-				on:click={() => {
-					tab = "projector";
-				}}
-			>
-				<img src="./icons/settings_tabs/projector.svg" alt="" />
-				<p>Projector</p>
-			</div>
-		{/if}
-		-->
-
 		<div
 			class="tab"
 			class:active={tab == "update"}
@@ -187,7 +173,7 @@ afterUpdate(() => {
 			}}
 		>
 			<img src="./icons/settings_tabs/update.svg" alt="" />
-			<p>Update</p>
+			<p>About</p>
 		</div>
 
 		<div
@@ -202,7 +188,8 @@ afterUpdate(() => {
 		</div>
 	</div>
 
-	<!-- svelte-ignore empty-block -->
+
+	<!--settings content-->
 	<div class="content-wrapper">
 		{#if settings != null}
 			{#if tab == "general"}
@@ -251,44 +238,13 @@ afterUpdate(() => {
 						<Keymap />
 					</div>
 				</div>
-				<!--
-			{:else if tab == "projector"}
-				<div class="content">
-					{#each monitorConfig.monitors as screen, i}
-						<div
-							class="screen"
-							class:active={monitorConfig.projector.name == screen.name}
-							on:click={() => {
-								monitorConfig.projector = screen;
-								$settings.projector_screen = screen;
-								save();
-							}}
-						>
-							<div
-								class="display"
-								style={`aspect-ratio: ${screen.size.width} / ${screen.size.height};`}
-							>
-								<p>
-									{monitorConfig.main.name == screen.name ? "Main" : ""}
-								</p>
-							</div>
-							<span>
-								<b>{screen.name}</b>
-								<p>
-									{screen.size.width} x {screen.size.height} @{screen.scaleFactor}
-								</p>
-							</span>
-						</div>
-					{/each}
-				</div>
-			-->
 			{:else if tab == "update"}
 				<div class="content update">
 					<p class="update">Stagetune {stagetuneVersion || ""}</p>
 					<p>Tauri {tauriVersion}</p>
 					<br />
 					<p>created by Fynn Gr.</p>
-					<p>GPL 3.0</p>
+					<p>GPL 3.0 License</p>
 				</div>
 			{:else}
 				<div class="content dev">
