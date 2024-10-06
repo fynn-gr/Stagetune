@@ -1,4 +1,5 @@
 <script lang="ts">
+import { addHotkey, rmHotkey } from "@/ts/Hotkeys";
 import {
 	hotkeys,
 	currentDragging,
@@ -14,58 +15,6 @@ import { onMount } from "svelte";
 
 export let key: number;
 export let track: any = null;
-let isPlaying = false;
-
-async function handleDropHotkeys(e: Event) {
-	e.preventDefault();
-
-	if ($draggingOrigin == "src" && $currentDragging!.type == "track") {
-		checkOtherHotkeys();
-		playlist.update(e => {
-			e.splice(
-				$playlist.length,
-				0,
-				createPlaylistTrack(
-					$currentDragging!.type,
-					$currentDragging!.path!,
-					$currentDragging!.name!,
-				),
-			);
-			return e;
-		});
-		$playlist[$playlist.length - 1].hotkey = key;
-		track = $playlist[$playlist.length - 1];
-
-		$currentDragging = null;
-	} else if (
-		$draggingOrigin == "playlist" &&
-		$currentDragging!.type == "track"
-	) {
-		console.log($currentDragging);
-		checkOtherHotkeys();
-
-		$currentDragging!.hotkey = key;
-		$playlist = $playlist;
-		track = $currentDragging;
-
-		$currentDragging = null;
-	} else {
-		$currentDragging = null;
-	}
-
-	console.log("hotkeys", $hotkeys);
-}
-
-//check there are no other Hotkeys for the same track an if, delete them
-function checkOtherHotkeys() {
-	$hotkeys.forEach(e => {
-		if (e.track === $currentDragging) {
-			console.log("track exists", e.track);
-			e.track!.hotkey = undefined;
-			e.track = null;
-		}
-	});
-}
 
 onMount(async () => {
 	document.addEventListener("keydown", e => {
@@ -91,20 +40,18 @@ onMount(async () => {
 		}
 	});
 });
-
-$: if (track != null) {
-	isPlaying = track.playing;
-}
 </script>
 
 <div
 	class="hotkeySlot"
-	class:playing={isPlaying}
 	on:dragover={e => {
 		e.preventDefault();
 		return false;
 	}}
-	on:drop={handleDropHotkeys}
+	on:drop={e => {
+		e.preventDefault();
+		addHotkey(key);
+	}}
 	on:contextmenu={e => {
 		if ($editMode) {
 			$contextMenu = {
@@ -126,8 +73,7 @@ $: if (track != null) {
 						iconColor: false,
 						accelerator: `alt+${key}`,
 						action: () => {
-							track.key = undefined;
-							track = null;
+							rmHotkey(key);
 						},
 					},
 				],
@@ -140,6 +86,6 @@ $: if (track != null) {
 >
 	<p class="key">{key}</p>
 	<p class="name" class:placeholder={track == null}>
-		{track ? track.name : $currentDragging != null ? "link to Hotkey" : ""}
+		{track ? track.name : $currentDragging != null ? "Drop to link Hotkey" : ""}
 	</p>
 </div>

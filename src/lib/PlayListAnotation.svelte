@@ -1,5 +1,5 @@
 <script lang="ts">
-import { DropHandler, createPlaylistTrack } from "@/ts/Utils";
+import { DropHandler } from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,

@@ -38,25 +38,6 @@ export async function openDir() {
 		scanSrcPaths(sel as string);
 		playlistPath.set(sel as string);
 
-		//add to recent
-		/*
-		settings.update(e => {
-			if (e.recent[0] == sel) {
-				//e.recent.unshift(sel);
-			} else if (e.recent.indexOf(sel) != -1) {
-				e.recent.splice(e.recent.indexOf(sel), 1);
-				e.recent.unshift(sel);
-			} else {
-				e.recent.unshift(sel);
-			}
-
-			if (e.recent.length > 5) {
-				e.recent.pop();
-			}
-			return e;
-		});
-		saveSettings();
-		*/
 	} catch (err) {
 		console.error(err);
 	}
@@ -120,15 +101,9 @@ export async function scanSrcPaths(selPath: string) {
 					// Other cases
 				}
 			});
-
-			// Sort alphabetically
-			srcFiles.update(items => {
-				items.sort((a, b) => a.title.localeCompare(b.title));
-				return items;
-			});
 		}
 
-		processDirRecursive(selPath);
+		processDirRecursive(selPath)
 	} catch (err) {
 		console.error(err);
 	}

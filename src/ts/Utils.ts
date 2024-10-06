@@ -14,26 +14,33 @@ export function createPlaylistTrack(
 	type: ItemType,
 	path: string,
 	name: string,
-): PlaylistItem {
-	return {
-		type,
-		path,
-		name,
-		playing: false,
-		state: 0,
-		volume: 80,
-		pan: 0,
-		repeat: false,
-		autoReset: false,
-		fade: { in: 0, out: 0 },
-		edit: { in: 0, out: 0 },
-		annotation: null,
-		startedAt: 0,
-		pausedAt: 0,
-		inFade: null,
-		missing: false,
-		loaded: false,
-	};
+) {
+	playlist.update(e => {
+		e.splice(
+			get(playlist).length,
+			0,
+			{
+				type,
+				path,
+				name,
+				playing: false,
+				state: 0,
+				volume: 80,
+				pan: 0,
+				repeat: false,
+				autoReset: false,
+				fade: { in: 0, out: 0 },
+				edit: { in: 0, out: 0 },
+				annotation: null,
+				startedAt: 0,
+				pausedAt: 0,
+				inFade: null,
+				missing: false,
+				loaded: false,
+			}
+		);
+		return e;
+	});
 }
 
 export function secondsToMinutes(inp: number): string {
@@ -117,18 +124,11 @@ export function DropHandler(newPosition: number) {
 		});
 	} else if (dragOrigin === "src" && currentDrag) {
 		console.log("drag form src to playlist: ", currentDrag);
-		playlist.update(e => {
-			e.splice(
-				newPosition,
-				0,
-				createPlaylistTrack(
-					currentDrag.type,
-					currentDrag.path!,
-					currentDrag.name!,
-				),
-			);
-			return e;
-		});
+		createPlaylistTrack(
+			currentDrag.type,
+			currentDrag.path!,
+			currentDrag.name!,
+		),
 		selectedItem.set(newPosition);
 	}
 

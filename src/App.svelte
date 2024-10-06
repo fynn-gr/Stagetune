@@ -131,7 +131,6 @@ function deleteTrack() {
 		// Remove hotkey if present
 		if (typeof $playlist[$selectedItem].hotkey === "number") {
 			let hotkeyRm = $playlist[$selectedItem].hotkey;
-			console.log(hotkeyRm);
 			$hotkeys[(hotkeyRm as number) - 1].track = null;
 		}
 
