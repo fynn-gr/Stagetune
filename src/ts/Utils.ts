@@ -16,29 +16,25 @@ export function createPlaylistTrack(
 	name: string,
 ) {
 	playlist.update(e => {
-		e.splice(
-			get(playlist).length,
-			0,
-			{
-				type,
-				path,
-				name,
-				playing: false,
-				state: 0,
-				volume: 80,
-				pan: 0,
-				repeat: false,
-				autoReset: false,
-				fade: { in: 0, out: 0 },
-				edit: { in: 0, out: 0 },
-				annotation: null,
-				startedAt: 0,
-				pausedAt: 0,
-				inFade: null,
-				missing: false,
-				loaded: false,
-			}
-		);
+		e.splice(get(playlist).length, 0, {
+			type,
+			path,
+			name,
+			playing: false,
+			state: 0,
+			volume: 80,
+			pan: 0,
+			repeat: false,
+			autoReset: false,
+			fade: { in: 0, out: 0 },
+			edit: { in: 0, out: 0 },
+			annotation: null,
+			startedAt: 0,
+			pausedAt: 0,
+			inFade: null,
+			missing: false,
+			loaded: false,
+		});
 		return e;
 	});
 }
@@ -124,12 +120,8 @@ export function DropHandler(newPosition: number) {
 		});
 	} else if (dragOrigin === "src" && currentDrag) {
 		console.log("drag form src to playlist: ", currentDrag);
-		createPlaylistTrack(
-			currentDrag.type,
-			currentDrag.path!,
-			currentDrag.name!,
-		),
-		selectedItem.set(newPosition);
+		createPlaylistTrack(currentDrag.type, currentDrag.path!, currentDrag.name!),
+			selectedItem.set(newPosition);
 	}
 
 	currentDragging.set(null);

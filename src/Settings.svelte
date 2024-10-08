@@ -188,7 +188,6 @@ afterUpdate(() => {
 		</div>
 	</div>
 
-
 	<!--settings content-->
 	<div class="content-wrapper">
 		{#if settings != null}

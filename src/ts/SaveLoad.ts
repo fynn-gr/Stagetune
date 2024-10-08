@@ -37,7 +37,6 @@ export async function openDir() {
 
 		scanSrcPaths(sel as string);
 		playlistPath.set(sel as string);
-
 	} catch (err) {
 		console.error(err);
 	}
@@ -103,7 +102,7 @@ export async function scanSrcPaths(selPath: string) {
 			});
 		}
 
-		processDirRecursive(selPath)
+		processDirRecursive(selPath);
 	} catch (err) {
 		console.error(err);
 	}

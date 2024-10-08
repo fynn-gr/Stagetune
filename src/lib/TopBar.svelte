@@ -4,7 +4,7 @@ import TopBarToggle from "../pureUI/components/TopBarToggle.svelte";
 import AppMenu from "../pureUI/components/AppMenu.svelte";
 import { availableMonitors, primaryMonitor } from "@tauri-apps/api/window";
 import { confirm } from "@tauri-apps/plugin-dialog";
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 import {
 	editMode,
@@ -83,9 +83,7 @@ onMount(async () => {
 							title: "Quit?",
 							kind: "warning",
 							okLabel: "Quit",
-						}).then(async isOK =>
-							isOK ? appWindow.close() : null,
-						);
+						}).then(async isOK => (isOK ? appWindow.close() : null));
 					}
 				}}
 				onMin={async () => {
