@@ -629,14 +629,26 @@
 // playlist edit mode
 .playlist.edit-mode {
 	.playlist-item {
+
+		&:has(.drag-area:hover) {
+			&::after {
+				content: '';
+				position: absolute;
+				pointer-events: none;
+				inset: 4rem 4rem -8rem 6rem;
+				background-color: rgba(255, 255, 255, 0.06);
+				border-radius: 16rem;
+			}
+		}
+
 		.drag-area {
 			cursor: grab;
 			width: 28rem;
 			min-width: 28rem;
-			margin-top: 6rem;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+			border-radius: 6rem;
 
 			& > p {
 				display: block;
@@ -844,8 +856,8 @@
 				}
 
 				.title {
-					height: 42rem;
-					line-height: 42rem;
+					height: 52rem;
+					line-height: 52rem;
 				}
 
 				.repeat-btn {
