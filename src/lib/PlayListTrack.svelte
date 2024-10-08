@@ -186,6 +186,7 @@ export function play(
 	useFade: boolean = false,
 ) {
 	//resume track
+	if (track.playing) return;
 
 	if (track.fade.in > 0 && track.inFade == null && useFade) {
 		track.inFade = "in";
