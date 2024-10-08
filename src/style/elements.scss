@@ -1052,9 +1052,8 @@
 
 // hotkey panel
 .hotkeys {
-	max-height: max-content;
 	padding: 10rem;
-	//flex: 1;
+	flex: 10;
 	display: flex;
 	flex-direction: column;
 	gap: 6rem;

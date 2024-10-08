@@ -1,19 +1,19 @@
 import { playlist, playlistElements, selectedItem } from "@/ts/Stores";
 import { get } from "svelte/store";
 
-export function test(pen: boolean) {
+export function test(stress: boolean) {
 	let rnd: number;
 	let delay: number;
 	let stop = false;
 	let allowedButtons = [
 		"Toggle Tracklist",
-		"Add comment",
-		"Toggle Mode",
-		"Reset all tracks",
-		"Stop all tracks",
 		"Toggle Edior",
 		"Toggle Tracks playing",
 		"Toggle Hotkeys",
+		"Toggle Mode",
+		"Add comment",
+		"Reset all tracks",
+		"Stop all tracks",
 		"Play",
 		"Reset",
 		"repeat track",
@@ -78,7 +78,7 @@ export function test(pen: boolean) {
 			default:
 		}
 
-		delay = pen ? getRndInteger(2, 200) : getRndInteger(10, 10000);
+		delay = stress ? getRndInteger(2, 200) : getRndInteger(10, 10000);
 		setTimeout(() => {
 			if (stop == false) loop();
 		}, delay);
