@@ -121,6 +121,7 @@ onMount(() => {
 	<div class="annotation-placeholder">
 		{#if $editMode}
 			<button
+				id="btn-add-attached-anotation"
 				class="add-annotation"
 				title="Add attached anotation"
 				on:click={e => {

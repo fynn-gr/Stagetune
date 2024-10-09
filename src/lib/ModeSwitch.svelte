@@ -2,6 +2,7 @@
 import { onMount } from "svelte";
 import { editMode, uiPlatform } from "@/ts/Stores";
 
+export let id: string;
 export let icon: string;
 export let iconActive: string = null;
 export let active: boolean;
@@ -11,10 +12,10 @@ export let toolTip: string;
 export let disabled = false;
 
 let self: HTMLElement;
-let topBarType;
-let topBarShort;
-let iconPath;
-let iconPathActive;
+let topBarType: string;
+let topBarShort: string;
+let iconPath: string;
+let iconPathActive: string;
 
 onMount(() => {
 	let cls = self;
@@ -41,6 +42,7 @@ onMount(() => {
 </script>
 
 <button
+	id={`btn-${id}`}
 	bind:this={self}
 	class="topbar-button mode-switch"
 	class:disabled

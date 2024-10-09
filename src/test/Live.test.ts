@@ -1,25 +1,25 @@
-import { playlist, playlistElements, selectedItem } from "@/ts/Stores";
+import {
+	editMode,
+	playlist,
+	playlistElements,
+	selectedItem,
+} from "@/ts/Stores";
 import { get } from "svelte/store";
 
-export function test(stress: boolean) {
+export function testLive() {
+	console.time("testLoop");
+	editMode.set(false);
 	let rnd: number;
 	let delay: number;
 	let stop = false;
+	let counter = 0;
 	let allowedButtons = [
-		"Toggle Tracklist",
-		"Toggle Edior",
-		"Toggle Tracks playing",
-		"Toggle Hotkeys",
-		"Toggle Mode",
-		"Add comment",
-		"Reset all tracks",
-		"Stop all tracks",
-		"Play",
-		"Reset",
-		"repeat track",
-		"auto reset track on pause",
-		"Add attached anotation",
-		"current playing",
+		"toggle-tracks-playing",
+		"toggle-hotkeys",
+		"reset-all-tracks",
+		"stop-all-tracks",
+		"play",
+		"reset",
 	];
 	document.addEventListener("keydown", e => {
 		if (e.code == "Escape") stop = true;
@@ -28,10 +28,11 @@ export function test(stress: boolean) {
 
 	const loop = () => {
 		rnd = getRndInteger(0, 5);
+		counter++;
 
 		switch (rnd) {
 			case 0: //select random track
-				console.log("move selecion");
+				console.log(counter + " - move selecion");
 				if (getRndInteger(0, 1))
 					for (let i = get(selectedItem) - 1; i > -1; i--) {
 						if (get(playlist)[i].type != "annotation") {
@@ -41,11 +42,11 @@ export function test(stress: boolean) {
 					}
 				break;
 			case 1: //play pause
-				console.log("play or pause track");
+				console.log(counter + " - play or pause track");
 				get(playlistElements)[get(selectedItem)].playPause(null, true);
 				break;
 			case 2: //skip
-				console.log("skip");
+				console.log(counter + " - skip");
 				for (let i = get(selectedItem) + 1; i < get(playlist).length; i++) {
 					if (get(playlist)[i].type != "annotation") {
 						get(playlistElements)[get(selectedItem)].stop(true);
@@ -56,31 +57,34 @@ export function test(stress: boolean) {
 				}
 				break;
 			case 3: //reset
-				console.log("reset");
+				console.log(counter + " - reset");
 				get(playlistElements)[get(selectedItem)].stop(true, false);
 				break;
 			case 4: //hotkey
-				console.log("hotkey");
+				console.log(counter + " - hotkey");
 				document.dispatchEvent(
 					new KeyboardEvent("keydown", { code: "Digit" + getRndInteger(1, 2) }),
 				);
 				break;
 			case 5: //button press
-				let buttons = document.querySelectorAll("button");
-				let button = buttons[getRndInteger(0, buttons.length - 1)];
-				if (allowedButtons.includes(button.title)) {
-					console.log("button press", button.title);
-					button.dispatchEvent(new MouseEvent("click", {}));
-				} else {
-					console.log("not allowed button");
-				}
+				let button =
+					allowedButtons[getRndInteger(0, allowedButtons.length - 1)];
+				let target = document.getElementById("btn-" + button);
+				console.log("btn-" + button);
+				console.log(counter + " - button press <", target.id, ">");
+				target!.dispatchEvent(new MouseEvent("click", {}));
+
 				break;
 			default:
 		}
 
-		delay = stress ? getRndInteger(2, 200) : getRndInteger(10, 10000);
+		delay = getRndInteger(2, 100);
 		setTimeout(() => {
-			if (stop == false) loop();
+			if (stop == false) {
+				loop();
+			} else {
+				console.timeEnd("testLoop");
+			}
 		}, delay);
 	};
 	loop();

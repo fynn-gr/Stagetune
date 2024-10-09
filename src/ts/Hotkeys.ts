@@ -30,7 +30,7 @@ export function addHotkey(key: number) {
 		// Dropping Track from Playlist, adding existing track to Hotkey
 		rmHotkeyForSameTrack();
 		currentDragging.update(e => {
-			e.hotkey = key;
+			e!.hotkey = key;
 			return e;
 		});
 		hotkeys.update(e => {

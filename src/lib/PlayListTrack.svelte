@@ -312,6 +312,7 @@ $: if (!track.loaded) load();
 
 		<!--reset-btn-->
 		<button
+			id="btn-reset"
 			class="play-btn"
 			title="Reset"
 			on:click={() => {
@@ -323,6 +324,7 @@ $: if (!track.loaded) load();
 
 		<!--play Button-->
 		<button
+			id="btn-play"
 			class="play-btn"
 			title="Play"
 			class:active={track.playing}
@@ -438,6 +440,7 @@ $: if (!track.loaded) load();
 
 			<!--repeat-->
 			<button
+				id="btn-repeat"
 				class="option repeat-btn"
 				class:active={track.repeat}
 				on:click={() => {
@@ -450,6 +453,7 @@ $: if (!track.loaded) load();
 
 			<!--auto reset-->
 			<button
+				id="btn-auto-reset"
 				class="option auto-reset-btn"
 				class:active={track.autoReset}
 				on:click={() => {

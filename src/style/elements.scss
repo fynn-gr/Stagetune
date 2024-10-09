@@ -629,10 +629,9 @@
 // playlist edit mode
 .playlist.edit-mode {
 	.playlist-item {
-
 		&:has(.drag-area:hover) {
 			&::after {
-				content: '';
+				content: "";
 				position: absolute;
 				pointer-events: none;
 				inset: 4rem 4rem -8rem 6rem;

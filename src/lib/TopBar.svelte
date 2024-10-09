@@ -21,11 +21,12 @@ import ModeSwitch from "./ModeSwitch.svelte";
 import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
 import AppMenuItem from "@/pureUI/components/AppMenuItem.svelte";
 import TopBarDropdown from "@/pureUI/components/TopBarDropdown.svelte";
-import { test } from "@/test/Loop.test";
+import { testLive } from "@/test/Live.test";
 import TopBarDropdownItem from "@/pureUI/components/TopBarDropdownItem.svelte";
 import { onMount } from "svelte";
 import { emit } from "@tauri-apps/api/event";
 import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
+import { testEdit } from "@/test/Edit.test";
 
 export let showTracklist: boolean;
 export let showEditor: boolean;
@@ -104,6 +105,7 @@ onMount(async () => {
 
 		<!--Sidebar-->
 		<TopBarToggle
+			id="sidebar"
 			icon="sidebar"
 			bind:active={showTracklist}
 			activeColor="var(--hover)"
@@ -163,18 +165,18 @@ onMount(async () => {
 				<button
 					class="app-menu-item"
 					on:click={() => {
-						test(false);
+						testLive();
 					}}
 				>
-					<p class="name">Continous Test</p>
+					<p class="name">Live Mode Test</p>
 				</button>
 				<button
 					class="app-menu-item"
 					on:click={() => {
-						test(true);
+						testEdit();
 					}}
 				>
-					<p class="name">Stress Test</p>
+					<p class="name">Edit Mode Test</p>
 				</button>
 			</AppMenuDev>
 		{/if}
@@ -215,6 +217,7 @@ onMount(async () => {
 
 		<!--Add Annotation-->
 		<TopBarButton
+			id="comment-add"
 			icon="comment_add"
 			disabled={!$editMode}
 			onClick={() => {
@@ -244,6 +247,7 @@ onMount(async () => {
 
 		<!--Lock-->
 		<ModeSwitch
+			id="mode-switch"
 			icon="lock"
 			iconActive="lock_open"
 			bind:active={$editMode}
@@ -256,13 +260,19 @@ onMount(async () => {
 		<div class="topbar-group">
 			<!--reset all-->
 			<TopBarButton
+				id="reset-all-tracks"
 				icon="reset"
 				toolTip="Reset all tracks"
 				onClick={resetAll}
 			/>
 
 			<!--stop all-->
-			<TopBarButton icon="stop" toolTip="Stop all tracks" onClick={pauseAll} />
+			<TopBarButton
+				id="stop-all-tracks"
+				icon="stop"
+				toolTip="Stop all tracks"
+				onClick={pauseAll}
+			/>
 		</div>
 
 		<div class="spacer" data-tauri-drag-region="" />
@@ -271,6 +281,7 @@ onMount(async () => {
 		{#if $settings.video}
 			<div class="topbar-group">
 				<TopBarToggle
+					id="projector"
 					icon="projector"
 					bind:active={$showProjector}
 					onChange={() => {
@@ -298,6 +309,7 @@ onMount(async () => {
 
 		<!--editor-->
 		<TopBarToggle
+			id="toggle-editor"
 			icon="cut"
 			bind:active={showEditor}
 			activeColor="var(--hover)"
@@ -308,6 +320,7 @@ onMount(async () => {
 		<div class="topbar-group">
 			<!--current playing-->
 			<TopBarToggle
+				id="toggle-tracks-playing"
 				icon="active_play"
 				bind:active={showCurrent}
 				activeColor="var(--hover)"
@@ -316,6 +329,7 @@ onMount(async () => {
 
 			<!--hotkeys-->
 			<TopBarToggle
+				id="toggle-hotkeys"
 				icon="hotkeys"
 				bind:active={showHotkeys}
 				activeColor="var(--hover)"
@@ -330,7 +344,7 @@ onMount(async () => {
 					if ($editMode) {
 						const confirmed = await confirm("Discard unsaved changes?", {
 							title: "Quit?",
-							type: "warning",
+							kind: "warning",
 							okLabel: "Quit",
 						}).then(isOK => (isOK ? appWindow.close() : null));
 					}
