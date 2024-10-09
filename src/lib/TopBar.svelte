@@ -37,7 +37,6 @@ export let resetAll;
 
 const appWindow = getCurrentWindow();
 let mainID: number;
-let window;
 
 function handleProjector(screen: number | null) {
 	if (screen) {

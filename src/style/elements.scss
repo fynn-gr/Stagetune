@@ -116,7 +116,7 @@
 
 .tracklist {
 	grid-area: tracklist;
-	background-color: var(--topbar-BG);
+	background-color: var(--tracklist);
 	width: 300px;
 	padding-top: 0;
 	border-bottom-left-radius: var(--win-corner);
@@ -197,7 +197,7 @@
 	flex-direction: column;
 	overflow: hidden scroll;
 	padding-bottom: 10vh;
-	background-color: rgb(14, 14, 14);
+	background-color: var(--playlist-BG);
 
 	&::-webkit-scrollbar {
 		width: 8px;
@@ -312,7 +312,7 @@
 			display: flex;
 			flex-direction: row;
 			overflow: hidden;
-			background-color: var(--panel2);
+			background-color: var(--playlist-item-BG);
 			border-radius: 10rem;
 
 			.play-btn {
@@ -992,7 +992,7 @@
 
 // current panel
 .current {
-	background-color: var(--properties-BG);
+	background-color: var(--palette-BG);
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -1069,7 +1069,7 @@
 	flex-direction: column;
 	gap: 6rem;
 	overflow: hidden scroll;
-	background-color: var(--properties-BG);
+	background-color: var(--palette-BG);
 
 	&::-webkit-scrollbar {
 		width: 8px;
