@@ -1,19 +1,22 @@
 <script lang="ts">
-import { playlistPath, settings } from "@/ts/Stores";
+import { settings } from "@/ts/Stores";
 import { onMount } from "svelte";
-import { scanSrcPaths } from "@/ts/SaveLoad";
 import { getVersion } from "@tauri-apps/api/app";
-import { Command } from "@tauri-apps/plugin-shell";
+import { open } from "@tauri-apps/plugin-shell";
+
+const links = {
+	Website: "https://fynn.gr/apps/stagetune",
+	Repository: "https://github.com/fynn-gr/stagetune",
+	License: "https://www.gnu.org/licenses/gpl-3.0.html#license-text",
+	BugReport: "https://github.com/fynn-gr/stagetune/issues",
+	Documentation: "https://github.com/fynn-gr/stagetune/docs",
+};
 
 export let splashScreen;
-let recentList = [];
 let version: string;
 
 onMount(async () => {
 	//loadSettings();
-	recentList = $settings.recent;
-	console.log("recent: ", recentList);
-
 	let fullVersion = await getVersion();
 	version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
 });
@@ -25,6 +28,7 @@ onMount(async () => {
 <div
 	class="splash"
 	on:mousedown={e => {
+		if (e.target instanceof HTMLButtonElement) return;
 		splashScreen = false;
 	}}
 >
@@ -37,14 +41,17 @@ onMount(async () => {
 
 		<div class="box">
 			<span>
-				{#each ["Website", "Repository", "Licence", "Bug tracker", "About", "Contribute"] as e}
+				{#each Object.keys(links) as key}
 					<button
+						title={links[key]}
 						on:click={e => {
 							e.stopPropagation();
+							console.log("link: ", e);
+							open(links[key]);
 						}}
 					>
 						<img src="./icons/std/web.svg" alt="" />
-						<p>{e}</p>
+						<p>{key}</p>
 					</button>
 				{/each}
 			</span>
