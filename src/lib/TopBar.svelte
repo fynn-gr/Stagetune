@@ -114,74 +114,72 @@ onMount(async () => {
 		/>
 
 		<!--menus on windows-->
-		<AppMenuContainer>
-			{#if $uiPlatform == "win"}
-				<AppMenu name="File">
-					<AppMenuItem id="open" name="Open" accelerator="ctrl O" />
-					<AppMenuItem id="save" name="Save" accelerator="ctrl S" />
+		{#if $uiPlatform == "win"}
+			<AppMenu name="File">
+				<AppMenuItem id="open" name="Open" accelerator="ctrl O" />
+				<AppMenuItem id="save" name="Save" accelerator="ctrl S" />
+				<div class="seperator" />
+				<AppMenuItem
+					id="settings"
+					name="Settings"
+					accelerator="ctrl ,"
+					disabled={!$editMode}
+				/>
+			</AppMenu>
+			<AppMenu name="Window">
+				<AppMenuItem
+					id="showTracklist"
+					name="Track List"
+					checked={showTracklist && $editMode ? "true" : "false"}
+					disabled={!$editMode}
+				/>
+				<AppMenuItem
+					id="showCurrent"
+					name="Tracks playing"
+					checked={showCurrent ? "true" : "false"}
+				/>
+				<AppMenuItem
+					id="showHotkeys"
+					name="Hotkeys"
+					checked={showHotkeys ? "true" : "false"}
+				/>
+				<AppMenuItem
+					id="showEditor"
+					name="Editor"
+					checked={showEditor && $editMode ? "true" : "false"}
+					disabled={!$editMode}
+				/>
+				{#if $settings.video}
 					<div class="seperator" />
-					<AppMenuItem
-						id="settings"
-						name="Settings"
-						accelerator="ctrl ,"
-						disabled={!$editMode}
-					/>
-				</AppMenu>
-				<AppMenu name="Window">
-					<AppMenuItem
-						id="showTracklist"
-						name="Track List"
-						checked={showTracklist && $editMode ? "true" : "false"}
-						disabled={!$editMode}
-					/>
-					<AppMenuItem
-						id="showCurrent"
-						name="Tracks playing"
-						checked={showCurrent ? "true" : "false"}
-					/>
-					<AppMenuItem
-						id="showHotkeys"
-						name="Hotkeys"
-						checked={showHotkeys ? "true" : "false"}
-					/>
-					<AppMenuItem
-						id="showEditor"
-						name="Editor"
-						checked={showEditor && $editMode ? "true" : "false"}
-						disabled={!$editMode}
-					/>
-					{#if $settings.video}
-						<div class="seperator" />
-						<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
-					{/if}
-					<div class="seperator" />
-					<AppMenuItem id="showSplash" name="Splash Screen" />
-				</AppMenu>
-			{/if}
+					<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
+				{/if}
+				<div class="seperator" />
+				<AppMenuItem id="showSplash" name="Splash Screen" />
+			</AppMenu>
+		{/if}
 
-			<!--Debug menu-->
-			{#if $settings.debug}
-				<AppMenuDev platforms={["mac", "win"]} themes={false}>
-					<div class="seperator" />
-					<button
-						class="app-menu-item"
-						on:click={() => {
-							testLive();
-						}}
-					>
-						<p class="name">Live Mode Test</p>
-					</button>
-					<button
-						class="app-menu-item"
-						on:click={() => {
-							testEdit();
-						}}
-					>
-						<p class="name">Edit Mode Test</p>
-					</button>
-				</AppMenuDev>
-			{/if}
-		</AppMenuContainer>
+		<!--Debug menu-->
+		{#if $settings.debug}
+			<AppMenuDev platforms={["mac", "win"]} themes={false}>
+				<div class="seperator" />
+				<button
+					class="app-menu-item"
+					on:click={() => {
+						testLive();
+					}}
+				>
+					<p class="name">Live Mode Test</p>
+				</button>
+				<button
+					class="app-menu-item"
+					on:click={() => {
+						testEdit();
+					}}
+				>
+					<p class="name">Edit Mode Test</p>
+				</button>
+			</AppMenuDev>
+		{/if}
 
 		<div class="spacer" data-tauri-drag-region="" />
 
