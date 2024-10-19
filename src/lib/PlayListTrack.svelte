@@ -350,10 +350,7 @@ $: if (!track.loaded) load();
 				<input
 					bind:this={titleEl}
 					on:focus={() => isEditing.update(e => e + 1)}
-					on:blur={() => {
-						isEditing.update(e => e - 1);
-						//track.name = titleEl.innerText;
-					}}
+					on:blur={() => isEditing.update(e => e - 1)}
 					bind:value={track.name}
 					disabled={!$editMode}
 				/>

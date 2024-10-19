@@ -204,20 +204,14 @@ $: $currentDragging == null ? (dragover = null) : null;
 
 		<!--Title-->
 		<div class="title">
-			<div
-				class="input"
-				contenteditable={$selectedItem == id && $editMode}
+			<input
 				bind:this={titleEl}
-				on:focus={() => {
-					isEditing.update(e => e + 1);
-				}}
-				on:blur={() => {
-					isEditing.update(e => e - 1);
-					track.name = titleEl.innerText;
-				}}
-			>
-				{track.name}
-			</div>
+				on:focus={() => isEditing.update(e => e + 1)}
+				on:blur={() => isEditing.update(e => e - 1)}
+				bind:value={track.name}
+				disabled={!$editMode}
+			/>
+			<div class="title-display">{track.name}</div>
 		</div>
 	</div>
 </div>
