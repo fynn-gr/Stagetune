@@ -327,18 +327,18 @@
 				font-weight: 500;
 				color: white;
 
-				.input {
+				.title-display {
+					pointer-events: none;
 					display: block;
 					margin: auto 0;
 					color: inherit;
 					background-color: transparent;
 					font-size: inherit;
 					font-weight: inherit;
+				}
 
-					&::selection {
-						color: white;
-						background-color: var(--accent);
-					}
+				input {
+					display: none;
 				}
 			}
 
@@ -649,8 +649,36 @@
 				line-height: 30rem;
 				font-size: 20rem;
 
-				.input:focus {
-					color: var(--accent);
+				&:has(input:focus) {
+					input {
+						opacity: 100%;
+					}
+
+					.title-display {
+						opacity: 0%;
+					}
+				}
+
+				input {
+					display: block;
+					position: absolute;
+					opacity: 0%;
+					width: inherit;
+					height: inherit;
+					margin: auto 0;
+					color: inherit;
+					background-color: transparent;
+					font-size: inherit;
+					font-weight: inherit;
+
+					&:focus {
+						color: var(--accent);
+					}
+
+					&::selection {
+						color: white;
+						background-color: var(--accent);
+					}
 				}
 			}
 

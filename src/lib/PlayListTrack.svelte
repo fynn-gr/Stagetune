@@ -347,18 +347,17 @@ $: if (!track.loaded) load();
 		<!--name-->
 		{#if track.buffer}
 			<div class="title">
-				<div
-					class="input"
-					contenteditable={$selectedItem == id && $editMode}
+				<input
 					bind:this={titleEl}
 					on:focus={() => isEditing.update(e => e + 1)}
 					on:blur={() => {
 						isEditing.update(e => e - 1);
-						track.name = titleEl.innerText;
+						//track.name = titleEl.innerText;
 					}}
-				>
-					{track.name}
-				</div>
+					bind:value={track.name}
+					disabled={!$editMode}
+				/>
+				<div class="title-display">{track.name}</div>
 			</div>
 		{:else if track.missing}
 			<div class="title">

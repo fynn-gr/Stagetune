@@ -29,3 +29,5 @@ pnpm-lock.yaml
 /public/videos/*
 
 /src-tauri/capabilities/ref.xml
+/target/
+/gen/
