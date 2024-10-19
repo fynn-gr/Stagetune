@@ -154,6 +154,7 @@ async function load() {
 		track.loaded = true;
 		track.length = track.buffer.duration;
 	} else {
+		//file not found
 		console.error(convertFileSrc(absPath), "track not found");
 		track.missing = true;
 		message(`Media File is missing or moved: ${absPath}`, {
@@ -257,7 +258,9 @@ $: gainNode
 	? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
 	: null;
 $: $currentDragging == null ? (dragover = null) : null;
-$: if (!track.loaded) load();
+$: if (!track.loaded) {
+	if (!track.missing) load();
+}
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
