@@ -87,7 +87,7 @@ export function playPause() {
 	track.playing ? stop() : play(track.state > 0);
 }
 
-export function play(resume: boolean) {
+export function play() {
 	emit("play_video", { name: track.name });
 	track.playing = true;
 }

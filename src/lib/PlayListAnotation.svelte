@@ -63,6 +63,12 @@ function handleDragLeave(e: any) {
 
 export function update() {}
 
+export function playPause() {}
+
+export function play() {}
+
+export function stop() {}
+
 onMount(() => {
 	if (track.annotation != null) annotationEl.innerHTML = track.annotation.text;
 });

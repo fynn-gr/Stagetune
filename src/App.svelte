@@ -169,7 +169,7 @@ const Listeners = () => {
 		if (id == "quit" && $editMode) {
 			const confirmed = await confirm("Discard all unsaved changes?", {
 				title: "Quit?",
-				type: "warning",
+				kind: "warning",
 				okLabel: "Quit",
 			}).then(isOK => (isOK ? exit(0) : null));
 		} else if (id == "open" && $editMode) {

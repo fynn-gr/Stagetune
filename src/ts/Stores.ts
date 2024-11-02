@@ -8,6 +8,7 @@ import type {
 } from "./Types";
 import { emit } from "@tauri-apps/api/event";
 import type { Monitor } from "@tauri-apps/api/window";
+import type { PlaylistElement } from "@/lib/Components";
 
 export const settings = writable<Settings>({
 	recent: [],
@@ -336,7 +337,7 @@ export const hotkeys = writable<Hotkey[]>([
 		track: null,
 	},
 ]);
-export const playlistElements = writable<any[]>([]);
+export const playlistElements = writable<PlaylistElement[]>([]);
 export const hotkeyElements = writable<any[]>([]);
 
 export const srcFiles = writable([]);
