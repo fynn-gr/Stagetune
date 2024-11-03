@@ -1,20 +1,19 @@
 # Stagetune
 
-Free and Open Source music player for stageplays and liveshows
+Free and Open Source music and video player for stageplays and liveshows
 
 ## Features
 
-Stagetune is made to setup audio and music to play during live shows. It includes:
+Stagetune is made to setup audio and video to play during live shows. It includes:
 
 - automatic fade in and fade out
 - non destructive editing of audio files
+- unobstructed video playback on a projector
 - keyboard shortcuts for fast navigation and blind operation
 - assigning hotkeys to tracks
 - annotations in the playlist
 
-currently macOS 10.15+ and Windows 10+ are supported. Linux might work but is unsupported and untested.
-
-Video playback for Projectors is in development and works technicaly, but is currently only avalible for developers
+currently macOS 10.15+ and Windows 10+ are supported.
 
 ## Development Setup
 
