@@ -7,8 +7,7 @@ import {
 import { get } from "svelte/store";
 
 export function testLive() {
-	console.time("testLoop");
-	editMode.set(false);
+	let timeStart = performance.now();
 	let rnd: number;
 	let delay: number;
 	let stop = false;
@@ -21,6 +20,11 @@ export function testLive() {
 		"play",
 		"reset",
 	];
+	editMode.set(true);
+	document.dispatchEvent(
+		new KeyboardEvent("keydown", { code: "KeyP", ctrlKey: true, metaKey: true }),
+	);
+	editMode.set(false);
 	document.addEventListener("keydown", e => {
 		if (e.code == "Escape") stop = true;
 	});
@@ -63,7 +67,7 @@ export function testLive() {
 			case 4: //hotkey
 				console.log(counter + " - hotkey");
 				document.dispatchEvent(
-					new KeyboardEvent("keydown", { code: "Digit" + getRndInteger(1, 2) }),
+					new KeyboardEvent("keydown", { code: "Digit" + getRndInteger(1, 3) }),
 				);
 				break;
 			case 5: //button press
@@ -83,7 +87,11 @@ export function testLive() {
 			if (stop == false) {
 				loop();
 			} else {
-				console.timeEnd("testLoop");
+				let timeEnd = performance.now()
+				const totalSeconds = Math.floor((timeEnd - timeStart) / 1000); // Convert ms to total seconds
+				const minutes = Math.floor(totalSeconds / 60); // Get whole minutes
+				const seconds = totalSeconds % 60; // Get remaining seconds
+				console.log(`test duration: ${minutes}min ${seconds}sec`)
 			}
 		}, delay);
 	};
