@@ -253,12 +253,6 @@ afterUpdate(() => {
 						checkboxName="Enable developer features"
 						{onChange}
 					/>
-					<SettingsCheckbox
-						name=""
-						bind:checked={$settings.video}
-						checkboxName="Enable projector"
-						{onChange}
-					/>
 				</div>
 			{/if}
 		{/if}

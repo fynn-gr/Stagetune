@@ -176,7 +176,7 @@ const Listeners = () => {
 			openDir();
 		} else if (id == "save") {
 			savePlaylist();
-		} else if (id == "projector" && $settings.video) {
+		} else if (id == "projector") {
 			$showProjector = !$showProjector;
 		} else if (id == "settings" && $editMode) {
 			openSettings();
@@ -215,8 +215,7 @@ const Shortcuts = () => {
 					if (e.ctrlKey) openDir();
 					break;
 				case "KeyP":
-					console.log($settings.video);
-					if (e.ctrlKey && $settings.video) {
+					if (e.ctrlKey) {
 						e.preventDefault();
 						$showProjector = !$showProjector;
 					}

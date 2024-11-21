@@ -149,10 +149,8 @@ onMount(async () => {
 					checked={showEditor && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
-				{#if $settings.video}
-					<div class="seperator" />
-					<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
-				{/if}
+				<div class="seperator" />
+				<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
 				<div class="seperator" />
 				<AppMenuItem id="showSplash" name="Splash Screen" />
 			</AppMenu>
@@ -278,34 +276,32 @@ onMount(async () => {
 		<div class="spacer" data-tauri-drag-region="" />
 
 		<!--projector-->
-		{#if $settings.video}
-			<div class="topbar-group">
-				<TopBarToggle
-					id="projector"
-					icon="projector"
-					bind:active={$showProjector}
-					onChange={() => {
-						handleProjector(null);
-					}}
-					activeColor="var(--hover)"
-					toolTip="Toggle Edior"
-					disabled={!$editMode}
-				/>
+		<div class="topbar-group">
+			<TopBarToggle
+				id="projector"
+				icon="projector"
+				bind:active={$showProjector}
+				onChange={() => {
+					handleProjector(null);
+				}}
+				activeColor="var(--hover)"
+				toolTip="Toggle Edior"
+				disabled={!$editMode}
+			/>
 
-				<TopBarDropdown icon={null} toolTip="Projector">
-					{#each $screens as screen, i}
-						<TopBarDropdownItem
-							name={i == mainID ? `Main` : `Display ${i + 1}`}
-							checked={$selectedScreen == i}
-							onChange={() => {
-								$selectedScreen = i;
-								handleProjector(i);
-							}}
-						/>
-					{/each}
-				</TopBarDropdown>
-			</div>
-		{/if}
+			<TopBarDropdown icon={null} toolTip="Projector">
+				{#each $screens as screen, i}
+					<TopBarDropdownItem
+						name={i == mainID ? `Main` : `Display ${i + 1}`}
+						checked={$selectedScreen == i}
+						onChange={() => {
+							$selectedScreen = i;
+							handleProjector(i);
+						}}
+					/>
+				{/each}
+			</TopBarDropdown>
+		</div>
 
 		<!--editor-->
 		<TopBarToggle

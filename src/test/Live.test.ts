@@ -22,7 +22,11 @@ export function testLive() {
 	];
 	editMode.set(true);
 	document.dispatchEvent(
-		new KeyboardEvent("keydown", { code: "KeyP", ctrlKey: true, metaKey: true }),
+		new KeyboardEvent("keydown", {
+			code: "KeyP",
+			ctrlKey: true,
+			metaKey: true,
+		}),
 	);
 	editMode.set(false);
 	document.addEventListener("keydown", e => {
@@ -87,11 +91,11 @@ export function testLive() {
 			if (stop == false) {
 				loop();
 			} else {
-				let timeEnd = performance.now()
+				let timeEnd = performance.now();
 				const totalSeconds = Math.floor((timeEnd - timeStart) / 1000); // Convert ms to total seconds
 				const minutes = Math.floor(totalSeconds / 60); // Get whole minutes
 				const seconds = totalSeconds % 60; // Get remaining seconds
-				console.log(`test duration: ${minutes}min ${seconds}sec`)
+				console.log(`test duration: ${minutes}min ${seconds}sec`);
 			}
 		}, delay);
 	};

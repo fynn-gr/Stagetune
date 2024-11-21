@@ -18,7 +18,6 @@ export const settings = writable<Settings>({
 	performance_mode: false,
 	projector_screen: {},
 	debug: false,
-	video: false,
 
 	//Playlist view settings
 	showAnnotations: true,

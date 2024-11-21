@@ -33,7 +33,6 @@ export type Settings = {
 	performance_mode: boolean;
 	projector_screen: any;
 	debug: boolean;
-	video: boolean;
 
 	showAnnotations: boolean;
 	showFadeOptions: boolean;

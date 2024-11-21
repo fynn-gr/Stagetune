@@ -16,7 +16,6 @@ let iconPath: string;
 let iconPathActive: string;
 
 onMount(() => {
-
 	iconPath = `./icons/top_bar/${icon}.svg`;
 
 	if (iconActive == null) {
