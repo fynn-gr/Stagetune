@@ -322,7 +322,7 @@ $: if (!track.loaded) {
 				stop(true);
 			}}
 		>
-			<img src="./icons/square/reset.svg" alt="" draggable="false" />
+			<img src="./icons/top_bar/reset.svg" alt="" draggable="false" />
 		</button>
 
 		<!--play Button-->
@@ -335,15 +335,15 @@ $: if (!track.loaded) {
 		>
 			{#if track.inFade != null}
 				<img
-					src="./icons/square/fade.svg"
+					src="./icons/top_bar/fade.svg"
 					alt=""
 					draggable="false"
 					class="fade-state-icon"
 				/>
 			{:else if track.playing}
-				<img src="./icons/square/pause.svg" alt="" draggable="false" />
+				<img src="./icons/top_bar/pause.svg" alt="" draggable="false" />
 			{:else}
-				<img src="./icons/square/play.svg" alt="" draggable="false" />
+				<img src="./icons/top_bar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
 
@@ -378,7 +378,7 @@ $: if (!track.loaded) {
 		{#if track.repeat && !$editMode}
 			<img
 				class="option-display"
-				src="./icons/square/repeat.svg"
+				src="./icons/top_bar/repeat.svg"
 				alt=""
 				draggable="false"
 			/>
@@ -388,7 +388,7 @@ $: if (!track.loaded) {
 		{#if track.autoReset && !$editMode}
 			<img
 				class="option-display"
-				src="./icons/square/reset.svg"
+				src="./icons/top_bar/reset.svg"
 				alt=""
 				draggable="false"
 			/>
@@ -398,7 +398,7 @@ $: if (!track.loaded) {
 		{#if !$editMode && track.fade.in > 0}
 			<img
 				class="fade-display"
-				src="./icons/square/fade_in.svg"
+				src="./icons/top_bar/fade_in.svg"
 				alt=""
 				draggable="false"
 			/>
@@ -407,7 +407,7 @@ $: if (!track.loaded) {
 		{#if !$editMode && track.fade.out > 0}
 			<img
 				class="fade-display"
-				src="./icons/square/fade_out.svg"
+				src="./icons/top_bar/fade_out.svg"
 				alt=""
 				draggable="false"
 			/>
@@ -447,7 +447,7 @@ $: if (!track.loaded) {
 				}}
 				title="repeat track"
 			>
-				<img src="./icons/square/repeat.svg" alt="repeat" draggable="false" />
+				<img src="./icons/top_bar/repeat.svg" alt="repeat" draggable="false" />
 			</button>
 
 			<!--auto reset-->
@@ -461,7 +461,7 @@ $: if (!track.loaded) {
 				title="auto reset track on pause"
 			>
 				<img
-					src="./icons/square/auto_reset.svg"
+					src="./icons/top_bar/auto_reset.svg"
 					alt="auto reset"
 					draggable="false"
 				/>
@@ -471,7 +471,7 @@ $: if (!track.loaded) {
 		<!--fade-->
 		{#if $settings.showFadeOptions}
 			<span class="fade">
-				<img class="fade-icon" src="./icons/square/fade_in.svg" alt="" />
+				<img class="fade-icon" src="./icons/top_bar/fade_in.svg" alt="" />
 				<PropNumber
 					bind:value={track.fade.in}
 					onFocus={() => isEditing.update(e => e + 1)}
@@ -483,7 +483,7 @@ $: if (!track.loaded) {
 					disabled={!$editMode}
 					title="Fade In"
 				/>
-				<img class="fade-icon" src="./icons/square/fade_out.svg" alt="" />
+				<img class="fade-icon" src="./icons/top_bar/fade_out.svg" alt="" />
 				<PropNumber
 					bind:value={track.fade.out}
 					onFocus={() => isEditing.update(e => e + 1)}

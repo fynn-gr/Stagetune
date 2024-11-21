@@ -462,20 +462,20 @@ $: invoke("show_projector", {
 								>
 									{#if e.inFade != null}
 										<img
-											src="./icons/square/fade.svg"
+											src="./icons/top_bar/fade.svg"
 											alt=""
 											draggable="false"
 											class="fade-state-icon"
 										/>
 									{:else if e.playing}
 										<img
-											src="./icons/square/stop.svg"
+											src="./icons/top_bar/stop.svg"
 											alt=""
 											draggable="false"
 										/>
 									{:else}
 										<img
-											src="./icons/square/reset.svg"
+											src="./icons/top_bar/reset.svg"
 											alt=""
 											draggable="false"
 										/>

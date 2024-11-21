@@ -185,7 +185,7 @@ $: $currentDragging == null ? (dragover = null) : null;
 				stop(true);
 			}}
 		>
-			<img src="./icons/square/reset.svg" alt="" draggable="false" />
+			<img src="./icons/top_bar/reset.svg" alt="" draggable="false" />
 		</button>
 
 		<!--play Button-->
@@ -196,9 +196,9 @@ $: $currentDragging == null ? (dragover = null) : null;
 			on:click={playPause}
 		>
 			{#if track.playing}
-				<img src="./icons/square/pause.svg" alt="" draggable="false" />
+				<img src="./icons/top_bar/pause.svg" alt="" draggable="false" />
 			{:else}
-				<img src="./icons/square/play.svg" alt="" draggable="false" />
+				<img src="./icons/top_bar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
 

@@ -12,31 +12,17 @@ export let toolTip: string;
 export let disabled = false;
 
 let self: HTMLElement;
-let topBarType: string;
-let topBarShort: string;
 let iconPath: string;
 let iconPathActive: string;
 
 onMount(() => {
-	let cls = self;
-	while (cls.parentElement) {
-		cls = cls.parentElement;
 
-		if (cls.classList.contains("toolbar")) {
-			topBarType = "toolbar-button";
-			topBarShort = "tool_bar";
-		} else if (cls.classList.contains("buttonbar")) {
-			topBarType = "buttonbar-button";
-			topBarShort = "button_bar";
-		}
-	}
-
-	iconPath = `./icons/${topBarShort}/${icon}.svg`;
+	iconPath = `./icons/top_bar/${icon}.svg`;
 
 	if (iconActive == null) {
 		iconPathActive = iconPath;
 	} else {
-		iconPathActive = `./icons/${topBarShort}/${iconActive}.svg`;
+		iconPathActive = `./icons/top_bar/${iconActive}.svg`;
 	}
 });
 </script>

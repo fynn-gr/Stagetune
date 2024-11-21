@@ -72,17 +72,17 @@ onMount(() => {
 	on:dragend={handleDragEnd}
 >
 	{#if entry.type == "video"}
-		<img src="./icons/square/film.svg" alt="" />
+		<img src="./icons/top_bar/film.svg" alt="" />
 	{:else if playing || hover}
 		<button class="play-btn" on:click={handlePlay}>
 			{#if playing}
-				<img src="./icons/square/pause.svg" />
+				<img src="./icons/top_bar/pause.svg" />
 			{:else}
-				<img src="./icons/square/play.svg" />
+				<img src="./icons/top_bar/play.svg" />
 			{/if}
 		</button>
 	{:else if entry.type == "track"}
-		<img src="./icons/square/music.svg" alt="" />
+		<img src="./icons/top_bar/music.svg" alt="" />
 	{/if}
 	<p>{entry.name}</p>
 </div>
