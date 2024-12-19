@@ -55,20 +55,28 @@ export function createNativeMenu() {
 		});
 
 		// File
-		let open = await MenuItem.new({
+		let newPlaylist = await MenuItem.new({
+			id: "new",
+			text: "New Playlist",
+		});
+		let openPlaylist = await MenuItem.new({
 			id: "open",
-			text: "Open",
+			text: "Open Plalist",
 			accelerator: "cmd+O",
 		});
-		let save = await MenuItem.new({
+		let savePlaylist = await MenuItem.new({
 			id: "save",
-			text: "Save",
+			text: "Save Playlist",
 			accelerator: "cmd+S",
+		});
+		let addSource = await MenuItem.new({
+			id: "addSource",
+			text: "Add Source",
 		});
 
 		subFile = await Submenu.new({
 			text: "File",
-			items: [open, save],
+			items: [newPlaylist, openPlaylist, savePlaylist, addSource],
 		});
 
 		// Edit

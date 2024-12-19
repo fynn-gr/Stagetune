@@ -17,7 +17,6 @@ import {
 	selectedItem,
 	isEditing,
 	currentDragging,
-	playlistPath,
 	settings,
 	draggingOrigin,
 	hotkeys,
@@ -142,7 +141,8 @@ function handleSkip(e: MouseEvent) {
 
 async function load() {
 	//load file
-	const absPath = await join($playlistPath, track.path!);
+	const absPath = await join(track.pathSource!, track.path!);
+	console.log(absPath);
 
 	//test file exist to throw error if file missing
 	if (await exists(absPath)) {

@@ -1,5 +1,5 @@
 //Tauri
-import { open } from "@tauri-apps/plugin-dialog";
+import { message, open, save } from "@tauri-apps/plugin-dialog";
 import { getVersion } from "@tauri-apps/api/app";
 import { basename, join } from "@tauri-apps/api/path";
 import { emit } from "@tauri-apps/api/event";
@@ -14,7 +14,7 @@ import {
 } from "@tauri-apps/plugin-fs";
 
 // Stores, Utils
-import { isAudioFile, isVideoFile, isPlaylistFile } from "./FileUtils";
+import { isAudioFile, isVideoFile, isImageFile } from "./FileUtils";
 import { get } from "svelte/store";
 import {
 	playlist,
@@ -26,6 +26,39 @@ import {
 } from "./Stores";
 import type { PlaylistItem, SaveFile } from "./Types";
 
+export async function openPlaylist() {
+	try {
+		const sel = await open({
+			multiple: false,
+			filters: [
+				{
+					name: "Playlist",
+					extensions: ["spl"],
+				},
+			],
+		});
+
+		if (!sel) return;
+
+		playlistPath.set(sel as string);
+		readTextFile(sel, {}).then(e => {
+			const obj = JSON.parse(e);
+			srcFiles.set(obj.srcFiles);
+			playlist.set(obj.playlist);
+			hotkeys.set(obj.hotkeys);
+
+			get(hotkeys).forEach(e => {
+				if (e.track != null) {
+					const ref = get(playlist)[e.track];
+					e.track = ref;
+				}
+			});
+		});
+	} catch (err) {
+		console.error(err);
+	}
+}
+
 export async function openDir() {
 	try {
 		const sel = await open({
@@ -35,8 +68,40 @@ export async function openDir() {
 
 		if (!sel) return;
 
+		let src = get(srcFiles);
+		for (let i = 0; i < src.length; i++) {
+			if (src[i].path === sel) {
+				message("Directory already added", {
+					title: "already added",
+					kind: "error",
+				});
+				return;
+			}
+		}
+		srcFiles.update(e => {
+			e.push({ path: sel, files: [] });
+			return e;
+		});
 		scanSrcPaths(sel as string);
-		playlistPath.set(sel as string);
+	} catch (err) {
+		console.error(err);
+	}
+}
+
+export async function relinkDir(pathIndex: number) {
+	try {
+		const sel = await open({
+			directory: true,
+			multiple: false,
+		});
+		if (!sel) return;
+
+		srcFiles.update(e => {
+			for (let i = 0; i < e.length; i++) {
+				e[i].path = sel;
+			}
+			return e;
+		});
 	} catch (err) {
 		console.error(err);
 	}
@@ -44,8 +109,6 @@ export async function openDir() {
 
 export async function scanSrcPaths(selPath: string) {
 	try {
-		let playlistFile: string;
-
 		// Recursive scan of src path
 		async function processDirRecursive(path: string) {
 			const entries = await readDir(path);
@@ -55,7 +118,8 @@ export async function scanSrcPaths(selPath: string) {
 			entries.forEach(async (entry: DirEntry) => {
 				if (entry.isDirectory) {
 					// Subfolder
-					processDirRecursive(await join(selPath, entry.name));
+					// TODO CUrrently disabled
+					// processDirRecursive(await join(selPath, entry.name));
 				} else if (isAudioFile(entry.name)) {
 					// Audio File
 					const modifiedPath = await basename(entry.name);
@@ -63,9 +127,11 @@ export async function scanSrcPaths(selPath: string) {
 						type: "track",
 						name: entry.name.replace(/\.[^.]+$/gm, ""),
 						path: modifiedPath,
+						pathSource: selPath,
 					};
 					srcFiles.update(items => {
-						items.push(obj);
+						let index = items.findIndex(obj => obj.path === selPath);
+						items[index].files.push(obj);
 						return items;
 					});
 				} else if (isVideoFile(entry.name)) {
@@ -75,27 +141,26 @@ export async function scanSrcPaths(selPath: string) {
 						type: "video",
 						name: entry.name.replace(/\.[^.]+$/gm, ""),
 						path: modifiedPath,
+						pathSource: selPath,
+					};
+					srcFiles.update(items => {
+						let index = items.findIndex(obj => obj.path === selPath);
+						items[index].files.push(obj);
+						return items;
+					});
+				} else if (isImageFile(entry.name)) {
+					// Image File
+					/* TODO add iamges
+ 					const modifiedPath = await basename(entry.name);
+					const obj = {
+						type: "image",
+						name: entry.name.replace(/\.[^.]+$/gm, ""),
+						path: modifiedPath,
 					};
 					srcFiles.update(items => {
 						items.push(obj);
 						return items;
-					});
-				} else if (isPlaylistFile(entry.name)) {
-					// Playlist File
-					playlistFile = entry.name;
-					console.log(playlistFile);
-					readTextFile(await join(selPath, playlistFile), {}).then(e => {
-						const obj = JSON.parse(e);
-						playlist.set(obj.playlist);
-						hotkeys.set(obj.hotkeys);
-
-						get(hotkeys).forEach(e => {
-							if (e.track != null) {
-								const ref = get(playlist)[e.track];
-								e.track = ref;
-							}
-						});
-					});
+					}); */
 				} else {
 					// Other cases
 				}
@@ -109,6 +174,17 @@ export async function scanSrcPaths(selPath: string) {
 }
 
 export async function savePlaylist() {
+	//test if allready saved
+	if (get(playlistPath) == "") {
+		// save as
+		const sel = await save({
+			title: "save Playlist as",
+			defaultPath: "Playlist.spl",
+		});
+		if (!sel) return;
+		playlistPath.set(sel);
+	}
+
 	const path = get(playlistPath);
 	console.log("Save to path:", path);
 
@@ -119,6 +195,7 @@ export async function savePlaylist() {
 		},
 		playlist: JSON.parse(JSON.stringify(get(playlist))),
 		hotkeys: [],
+		srcFiles: get(srcFiles),
 	};
 
 	// Remove unwanted attributes, remove Buffer
@@ -147,7 +224,7 @@ export async function savePlaylist() {
 	});
 
 	// Write file to disk
-	writeTextFile(`${path}/playlist.Stagetune`, JSON.stringify(saveObj), {});
+	writeTextFile(path, JSON.stringify(saveObj), {});
 }
 
 export function saveSettings() {

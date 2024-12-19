@@ -5,6 +5,7 @@ export type ItemType = "track" | "video" | "annotation";
 export type PlaylistItem = {
 	type: ItemType; // type of item
 	path?: string; //relative path
+	pathSource?: string; // absolute path of the folder
 	name?: string; //title of the item
 	length?: number; //track duration
 	playing?: boolean; //is currently playing
@@ -46,6 +47,12 @@ export type SaveFile = {
 	};
 	playlist: PlaylistItem[];
 	hotkeys: Hotkey[];
+	srcFiles: SrcDirectory[];
+};
+
+export type SrcDirectory = {
+	path: string;
+	files: Array<Object>;
 };
 
 export type Hotkey = {

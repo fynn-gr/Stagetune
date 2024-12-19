@@ -5,6 +5,7 @@ import type {
 	Operator,
 	Settings,
 	PlaylistItem,
+	SrcDirectory,
 } from "./Types";
 import { emit } from "@tauri-apps/api/event";
 import type { Monitor } from "@tauri-apps/api/window";
@@ -339,8 +340,9 @@ export const hotkeys = writable<Hotkey[]>([
 export const playlistElements = writable<PlaylistElement[]>([]);
 export const hotkeyElements = writable<any[]>([]);
 
-export const srcFiles = writable([]);
-export const playlistPath = writable<string>("");
+export const srcFiles = writable<SrcDirectory[]>([]); // media Files
+export const playlistPath = writable<string>(""); // playlist save path
+
 export const isEditing = writable<number>(0); //input currently in focus counter
 export const menuHandler = readable({
 	handle(id: string) {

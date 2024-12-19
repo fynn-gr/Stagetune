@@ -1,6 +1,6 @@
 <script lang="ts">
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { currentDragging, draggingOrigin, playlistPath } from "../ts/Stores";
+import { currentDragging, draggingOrigin } from "../ts/Stores";
 import { join } from "@tauri-apps/api/path";
 import { onMount } from "svelte";
 
@@ -36,7 +36,7 @@ async function handlePlay(e: any) {
 	} else {
 		playing = true;
 		const response = await fetch(
-			convertFileSrc(await join($playlistPath, entry.path)),
+			convertFileSrc(await join(entry.pathSource, entry.path)),
 		);
 		const arrayBuffer = await response.arrayBuffer();
 		const buffer = await ctx.decodeAudioData(arrayBuffer);

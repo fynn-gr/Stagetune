@@ -13,12 +13,14 @@ import { join } from "@tauri-apps/api/path";
 export function createPlaylistTrack(
 	type: ItemType,
 	path: string,
+	pathSource: string,
 	name: string,
 ) {
 	playlist.update(e => {
 		e.splice(get(playlist).length, 0, {
 			type,
 			path,
+			pathSource,
 			name,
 			playing: false,
 			state: 0,
@@ -120,7 +122,12 @@ export function DropHandler(newPosition: number) {
 		});
 	} else if (dragOrigin === "src" && currentDrag) {
 		console.log("drag form src to playlist: ", currentDrag);
-		createPlaylistTrack(currentDrag.type, currentDrag.path!, currentDrag.name!),
+		createPlaylistTrack(
+			currentDrag.type,
+			currentDrag.path!,
+			currentDrag.pathSource!,
+			currentDrag.name!,
+		),
 			selectedItem.set(newPosition);
 	}
 

@@ -10,7 +10,6 @@ import {
 	playlistElements,
 	contextMenu,
 } from "@/ts/Stores";
-import { createPlaylistTrack } from "@/ts/Utils";
 import { onMount } from "svelte";
 
 export let key: number;

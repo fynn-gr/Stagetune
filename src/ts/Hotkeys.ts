@@ -11,6 +11,7 @@ export function addHotkey(key: number) {
 		createPlaylistTrack(
 			get(currentDragging)!.type,
 			get(currentDragging)!.path!,
+			get(currentDragging)?.pathSource!,
 			get(currentDragging)!.name!,
 		);
 		playlist.update(e => {

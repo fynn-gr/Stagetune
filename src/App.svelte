@@ -39,6 +39,7 @@ import {
 	screens,
 	selectedScreen,
 	currentDragging,
+	contextMenu,
 } from "./ts/Stores";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -46,8 +47,11 @@ import {
 	openDir,
 	loadSettings,
 	checkSettingsExist,
+	openPlaylist,
+	relinkDir,
 } from "./ts/SaveLoad";
 import { createNativeMenu } from "./ts/Menus";
+import { lastFolderFromPath } from "./ts/FileUtils";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = 25;
@@ -172,10 +176,14 @@ const Listeners = () => {
 				kind: "warning",
 				okLabel: "Quit",
 			}).then(isOK => (isOK ? exit(0) : null));
-		} else if (id == "open" && $editMode) {
-			openDir();
-		} else if (id == "save") {
+		} else if (id == "newPlaylist") {
+			// TODO
+		} else if (id == "openPlaylist" && $editMode) {
+			openPlaylist();
+		} else if (id == "savePlaylist") {
 			savePlaylist();
+		} else if (id == "addSource") {
+			openDir();
 		} else if (id == "projector") {
 			$showProjector = !$showProjector;
 		} else if (id == "settings" && $editMode) {
@@ -293,8 +301,40 @@ $: invoke("show_projector", {
 		<div class="tracklist">
 			<div class="trackList">
 				{#each $srcFiles as p, i}
-					<TrackListItem entry={p} {ctx} {masterGain} />
+					<p
+						class="category"
+						title={p.path}
+						on:contextmenu={e => {
+							if ($editMode) {
+								$contextMenu = {
+									position: { x: e.clientX, y: e.clientY },
+									content: [
+										{
+											name: "Relink",
+											icon: "",
+											iconColor: false,
+											action: () => {
+												relinkDir(i);
+											},
+										},
+									],
+								};
+								console.log($contextMenu, e);
+							}
+						}}
+					>
+						{lastFolderFromPath(p.path)}
+					</p>
+					{#each p.files as e, j}
+						<TrackListItem entry={e} {ctx} {masterGain} />
+					{/each}
 				{/each}
+				<button
+					class="placeholder"
+					on:click={() => {
+						openDir();
+					}}>Add Source Directory</button
+				>
 			</div>
 		</div>
 	{:else}
