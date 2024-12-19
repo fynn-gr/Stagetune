@@ -60,6 +60,11 @@ export type Hotkey = {
 	track: PlaylistItem | null;
 };
 
+export type videoListElement = {
+	name: string;
+	url: string;
+};
+
 //temp Operator declaration till Operators are implemented in UI
 export type Operator = {
 	operator: string;

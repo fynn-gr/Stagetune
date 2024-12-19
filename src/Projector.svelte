@@ -2,27 +2,18 @@
 import { emit, listen } from "@tauri-apps/api/event";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import {
-	LogicalSize,
-	PhysicalPosition,
-	PhysicalSize,
-} from "@tauri-apps/api/window";
+import { PhysicalPosition, PhysicalSize } from "@tauri-apps/api/window";
 import { onMount } from "svelte";
+import type { videoListElement } from "./ts/Types";
 
 let editMode = true;
-let list: Array<any> = [];
+let list: Array<videoListElement> = [];
 let listElements: Array<HTMLVideoElement> = [];
 let active = -1;
-let fullscreen = false;
 let buffer: any[] = [];
 
 //play call to a video
 const unlistenPlay = listen("play_video", (event: any) => {
-	/*
-		const p = platform().then((e) => {
-			src = convertFileSrc(event.payload.url);
-		});
-		*/
 	console.log(event);
 	list.forEach((e, i) => {
 		if (e.name == event.payload.name) active = i;
@@ -35,7 +26,7 @@ const unlistenUpdate = listen("update_play", (e: any) => {
 	console.log(e.payload);
 	if (e.payload.action == "stop") {
 		listElements[active].pause();
-		active = -1;
+		//active = -1;
 	} else if (e.payload.action == "skip") {
 		listElements[active].currentTime =
 			listElements[active].duration * e.payload.position;
@@ -48,7 +39,6 @@ const unlistenUpdate = listen("update_play", (e: any) => {
 
 //update the video list
 const unlistenUpdateList = listen("updateList", e => {
-	console.log("update List", e.payload);
 	list = e.payload.list;
 });
 
@@ -98,19 +88,7 @@ onMount(() => {
 
 <!-- svelte-ignore a11y-media-has-caption -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-	class="wrapper"
-	class:edit={editMode}
-	data-tauri-drag-region
-	on:dblclick={async () => {
-		if (fullscreen) {
-			await getCurrentWindow().setFullscreen(false);
-			await getCurrentWindow().setSize(new LogicalSize(720, 480));
-		} else {
-			await getCurrentWindow().setFullscreen(true);
-		}
-	}}
->
+<div class="wrapper" class:edit={editMode} data-tauri-drag-region>
 	{#each list as video, i}
 		<video
 			id="video"

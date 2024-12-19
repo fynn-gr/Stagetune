@@ -7,7 +7,7 @@ import {
 	playlistPath,
 	selectedItem,
 } from "./Stores";
-import type { ItemType, PlaylistItem } from "./Types";
+import type { ItemType, PlaylistItem, videoListElement } from "./Types";
 import { join } from "@tauri-apps/api/path";
 
 export function createPlaylistTrack(
@@ -76,11 +76,11 @@ export function waveformCalc(
 }
 
 export async function updateProjectorList() {
-	let list: { name: string; url: string }[] = [];
+	let list: Array<videoListElement> = [];
 
 	const promises = get(playlist).map(async e => {
 		if (e.type === "video" && e.name && e.path) {
-			const path = await join(get(playlistPath), e.path);
+			const path = await join(e.pathSource, e.path);
 			console.log("path: ", path);
 			list.push({ name: e.name, url: path });
 		}
