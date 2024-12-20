@@ -79,10 +79,10 @@ export async function updateProjectorList() {
 	let list: Array<videoListElement> = [];
 
 	const promises = get(playlist).map(async e => {
-		if (e.type === "video" && e.name && e.path) {
+		if ((e.type === "video" || e.type == "image") && e.name && e.path) {
 			const path = await join(e.pathSource, e.path);
 			console.log("path: ", path);
-			list.push({ name: e.name, url: path });
+			list.push({ type: e.type, name: e.name, url: path });
 		}
 	});
 

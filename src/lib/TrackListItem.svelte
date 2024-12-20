@@ -73,6 +73,8 @@ onMount(() => {
 >
 	{#if entry.type == "video"}
 		<img src="./icons/top_bar/film.svg" alt="" />
+	{:else if entry.type == "image"}
+		<img src="./icons/top_bar/image.svg" alt="" />
 	{:else if playing || hover}
 		<button class="play-btn" on:click={handlePlay}>
 			{#if playing}

@@ -8,33 +8,55 @@ import type { videoListElement } from "./ts/Types";
 
 let editMode = true;
 let list: Array<videoListElement> = [];
-let listElements: Array<HTMLVideoElement> = [];
+let listElements: Array<HTMLVideoElement | HTMLImageElement> = [];
 let active = -1;
-let buffer: any[] = [];
 
 //play call to a video
 const unlistenPlay = listen("play_video", (event: any) => {
 	console.log(event);
+
 	list.forEach((e, i) => {
 		if (e.name == event.payload.name) active = i;
 	});
-	listElements[active].play();
+	if (list[active].type == "video") {
+		listElements[active].play();
+	}
 });
 
 //skip, pause, stop or resume the active video
 const unlistenUpdate = listen("update_play", (e: any) => {
 	console.log(e.payload);
-	if (e.payload.action == "stop") {
-		listElements[active].pause();
-		//active = -1;
-	} else if (e.payload.action == "skip") {
-		listElements[active].currentTime =
-			listElements[active].duration * e.payload.position;
-	} else if (e.payload.action == "pause") {
-		listElements[active].pause();
-	} else if (e.payload.action == "resume") {
-		listElements[active].play();
+
+	if (list[active].type == "video") {
+		switch (e.payload.action) {
+			case "stop":
+				listElements[active].pause();
+				break;
+			case "skip":
+				listElements[active].currentTime =
+					listElements[active].duration * e.payload.position;
+				break;
+			case "pause":
+				listElements[active].pause();
+				break;
+			case "resume":
+				listElements[active].play();
+				break;
+		}
+	} else {
+		switch (e.payload.action) {
+			case "stop":
+				active = -1;
+				break;
+			case "skip":
+				break;
+			case "pause":
+				break;
+			case "resume":
+				break;
+		}
 	}
+
 });
 
 //update the video list
@@ -62,24 +84,21 @@ onMount(() => {
 
 	const interval = setInterval(() => {
 		if (active != -1) {
-			emit("video_state", {
-				state: listElements[active].currentTime,
-				duration: listElements[active].duration,
-				name: list[active].name,
-			});
-		}
-
-		/*
-			for (let i = 0; i < listElements.length; i++) {
-				buffer[i] = {
-					buffer: listElements[i].buffered.end(0),
-					duration:listElements[i].duration
-				}
+			if (list[active].type == "video") {
+				//video
+				emit("video_state", {
+					state: listElements[active].currentTime,
+					duration: listElements[active].duration,
+					name: list[active].name,
+				});
+			} else {
+				//image
+				emit("video_state", {
+					state: 1,
+					name: list[active].name,
+				})
 			}
-			console.log(buffer)
-	
-			emit("video_buffer", buffer);
-			*/
+		}
 	}, 100);
 
 	return () => clearInterval(interval);
@@ -88,39 +107,29 @@ onMount(() => {
 
 <!-- svelte-ignore a11y-media-has-caption -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="wrapper" class:edit={editMode} data-tauri-drag-region>
-	{#each list as video, i}
-		<video
-			id="video"
-			controls={editMode}
-			src={convertFileSrc(video.url)}
-			preload="auto"
-			data-tauri-drag-region
-			class:vis={i == active}
-			bind:this={listElements[i]}
-			on:ended={() => {
-				emit("video_ended", { name: list[active].name });
-			}}
-		/>
+<div class="wrapper" class:editMode>
+	{#each list as item, i}
+		{#if item.type == "video"}
+			<video
+				id="video"
+				controls={editMode}
+				src={convertFileSrc(item.url)}
+				preload="auto"
+				class:vis={i == active}
+				bind:this={listElements[i]}
+				on:ended={() => {
+					emit("video_ended", { name: list[active].name });
+				}}
+			/>
+		{:else}
+			<img
+				src={convertFileSrc(item.url)}
+				class:vis={i == active}
+				bind:this={listElements[i]}
+				alt=""
+			/>
+		{/if}
 	{/each}
-
-	{#if editMode}
-		<div class="buffers">
-			{#each buffer as b}
-				<div
-					class="bar"
-					style={`
-						background: linear-gradient(
-							90deg,
-							red 0%,
-							red calc(100% * ${b.buffer / b.duration}),
-							#555 calc(100% * ${b.buffer / b.duration}),
-							#555 100%
-						);`}
-				/>
-			{/each}
-		</div>
-	{/if}
 </div>
 
 <style lang="scss">
@@ -135,7 +144,7 @@ onMount(() => {
 	padding: 0;
 	background-color: black;
 
-	video {
+	video, img {
 		position: absolute;
 		width: 100%;
 		height: 100%;
@@ -149,27 +158,14 @@ onMount(() => {
 	}
 }
 
-.buffers {
-	position: fixed;
-	inset: auto 0 0 0;
-	background-color: white;
-	display: flex;
-	flex-direction: column;
-
-	.bar {
-		height: 6px;
-		width: 100%;
-	}
-}
-
-.wrapper.edit {
+.wrapper.editMode {
 	overflow: scroll;
 
 	&::-webkit-scrollbar {
 		width: 0px;
 	}
 
-	video {
+	video, img {
 		width: 50%;
 		height: auto;
 		position: relative;

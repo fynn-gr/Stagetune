@@ -1,6 +1,6 @@
 import type { MouseEventHandler } from "svelte/elements";
 
-export type ItemType = "track" | "video" | "annotation";
+export type ItemType = "track" | "video" | "image" | "annotation";
 
 export type PlaylistItem = {
 	type: ItemType; // type of item
@@ -61,6 +61,7 @@ export type Hotkey = {
 };
 
 export type videoListElement = {
+	type: "video" | "image";
 	name: string;
 	url: string;
 };

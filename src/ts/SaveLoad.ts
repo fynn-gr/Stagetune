@@ -150,17 +150,18 @@ export async function scanSrcPaths(selPath: string) {
 					});
 				} else if (isImageFile(entry.name)) {
 					// Image File
-					/* TODO add iamges
- 					const modifiedPath = await basename(entry.name);
+					const modifiedPath = await basename(entry.name);
 					const obj = {
 						type: "image",
 						name: entry.name.replace(/\.[^.]+$/gm, ""),
 						path: modifiedPath,
+						pathSource: selPath,
 					};
 					srcFiles.update(items => {
-						items.push(obj);
+						let index = items.findIndex(obj => obj.path === selPath);
+						items[index].files.push(obj);
 						return items;
-					}); */
+					});
 				} else {
 					// Other cases
 				}

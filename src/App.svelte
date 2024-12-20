@@ -52,6 +52,7 @@ import {
 } from "./ts/SaveLoad";
 import { createNativeMenu } from "./ts/Menus";
 import { lastFolderFromPath } from "./ts/FileUtils";
+import PlayListImage from "./lib/PlayListImage.svelte";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = 25;
@@ -392,6 +393,12 @@ $: invoke("show_projector", {
 					/>
 				{:else if t.type === "video"}
 					<PlayListVideo
+						bind:this={$playlistElements[i]}
+						bind:track={t}
+						id={i}
+					/>
+				{:else if t.type === "image"}
+					<PlayListImage
 						bind:this={$playlistElements[i]}
 						bind:track={t}
 						id={i}
