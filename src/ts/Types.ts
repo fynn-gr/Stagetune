@@ -1,6 +1,6 @@
 import type { MouseEventHandler } from "svelte/elements";
 
-export type ItemType = "track" | "video" | "image" | "annotation";
+export type ItemType = "track" | "video" | "image" | "annotation" | "loop";
 
 export type PlaylistItem = {
 	type: ItemType; // type of item
@@ -24,6 +24,7 @@ export type PlaylistItem = {
 	hotkey?: number | null; //hotkey number assigned, null if not assigned
 	missing?: boolean; //true if file could not be found
 	loaded?: boolean; //if track finished loading
+	items?: Array<{ type: string, path: string, pathSource: string}>; //Loop items
 };
 
 export type Settings = {

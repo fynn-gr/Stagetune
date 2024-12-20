@@ -557,6 +557,65 @@
 		}
 	}
 
+	.loop {
+		&.drop-content {
+			.inner .content {
+				background-color: var(--accent) !important;
+			}
+		}
+
+		.inner {
+			min-height: 98rem;
+
+			.play-btn {
+				margin: 6rem 0;
+
+				&:first-of-type {
+					margin: 6rem 0 6rem 6rem;
+				}
+			}
+
+			.content {
+				min-height: 30rem;
+				position: absolute;
+				inset: 62rem 6rem 6rem 6rem;
+				display: flex;
+				flex-direction: column;
+				gap: 2rem;
+				padding: 2rem;
+				background-color: var(--playlist-BG);
+				border-radius: 6rem;
+
+				.loop-item {
+					height: 30rem;
+					background-color: var(--playlist-item-BG);
+					line-height: 30rem;
+					font-size: 13rem;
+					font-weight: 600;
+					padding: 0 10rem;
+					border-radius: 4rem;
+				}
+
+				.placeholder {
+					display: none;
+					height: 30rem;
+					margin: 0;
+					height: auto;
+					border: none;
+					text-align: center;
+					font-size: 16rem;
+					line-height: 30rem;
+					font-weight: 700;
+					color: rgb(143, 143, 143);
+
+					&:nth-child(1) {
+						display: block;
+					}
+				}
+			}
+		}
+	}
+
 	.annotation-attached {
 		z-index: 1;
 		position: relative;

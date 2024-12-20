@@ -251,6 +251,40 @@ onMount(async () => {
 			toolTip="Add comment"
 		/>
 
+		{#if $settings.debug}
+			<!--Add Loop-->
+			<TopBarButton
+				id="loop-add"
+				icon="repeat"
+				disabled={!$editMode}
+				onClick={() => {
+					if ($selectedItem == null) {
+						playlist.update(e => {
+							e.push({
+								type: "loop",
+								name: "Loop",
+								annotation: null,
+								items: [],
+							});
+							return e;
+						});
+					} else {
+						playlist.update(e => {
+							e.splice($selectedItem + 1, 0, {
+								type: "loop",
+								name: "Loop",
+								annotation: null,
+								items: [],
+							});
+							return e;
+						});
+					}
+					console.log($playlist);
+				}}
+				toolTip="Add loop"
+			/>
+		{/if}
+
 		<div class="spacer-fix" data-tauri-drag-region="" />
 
 		<!--Lock-->

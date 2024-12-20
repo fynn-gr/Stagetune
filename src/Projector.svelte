@@ -56,7 +56,6 @@ const unlistenUpdate = listen("update_play", (e: any) => {
 				break;
 		}
 	}
-
 });
 
 //update the video list
@@ -96,7 +95,7 @@ onMount(() => {
 				emit("video_state", {
 					state: 1,
 					name: list[active].name,
-				})
+				});
 			}
 		}
 	}, 100);
@@ -144,7 +143,8 @@ onMount(() => {
 	padding: 0;
 	background-color: black;
 
-	video, img {
+	video,
+	img {
 		position: absolute;
 		width: 100%;
 		height: 100%;
@@ -165,7 +165,8 @@ onMount(() => {
 		width: 0px;
 	}
 
-	video, img {
+	video,
+	img {
 		width: 50%;
 		height: auto;
 		position: relative;

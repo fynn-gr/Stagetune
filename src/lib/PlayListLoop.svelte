@@ -1,14 +1,5 @@
 <script lang="ts">
-// Svelte, Tauri
-import { onDestroy, onMount } from "svelte";
-import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
-
-// Components
-import Annotation from "./Annotation.svelte";
-
-// Stores, Utils
-import { DropHandler, updateProjectorList } from "@/ts/Utils";
-import type { PlaylistItem } from "@/ts/Types";
+import { DropHandler } from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
@@ -17,12 +8,15 @@ import {
 	draggingOrigin,
 	settings,
 } from "../ts/Stores";
+import { onMount } from "svelte";
+import Annotation from "./Annotation.svelte";
+import type { PlaylistItem } from "@/ts/Types";
 
 export let track: PlaylistItem;
 export let id: number;
 
 let dragging = false;
-let dragover: "top" | "bottom" | null = null;
+let dragover: "top" | "bottom" | "content" | null = null;
 let titleEl: HTMLElement;
 
 function handleDragStart(e: DragEvent) {
@@ -33,8 +27,9 @@ function handleDragStart(e: DragEvent) {
 
 	//drag if pointer on drag area
 	if (x < 80) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
+		const dataTransfer = e.dataTransfer as DataTransfer;
+		dataTransfer.dropEffect = "copy";
+		dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = track;
 		$draggingOrigin = "playlist";
 		dragging = true;
@@ -43,7 +38,7 @@ function handleDragStart(e: DragEvent) {
 	}
 }
 
-function handleDragEnd(e: DragEvent) {
+function handleDragEnd(e: any) {
 	dragging = false;
 }
 
@@ -54,78 +49,73 @@ function handleDrop(e: DragEvent) {
 	const target = e.target as HTMLElement;
 	let rec = target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
-	let newPosition = y > rec.height / 2 ? id + 1 : id;
+	if (y < 40) {
+		let newPosition = id;
+		DropHandler(newPosition);
+	} else if ($currentDragging?.type == "image") {
+		track.items?.push({
+			type: "image",
+			path: $currentDragging.path,
+			pathSource: $currentDragging.pathSource
+		});
+	} else {
+		let newPosition = id + 1;
+		DropHandler(newPosition);
+	}
 
-	DropHandler(newPosition);
+	track = track;
 }
 
 function handleDragEnter(e: DragEvent) {
 	const target = e.target as HTMLElement;
 	let rec = target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
-	dragover = y > rec.height / 2 ? "top" : "bottom";
+	if (y < 40) {
+		dragover = "top";
+		console.log("drag top")
+	} else if ($currentDragging?.type == "image") {
+		dragover = "content";
+		console.log("drag content")
+	} else {
+		dragover = "bottom";
+		console.log("drag bottom")
+	}
 }
 
-function handleDragLeave() {
+function handleDragLeave(e: any) {
 	dragover = null;
-}
-
-export function playPause() {
-	track.playing ? stop() : play(track.state > 0);
-}
-
-export function play() {
-	emit("play_video", { name: track.name });
-	track.playing = true;
-}
-
-export function stop(reset: boolean = false) {
-	emit("update_play", { action: "stop" });
-	track.state = 0;
-	track.playing = false;
 }
 
 export function update() {}
 
-const unlistenState = listen("video_state", (e: any) => {
-	if (track.playing && e.payload.name === track.name) {
-		track.state = e.payload.state;
-	}
-});
+export function playPause() {}
 
-const unlistenEnd = listen("video_ended", (e: any) => {
-	if (e.payload.name === track.name) {
-		track.playing = false;
-		track.state = 0;
-	}
-});
+export function play() {}
 
-onMount(async () => {
-	updateProjectorList();
-});
+export function stop() {}
+
+onMount(() => {});
 
 $: $currentDragging == null ? (dragover = null) : null;
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-	class="playlist-item video"
+	class="playlist-item loop"
 	class:selected={$selectedItem == id}
-	class:missing={track.missing}
 	class:drag-top={dragover == "bottom"}
 	class:drag-bottom={dragover == "top"}
+	class:drag-content={dragover == "content"}
 	draggable={$editMode}
 	on:dragstart={handleDragStart}
 	on:dragend={handleDragEnd}
+	on:drop={handleDrop}
 	on:dragenter={handleDragEnter}
 	on:dragleave={handleDragLeave}
-	on:drop={handleDrop}
 	on:click={e => {
 		selectedItem.set(id);
 	}}
-	role="button"
-	tabindex="0"
 >
 	<div class="drag-area">
 		<p>{id + 1}</p>
@@ -138,19 +128,14 @@ $: $currentDragging == null ? (dragover = null) : null;
 
 	<div
 		class="inner"
-		style={$currentDragging == null ? "" : "pointer-events: none;"}
+		style={`
+			pointer-events: ${$currentDragging == null ? "auto" : "none"};
+			height: ${track.items?.length * 32 + 70}rem;
+		`}
 	>
-		<!--progress-->
-		<div
-			class="progress"
-			style={`
-					background: ${track.state > 0.5 ? "var(--accent)" : "#555"};`}
-			role="button"
-			tabindex="0"
-		/>
-
 		<!--reset-btn-->
 		<button
+			id="btn-reset"
 			class="play-btn"
 			title="Reset"
 			on:click={() => {
@@ -162,19 +147,27 @@ $: $currentDragging == null ? (dragover = null) : null;
 
 		<!--play Button-->
 		<button
+			id="btn-play"
 			class="play-btn"
 			title="Play"
 			class:active={track.playing}
 			on:click={playPause}
 		>
-			{#if track.playing}
+			{#if track.inFade != null}
+				<img
+					src="./icons/top_bar/fade.svg"
+					alt=""
+					draggable="false"
+					class="fade-state-icon"
+				/>
+			{:else if track.playing}
 				<img src="./icons/top_bar/pause.svg" alt="" draggable="false" />
 			{:else}
 				<img src="./icons/top_bar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
 
-		<!--Title-->
+		<!--name-->
 		<div class="title">
 			<input
 				bind:this={titleEl}
@@ -184,6 +177,18 @@ $: $currentDragging == null ? (dragover = null) : null;
 				disabled={!$editMode}
 			/>
 			<div class="title-display">{track.name}</div>
+		</div>
+
+		<!--Content-->
+		<div class="content">
+			{#if track.items}
+				{#each track.items as item}
+					<div class="loop-item">
+						{item.path}
+					</div>
+				{/each}
+			{/if}
+			<p class="placeholder">Drop Image or Video to add</p>
 		</div>
 	</div>
 </div>

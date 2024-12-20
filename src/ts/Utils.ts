@@ -83,6 +83,12 @@ export async function updateProjectorList() {
 			const path = await join(e.pathSource, e.path);
 			console.log("path: ", path);
 			list.push({ type: e.type, name: e.name, url: path });
+		} else if (e.type === "loop") {
+			for (let i = 0; i < e.items?.length; i++) {
+				const path = await join(e.items[i].path, e.items[i].pathSource);
+				console.log("path: ", path);
+				list.push({ type: "image", name: e.items[i].name, url: path})
+			}
 		}
 	});
 

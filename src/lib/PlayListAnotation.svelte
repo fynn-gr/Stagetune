@@ -14,15 +14,20 @@ import { onMount } from "svelte";
 export let track: any;
 export let id: number;
 let dragging = false;
-let dragover = false;
+let dragover: "top" | "bottom" | null = null;
 let annotationEl: HTMLElement;
 
-function handleDragStart(e: any) {
-	let rec = e.target.getBoundingClientRect();
+function handleDragStart(e: DragEvent) {
+	//calc pointer position
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
 	let x = e.clientX - rec.left;
+
+	//drag if pointer on drag area
 	if (x < 80) {
-		e.dataTransfer.dropEffect = "copy";
-		e.dataTransfer.setData("text/plain", "placehold");
+		const dataTransfer = e.dataTransfer as DataTransfer;
+		dataTransfer.dropEffect = "copy";
+		dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = track;
 		$draggingOrigin = "playlist";
 		dragging = true;
@@ -33,32 +38,29 @@ function handleDragStart(e: any) {
 
 function handleDragEnd(e: any) {
 	dragging = false;
-	console.log("end dragging", e);
 }
 
-function handleDrop(e: any) {
+function handleDrop(e: DragEvent) {
 	e.preventDefault();
 	e.stopPropagation();
 
-	let rec = e.target.getBoundingClientRect();
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
 	let y = e.clientY - rec.top;
-
-	let newPosition;
-	if (y > rec.height / 2) {
-		newPosition = id + 1;
-	} else {
-		newPosition = id;
-	}
+	let newPosition = y > rec.height / 2 ? id + 1 : id;
 
 	DropHandler(newPosition);
 }
 
-function handleDragEnter(e: any) {
-	dragover = true;
+function handleDragEnter(e: DragEvent) {
+	const target = e.target as HTMLElement;
+	let rec = target.getBoundingClientRect();
+	let y = e.clientY - rec.top;
+	dragover = y > rec.height / 2 ? "top" : "bottom";
 }
 
 function handleDragLeave(e: any) {
-	dragover = false;
+	dragover = null;
 }
 
 export function update() {}
