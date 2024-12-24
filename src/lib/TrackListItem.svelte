@@ -4,14 +4,17 @@ import { currentDragging, draggingOrigin } from "../ts/Stores";
 import { join } from "@tauri-apps/api/path";
 import { onMount } from "svelte";
 
-export let entry: any;
-export let ctx: AudioContext;
-export let masterGain: GainNode;
+interface Props {
+	entry: any;
+	ctx: AudioContext;
+	masterGain: GainNode;
+}
+let { entry, ctx, masterGain }: Props = $props();
 
 let self: HTMLElement;
-let dragging = false;
-let playing = false;
-let hover = false;
+let dragging = $state(false);
+let playing = $state(false);
+let hover = $state(false);
 let node: AudioBufferSourceNode | null = null;
 
 function handleDragStart(e: any) {
@@ -55,28 +58,28 @@ onMount(() => {
 });
 </script>
 
-<!-- svelte-ignore a11y-missing-attribute -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_missing_attribute -->
 <div
 	bind:this={self}
 	class="trackListItem"
 	class:dragging
 	draggable="true"
-	on:mouseenter={() => {
+	onmouseenter={() => {
 		hover = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		hover = false;
 	}}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
 >
 	{#if entry.type == "video"}
 		<img src="./icons/top_bar/film.svg" alt="" />
 	{:else if entry.type == "image"}
 		<img src="./icons/top_bar/image.svg" alt="" />
 	{:else if playing || hover}
-		<button class="play-btn" on:click={handlePlay}>
+		<button class="play-btn" onclick={handlePlay}>
 			{#if playing}
 				<img src="./icons/top_bar/pause.svg" />
 			{:else}

@@ -18,8 +18,11 @@ import {
 	settings,
 } from "../ts/Stores";
 
-export let track: PlaylistItem;
-export let id: number;
+interface Props {
+	track: PlaylistItem;
+	id: number;
+}
+let { track = $bindable(), id }: Props = $props();
 
 let dragging = false;
 let dragover: "top" | "bottom" | null = null;
@@ -125,11 +128,11 @@ onDestroy(() => {
 	unlistenState();
 });
 
-$: $currentDragging == null ? (dragover = null) : null;
+$effect(() => { $currentDragging == null ? (dragover = null) : null});
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
+
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="playlist-item video"
 	class:selected={$selectedItem == id}
@@ -137,12 +140,12 @@ $: $currentDragging == null ? (dragover = null) : null;
 	class:drag-top={dragover == "bottom"}
 	class:drag-bottom={dragover == "top"}
 	draggable={$editMode}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
-	on:dragenter={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:drop={handleDrop}
-	on:click={e => {
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
+	ondragenter={handleDragEnter}
+	ondragleave={handleDragLeave}
+	ondrop={handleDrop}
+	onclick={e => {
 		selectedItem.set(id);
 	}}
 	role="button"
@@ -164,7 +167,7 @@ $: $currentDragging == null ? (dragover = null) : null;
 		<!--progress-->
 		<div
 			class="progress"
-			on:click={handleSkip}
+			onclick={handleSkip}
 			style={`
 					background: linear-gradient(
 						90deg,
@@ -175,13 +178,13 @@ $: $currentDragging == null ? (dragover = null) : null;
 					);`}
 			role="button"
 			tabindex="0"
-		/>
+		></div>
 
 		<!--reset-btn-->
 		<button
 			class="play-btn"
 			title="Reset"
-			on:click={() => {
+			onclick={() => {
 				stop(true);
 			}}
 		>
@@ -193,7 +196,7 @@ $: $currentDragging == null ? (dragover = null) : null;
 			class="play-btn"
 			title="Play"
 			class:active={track.playing}
-			on:click={playPause}
+			onclick={playPause}
 		>
 			{#if track.playing}
 				<img src="./icons/top_bar/pause.svg" alt="" draggable="false" />
@@ -206,8 +209,8 @@ $: $currentDragging == null ? (dragover = null) : null;
 		<div class="title">
 			<input
 				bind:this={titleEl}
-				on:focus={() => isEditing.update(e => e + 1)}
-				on:blur={() => isEditing.update(e => e - 1)}
+				onfocus={() => isEditing.update(e => e + 1)}
+				onblur={() => isEditing.update(e => e - 1)}
 				bind:value={track.name}
 				disabled={!$editMode}
 			/>

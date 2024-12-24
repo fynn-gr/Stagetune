@@ -1,5 +1,4 @@
 <script lang="ts">
-import { settings } from "@/ts/Stores";
 import { onMount } from "svelte";
 import { getVersion } from "@tauri-apps/api/app";
 import { open } from "@tauri-apps/plugin-shell";
@@ -12,7 +11,8 @@ const links = {
 	Documentation: "https://github.com/fynn-gr/stagetune/docs",
 };
 
-export let splashScreen;
+interface Props { splashScreen: boolean }
+let { splashScreen = $bindable() }: Props = $props();
 let version: string;
 
 onMount(async () => {
@@ -22,12 +22,12 @@ onMount(async () => {
 });
 </script>
 
-<!-- svelte-ignore a11y-missing-attribute -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_missing_attribute -->
 <div
 	class="splash"
-	on:mousedown={e => {
+	onmousedown={e => {
 		if (e.target instanceof HTMLButtonElement) return;
 		splashScreen = false;
 	}}
@@ -44,7 +44,7 @@ onMount(async () => {
 				{#each Object.keys(links) as key}
 					<button
 						title={links[key]}
-						on:click={e => {
+						onclick={e => {
 							e.stopPropagation();
 							console.log("link: ", e);
 							open(links[key]);

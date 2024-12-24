@@ -8,9 +8,13 @@ import {
 } from "@/ts/Stores";
 import { onMount } from "svelte";
 
-export let id: number;
-export let annotation: { text: string; color: string | null } | null;
+interface Props {
+	id: number,
+	annotation: { text: string; color: string | null } | null
+}
+let { id, annotation = $bindable() }: Props = $props();
 
+// svelte-ignore non_reactive_update
 let annotationEl: HTMLElement;
 
 onMount(() => {
@@ -18,13 +22,13 @@ onMount(() => {
 });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 {#if annotation != null}
 	<div
 		class="annotation-attached"
 		style={`background: ${annotation.color};`}
-		on:contextmenu={e => {
+		oncontextmenu={e => {
 			if ($editMode) {
 				$contextMenu = {
 					position: { x: e.clientX, y: e.clientY },
@@ -98,7 +102,7 @@ onMount(() => {
 				console.log($contextMenu, e);
 			}
 		}}
-		on:click={e => {
+		onclick={e => {
 			//e.stopPropagation();
 		}}
 	>
@@ -106,12 +110,12 @@ onMount(() => {
 			class="input"
 			contenteditable={$selectedItem == id && $editMode}
 			bind:this={annotationEl}
-			on:focus={e => {
+			onfocus={e => {
 				isEditing.update(e => e + 1);
 			}}
-			on:blur={() => {
+			onblur={() => {
 				isEditing.update(e => e - 1);
-				annotation.text = annotationEl.innerHTML;
+				annotation!.text = annotationEl.innerHTML;
 			}}
 		>
 			{@html annotation.text}
@@ -124,7 +128,7 @@ onMount(() => {
 				id="btn-add-attached-anotation"
 				class="add-annotation"
 				title="Add attached anotation"
-				on:click={e => {
+				onclick={e => {
 					annotation = { text: "Annotation", color: null };
 				}}
 			>

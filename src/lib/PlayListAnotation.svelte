@@ -11,8 +11,11 @@ import {
 } from "../ts/Stores";
 import { onMount } from "svelte";
 
-export let track: any;
-export let id: number;
+interface Props {
+	track: any, id: number
+}
+let { track = $bindable(), id }: Props = $props();
+
 let dragging = false;
 let dragover: "top" | "bottom" | null = null;
 let annotationEl: HTMLElement;
@@ -76,14 +79,14 @@ onMount(() => {
 });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="playlist-item annotation"
 	class:selected={$selectedItem == id}
 	class:drag-over={dragover}
 	draggable={$editMode}
-	on:contextmenu={e => {
+	oncontextmenu={e => {
 		if ($editMode) {
 			$contextMenu = {
 				position: { x: e.clientX, y: e.clientY },
@@ -149,12 +152,12 @@ onMount(() => {
 			console.log($contextMenu, e);
 		}
 	}}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
-	on:drop={handleDrop}
-	on:dragenter={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:click={e => {
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
+	ondrop={handleDrop}
+	ondragenter={handleDragEnter}
+	ondragleave={handleDragLeave}
+	onclick={e => {
 		selectedItem.set(id);
 	}}
 >
@@ -172,10 +175,10 @@ onMount(() => {
 			class="input"
 			contenteditable={$selectedItem == id && $editMode}
 			bind:this={annotationEl}
-			on:focus={e => {
+			onfocus={e => {
 				isEditing.update(e => e + 1);
 			}}
-			on:blur={() => {
+			onblur={() => {
 				isEditing.update(e => e - 1);
 				track.annotation.text = annotationEl.innerHTML;
 			}}

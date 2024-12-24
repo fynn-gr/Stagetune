@@ -12,8 +12,11 @@ import { onMount } from "svelte";
 import Annotation from "./Annotation.svelte";
 import type { PlaylistItem } from "@/ts/Types";
 
-export let track: PlaylistItem;
-export let id: number;
+interface Props {
+	track: PlaylistItem,
+	id: number,
+}
+let { track = $bindable(), id }: Props = $props();
 
 let dragging = false;
 let dragover: "top" | "bottom" | "content" | null = null;
@@ -96,11 +99,12 @@ export function stop() {}
 
 onMount(() => {});
 
-$: $currentDragging == null ? (dragover = null) : null;
+$effect(() => {$currentDragging == null ? (dragover = null) : null;})
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="playlist-item loop"
 	class:selected={$selectedItem == id}
@@ -108,12 +112,12 @@ $: $currentDragging == null ? (dragover = null) : null;
 	class:drag-bottom={dragover == "top"}
 	class:drag-content={dragover == "content"}
 	draggable={$editMode}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
-	on:drop={handleDrop}
-	on:dragenter={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:click={e => {
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
+	ondrop={handleDrop}
+	ondragenter={handleDragEnter}
+	ondragleave={handleDragLeave}
+	onclick={e => {
 		selectedItem.set(id);
 	}}
 >
@@ -138,7 +142,7 @@ $: $currentDragging == null ? (dragover = null) : null;
 			id="btn-reset"
 			class="play-btn"
 			title="Reset"
-			on:click={() => {
+			onclick={() => {
 				stop(true);
 			}}
 		>
@@ -151,7 +155,7 @@ $: $currentDragging == null ? (dragover = null) : null;
 			class="play-btn"
 			title="Play"
 			class:active={track.playing}
-			on:click={playPause}
+			onclick={playPause}
 		>
 			{#if track.inFade != null}
 				<img
@@ -171,8 +175,8 @@ $: $currentDragging == null ? (dragover = null) : null;
 		<div class="title">
 			<input
 				bind:this={titleEl}
-				on:focus={() => isEditing.update(e => e + 1)}
-				on:blur={() => isEditing.update(e => e - 1)}
+				onfocus={() => isEditing.update(e => e + 1)}
+				onblur={() => isEditing.update(e => e - 1)}
 				bind:value={track.name}
 				disabled={!$editMode}
 			/>

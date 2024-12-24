@@ -35,7 +35,6 @@ const settings = writable<Settings>({
 	performance_mode: false,
 	projector_screen: {},
 	debug: false,
-	video: false,
 
 	showAnnotations: true,
 	showFadeOptions: true,
@@ -146,7 +145,7 @@ afterUpdate(() => {
 		<div
 			class="tab"
 			class:active={tab == "general"}
-			on:click={() => {
+			onclick={() => {
 				tab = "general";
 			}}
 		>
@@ -157,7 +156,7 @@ afterUpdate(() => {
 		<div
 			class="tab active"
 			class:active={tab == "keymap"}
-			on:click={() => {
+			onclick={() => {
 				tab = "keymap";
 			}}
 		>
@@ -168,7 +167,7 @@ afterUpdate(() => {
 		<div
 			class="tab"
 			class:active={tab == "update"}
-			on:click={() => {
+			onclick={() => {
 				tab = "update";
 			}}
 		>
@@ -179,7 +178,7 @@ afterUpdate(() => {
 		<div
 			class="tab"
 			class:active={tab == "developer"}
-			on:click={() => {
+			onclick={() => {
 				tab = "developer";
 			}}
 		>

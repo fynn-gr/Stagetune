@@ -2,8 +2,11 @@
 import { onMount } from "svelte";
 import { mapRange } from "../ts/Utils";
 
-export let analyser: any;
-export let ctx: AudioContext;
+interface Props {
+	analyser: any,
+	ctx: AudioContext,
+}
+let { analyser, ctx }: Props = $props();
 let meterCanvas: HTMLCanvasElement;
 let meterCtx: CanvasRenderingContext2D;
 let lastDB = -100;

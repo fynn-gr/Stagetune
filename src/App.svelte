@@ -54,14 +54,15 @@ import { createNativeMenu } from "./ts/Menus";
 import { lastFolderFromPath } from "./ts/FileUtils";
 import PlayListImage from "./lib/PlayListImage.svelte";
 import PlayListLoop from "./lib/PlayListLoop.svelte";
+import { type PlaylistTrack } from "./ts/Types";
 
 let playlistEl: HTMLElement;
-let annotationWidth: number = 25;
-let showTracklist = true;
-let showEditor = false;
-let showCurrent = true;
-let showHotkeys = true;
-let dragOverPlaylist = false;
+let annotationWidth: number = $state(25);
+let showTracklist = $state(true);
+let showEditor = $state(false);
+let showCurrent = $state(true);
+let showHotkeys = $state(true);
+let dragOverPlaylist = $state(false);
 
 checkSettingsExist();
 
@@ -284,19 +285,22 @@ onMount(() => {
 	return () => clearInterval(updateInterval);
 });
 
-$: emit("editMode", { edit: $editMode });
-$: invoke("show_projector", {
-	show: $showProjector ? true : false,
+$effect(() => {
+	emit("editMode", { edit: $editMode });
+});
+$effect(() => {
+	invoke("show_projector", {
+		show: $showProjector ? true : false,
+	});
 });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<!-- svelte-ignore a11y-label-has-associated-control -->
+
 {#if $splash}
-	<Splash bind:splashScreen={$splash} />
+<Splash bind:splashScreen={$splash} />
 {/if}
 
+<!-- svelte-ignore a11y_label_has_associated_control -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
 	{#if $editMode && showTracklist}
@@ -306,7 +310,7 @@ $: invoke("show_projector", {
 					<p
 						class="category"
 						title={p.path}
-						on:contextmenu={e => {
+						oncontextmenu={e => {
 							if ($editMode) {
 								$contextMenu = {
 									position: { x: e.clientX, y: e.clientY },
@@ -333,14 +337,14 @@ $: invoke("show_projector", {
 				{/each}
 				<button
 					class="placeholder"
-					on:click={() => {
+					onclick={() => {
 						openDir();
 					}}>Add Source Directory</button
 				>
 			</div>
 		</div>
 	{:else}
-		<div />
+		<div></div>
 	{/if}
 
 	<!--TopBar-->
@@ -361,9 +365,9 @@ $: invoke("show_projector", {
 		style={`--annotation-width: calc(${annotationWidth}% - ${
 			$editMode ? 46 : 9
 		}rem);`}
-		on:drop={handleDropPlaylist}
-		on:dragover={handleDragOverPlaylist}
-		on:dragleave={e => {
+		ondrop={handleDropPlaylist}
+		ondragover={handleDragOverPlaylist}
+		ondragleave={e => {
 			console.log("drag leave Playlist");
 			e.preventDefault();
 			dragOverPlaylist = false;
@@ -387,7 +391,7 @@ $: invoke("show_projector", {
 				{#if t.type === "track"}
 					<PlayListTrack
 						bind:this={$playlistElements[i]}
-						bind:track={t}
+						bind:track={$playlist[i] as PlaylistTrack}
 						id={i}
 						{ctx}
 						{masterGain}
@@ -395,31 +399,31 @@ $: invoke("show_projector", {
 				{:else if t.type === "video"}
 					<PlayListVideo
 						bind:this={$playlistElements[i]}
-						bind:track={t}
+						bind:track={$playlist[i]}
 						id={i}
 					/>
 				{:else if t.type === "image"}
 					<PlayListImage
 						bind:this={$playlistElements[i]}
-						bind:track={t}
+						bind:track={$playlist[i]}
 						id={i}
 					/>
 				{:else if t.type === "annotation"}
 					<PlayListAnotation
 						bind:this={$playlistElements[i]}
-						bind:track={t}
+						bind:track={$playlist[i]}
 						id={i}
 					/>
 				{:else if t.type === "loop"}
 					<PlayListLoop
 						bind:this={$playlistElements[i]}
-						bind:track={t}
+						bind:track={$playlist[i]}
 						id={i}
 					/>
 				{/if}
 			{/each}
 			{#if dragOverPlaylist}
-				<div class="drag-end" />
+				<div class="drag-end"></div>
 			{/if}
 		{:else}
 			<p class="placeholder">Drag Track here</p>
@@ -431,6 +435,7 @@ $: invoke("show_projector", {
 		<div class="editor">
 			{#if $selectedItem && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type === "track"}
 				<div class="prop-bar">
+					
 					<label>cut start</label>
 					<PropNumber
 						bind:value={$playlist[$selectedItem].edit.in}
@@ -487,7 +492,7 @@ $: invoke("show_projector", {
 					<div
 						class="border"
 						style={`left: ${($playlist[$selectedItem].edit.in / $playlist[$selectedItem].length) * 100}%;`}
-					/>
+					></div>
 				</div>
 			{:else}
 				<p class="placeholder">No track selected</p>
@@ -508,10 +513,10 @@ $: invoke("show_projector", {
 									class="state"
 									class:playing={e.playing}
 									style={`width: calc(100% * ${e.state != undefined ? e.state / e.length : 0});`}
-								/>
+								></div>
 								<button
 									title="current playing"
-									on:click={() => $playlistElements[i].stop(!e.playing, false)}
+									onclick={() => $playlistElements[i].stop(!e.playing, false)}
 								>
 									{#if e.inFade != null}
 										<img
@@ -548,7 +553,7 @@ $: invoke("show_projector", {
 					{#each $hotkeys as a, i}
 						<Hotkey
 							bind:this={$hotkeyElements[i]}
-							bind:track={a.track}
+							bind:track={$hotkeys[i].track}
 							key={a.key}
 						/>
 					{/each}
@@ -559,5 +564,7 @@ $: invoke("show_projector", {
 
 	<ContextMenu />
 
-	<div class="window-rim" />
+	{#if $uiPlatform == "mac"}
+		<div class="window-rim"></div>
+	{/if}
 </main>

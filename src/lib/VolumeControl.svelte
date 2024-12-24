@@ -3,8 +3,11 @@ import "../style/VolumeOptions.scss";
 import { editMode } from "@/ts/Stores";
 import type { PlaylistItem } from "@/ts/Types";
 
-export let track: PlaylistItem;
-export let slider: boolean = true;
+interface Props {
+	track: PlaylistItem,
+	slider: boolean
+}
+let { track = $bindable(), slider = true}: Props = $props();
 
 function handleVolumeDrag(e: any) {
 	e.preventDefault();
@@ -21,7 +24,7 @@ function handlePanDrag(e: any) {
 }
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if slider}
 	<div class="volume slider">
 		<span>
@@ -53,7 +56,7 @@ function handlePanDrag(e: any) {
 	<div class="volume knobs">
 		<!--Volume-->
 		<span
-			on:mousedown={e => {
+			onmousedown={e => {
 				console.log("start drag");
 				document.addEventListener("mousemove", handleVolumeDrag);
 				document.addEventListener("mouseup", f => {
@@ -74,15 +77,15 @@ function handlePanDrag(e: any) {
             transparent 360deg
           );
         `}
-			/>
+			></div>
 			<div class="knob" style={`rotate: ${track.volume * 2.7 - 135}deg;`}>
-				<div class="mark" />
+				<div class="mark"></div>
 			</div>
 		</span>
 
 		<!--Pan-->
 		<span
-			on:mousedown={e => {
+			onmousedown={e => {
 				console.log("start drag");
 				document.addEventListener("mousemove", handlePanDrag);
 				document.addEventListener("mouseup", f => {
@@ -115,9 +118,9 @@ function handlePanDrag(e: any) {
             rgb(77, 77, 77) 225deg,
             rgb(77, 77, 77) 360deg
           );`}
-			/>
+			></div>
 			<div class="knob" style={`rotate: ${track.pan * 135}deg;`}>
-				<div class="mark" />
+				<div class="mark"></div>
 			</div>
 		</span>
 	</div>

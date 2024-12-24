@@ -6,10 +6,10 @@ import { PhysicalPosition, PhysicalSize } from "@tauri-apps/api/window";
 import { onMount } from "svelte";
 import type { videoListElement } from "./ts/Types";
 
-let editMode = true;
-let list: Array<videoListElement> = [];
-let listElements: Array<HTMLVideoElement | HTMLImageElement> = [];
-let active = -1;
+let editMode = $state(true);
+let list: Array<videoListElement> = $state([])
+let listElements: Array<HTMLVideoElement | HTMLImageElement> = $state([]);
+let active = $state(-1);
 
 //play call to a video
 const unlistenPlay = listen("play_video", (event: any) => {
@@ -104,8 +104,8 @@ onMount(() => {
 });
 </script>
 
-<!-- svelte-ignore a11y-media-has-caption -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+
+<!-- svelte-ignore a11y_media_has_caption -->
 <div class="wrapper" class:editMode>
 	{#each list as item, i}
 		{#if item.type == "video"}
@@ -116,10 +116,10 @@ onMount(() => {
 				preload="auto"
 				class:vis={i == active}
 				bind:this={listElements[i]}
-				on:ended={() => {
+				onended={() => {
 					emit("video_ended", { name: list[active].name });
 				}}
-			/>
+			></video>
 		{:else}
 			<img
 				src={convertFileSrc(item.url)}

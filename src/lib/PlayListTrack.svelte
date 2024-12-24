@@ -21,25 +21,30 @@ import {
 	draggingOrigin,
 	hotkeys,
 } from "../ts/Stores";
-import type { PlaylistItem } from "@/ts/Types";
+import type { PlaylistTrack } from "@/ts/Types";
 import VolumeControl from "./VolumeControl.svelte";
 import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 
-export let track: PlaylistItem;
-export let id: number;
-export let ctx: AudioContext;
-export let masterGain: GainNode;
+interface Props {
+	track: PlaylistTrack;
+	id: number;
+	ctx: AudioContext;
+	masterGain: GainNode;
+}
+let { track = $bindable(), id, ctx, masterGain }: Props = $props();
 
-let hotkeySelect: number | undefined;
-let dragging = false;
-let dragover: "top" | "bottom" | null = null;
+let hotkeySelect: number | undefined = $state(undefined);
+let dragging = $state(false);
+let dragover: "top" | "bottom" | null = $state(null);
 let titleEl: HTMLElement;
+let cutIn: number = $state(0);
+let cutTrackLength: number = $state(0);
 
 //Audio
-let input: AudioBufferSourceNode;
-let gainNode: GainNode;
-let fadeNode: GainNode;
-let panNode: StereoPannerNode;
+let input: AudioBufferSourceNode = $state(new AudioBufferSourceNode(ctx));
+let gainNode: GainNode = $state(new GainNode(ctx));
+let fadeNode: GainNode  = $state(new GainNode(ctx));
+let panNode: StereoPannerNode = $state(new StereoPannerNode(ctx));
 
 function handleDragStart(e: DragEvent) {
 	//calc pointer position
@@ -167,6 +172,7 @@ async function load() {
 }
 
 function setupAudioChain() {
+	if (!input) return
 	gainNode = ctx.createGain();
 	fadeNode = ctx.createGain();
 	panNode = ctx.createStereoPanner();
@@ -251,20 +257,32 @@ onMount(() => {
 	load();
 });
 
-$: cutIn = track.edit.in;
-$: cutTrackLength = track.length ? track.length - cutIn : 0;
-$: panNode ? (panNode.pan.value = track.pan) : null;
-$: gainNode
-	? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
-	: null;
-$: $currentDragging == null ? (dragover = null) : null;
-$: if (!track.loaded) {
-	if (!track.missing) load();
-}
+$effect(() => {
+	cutIn = track.edit.in;
+});
+$effect(() => {
+	cutTrackLength = track.length ? track.length - cutIn : 0;
+});
+$effect(() => {
+	panNode ? (panNode.pan.value = track.pan) : null;
+});
+$effect(() => {
+	gainNode
+		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
+		: null;
+});
+$effect(() => {
+	$currentDragging == null ? (dragover = null) : null;
+});
+$effect(() => {
+	if (!track.loaded) {
+		if (!track.missing) load();
+	}
+});
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="playlist-item track"
 	class:selected={$selectedItem == id}
@@ -273,12 +291,12 @@ $: if (!track.loaded) {
 	class:drag-bottom={dragover == "top"}
 	class:loaded={track.buffer != undefined}
 	draggable={$editMode}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
-	on:dragover={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:drop={handleDrop}
-	on:click={() => selectedItem.set(id)}
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
+	ondragover={handleDragEnter}
+	ondragleave={handleDragLeave}
+	ondrop={handleDrop}
+	onclick={() => selectedItem.set(id)}
 >
 	<div class="drag-area">
 		<p>{id + 1}</p>
@@ -296,7 +314,7 @@ $: if (!track.loaded) {
 		<!--progress-->
 		<div
 			class="progress"
-			on:click={handleSkip}
+			onclick={handleSkip}
 			style={`
 				background: linear-gradient(
 					90deg,
@@ -305,7 +323,7 @@ $: if (!track.loaded) {
 					#555 calc(100% * ${track.state / cutTrackLength}),
 					#555 100%
 				);`}
-		/>
+		></div>
 
 		<Waveform
 			data={waveformCalc(track.buffer, 300, cutIn / track.length)}
@@ -318,7 +336,7 @@ $: if (!track.loaded) {
 			id="btn-reset"
 			class="play-btn"
 			title="Reset"
-			on:click={() => {
+			onclick={() => {
 				stop(true);
 			}}
 		>
@@ -331,7 +349,7 @@ $: if (!track.loaded) {
 			class="play-btn"
 			title="Play"
 			class:active={track.playing}
-			on:click={playPause}
+			onclick={playPause}
 		>
 			{#if track.inFade != null}
 				<img
@@ -352,8 +370,8 @@ $: if (!track.loaded) {
 			<div class="title">
 				<input
 					bind:this={titleEl}
-					on:focus={() => isEditing.update(e => e + 1)}
-					on:blur={() => isEditing.update(e => e - 1)}
+					onfocus={() => isEditing.update(e => e + 1)}
+					onblur={() => isEditing.update(e => e - 1)}
 					bind:value={track.name}
 					disabled={!$editMode}
 				/>
@@ -422,7 +440,7 @@ $: if (!track.loaded) {
 		<div class="options">
 			<!--Hotkey-->
 			<div class="option hotkey" class:assigned={track.hotkey != undefined}>
-				<select bind:value={hotkeySelect} on:change={handleHotkeySelect}>
+				<select bind:value={hotkeySelect} onchange={handleHotkeySelect}>
 					<option value={undefined}>none</option>
 					<option value={1}>1</option>
 					<option value={2}>2</option>
@@ -442,7 +460,7 @@ $: if (!track.loaded) {
 				id="btn-repeat"
 				class="option repeat-btn"
 				class:active={track.repeat}
-				on:click={() => {
+				onclick={() => {
 					track.repeat = $editMode ? !track.repeat : track.repeat;
 				}}
 				title="repeat track"
@@ -455,7 +473,7 @@ $: if (!track.loaded) {
 				id="btn-auto-reset"
 				class="option auto-reset-btn"
 				class:active={track.autoReset}
-				on:click={() => {
+				onclick={() => {
 					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
 				}}
 				title="auto reset track on pause"
