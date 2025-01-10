@@ -3,7 +3,7 @@ import {
 	playlist,
 	playlistElements,
 	selectedItem,
-} from "@/ts/Stores";
+} from "@/ts/Stores.svelte";
 import { get } from "svelte/store";
 
 export function testEdit() {

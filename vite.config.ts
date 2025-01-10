@@ -20,9 +20,9 @@ export default defineConfig(({ command }) => {
 				compilerOptions: {
 					runes: true,
 					compatibility: {
-						componentApi: 5
-					}
-				}
+						componentApi: 5,
+					},
+				},
 			}),
 
 			{

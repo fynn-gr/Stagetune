@@ -9,6 +9,8 @@ import { message } from "@tauri-apps/plugin-dialog";
 // Components
 import Annotation from "./Annotation.svelte";
 import Waveform from "./Waveform.svelte";
+import VolumeControl from "./VolumeControl.svelte";
+import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 
 // Stores, Utils
 import { DropHandler, secondsToMinutes, waveformCalc } from "@/ts/Utils";
@@ -20,10 +22,8 @@ import {
 	settings,
 	draggingOrigin,
 	hotkeys,
-} from "../ts/Stores";
+} from "../ts/Stores.svelte";
 import type { PlaylistTrack } from "@/ts/Types";
-import VolumeControl from "./VolumeControl.svelte";
-import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 
 interface Props {
 	track: PlaylistTrack;
@@ -43,7 +43,7 @@ let cutTrackLength: number = $state(0);
 //Audio
 let input: AudioBufferSourceNode = $state(new AudioBufferSourceNode(ctx));
 let gainNode: GainNode = $state(new GainNode(ctx));
-let fadeNode: GainNode  = $state(new GainNode(ctx));
+let fadeNode: GainNode = $state(new GainNode(ctx));
 let panNode: StereoPannerNode = $state(new StereoPannerNode(ctx));
 
 function handleDragStart(e: DragEvent) {
@@ -146,8 +146,8 @@ function handleSkip(e: MouseEvent) {
 
 async function load() {
 	//load file
-	const absPath = await join(track.pathSource!, track.path!);
-	console.log(absPath);
+	const absPath = await join(track.pathSource, track.path);
+	console.log("loading track: ", absPath);
 
 	//test file exist to throw error if file missing
 	if (await exists(absPath)) {
@@ -172,7 +172,7 @@ async function load() {
 }
 
 function setupAudioChain() {
-	if (!input) return
+	if (!input) return;
 	gainNode = ctx.createGain();
 	fadeNode = ctx.createGain();
 	panNode = ctx.createStereoPanner();
@@ -267,9 +267,7 @@ $effect(() => {
 	panNode ? (panNode.pan.value = track.pan) : null;
 });
 $effect(() => {
-	gainNode
-		? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
-		: null;
+	gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime);
 });
 $effect(() => {
 	$currentDragging == null ? (dragover = null) : null;

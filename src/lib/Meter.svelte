@@ -3,8 +3,8 @@ import { onMount } from "svelte";
 import { mapRange } from "../ts/Utils";
 
 interface Props {
-	analyser: any,
-	ctx: AudioContext,
+	analyser: any;
+	ctx: AudioContext;
 }
 let { analyser, ctx }: Props = $props();
 let meterCanvas: HTMLCanvasElement;

@@ -9,12 +9,12 @@ import {
 	playlist,
 	playlistElements,
 	contextMenu,
-} from "@/ts/Stores";
+} from "@/ts/Stores.svelte";
 import { onMount } from "svelte";
 
 interface Props {
-	key: number,
-	track: any,
+	key: number;
+	track: any;
 }
 let { key, track = $bindable() }: Props = $props();
 
@@ -72,7 +72,7 @@ onMount(async () => {
 					},
 					{
 						name: "Delete Hotkey",
-						icon: "./icons/menu_win/x.svg",
+						icon: "./icons/app_menu/x.svg",
 						iconColor: false,
 						accelerator: `alt+${key}`,
 						action: () => {

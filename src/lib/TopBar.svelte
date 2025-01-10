@@ -15,7 +15,7 @@ import {
 	settings,
 	showProjector,
 	uiPlatform,
-} from "@/ts/Stores";
+} from "@/ts/Stores.svelte";
 import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 import ModeSwitch from "./ModeSwitch.svelte";
 import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";

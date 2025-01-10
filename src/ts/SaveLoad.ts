@@ -23,7 +23,7 @@ import {
 	hotkeys,
 	settings,
 	splash,
-} from "./Stores";
+} from "./Stores.svelte";
 import type { PlaylistItem, SaveFile } from "./Types";
 
 export async function openPlaylist() {

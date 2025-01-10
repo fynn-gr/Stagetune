@@ -12,7 +12,7 @@ import { exit } from "@tauri-apps/plugin-process";
 
 // Components
 import PlayListTrack from "./lib/PlayListTrack.svelte";
-import PlayListAnotation from "./lib/PlayListAnotation.svelte";
+import PlayListAnotation from "./lib/PlayListAnnotation.svelte";
 import PlayListVideo from "./lib/PlayListVideo.svelte";
 import TrackListItem from "./lib/TrackListItem.svelte";
 import TopBar from "./lib/TopBar.svelte";
@@ -21,6 +21,8 @@ import Waveform from "./lib/Waveform.svelte";
 import Splash from "./lib/Splash.svelte";
 import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 import PropNumber from "./pureUI/components/props/PropNumber.svelte";
+import PlayListImage from "./lib/PlayListImage.svelte";
+import PlayListLoop from "./lib/PlayListLoop.svelte";
 
 // Stores, Utils
 import {
@@ -40,7 +42,7 @@ import {
 	selectedScreen,
 	currentDragging,
 	contextMenu,
-} from "./ts/Stores";
+} from "./ts/Stores.svelte";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
 	savePlaylist,
@@ -52,8 +54,6 @@ import {
 } from "./ts/SaveLoad";
 import { createNativeMenu } from "./ts/Menus";
 import { lastFolderFromPath } from "./ts/FileUtils";
-import PlayListImage from "./lib/PlayListImage.svelte";
-import PlayListLoop from "./lib/PlayListLoop.svelte";
 import { type PlaylistTrack } from "./ts/Types";
 
 let playlistEl: HTMLElement;
@@ -77,7 +77,7 @@ function openSettings() {
 }
 
 function handleDropPlaylist(e: Event) {
-	console.log("to playlist", $currentDragging);
+	console.log("add to playlist: ", $currentDragging);
 	e.preventDefault();
 	DropHandler($playlist.length);
 	dragOverPlaylist = false;
@@ -128,7 +128,7 @@ function skip() {
 }
 
 function deleteTrack() {
-	if ($selectedItem != null) {
+	if ($selectedItem) {
 		// Stop track if playing
 		if ($playlist[$selectedItem].playing)
 			$playlistElements[$selectedItem].stop();
@@ -295,9 +295,8 @@ $effect(() => {
 });
 </script>
 
-
 {#if $splash}
-<Splash bind:splashScreen={$splash} />
+	<Splash bind:splashScreen={$splash} />
 {/if}
 
 <!-- svelte-ignore a11y_label_has_associated_control -->
@@ -325,7 +324,6 @@ $effect(() => {
 										},
 									],
 								};
-								console.log($contextMenu, e);
 							}
 						}}
 					>
@@ -368,7 +366,6 @@ $effect(() => {
 		ondrop={handleDropPlaylist}
 		ondragover={handleDragOverPlaylist}
 		ondragleave={e => {
-			console.log("drag leave Playlist");
 			e.preventDefault();
 			dragOverPlaylist = false;
 		}}
@@ -386,48 +383,45 @@ $effect(() => {
 				bind:value={annotationWidth}
 			/>
 		{/if}
-		{#if $playlist.length > 0}
-			{#each $playlist as t, i}
-				{#if t.type === "track"}
-					<PlayListTrack
-						bind:this={$playlistElements[i]}
-						bind:track={$playlist[i] as PlaylistTrack}
-						id={i}
-						{ctx}
-						{masterGain}
-					/>
-				{:else if t.type === "video"}
-					<PlayListVideo
-						bind:this={$playlistElements[i]}
-						bind:track={$playlist[i]}
-						id={i}
-					/>
-				{:else if t.type === "image"}
-					<PlayListImage
-						bind:this={$playlistElements[i]}
-						bind:track={$playlist[i]}
-						id={i}
-					/>
-				{:else if t.type === "annotation"}
-					<PlayListAnotation
-						bind:this={$playlistElements[i]}
-						bind:track={$playlist[i]}
-						id={i}
-					/>
-				{:else if t.type === "loop"}
-					<PlayListLoop
-						bind:this={$playlistElements[i]}
-						bind:track={$playlist[i]}
-						id={i}
-					/>
-				{/if}
-			{/each}
-			{#if dragOverPlaylist}
-				<div class="drag-end"></div>
+		{#each $playlist as t, i}
+			{#if t.type === "track"}
+				<PlayListTrack
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i] as PlaylistTrack}
+					id={i}
+					{ctx}
+					{masterGain}
+				/>
+			{:else if t.type === "video"}
+				<PlayListVideo
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
+			{:else if t.type === "image"}
+				<PlayListImage
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
+			{:else if t.type === "annotation"}
+				<PlayListAnotation
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
+			{:else if t.type === "loop"}
+				<PlayListLoop
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
 			{/if}
-		{:else}
-			<p class="placeholder">Drag Track here</p>
+		{/each}
+		{#if dragOverPlaylist}
+			<div class="drag-end"></div>
 		{/if}
+		<p class="placeholder">Drag Track here</p>
 	</div>
 
 	<!--editor-->
@@ -435,7 +429,6 @@ $effect(() => {
 		<div class="editor">
 			{#if $selectedItem && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type === "track"}
 				<div class="prop-bar">
-					
 					<label>cut start</label>
 					<PropNumber
 						bind:value={$playlist[$selectedItem].edit.in}
@@ -507,7 +500,7 @@ $effect(() => {
 			{#if showCurrent}
 				<div class="current">
 					{#each $playlist as e, i}
-						{#if e.playing != undefined && e.state != 0}
+						{#if e.type != "annotation" && e.playing && e.state != 0}
 							<div class="song">
 								<div
 									class="state"

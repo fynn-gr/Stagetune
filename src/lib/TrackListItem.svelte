@@ -1,6 +1,6 @@
 <script lang="ts">
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { currentDragging, draggingOrigin } from "../ts/Stores";
+import { currentDragging, draggingOrigin } from "../ts/Stores.svelte";
 import { join } from "@tauri-apps/api/path";
 import { onMount } from "svelte";
 

@@ -7,14 +7,14 @@ import {
 	currentDragging,
 	draggingOrigin,
 	settings,
-} from "../ts/Stores";
+} from "../ts/Stores.svelte";
 import { onMount } from "svelte";
 import Annotation from "./Annotation.svelte";
 import type { PlaylistItem } from "@/ts/Types";
 
 interface Props {
-	track: PlaylistItem,
-	id: number,
+	track: PlaylistItem;
+	id: number;
 }
 let { track = $bindable(), id }: Props = $props();
 
@@ -59,7 +59,7 @@ function handleDrop(e: DragEvent) {
 		track.items?.push({
 			type: "image",
 			path: $currentDragging.path,
-			pathSource: $currentDragging.pathSource
+			pathSource: $currentDragging.pathSource,
 		});
 	} else {
 		let newPosition = id + 1;
@@ -75,13 +75,13 @@ function handleDragEnter(e: DragEvent) {
 	let y = e.clientY - rec.top;
 	if (y < 40) {
 		dragover = "top";
-		console.log("drag top")
+		console.log("drag top");
 	} else if ($currentDragging?.type == "image") {
 		dragover = "content";
-		console.log("drag content")
+		console.log("drag content");
 	} else {
 		dragover = "bottom";
-		console.log("drag bottom")
+		console.log("drag bottom");
 	}
 }
 
@@ -99,9 +99,10 @@ export function stop() {}
 
 onMount(() => {});
 
-$effect(() => {$currentDragging == null ? (dragover = null) : null;})
+$effect(() => {
+	$currentDragging == null ? (dragover = null) : null;
+});
 </script>
-
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->

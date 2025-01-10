@@ -1,9 +1,9 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { editMode } from "@/ts/Stores";
+import { editMode } from "@/ts/Stores.svelte";
 
 interface Props {
-	id: string
+	id: string;
 	icon: string;
 	iconActive?: string | null;
 	active?: boolean;

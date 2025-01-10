@@ -8,11 +8,12 @@ import {
 	playlist,
 	contextMenu,
 	draggingOrigin,
-} from "../ts/Stores";
+} from "../ts/Stores.svelte";
 import { onMount } from "svelte";
 
 interface Props {
-	track: any, id: number
+	track: any;
+	id: number;
 }
 let { track = $bindable(), id }: Props = $props();
 
@@ -93,7 +94,7 @@ onMount(() => {
 				content: [
 					{
 						name: "Gray",
-						icon: "./icons/menu_win/gray.svg",
+						icon: "./icons/app_menu/gray.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = null;
@@ -101,7 +102,7 @@ onMount(() => {
 					},
 					{
 						name: "Red",
-						icon: "./icons/menu_win/red.svg",
+						icon: "./icons/app_menu/red.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(5, 54%, 33%)";
@@ -109,7 +110,7 @@ onMount(() => {
 					},
 					{
 						name: "Orange",
-						icon: "./icons/menu_win/orange.svg",
+						icon: "./icons/app_menu/orange.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(25.4deg 66% 37%)";
@@ -117,7 +118,7 @@ onMount(() => {
 					},
 					{
 						name: "Green",
-						icon: "./icons/menu_win/green.svg",
+						icon: "./icons/app_menu/green.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(102deg 62% 30%)";
@@ -125,7 +126,7 @@ onMount(() => {
 					},
 					{
 						name: "Teal",
-						icon: "./icons/menu_win/teal.svg",
+						icon: "./icons/app_menu/teal.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(169.44deg 62% 30%)";
@@ -133,7 +134,7 @@ onMount(() => {
 					},
 					{
 						name: "Blue",
-						icon: "./icons/menu_win/blue.svg",
+						icon: "./icons/app_menu/blue.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(205.44deg 62% 30%)";
@@ -141,7 +142,7 @@ onMount(() => {
 					},
 					{
 						name: "Purple",
-						icon: "./icons/menu_win/purple.svg",
+						icon: "./icons/app_menu/purple.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(274.67deg 53.55% 26.67%)";

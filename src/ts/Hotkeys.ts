@@ -1,6 +1,11 @@
 import { get } from "svelte/store";
-import { currentDragging, draggingOrigin, hotkeys, playlist } from "./Stores";
-import { createPlaylistTrack } from "./Utils";
+import {
+	currentDragging,
+	draggingOrigin,
+	hotkeys,
+	playlist,
+} from "./Stores.svelte";
+import { createPlaylistItem } from "./Utils";
 
 export function addHotkey(key: number) {
 	if (get(draggingOrigin) == "src" && get(currentDragging)!.type == "track") {
@@ -8,7 +13,7 @@ export function addHotkey(key: number) {
 
 		// Dropping Track from src Tracklist, create Track in Playlist and add Hotkey
 		rmHotkeyForSameTrack();
-		createPlaylistTrack(
+		createPlaylistItem(
 			get(currentDragging)!.type,
 			get(currentDragging)!.path!,
 			get(currentDragging)?.pathSource!,

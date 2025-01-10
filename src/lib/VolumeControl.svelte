@@ -1,13 +1,13 @@
 <script lang="ts">
 import "../style/VolumeOptions.scss";
-import { editMode } from "@/ts/Stores";
-import type { PlaylistItem } from "@/ts/Types";
+import { editMode } from "@/ts/Stores.svelte";
+import type { PlaylistTrack } from "@/ts/Types";
 
 interface Props {
-	track: PlaylistItem,
-	slider: boolean
+	track: PlaylistTrack;
+	slider: boolean;
 }
-let { track = $bindable(), slider = true}: Props = $props();
+let { track = $bindable(), slider = true }: Props = $props();
 
 function handleVolumeDrag(e: any) {
 	e.preventDefault();

@@ -10,11 +10,10 @@ import {
 } from "@tauri-apps/api/window";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
-import { afterUpdate, onMount, tick } from "svelte";
+import { onMount, tick } from "svelte";
 import { writable } from "svelte/store";
-import type { Settings } from "./ts/Types";
 
-import { uiPlatform } from "./ts/Stores";
+import { uiPlatform } from "./ts/Stores.svelte";
 import Keymap from "./pureUI/components//settings/Keymap.svelte";
 import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
@@ -26,21 +25,9 @@ import {
 import { emit } from "@tauri-apps/api/event";
 import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svelte";
 import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
+import { settingsDefault, type Settings } from "./ts/SettingsDefault";
 
-const settings = writable<Settings>({
-	recent: [],
-	lang: "en",
-	show_splash: true,
-	ui_scale: 1,
-	performance_mode: false,
-	projector_screen: {},
-	debug: false,
-
-	showAnnotations: true,
-	showFadeOptions: true,
-	showVolumeOptions: true,
-	allowSkipLive: true,
-});
+const settings = writable<Settings>(settingsDefault);
 const appWindow = getCurrentWindow();
 let tab: string = "general";
 let stagetuneVersion: string;
@@ -104,10 +91,6 @@ onMount(async () => {
 	console.log("all av Monitors: ", await availableMonitors());
 	console.log("current Monitor: ", await currentMonitor());
 	console.log("primary Monitor: ", await primaryMonitor());
-});
-
-afterUpdate(() => {
-	setWindowHeight();
 });
 </script>
 

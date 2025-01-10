@@ -2,33 +2,8 @@ import type { MouseEventHandler } from "svelte/elements";
 
 export type ItemType = "track" | "video" | "image" | "annotation" | "loop";
 
-export type PlaylistItem = {
-	type: ItemType; // type of item
-	path?: string; //relative path
-	pathSource?: string; // absolute path of the folder
-	name?: string; //title of the item
-	length?: number; //track duration
-	playing?: boolean; //is currently playing
-	state?: number; //seconds playhead is at, not including cut In
-	volume?: number; //sound volume, deafult is 80 out of 100
-	pan?: number; //stereo pan -1 to 1
-	repeat?: boolean; //repeat track option is on
-	autoReset?: boolean; //auto reset after pause option is on
-	edit?: { in: number; out: number }; //cut second at beginning and end (only beginning is implemented)
-	fade?: { in: number; out: number }; //sedonds to fade in and out
-	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
-	buffer?: AudioBuffer; //audio buffer
-	startedAt?: number; //track was started at seconds
-	pausedAt?: number; // track was paused at seconds
-	inFade?: "in" | "out" | null; //track is currently in fade or null
-	hotkey?: number | null; //hotkey number assigned, null if not assigned
-	missing?: boolean; //true if file could not be found
-	loaded?: boolean; //if track finished loading
-	items?: Array<{ type: string, path: string, pathSource: string}>; //Loop items
-};
-
 export type PlaylistTrack = {
-	type: ItemType; // type of item
+	type: "track"; // type of item
 	path: string; //relative path
 	pathSource: string; // absolute path of the folder
 	name: string; //title of the item
@@ -42,52 +17,68 @@ export type PlaylistTrack = {
 	edit: { in: number; out: number }; //cut second at beginning and end (only beginning is implemented)
 	fade: { in: number; out: number }; //sedonds to fade in and out
 	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
-	buffer: AudioBuffer; //audio buffer
+	buffer: AudioBuffer | null; //audio buffer
 	startedAt: number; //track was started at seconds
 	pausedAt: number; // track was paused at seconds
 	inFade: "in" | "out" | null; //track is currently in fade or null
 	hotkey: number | null; //hotkey number assigned, null if not assigned
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
-}
+};
 
 export type PlaylistVideo = {
 	type: "video"; // type of item
-	path?: string; //relative path
-	pathSource?: string; // absolute path of the folder
+	path: string; //relative path
+	pathSource: string; // absolute path of the folder
+	name: string; //title of the item
+	length: number; //track duration
+	playing: boolean; //is currently playing
+	state: number; //seconds playhead is at, not including cut In
+	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
+	startedAt: number; //track was started at seconds
+	pausedAt: number; // track was paused at seconds
+	missing: boolean; //true if file could not be found
+	loaded: boolean; //if track finished loading
+};
+
+export type PlaylistAnnotation = {
+	type: "annotation"; // type of item
+	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
+};
+
+export type PlaylistImage = {
+	type: "image"; // type of item
+	path: string; //relative path
+	pathSource: string; // absolute path of the folder
+	name: string; //title of the item
+	playing: boolean; //is currently playing
+	state: number; //seconds playhead is at, not including cut In
+	missing: boolean; //true if file could not be found
+	loaded: boolean; //if track finished loading
+};
+
+export type PlaylistLoop = {
+	type: "loop"; // type of item
 	name?: string; //title of the item
-	length?: number; //track duration
 	playing?: boolean; //is currently playing
 	state?: number; //seconds playhead is at, not including cut In
-	autoReset?: boolean; //auto reset after pause option is on
+	volume?: number; //sound volume, deafult is 80 out of 100
+	pan?: number; //stereo pan -1 to 1
 	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
-	startedAt?: number; //track was started at seconds
-	pausedAt?: number; // track was paused at seconds
-	hotkey?: number | null; //hotkey number assigned, null if not assigned
-	missing?: boolean; //true if file could not be found
-	loaded?: boolean; //if track finished loading
-}
-
-export type Settings = {
-	recent: Array<string>;
-	lang: string;
-	show_splash: boolean;
-	ui_scale: number;
-	performance_mode: boolean;
-	projector_screen: any;
-	debug: boolean;
-
-	showAnnotations: boolean;
-	showFadeOptions: boolean;
-	showVolumeOptions: boolean;
-	allowSkipLive: boolean;
+	items?: Array<{ type: string; path: string; pathSource: string }>; //Loop items
 };
 
 export type SaveFile = {
 	meta: {
 		version: string;
 	};
-	playlist: PlaylistItem[];
+	playlist: Array<
+		| PlaylistTrack
+		| PlaylistVideo
+		| PlaylistAnnotation
+		| PlaylistImage
+		| PlaylistLoop
+	>;
 	hotkeys: Hotkey[];
 	srcFiles: SrcDirectory[];
 };
@@ -99,7 +90,7 @@ export type SrcDirectory = {
 
 export type Hotkey = {
 	key: number;
-	track: PlaylistItem | null;
+	track: PlaylistTrack | null;
 };
 
 export type videoListElement = {

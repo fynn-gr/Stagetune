@@ -16,7 +16,7 @@ import {
 	currentDragging,
 	draggingOrigin,
 	settings,
-} from "../ts/Stores";
+} from "../ts/Stores.svelte";
 
 interface Props {
 	track: PlaylistItem;
@@ -128,9 +128,10 @@ onDestroy(() => {
 	unlistenState();
 });
 
-$effect(() => { $currentDragging == null ? (dragover = null) : null});
+$effect(() => {
+	$currentDragging == null ? (dragover = null) : null;
+});
 </script>
-
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div

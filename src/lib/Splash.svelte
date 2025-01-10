@@ -11,7 +11,9 @@ const links = {
 	Documentation: "https://github.com/fynn-gr/stagetune/docs",
 };
 
-interface Props { splashScreen: boolean }
+interface Props {
+	splashScreen: boolean;
+}
 let { splashScreen = $bindable() }: Props = $props();
 let version: string;
 
@@ -21,7 +23,6 @@ onMount(async () => {
 	version = fullVersion.slice(0, fullVersion.lastIndexOf("."));
 });
 </script>
-
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_missing_attribute -->

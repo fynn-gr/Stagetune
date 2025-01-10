@@ -7,7 +7,7 @@ import { onMount } from "svelte";
 import type { videoListElement } from "./ts/Types";
 
 let editMode = $state(true);
-let list: Array<videoListElement> = $state([])
+let list: Array<videoListElement> = $state([]);
 let listElements: Array<HTMLVideoElement | HTMLImageElement> = $state([]);
 let active = $state(-1);
 
@@ -103,7 +103,6 @@ onMount(() => {
 	return () => clearInterval(interval);
 });
 </script>
-
 
 <!-- svelte-ignore a11y_media_has_caption -->
 <div class="wrapper" class:editMode>
