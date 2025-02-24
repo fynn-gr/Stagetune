@@ -147,7 +147,7 @@ $effect(() => {
 				stop(true);
 			}}
 		>
-			<img src="./icons/top_bar/reset.svg" alt="" draggable="false" />
+			<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
 		</button>
 
 		<!--play Button-->
@@ -160,15 +160,15 @@ $effect(() => {
 		>
 			{#if track.inFade != null}
 				<img
-					src="./icons/top_bar/fade.svg"
+					src="./icons/topbar/fade.svg"
 					alt=""
 					draggable="false"
 					class="fade-state-icon"
 				/>
 			{:else if track.playing}
-				<img src="./icons/top_bar/pause.svg" alt="" draggable="false" />
+				<img src="./icons/topbar/pause.svg" alt="" draggable="false" />
 			{:else}
-				<img src="./icons/top_bar/play.svg" alt="" draggable="false" />
+				<img src="./icons/topbar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
 

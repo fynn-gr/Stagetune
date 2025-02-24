@@ -9,7 +9,7 @@ export type PlaylistTrack = {
 	name: string; //title of the item
 	length: number; //track duration
 	playing: boolean; //is currently playing
-	state: number; //seconds playhead is at, not including cut In
+	timeCode: number; //seconds playhead is at, not including cut In
 	volume: number; //sound volume, deafult is 80 out of 100
 	pan: number; //stereo pan -1 to 1
 	repeat: boolean; //repeat track option is on
@@ -33,7 +33,7 @@ export type PlaylistVideo = {
 	name: string; //title of the item
 	length: number; //track duration
 	playing: boolean; //is currently playing
-	state: number; //seconds playhead is at, not including cut In
+	timeCode: number; //seconds playhead is at, not including cut In
 	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
 	startedAt: number; //track was started at seconds
 	pausedAt: number; // track was paused at seconds
@@ -52,7 +52,7 @@ export type PlaylistImage = {
 	pathSource: string; // absolute path of the folder
 	name: string; //title of the item
 	playing: boolean; //is currently playing
-	state: number; //seconds playhead is at, not including cut In
+	timeCode: number; //seconds playhead is at, not including cut In
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
 };
@@ -61,7 +61,7 @@ export type PlaylistLoop = {
 	type: "loop"; // type of item
 	name?: string; //title of the item
 	playing?: boolean; //is currently playing
-	state?: number; //seconds playhead is at, not including cut In
+	timeCode?: number; //seconds playhead is at, not including cut In
 	volume?: number; //sound volume, deafult is 80 out of 100
 	pan?: number; //stereo pan -1 to 1
 	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used

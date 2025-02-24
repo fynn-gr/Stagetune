@@ -1,26 +1,30 @@
 <script lang="ts">
 import "../style/VolumeOptions.scss";
 import { editMode } from "@/ts/Stores.svelte";
-import type { PlaylistTrack } from "@/ts/Types";
 
 interface Props {
-	track: PlaylistTrack;
+	volume: number;
+	pan: number;
 	slider: boolean;
 }
-let { track = $bindable(), slider = true }: Props = $props();
+let {
+	volume = $bindable(),
+	pan = $bindable(),
+	slider = true,
+}: Props = $props();
 
 function handleVolumeDrag(e: any) {
 	e.preventDefault();
 	e.stopPropagation();
-	track.volume -= Math.round(e.movementY * 0.4);
-	track.volume = Math.max(0, Math.min(track.volume, 100));
+	volume -= Math.round(e.movementY * 0.4);
+	volume = Math.max(0, Math.min(volume, 100));
 }
 
 function handlePanDrag(e: any) {
 	e.preventDefault();
 	e.stopPropagation();
-	track.pan -= e.movementY * 0.01;
-	track.pan = Math.max(-1, Math.min(track.pan, 1));
+	pan -= e.movementY * 0.01;
+	pan = Math.max(-1, Math.min(pan, 1));
 }
 </script>
 
@@ -30,7 +34,7 @@ function handlePanDrag(e: any) {
 		<span>
 			<p>Vol</p>
 			<input
-				bind:value={track.volume}
+				bind:value={volume}
 				type="range"
 				min="0"
 				max="100"
@@ -43,7 +47,7 @@ function handlePanDrag(e: any) {
 			<p>Pan</p>
 			<input
 				class="pan"
-				bind:value={track.pan}
+				bind:value={pan}
 				type="range"
 				min={-1}
 				max={1}
@@ -70,15 +74,15 @@ function handlePanDrag(e: any) {
           background-image: conic-gradient(
             from 225deg,
             var(--accent) 0deg,
-            var(--accent) ${track.volume * 2.7}deg,
-            rgb(77, 77, 77) ${track.volume * 2.7}deg,
+            var(--accent) ${volume * 2.7}deg,
+            rgb(77, 77, 77) ${volume * 2.7}deg,
             rgb(77, 77, 77) 270deg,
             transparent 270deg,
             transparent 360deg
           );
         `}
 			></div>
-			<div class="knob" style={`rotate: ${track.volume * 2.7 - 135}deg;`}>
+			<div class="knob" style={`rotate: ${volume * 2.7 - 135}deg;`}>
 				<div class="mark"></div>
 			</div>
 		</span>
@@ -95,23 +99,23 @@ function handlePanDrag(e: any) {
 		>
 			<div
 				class="arch"
-				style={track.pan == 0
+				style={pan == 0
 					? "background: rgb(77, 77, 77);"
-					: track.pan < 0
+					: pan < 0
 						? `background-image: conic-gradient(
             rgb(77 ,77, 77) 0deg,
             rgb(77, 77, 77) 135deg,
             transparent 135deg,
             transparent 225deg,
             rgb(77, 77, 77) 225deg,
-            rgb(77, 77, 77) ${360 - track.pan * -135}deg,
-            var(--accent) ${360 - track.pan * -135}deg,
+            rgb(77, 77, 77) ${360 - pan * -135}deg,
+            var(--accent) ${360 - pan * -135}deg,
             var(--accent) 360deg
           );`
 						: `background-image: conic-gradient(
             var(--accent) 0deg,
-            var(--accent) ${track.pan * 135}deg,
-            rgb(77, 77, 77) ${track.pan * 135}deg,
+            var(--accent) ${pan * 135}deg,
+            rgb(77, 77, 77) ${pan * 135}deg,
             rgb(77, 77, 77) 135deg,
             transparent 135deg,
             transparent 225deg,
@@ -119,7 +123,7 @@ function handlePanDrag(e: any) {
             rgb(77, 77, 77) 360deg
           );`}
 			></div>
-			<div class="knob" style={`rotate: ${track.pan * 135}deg;`}>
+			<div class="knob" style={`rotate: ${pan * 135}deg;`}>
 				<div class="mark"></div>
 			</div>
 		</span>

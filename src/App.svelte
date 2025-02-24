@@ -4,7 +4,7 @@ import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
 
 // Svelte, Tauri
-import { onMount } from "svelte";
+import { onMount, tick } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
@@ -387,7 +387,27 @@ $effect(() => {
 			{#if t.type === "track"}
 				<PlayListTrack
 					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i] as PlaylistTrack}
+					bind:type={t.type}
+					bind:path={t.path}
+					bind:pathSource={t.pathSource}
+					bind:name={t.name}
+					bind:length={t.length}
+					bind:playing={t.playing}
+					bind:timeCode={t.timeCode}
+					bind:volume={t.volume}
+					bind:pan={t.pan}
+					bind:repeat={t.repeat}
+					bind:autoReset={t.autoReset}
+					bind:edit={t.edit}
+					bind:fade={t.fade}
+					bind:annotation={t.annotation}
+					bind:buffer={t.buffer}
+					bind:startedAt={t.startedAt}
+					bind:pausedAt={t.pausedAt}
+					bind:inFade={t.inFade}
+					bind:hotkey={t.hotkey}
+					bind:missing={t.missing}
+					bind:loaded={t.loaded}
 					id={i}
 					{ctx}
 					{masterGain}
@@ -513,20 +533,20 @@ $effect(() => {
 								>
 									{#if e.inFade != null}
 										<img
-											src="./icons/top_bar/fade.svg"
+											src="./icons/topbar/fade.svg"
 											alt=""
 											draggable="false"
 											class="fade-state-icon"
 										/>
 									{:else if e.playing}
 										<img
-											src="./icons/top_bar/stop.svg"
+											src="./icons/topbar/stop.svg"
 											alt=""
 											draggable="false"
 										/>
 									{:else}
 										<img
-											src="./icons/top_bar/reset.svg"
+											src="./icons/topbar/reset.svg"
 											alt=""
 											draggable="false"
 										/>

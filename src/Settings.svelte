@@ -29,7 +29,7 @@ import { settingsDefault, type Settings } from "./ts/SettingsDefault";
 
 const settings = writable<Settings>(settingsDefault);
 const appWindow = getCurrentWindow();
-let tab: string = "general";
+let tab: string = $state("general");
 let stagetuneVersion: string;
 let tauriVersion: string;
 
@@ -240,5 +240,7 @@ onMount(async () => {
 		{/if}
 	</div>
 
-	<div class="window-rim" />
+	{#if $uiPlatform == "mac"}
+		<div class="window-rim" />
+	{/if}
 </main>
