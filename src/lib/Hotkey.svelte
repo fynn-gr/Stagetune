@@ -9,11 +9,14 @@ import {
 	playlist,
 	playlistElements,
 	contextMenu,
-} from "@/ts/Stores";
+} from "@/ts/Stores.svelte";
 import { onMount } from "svelte";
 
-export let key: number;
-export let track: any = null;
+interface Props {
+	key: number;
+	track: any;
+}
+let { key, track = $bindable() }: Props = $props();
 
 onMount(async () => {
 	document.addEventListener("keydown", e => {
@@ -44,15 +47,15 @@ onMount(async () => {
 
 <div
 	class="hotkeySlot"
-	on:dragover={e => {
+	ondragover={e => {
 		e.preventDefault();
 		return false;
 	}}
-	on:drop={e => {
+	ondrop={e => {
 		e.preventDefault();
 		addHotkey(key);
 	}}
-	on:contextmenu={e => {
+	oncontextmenu={e => {
 		if ($editMode) {
 			$contextMenu = {
 				position: { x: e.clientX, y: e.clientY },
@@ -69,7 +72,7 @@ onMount(async () => {
 					},
 					{
 						name: "Delete Hotkey",
-						icon: "./icons/menu_win/x.svg",
+						icon: "./icons/app_menu/x.svg",
 						iconColor: false,
 						accelerator: `alt+${key}`,
 						action: () => {

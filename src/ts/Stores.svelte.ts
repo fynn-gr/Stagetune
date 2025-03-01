@@ -3,29 +3,20 @@ import type {
 	ContextMenu,
 	Hotkey,
 	Operator,
-	Settings,
+	PlaylistAnnotation,
+	PlaylistImage,
 	PlaylistItem,
+	PlaylistLoop,
+	PlaylistTrack,
+	PlaylistVideo,
 	SrcDirectory,
 } from "./Types";
 import { emit } from "@tauri-apps/api/event";
 import type { Monitor } from "@tauri-apps/api/window";
 import type { PlaylistElement } from "@/lib/Components";
+import { settingsDefault, type Settings } from "./SettingsDefault";
 
-export const settings = writable<Settings>({
-	recent: [],
-	lang: "en",
-	show_splash: true,
-	ui_scale: 1,
-	performance_mode: false,
-	projector_screen: {},
-	debug: false,
-
-	//Playlist view settings
-	showAnnotations: true,
-	showFadeOptions: true,
-	showVolumeOptions: true,
-	allowSkipLive: true,
-});
+export const settings = writable<Settings>(settingsDefault);
 export const showProjector = writable<boolean>(false);
 
 // screens for projector
@@ -298,7 +289,15 @@ export const theme = writable("dark"); //unused, just for compatibility with pur
 export const splash = writable<boolean>(false); //splash screen visible
 
 export const selectedItem = writable<number | undefined>(undefined);
-export const playlist = writable<PlaylistItem[]>([]);
+export const playlist = writable<
+	Array<
+		| PlaylistTrack
+		| PlaylistVideo
+		| PlaylistAnnotation
+		| PlaylistImage
+		| PlaylistLoop
+	>
+>([]);
 export const hotkeys = writable<Hotkey[]>([
 	{
 		key: 1,

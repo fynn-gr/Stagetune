@@ -4,7 +4,7 @@ import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
 
 // Svelte, Tauri
-import { onMount } from "svelte";
+import { onMount, tick } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
@@ -12,7 +12,7 @@ import { exit } from "@tauri-apps/plugin-process";
 
 // Components
 import PlayListTrack from "./lib/PlayListTrack.svelte";
-import PlayListAnotation from "./lib/PlayListAnotation.svelte";
+import PlayListAnotation from "./lib/PlayListAnnotation.svelte";
 import PlayListVideo from "./lib/PlayListVideo.svelte";
 import TrackListItem from "./lib/TrackListItem.svelte";
 import TopBar from "./lib/TopBar.svelte";
@@ -21,6 +21,8 @@ import Waveform from "./lib/Waveform.svelte";
 import Splash from "./lib/Splash.svelte";
 import ContextMenu from "./pureUI/components/ContextMenu.svelte";
 import PropNumber from "./pureUI/components/props/PropNumber.svelte";
+import PlayListImage from "./lib/PlayListImage.svelte";
+import PlayListLoop from "./lib/PlayListLoop.svelte";
 
 // Stores, Utils
 import {
@@ -40,7 +42,7 @@ import {
 	selectedScreen,
 	currentDragging,
 	contextMenu,
-} from "./ts/Stores";
+} from "./ts/Stores.svelte";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
 	savePlaylist,
@@ -52,16 +54,15 @@ import {
 } from "./ts/SaveLoad";
 import { createNativeMenu } from "./ts/Menus";
 import { lastFolderFromPath } from "./ts/FileUtils";
-import PlayListImage from "./lib/PlayListImage.svelte";
-import PlayListLoop from "./lib/PlayListLoop.svelte";
+import { type PlaylistTrack } from "./ts/Types";
 
 let playlistEl: HTMLElement;
-let annotationWidth: number = 25;
-let showTracklist = true;
-let showEditor = false;
-let showCurrent = true;
-let showHotkeys = true;
-let dragOverPlaylist = false;
+let annotationWidth: number = $state(25);
+let showTracklist = $state(true);
+let showEditor = $state(false);
+let showCurrent = $state(true);
+let showHotkeys = $state(true);
+let dragOverPlaylist = $state(false);
 
 checkSettingsExist();
 
@@ -76,7 +77,7 @@ function openSettings() {
 }
 
 function handleDropPlaylist(e: Event) {
-	console.log("to playlist", $currentDragging);
+	console.log("add to playlist: ", $currentDragging);
 	e.preventDefault();
 	DropHandler($playlist.length);
 	dragOverPlaylist = false;
@@ -127,7 +128,7 @@ function skip() {
 }
 
 function deleteTrack() {
-	if ($selectedItem != null) {
+	if ($selectedItem) {
 		// Stop track if playing
 		if ($playlist[$selectedItem].playing)
 			$playlistElements[$selectedItem].stop();
@@ -284,19 +285,21 @@ onMount(() => {
 	return () => clearInterval(updateInterval);
 });
 
-$: emit("editMode", { edit: $editMode });
-$: invoke("show_projector", {
-	show: $showProjector ? true : false,
+$effect(() => {
+	emit("editMode", { edit: $editMode });
+});
+$effect(() => {
+	invoke("show_projector", {
+		show: $showProjector ? true : false,
+	});
 });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<!-- svelte-ignore a11y-label-has-associated-control -->
 {#if $splash}
 	<Splash bind:splashScreen={$splash} />
 {/if}
 
+<!-- svelte-ignore a11y_label_has_associated_control -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
 	{#if $editMode && showTracklist}
@@ -306,7 +309,7 @@ $: invoke("show_projector", {
 					<p
 						class="category"
 						title={p.path}
-						on:contextmenu={e => {
+						oncontextmenu={e => {
 							if ($editMode) {
 								$contextMenu = {
 									position: { x: e.clientX, y: e.clientY },
@@ -321,7 +324,6 @@ $: invoke("show_projector", {
 										},
 									],
 								};
-								console.log($contextMenu, e);
 							}
 						}}
 					>
@@ -333,14 +335,14 @@ $: invoke("show_projector", {
 				{/each}
 				<button
 					class="placeholder"
-					on:click={() => {
+					onclick={() => {
 						openDir();
 					}}>Add Source Directory</button
 				>
 			</div>
 		</div>
 	{:else}
-		<div />
+		<div></div>
 	{/if}
 
 	<!--TopBar-->
@@ -361,10 +363,9 @@ $: invoke("show_projector", {
 		style={`--annotation-width: calc(${annotationWidth}% - ${
 			$editMode ? 46 : 9
 		}rem);`}
-		on:drop={handleDropPlaylist}
-		on:dragover={handleDragOverPlaylist}
-		on:dragleave={e => {
-			console.log("drag leave Playlist");
+		ondrop={handleDropPlaylist}
+		ondragover={handleDragOverPlaylist}
+		ondragleave={e => {
 			e.preventDefault();
 			dragOverPlaylist = false;
 		}}
@@ -382,48 +383,65 @@ $: invoke("show_projector", {
 				bind:value={annotationWidth}
 			/>
 		{/if}
-		{#if $playlist.length > 0}
-			{#each $playlist as t, i}
-				{#if t.type === "track"}
-					<PlayListTrack
-						bind:this={$playlistElements[i]}
-						bind:track={t}
-						id={i}
-						{ctx}
-						{masterGain}
-					/>
-				{:else if t.type === "video"}
-					<PlayListVideo
-						bind:this={$playlistElements[i]}
-						bind:track={t}
-						id={i}
-					/>
-				{:else if t.type === "image"}
-					<PlayListImage
-						bind:this={$playlistElements[i]}
-						bind:track={t}
-						id={i}
-					/>
-				{:else if t.type === "annotation"}
-					<PlayListAnotation
-						bind:this={$playlistElements[i]}
-						bind:track={t}
-						id={i}
-					/>
-				{:else if t.type === "loop"}
-					<PlayListLoop
-						bind:this={$playlistElements[i]}
-						bind:track={t}
-						id={i}
-					/>
-				{/if}
-			{/each}
-			{#if dragOverPlaylist}
-				<div class="drag-end" />
+		{#each $playlist as t, i}
+			{#if t.type === "track"}
+				<PlayListTrack
+					bind:this={$playlistElements[i]}
+					bind:type={t.type}
+					bind:path={t.path}
+					bind:pathSource={t.pathSource}
+					bind:name={t.name}
+					bind:length={t.length}
+					bind:playing={t.playing}
+					bind:timeCode={t.timeCode}
+					bind:volume={t.volume}
+					bind:pan={t.pan}
+					bind:repeat={t.repeat}
+					bind:autoReset={t.autoReset}
+					bind:edit={t.edit}
+					bind:fade={t.fade}
+					bind:annotation={t.annotation}
+					bind:buffer={t.buffer}
+					bind:startedAt={t.startedAt}
+					bind:pausedAt={t.pausedAt}
+					bind:inFade={t.inFade}
+					bind:hotkey={t.hotkey}
+					bind:missing={t.missing}
+					bind:loaded={t.loaded}
+					id={i}
+					{ctx}
+					{masterGain}
+				/>
+			{:else if t.type === "video"}
+				<PlayListVideo
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
+			{:else if t.type === "image"}
+				<PlayListImage
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
+			{:else if t.type === "annotation"}
+				<PlayListAnotation
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
+			{:else if t.type === "loop"}
+				<PlayListLoop
+					bind:this={$playlistElements[i]}
+					bind:track={$playlist[i]}
+					id={i}
+				/>
 			{/if}
-		{:else}
-			<p class="placeholder">Drag Track here</p>
+		{/each}
+		{#if dragOverPlaylist}
+			<div class="drag-end"></div>
 		{/if}
+		<p class="placeholder">Drag Track here</p>
 	</div>
 
 	<!--editor-->
@@ -487,7 +505,7 @@ $: invoke("show_projector", {
 					<div
 						class="border"
 						style={`left: ${($playlist[$selectedItem].edit.in / $playlist[$selectedItem].length) * 100}%;`}
-					/>
+					></div>
 				</div>
 			{:else}
 				<p class="placeholder">No track selected</p>
@@ -502,33 +520,33 @@ $: invoke("show_projector", {
 			{#if showCurrent}
 				<div class="current">
 					{#each $playlist as e, i}
-						{#if e.playing != undefined && e.state != 0}
+						{#if e.type != "annotation" && e.playing && e.state != 0}
 							<div class="song">
 								<div
 									class="state"
 									class:playing={e.playing}
 									style={`width: calc(100% * ${e.state != undefined ? e.state / e.length : 0});`}
-								/>
+								></div>
 								<button
 									title="current playing"
-									on:click={() => $playlistElements[i].stop(!e.playing, false)}
+									onclick={() => $playlistElements[i].stop(!e.playing, false)}
 								>
 									{#if e.inFade != null}
 										<img
-											src="./icons/top_bar/fade.svg"
+											src="./icons/topbar/fade.svg"
 											alt=""
 											draggable="false"
 											class="fade-state-icon"
 										/>
 									{:else if e.playing}
 										<img
-											src="./icons/top_bar/stop.svg"
+											src="./icons/topbar/stop.svg"
 											alt=""
 											draggable="false"
 										/>
 									{:else}
 										<img
-											src="./icons/top_bar/reset.svg"
+											src="./icons/topbar/reset.svg"
 											alt=""
 											draggable="false"
 										/>
@@ -548,7 +566,7 @@ $: invoke("show_projector", {
 					{#each $hotkeys as a, i}
 						<Hotkey
 							bind:this={$hotkeyElements[i]}
-							bind:track={a.track}
+							bind:track={$hotkeys[i].track}
 							key={a.key}
 						/>
 					{/each}
@@ -559,5 +577,7 @@ $: invoke("show_projector", {
 
 	<ContextMenu />
 
-	<div class="window-rim" />
+	{#if $uiPlatform == "mac"}
+		<div class="window-rim"></div>
+	{/if}
 </main>

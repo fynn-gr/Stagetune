@@ -4,41 +4,91 @@ import {
 	currentDragging,
 	draggingOrigin,
 	playlist,
-	playlistPath,
 	selectedItem,
-} from "./Stores";
-import type { ItemType, PlaylistItem, videoListElement } from "./Types";
+} from "./Stores.svelte";
+import type {
+	ItemType,
+	PlaylistAnnotation,
+	PlaylistImage,
+	PlaylistTrack,
+	PlaylistVideo,
+	videoListElement,
+} from "./Types";
 import { join } from "@tauri-apps/api/path";
 
-export function createPlaylistTrack(
+export function createPlaylistItem(
 	type: ItemType,
 	path: string,
 	pathSource: string,
 	name: string,
 ) {
-	playlist.update(e => {
-		e.splice(get(playlist).length, 0, {
-			type,
-			path,
-			pathSource,
-			name,
-			playing: false,
-			state: 0,
-			volume: 80,
-			pan: 0,
-			repeat: false,
-			autoReset: false,
-			fade: { in: 0, out: 0 },
-			edit: { in: 0, out: 0 },
-			annotation: null,
-			startedAt: 0,
-			pausedAt: 0,
-			inFade: null,
-			missing: false,
-			loaded: false,
-		});
-		return e;
-	});
+	switch (type) {
+		case "track":
+			let newTrack: PlaylistTrack = {
+				type: "track",
+				path: path,
+				pathSource: pathSource,
+				name: name,
+				length: 0,
+				playing: false,
+				state: 0,
+				volume: 80,
+				pan: 0,
+				repeat: false,
+				autoReset: false,
+				fade: { in: 0, out: 0 },
+				edit: { in: 0, out: 0 },
+				annotation: null,
+				buffer: null,
+				startedAt: 0,
+				pausedAt: 0,
+				inFade: null,
+				hotkey: null,
+				missing: false,
+				loaded: false,
+			};
+			playlist.update(e => {
+				e.splice(get(playlist).length, 0, newTrack);
+				return e;
+			});
+			break;
+		case "video":
+			let newVideo: PlaylistVideo = {
+				type: "video",
+				path: path,
+				pathSource: pathSource,
+				name: name,
+				length: 0,
+				playing: false,
+				state: 0,
+				annotation: null,
+				startedAt: 0,
+				pausedAt: 0,
+				missing: false,
+				loaded: false,
+			};
+			playlist.update(e => {
+				e.splice(get(playlist).length, 0, newVideo);
+				return e;
+			});
+			break;
+		case "image":
+			let newImage: PlaylistImage = {
+				type: "image",
+				path: path,
+				pathSource: pathSource,
+				name: name,
+				playing: false,
+				state: 0,
+				missing: false,
+				loaded: false,
+			};
+			playlist.update(e => {
+				e.splice(get(playlist).length, 0, newImage);
+				return e;
+			});
+			break;
+	}
 }
 
 export function secondsToMinutes(inp: number): string {
@@ -70,7 +120,6 @@ export function waveformCalc(
 		const multiplier = Math.pow(Math.max(...filteredData), -1);
 		return filteredData.map(n => n * multiplier);
 	} else {
-		//console.log("cant calc Waveform");
 		return [0];
 	}
 }
@@ -87,7 +136,7 @@ export async function updateProjectorList() {
 			for (let i = 0; i < e.items?.length; i++) {
 				const path = await join(e.items[i].path, e.items[i].pathSource);
 				console.log("path: ", path);
-				list.push({ type: "image", name: e.items[i].name, url: path})
+				list.push({ type: "image", name: e.items[i].name, url: path });
 			}
 		}
 	});
@@ -120,6 +169,7 @@ export function DropHandler(newPosition: number) {
 	console.log(currentDrag);
 
 	if (dragOrigin === "playlist" && currentDrag) {
+		// move in Playlist
 		const oldPosition = get(playlist).indexOf(currentDrag);
 		playlist.update(e => {
 			e.splice(oldPosition, 1);
@@ -127,8 +177,9 @@ export function DropHandler(newPosition: number) {
 			return e;
 		});
 	} else if (dragOrigin === "src" && currentDrag) {
+		// add new to Playlist
 		console.log("drag form src to playlist: ", currentDrag);
-		createPlaylistTrack(
+		createPlaylistItem(
 			currentDrag.type,
 			currentDrag.path!,
 			currentDrag.pathSource!,

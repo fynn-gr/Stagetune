@@ -10,11 +10,10 @@ import {
 } from "@tauri-apps/api/window";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
-import { afterUpdate, onMount, tick } from "svelte";
+import { onMount, tick } from "svelte";
 import { writable } from "svelte/store";
-import type { Settings } from "./ts/Types";
 
-import { uiPlatform } from "./ts/Stores";
+import { uiPlatform } from "./ts/Stores.svelte";
 import Keymap from "./pureUI/components//settings/Keymap.svelte";
 import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
@@ -26,24 +25,11 @@ import {
 import { emit } from "@tauri-apps/api/event";
 import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svelte";
 import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
+import { settingsDefault, type Settings } from "./ts/SettingsDefault";
 
-const settings = writable<Settings>({
-	recent: [],
-	lang: "en",
-	show_splash: true,
-	ui_scale: 1,
-	performance_mode: false,
-	projector_screen: {},
-	debug: false,
-	video: false,
-
-	showAnnotations: true,
-	showFadeOptions: true,
-	showVolumeOptions: true,
-	allowSkipLive: true,
-});
+const settings = writable<Settings>(settingsDefault);
 const appWindow = getCurrentWindow();
-let tab: string = "general";
+let tab: string = $state("general");
 let stagetuneVersion: string;
 let tauriVersion: string;
 
@@ -67,15 +53,19 @@ function onChange() {
 
 function save() {
 	let currentVersion: string;
+	const toSave = {
+		settings: $settings,
+		uiPlatform: $uiPlatform,
+	};
 	getVersion()
 		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
 		})
 		.then(() => {
-			console.log("save: ", $settings);
+			console.log("save: ", toSave);
 			writeTextFile(
 				`Stagetune/${currentVersion}/settings.json`,
-				JSON.stringify($settings),
+				JSON.stringify(toSave),
 				{
 					baseDir: BaseDirectory.Config,
 				},
@@ -92,7 +82,9 @@ async function load() {
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			baseDir: BaseDirectory.Config,
 		}).then(async e => {
-			$settings = JSON.parse(e);
+			const obj = JSON.parse(e);
+			settings.set(obj.settings);
+			uiPlatform.set(obj.uiPlatform);
 			console.log("loaded settings", $settings);
 		});
 	});
@@ -105,10 +97,6 @@ onMount(async () => {
 	console.log("all av Monitors: ", await availableMonitors());
 	console.log("current Monitor: ", await currentMonitor());
 	console.log("primary Monitor: ", await primaryMonitor());
-});
-
-afterUpdate(() => {
-	setWindowHeight();
 });
 </script>
 
@@ -146,7 +134,7 @@ afterUpdate(() => {
 		<div
 			class="tab"
 			class:active={tab == "general"}
-			on:click={() => {
+			onclick={() => {
 				tab = "general";
 			}}
 		>
@@ -157,7 +145,7 @@ afterUpdate(() => {
 		<div
 			class="tab active"
 			class:active={tab == "keymap"}
-			on:click={() => {
+			onclick={() => {
 				tab = "keymap";
 			}}
 		>
@@ -168,7 +156,7 @@ afterUpdate(() => {
 		<div
 			class="tab"
 			class:active={tab == "update"}
-			on:click={() => {
+			onclick={() => {
 				tab = "update";
 			}}
 		>
@@ -179,7 +167,7 @@ afterUpdate(() => {
 		<div
 			class="tab"
 			class:active={tab == "developer"}
-			on:click={() => {
+			onclick={() => {
 				tab = "developer";
 			}}
 		>
@@ -258,5 +246,7 @@ afterUpdate(() => {
 		{/if}
 	</div>
 
-	<div class="window-rim" />
+	{#if $uiPlatform == "mac"}
+		<div class="window-rim" />
+	{/if}
 </main>

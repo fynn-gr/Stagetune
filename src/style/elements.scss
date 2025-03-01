@@ -671,6 +671,7 @@
 	}
 
 	.placeholder {
+		display: none;
 		position: relative;
 		z-index: 1;
 		margin: 12rem 12rem 0 12rem;
@@ -682,6 +683,14 @@
 		color: gray;
 		border-radius: 8rem;
 		border: dashed 2px gray;
+
+		&:first-child {
+			display: block;
+		}
+	}
+
+	.annotation-slider + .placeholder {
+		display: block;
 	}
 }
 

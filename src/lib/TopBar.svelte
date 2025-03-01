@@ -15,7 +15,7 @@ import {
 	settings,
 	showProjector,
 	uiPlatform,
-} from "@/ts/Stores";
+} from "@/ts/Stores.svelte";
 import WinButtonsMac from "@/pureUI/components/WinButtonsMac.svelte";
 import ModeSwitch from "./ModeSwitch.svelte";
 import WinButtonsMs from "@/pureUI/components/WinButtonsMS.svelte";
@@ -27,17 +27,26 @@ import { onMount } from "svelte";
 import { emit } from "@tauri-apps/api/event";
 import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
 import { testEdit } from "@/test/Edit.test";
-import AppMenuContainer from "@/pureUI/components/AppMenuContainer.svelte";
 
-export let showTracklist: boolean;
-export let showEditor: boolean;
-export let showCurrent: boolean;
-export let showHotkeys: boolean;
-export let pauseAll;
-export let resetAll;
+interface Props {
+	showTracklist: boolean;
+	showEditor: boolean;
+	showCurrent: boolean;
+	showHotkeys: boolean;
+	pauseAll: Function;
+	resetAll: Function;
+}
+let {
+	showTracklist = $bindable(),
+	showEditor = $bindable(),
+	showCurrent = $bindable(),
+	showHotkeys = $bindable(),
+	pauseAll,
+	resetAll,
+}: Props = $props();
 
 const appWindow = getCurrentWindow();
-let mainID: number;
+let mainID: number = $state(0);
 
 function handleProjector(screen: number | null) {
 	if (screen) {
@@ -57,7 +66,7 @@ onMount(async () => {
 	$screens.forEach((e, i) => {
 		if (e.name == main?.name) mainID = i;
 	});
-	console.log("screens", $screens);
+	console.log("screens", $state.snapshot($screens));
 	console.log("main", main);
 	console.log("main ID", mainID);
 
@@ -159,20 +168,20 @@ onMount(async () => {
 					checked={showEditor && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
-				<div class="seperator" />
+				<div class="seperator"></div>
 				<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
-				<div class="seperator" />
+				<div class="seperator"></div>
 				<AppMenuItem id="showSplash" name="Splash Screen" />
 			</AppMenu>
 		{/if}
 
 		<!--Debug menu-->
 		{#if $settings.debug}
-			<AppMenuDev platforms={["mac", "win"]} themes={false}>
-				<div class="seperator" />
+			<AppMenuDev platforms={["mac", "win"]} themes={false} appName="Stagetune">
+				<div class="seperator"></div>
 				<button
 					class="app-menu-item"
-					on:click={() => {
+					onclick={() => {
 						testLive();
 					}}
 				>
@@ -180,7 +189,7 @@ onMount(async () => {
 				</button>
 				<button
 					class="app-menu-item"
-					on:click={() => {
+					onclick={() => {
 						testEdit();
 					}}
 				>
@@ -189,7 +198,7 @@ onMount(async () => {
 			</AppMenuDev>
 		{/if}
 
-		<div class="spacer" data-tauri-drag-region="" />
+		<div class="spacer" data-tauri-drag-region=""></div>
 
 		<!--Playlist options-->
 		<TopBarDropdown icon="settings" toolTip="Playlist Settings">
@@ -213,6 +222,13 @@ onMount(async () => {
 				onChange={() => {
 					$settings.showVolumeOptions = !$settings.showVolumeOptions;
 				}}
+			/>
+			<TopBarDropdownItem
+				name={$settings.useSliders ? "Use Knobs" : "Use Sliders"}
+				onChange={() => {
+					$settings.useSliders = !$settings.useSliders;
+				}}
+				disabled={!$settings.showVolumeOptions}
 			/>
 			<TopBarDropdownItem
 				name="Scrubbing in Live Mode"
@@ -285,7 +301,7 @@ onMount(async () => {
 			/>
 		{/if}
 
-		<div class="spacer-fix" data-tauri-drag-region="" />
+		<div class="spacer-fix" data-tauri-drag-region=""></div>
 
 		<!--Lock-->
 		<ModeSwitch
@@ -293,11 +309,10 @@ onMount(async () => {
 			icon="lock"
 			iconActive="lock_open"
 			bind:active={$editMode}
-			activeColor="var(--accent)"
 			toolTip="Toggle Mode"
 		/>
 
-		<div class="spacer-fix" data-tauri-drag-region="" />
+		<div class="spacer-fix" data-tauri-drag-region=""></div>
 
 		<div class="topbar-group">
 			<!--reset all-->
@@ -317,7 +332,7 @@ onMount(async () => {
 			/>
 		</div>
 
-		<div class="spacer" data-tauri-drag-region="" />
+		<div class="spacer" data-tauri-drag-region=""></div>
 
 		<!--projector-->
 		<div class="topbar-group">

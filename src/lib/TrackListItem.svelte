@@ -1,17 +1,20 @@
 <script lang="ts">
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { currentDragging, draggingOrigin } from "../ts/Stores";
+import { currentDragging, draggingOrigin } from "../ts/Stores.svelte";
 import { join } from "@tauri-apps/api/path";
 import { onMount } from "svelte";
 
-export let entry: any;
-export let ctx: AudioContext;
-export let masterGain: GainNode;
+interface Props {
+	entry: any;
+	ctx: AudioContext;
+	masterGain: GainNode;
+}
+let { entry, ctx, masterGain }: Props = $props();
 
 let self: HTMLElement;
-let dragging = false;
-let playing = false;
-let hover = false;
+let dragging = $state(false);
+let playing = $state(false);
+let hover = $state(false);
 let node: AudioBufferSourceNode | null = null;
 
 function handleDragStart(e: any) {
@@ -55,36 +58,36 @@ onMount(() => {
 });
 </script>
 
-<!-- svelte-ignore a11y-missing-attribute -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_missing_attribute -->
 <div
 	bind:this={self}
 	class="trackListItem"
 	class:dragging
 	draggable="true"
-	on:mouseenter={() => {
+	onmouseenter={() => {
 		hover = true;
 	}}
-	on:mouseleave={() => {
+	onmouseleave={() => {
 		hover = false;
 	}}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
 >
 	{#if entry.type == "video"}
-		<img src="./icons/top_bar/film.svg" alt="" />
+		<img src="./icons/topbar/film.svg" alt="" />
 	{:else if entry.type == "image"}
-		<img src="./icons/top_bar/image.svg" alt="" />
+		<img src="./icons/topbar/image.svg" alt="" />
 	{:else if playing || hover}
-		<button class="play-btn" on:click={handlePlay}>
+		<button class="play-btn" onclick={handlePlay}>
 			{#if playing}
-				<img src="./icons/top_bar/pause.svg" />
+				<img src="./icons/topbar/pause.svg" />
 			{:else}
-				<img src="./icons/top_bar/play.svg" />
+				<img src="./icons/topbar/play.svg" />
 			{/if}
 		</button>
 	{:else if entry.type == "track"}
-		<img src="./icons/top_bar/music.svg" alt="" />
+		<img src="./icons/topbar/music.svg" alt="" />
 	{/if}
 	<p>{entry.name}</p>
 </div>

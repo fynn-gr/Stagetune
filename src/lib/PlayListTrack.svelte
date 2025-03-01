@@ -9,6 +9,8 @@ import { message } from "@tauri-apps/plugin-dialog";
 // Components
 import Annotation from "./Annotation.svelte";
 import Waveform from "./Waveform.svelte";
+import VolumeControl from "./VolumeControl.svelte";
+import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 
 // Stores, Utils
 import { DropHandler, secondsToMinutes, waveformCalc } from "@/ts/Utils";
@@ -20,26 +22,73 @@ import {
 	settings,
 	draggingOrigin,
 	hotkeys,
-} from "../ts/Stores";
-import type { PlaylistItem } from "@/ts/Types";
-import VolumeControl from "./VolumeControl.svelte";
-import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
+} from "../ts/Stores.svelte";
 
-export let track: PlaylistItem;
-export let id: number;
-export let ctx: AudioContext;
-export let masterGain: GainNode;
+interface Props {
+	type: "track"; // type of item
+	path: string; //relative path
+	pathSource: string; // absolute path of the folder
+	name: string; //title of the item
+	length: number; //track duration
+	playing: boolean; //is currently playing
+	timeCode: number; //seconds playhead is at, not including cut In
+	volume: number; //sound volume, deafult is 80 out of 100
+	pan: number; //stereo pan -1 to 1
+	repeat: boolean; //repeat track option is on
+	autoReset: boolean; //auto reset after pause option is on
+	edit: { in: number; out: number }; //cut second at beginning and end (only beginning is implemented)
+	fade: { in: number; out: number }; //sedonds to fade in and out
+	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
+	buffer: AudioBuffer | null; //audio buffer
+	startedAt: number; //track was started at seconds
+	pausedAt: number; // track was paused at seconds
+	inFade: "in" | "out" | null; //track is currently in fade or null
+	hotkey: number | null; //hotkey number assigned, null if not assigned
+	missing: boolean; //true if file could not be found
+	loaded: boolean; //if track finished loading
+	id: number;
+	ctx: AudioContext;
+	masterGain: GainNode;
+}
+let {
+	type = $bindable(),
+	path = $bindable(),
+	pathSource = $bindable(),
+	name = $bindable(),
+	length = $bindable(),
+	playing = $bindable(),
+	timeCode = $bindable(),
+	volume = $bindable(),
+	pan = $bindable(),
+	repeat = $bindable(),
+	autoReset = $bindable(),
+	edit = $bindable(),
+	fade = $bindable(),
+	annotation = $bindable(),
+	buffer = $bindable(),
+	startedAt = $bindable(),
+	pausedAt = $bindable(),
+	inFade = $bindable(),
+	hotkey = $bindable(),
+	missing = $bindable(),
+	loaded = $bindable(),
+	id,
+	ctx,
+	masterGain,
+}: Props = $props();
 
-let hotkeySelect: number | undefined;
-let dragging = false;
-let dragover: "top" | "bottom" | null = null;
+let hotkeySelect: number | undefined = $state(undefined);
+let dragging = $state(false);
+let dragover: "top" | "bottom" | null = $state(null);
 let titleEl: HTMLElement;
+let cutIn: number = $state(0);
+let cutTrackLength: number = $state(0);
 
 //Audio
-let input: AudioBufferSourceNode;
-let gainNode: GainNode;
-let fadeNode: GainNode;
-let panNode: StereoPannerNode;
+let input: AudioBufferSourceNode = $state(new AudioBufferSourceNode(ctx));
+let gainNode: GainNode = $state(new GainNode(ctx));
+let fadeNode: GainNode = $state(new GainNode(ctx));
+let panNode: StereoPannerNode = $state(new StereoPannerNode(ctx));
 
 function handleDragStart(e: DragEvent) {
 	//calc pointer position
@@ -96,23 +145,23 @@ function handleHotkeySelect(e: any) {
 			$hotkeys[hotkeySelect - 1].track.hotkey = null;
 			$hotkeys[hotkeySelect - 1].track = null;
 		}
-		if (track.hotkey != undefined) {
+		if (hotkey != undefined) {
 			//remove old hotkey from current track first
-			$hotkeys[track.hotkey].track = null;
+			$hotkeys[hotkey].track = null;
 		}
 		//set new hotkey
-		track.hotkey = hotkeySelect;
+		hotkey = hotkeySelect;
 		$hotkeys[hotkeySelect - 1].track = track;
 	} else {
 		//selected undefined
-		$hotkeys[track.hotkey].track = null;
-		track.hotkey = null;
+		$hotkeys[hotkey].track = null;
+		hotkey = null;
 	}
 }
 
 function onEnd() {
-	if (ctx.currentTime - track.startedAt! >= (track.length! - cutIn) * 0.96) {
-		if (track.repeat) {
+	if (ctx.currentTime - startedAt! >= (length! - cutIn) * 0.96) {
+		if (repeat) {
 			stop(true, false);
 			play(0);
 		} else {
@@ -128,35 +177,35 @@ function handleSkip(e: MouseEvent) {
 		let x = e.clientX - rec.left;
 		let skipFac = Math.min(Math.max(x / rec.width, 0), 1);
 
-		if (track.playing) {
+		if (playing) {
 			stop();
 			play(cutTrackLength! * skipFac);
-			track.state = cutTrackLength! * skipFac;
+			timeCode = cutTrackLength! * skipFac;
 		} else {
-			track.pausedAt = cutTrackLength! * skipFac;
-			track.state = cutTrackLength! * skipFac;
+			pausedAt = cutTrackLength! * skipFac;
+			timeCode = cutTrackLength! * skipFac;
 		}
 	}
 }
 
 async function load() {
 	//load file
-	const absPath = await join(track.pathSource!, track.path!);
-	console.log(absPath);
+	const absPath = await join(pathSource, path);
+	console.log("loading track: ", absPath);
 
 	//test file exist to throw error if file missing
 	if (await exists(absPath)) {
 		console.log(convertFileSrc(absPath));
 		const response = await fetch(convertFileSrc(absPath));
 		const arrayBuffer = await response.arrayBuffer();
-		track.buffer = await ctx.decodeAudioData(arrayBuffer);
-		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
-		track.loaded = true;
-		track.length = track.buffer.duration;
+		buffer = await ctx.decodeAudioData(arrayBuffer);
+		input = new AudioBufferSourceNode(ctx, { buffer: buffer });
+		loaded = true;
+		length = buffer.duration;
 	} else {
 		//file not found
 		console.error(convertFileSrc(absPath), "track not found");
-		track.missing = true;
+		missing = true;
 		message(`Media File is missing or moved: ${absPath}`, {
 			title: "File not found",
 			kind: "warning",
@@ -167,6 +216,7 @@ async function load() {
 }
 
 function setupAudioChain() {
+	if (!input) return;
 	gainNode = ctx.createGain();
 	fadeNode = ctx.createGain();
 	panNode = ctx.createStereoPanner();
@@ -179,7 +229,7 @@ function setupAudioChain() {
 }
 
 export function playPause() {
-	track.playing ? stop(track.autoReset, true) : play(undefined, true);
+	playing ? stop(autoReset, true) : play(undefined, true);
 }
 
 export function play(
@@ -187,50 +237,47 @@ export function play(
 	useFade: boolean = false,
 ) {
 	//resume track
-	if (track.playing) return;
+	if (playing) return;
 
-	if (track.fade.in > 0 && track.inFade == null && useFade) {
-		track.inFade = "in";
+	if (fade.in > 0 && inFade == null && useFade) {
+		inFade = "in";
 		fadeNode.gain.setValueAtTime(0.01, 0);
-		fadeNode.gain.linearRampToValueAtTime(1, ctx.currentTime + track.fade.in);
+		fadeNode.gain.linearRampToValueAtTime(1, ctx.currentTime + fade.in);
 		setTimeout(() => {
-			track.inFade = null;
-		}, track.fade.in * 1000);
+			inFade = null;
+		}, fade.in * 1000);
 	}
-	input.start(0, (startTime ?? track.pausedAt) + cutIn);
-	track.startedAt = ctx.currentTime - (startTime ?? track.pausedAt);
-	track.playing = true;
+	input.start(0, (startTime ?? pausedAt) + cutIn);
+	startedAt = ctx.currentTime - (startTime ?? pausedAt);
+	playing = true;
 }
 
 export function stop(reset: boolean = false, useFade: boolean = false) {
 	const end = () => {
-		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
+		input = new AudioBufferSourceNode(ctx, { buffer: buffer });
 		setupAudioChain();
-		track.pausedAt = reset ? 0 : ctx.currentTime - track.startedAt;
-		track.state = reset ? 0 : track.state;
+		pausedAt = reset ? 0 : ctx.currentTime - startedAt;
+		timeCode = reset ? 0 : timeCode;
 	};
-	if (track.playing) {
-		if (track.inFade && !useFade) {
-			track.inFade = null;
+	if (playing) {
+		if (inFade && !useFade) {
+			inFade = null;
 			fadeNode.gain.setValueAtTime(1, ctx.currentTime);
 			input.stop();
 			end();
-		} else if (track.fade.out > 0 && !track.inFade && useFade) {
-			track.inFade = "out";
-			fadeNode.gain.linearRampToValueAtTime(
-				0.01,
-				ctx.currentTime + track.fade.out,
-			);
+		} else if (fade.out > 0 && !inFade && useFade) {
+			inFade = "out";
+			fadeNode.gain.linearRampToValueAtTime(0.01, ctx.currentTime + fade.out);
 			setTimeout(() => {
 				input.stop();
 				end();
-				track.inFade = null;
-				track.playing = false;
-			}, track.fade.out * 1000);
+				inFade = null;
+				playing = false;
+			}, fade.out * 1000);
 		} else {
 			input.stop();
 			end();
-			track.playing = false;
+			playing = false;
 		}
 	} else {
 		end();
@@ -238,12 +285,12 @@ export function stop(reset: boolean = false, useFade: boolean = false) {
 }
 
 export function getBuffer(): AudioBuffer {
-	return track.buffer as AudioBuffer;
+	return buffer as AudioBuffer;
 }
 
 export function update() {
-	if (track.playing) {
-		track.state = ctx.currentTime - track.startedAt;
+	if (playing) {
+		timeCode = ctx.currentTime - startedAt;
 	}
 }
 
@@ -251,34 +298,44 @@ onMount(() => {
 	load();
 });
 
-$: cutIn = track.edit.in;
-$: cutTrackLength = track.length ? track.length - cutIn : 0;
-$: panNode ? (panNode.pan.value = track.pan) : null;
-$: gainNode
-	? gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime)
-	: null;
-$: $currentDragging == null ? (dragover = null) : null;
-$: if (!track.loaded) {
-	if (!track.missing) load();
-}
+$effect(() => {
+	cutIn = edit.in;
+});
+$effect(() => {
+	cutTrackLength = length ? length - cutIn : 0;
+});
+$effect(() => {
+	panNode ? (panNode.pan.value = pan) : null;
+});
+$effect(() => {
+	gainNode.gain.setValueAtTime(volume / 100, ctx.currentTime);
+});
+$effect(() => {
+	$currentDragging == null ? (dragover = null) : null;
+});
+$effect(() => {
+	if (!loaded) {
+		if (!missing) load();
+	}
+});
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="playlist-item track"
 	class:selected={$selectedItem == id}
-	class:missing={track.missing}
+	class:missing
 	class:drag-top={dragover == "bottom"}
 	class:drag-bottom={dragover == "top"}
-	class:loaded={track.buffer != undefined}
+	class:loaded={buffer != undefined}
 	draggable={$editMode}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
-	on:dragover={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:drop={handleDrop}
-	on:click={() => selectedItem.set(id)}
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
+	ondragover={handleDragEnter}
+	ondragleave={handleDragLeave}
+	ondrop={handleDrop}
+	onclick={() => selectedItem.set(id)}
 >
 	<div class="drag-area">
 		<p>{id + 1}</p>
@@ -286,7 +343,7 @@ $: if (!track.loaded) {
 
 	<!--annotation attached-->
 	{#if $settings.showAnnotations}
-		<Annotation bind:annotation={track.annotation} {id} />
+		<Annotation bind:annotation {id} />
 	{/if}
 
 	<div
@@ -296,19 +353,19 @@ $: if (!track.loaded) {
 		<!--progress-->
 		<div
 			class="progress"
-			on:click={handleSkip}
+			onclick={handleSkip}
 			style={`
 				background: linear-gradient(
 					90deg,
 					var(--accent) 0%,
-					var(--accent) calc(100% * ${track.state / cutTrackLength}),
-					#555 calc(100% * ${track.state / cutTrackLength}),
+					var(--accent) calc(100% * ${timeCode / cutTrackLength}),
+					#555 calc(100% * ${timeCode / cutTrackLength}),
 					#555 100%
 				);`}
-		/>
+		></div>
 
 		<Waveform
-			data={waveformCalc(track.buffer, 300, cutIn / track.length)}
+			data={waveformCalc(buffer, 300, cutIn / length)}
 			samples={300}
 			resY={50}
 		/>
@@ -318,11 +375,11 @@ $: if (!track.loaded) {
 			id="btn-reset"
 			class="play-btn"
 			title="Reset"
-			on:click={() => {
+			onclick={() => {
 				stop(true);
 			}}
 		>
-			<img src="./icons/top_bar/reset.svg" alt="" draggable="false" />
+			<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
 		</button>
 
 		<!--play Button-->
@@ -330,99 +387,99 @@ $: if (!track.loaded) {
 			id="btn-play"
 			class="play-btn"
 			title="Play"
-			class:active={track.playing}
-			on:click={playPause}
+			class:active={playing}
+			onclick={playPause}
 		>
-			{#if track.inFade != null}
+			{#if inFade != null}
 				<img
-					src="./icons/top_bar/fade.svg"
+					src="./icons/topbar/fade.svg"
 					alt=""
 					draggable="false"
-					class="fade-state-icon"
+					class="fade-timeCode-icon"
 				/>
-			{:else if track.playing}
-				<img src="./icons/top_bar/pause.svg" alt="" draggable="false" />
+			{:else if playing}
+				<img src="./icons/topbar/pause.svg" alt="" draggable="false" />
 			{:else}
-				<img src="./icons/top_bar/play.svg" alt="" draggable="false" />
+				<img src="./icons/topbar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
 
 		<!--name-->
-		{#if track.buffer}
+		{#if buffer}
 			<div class="title">
 				<input
 					bind:this={titleEl}
-					on:focus={() => isEditing.update(e => e + 1)}
-					on:blur={() => isEditing.update(e => e - 1)}
-					bind:value={track.name}
+					onfocus={() => isEditing.update(e => e + 1)}
+					onblur={() => isEditing.update(e => e - 1)}
+					bind:value={name}
 					disabled={!$editMode}
 				/>
-				<div class="title-display">{track.name}</div>
+				<div class="title-display">{name}</div>
 			</div>
-		{:else if track.missing}
+		{:else if missing}
 			<div class="title">
-				<p class="input">{"File not found: " + track.path}</p>
+				<p class="input">{"File not found: " + path}</p>
 			</div>
 		{:else}
 			<div class="title"><p class="input">Loading...</p></div>
 		{/if}
 
 		<!--Hotkey Display-->
-		{#if track.hotkey != undefined}
+		{#if hotkey != undefined}
 			<div class="hotkey-display">
-				<p>{track.hotkey}</p>
+				<p>{hotkey}</p>
 			</div>
 		{/if}
 
 		<!--Display Repeat-->
-		{#if track.repeat && !$editMode}
+		{#if repeat && !$editMode}
 			<img
 				class="option-display"
-				src="./icons/top_bar/repeat.svg"
+				src="./icons/topbar/repeat.svg"
 				alt=""
 				draggable="false"
 			/>
 		{/if}
 
 		<!--Display Reset-->
-		{#if track.autoReset && !$editMode}
+		{#if autoReset && !$editMode}
 			<img
 				class="option-display"
-				src="./icons/top_bar/reset.svg"
+				src="./icons/topbar/reset.svg"
 				alt=""
 				draggable="false"
 			/>
 		{/if}
 
 		<!--fade Display-->
-		{#if !$editMode && track.fade.in > 0}
+		{#if !$editMode && fade.in > 0}
 			<img
 				class="fade-display"
-				src="./icons/top_bar/fade_in.svg"
+				src="./icons/topbar/fade_in.svg"
 				alt=""
 				draggable="false"
 			/>
 		{/if}
 
-		{#if !$editMode && track.fade.out > 0}
+		{#if !$editMode && fade.out > 0}
 			<img
 				class="fade-display"
-				src="./icons/top_bar/fade_out.svg"
+				src="./icons/topbar/fade_out.svg"
 				alt=""
 				draggable="false"
 			/>
 		{/if}
 
 		<!--time-->
-		<p class="timecode">{secondsToMinutes(track.state)}</p>
+		<p class="timecode">{secondsToMinutes(timeCode)}</p>
 		<p class="length">
 			{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
 		</p>
 
 		<div class="options">
 			<!--Hotkey-->
-			<div class="option hotkey" class:assigned={track.hotkey != undefined}>
-				<select bind:value={hotkeySelect} on:change={handleHotkeySelect}>
+			<div class="option hotkey" class:assigned={hotkey != undefined}>
+				<select bind:value={hotkeySelect} onchange={handleHotkeySelect}>
 					<option value={undefined}>none</option>
 					<option value={1}>1</option>
 					<option value={2}>2</option>
@@ -434,34 +491,34 @@ $: if (!track.loaded) {
 					<option value={8}>8</option>
 					<option value={9}>9</option>
 				</select>
-				<p class:unset={track.hotkey == undefined}>{track.hotkey || "?"}</p>
+				<p class:unset={hotkey == undefined}>{hotkey || "?"}</p>
 			</div>
 
 			<!--repeat-->
 			<button
 				id="btn-repeat"
 				class="option repeat-btn"
-				class:active={track.repeat}
-				on:click={() => {
-					track.repeat = $editMode ? !track.repeat : track.repeat;
+				class:active={repeat}
+				onclick={() => {
+					repeat = $editMode ? !repeat : repeat;
 				}}
 				title="repeat track"
 			>
-				<img src="./icons/top_bar/repeat.svg" alt="repeat" draggable="false" />
+				<img src="./icons/topbar/repeat.svg" alt="repeat" draggable="false" />
 			</button>
 
 			<!--auto reset-->
 			<button
 				id="btn-auto-reset"
 				class="option auto-reset-btn"
-				class:active={track.autoReset}
-				on:click={() => {
-					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
+				class:active={autoReset}
+				onclick={() => {
+					autoReset = $editMode ? !autoReset : autoReset;
 				}}
 				title="auto reset track on pause"
 			>
 				<img
-					src="./icons/top_bar/auto_reset.svg"
+					src="./icons/topbar/auto_reset.svg"
 					alt="auto reset"
 					draggable="false"
 				/>
@@ -471,25 +528,25 @@ $: if (!track.loaded) {
 		<!--fade-->
 		{#if $settings.showFadeOptions}
 			<span class="fade">
-				<img class="fade-icon" src="./icons/top_bar/fade_in.svg" alt="" />
+				<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
 				<PropNumber
-					bind:value={track.fade.in}
+					bind:value={fade.in}
 					onFocus={() => isEditing.update(e => e + 1)}
 					onBlur={() => isEditing.update(e => e - 1)}
 					min={0}
-					max={track.length}
+					max={length}
 					decimalDisplay={0}
 					unit="s"
 					disabled={!$editMode}
 					title="Fade In"
 				/>
-				<img class="fade-icon" src="./icons/top_bar/fade_out.svg" alt="" />
+				<img class="fade-icon" src="./icons/topbar/fade_out.svg" alt="" />
 				<PropNumber
-					bind:value={track.fade.out}
+					bind:value={fade.out}
 					onFocus={() => isEditing.update(e => e + 1)}
 					onBlur={() => isEditing.update(e => e - 1)}
 					min={0}
-					max={track.length}
+					max={length}
 					decimalDisplay={0}
 					unit="s"
 					disabled={!$editMode}
@@ -500,7 +557,7 @@ $: if (!track.loaded) {
 
 		<!--volume Pan-->
 		{#if $settings.showVolumeOptions}
-			<VolumeControl bind:track slider={true} />
+			<VolumeControl bind:volume bind:pan slider={$settings.useSliders} />
 		{/if}
 	</div>
 </div>

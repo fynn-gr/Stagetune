@@ -1,27 +1,38 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { editMode, uiPlatform } from "@/ts/Stores";
+import { editMode } from "@/ts/Stores.svelte";
 
-export let id: string;
-export let icon: string;
-export let iconActive: string = null;
-export let active: boolean;
-export let onChange = (active: boolean) => {};
-export let activeColor: string = null;
-export let toolTip: string;
-export let disabled = false;
+interface Props {
+	id: string;
+	icon: string;
+	iconActive?: string | null;
+	active?: boolean;
+	onChange?: Function;
+	toolTip: string;
+	disabled?: boolean;
+}
+
+let {
+	id,
+	icon,
+	iconActive = null,
+	active = $bindable(),
+	onChange = (active: boolean) => {},
+	toolTip,
+	disabled = false,
+}: Props = $props();
 
 let self: HTMLElement;
-let iconPath: string;
-let iconPathActive: string;
+let iconPath: string = $state("");
+let iconPathActive: string = $state("");
 
 onMount(() => {
-	iconPath = `./icons/top_bar/${icon}.svg`;
+	iconPath = `./icons/topbar/${icon}.svg`;
 
 	if (iconActive == null) {
 		iconPathActive = iconPath;
 	} else {
-		iconPathActive = `./icons/top_bar/${iconActive}.svg`;
+		iconPathActive = `./icons/topbar/${iconActive}.svg`;
 	}
 });
 </script>
@@ -31,7 +42,7 @@ onMount(() => {
 	bind:this={self}
 	class="topbar-button mode-switch"
 	class:disabled
-	on:click={() => {
+	onclick={() => {
 		!disabled ? (active = !active) : (active = active);
 		onChange(active);
 	}}

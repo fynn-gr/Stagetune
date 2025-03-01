@@ -3,4 +3,5 @@ export interface PlaylistElement {
 	stop(reset?: boolean, useFade?: boolean);
 	playPause(): void;
 	update(): void;
+	getBuffer();
 }

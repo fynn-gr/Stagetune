@@ -8,11 +8,15 @@ import {
 	playlist,
 	contextMenu,
 	draggingOrigin,
-} from "../ts/Stores";
+} from "../ts/Stores.svelte";
 import { onMount } from "svelte";
 
-export let track: any;
-export let id: number;
+interface Props {
+	track: any;
+	id: number;
+}
+let { track = $bindable(), id }: Props = $props();
+
 let dragging = false;
 let dragover: "top" | "bottom" | null = null;
 let annotationEl: HTMLElement;
@@ -76,21 +80,21 @@ onMount(() => {
 });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="playlist-item annotation"
 	class:selected={$selectedItem == id}
 	class:drag-over={dragover}
 	draggable={$editMode}
-	on:contextmenu={e => {
+	oncontextmenu={e => {
 		if ($editMode) {
 			$contextMenu = {
 				position: { x: e.clientX, y: e.clientY },
 				content: [
 					{
 						name: "Gray",
-						icon: "./icons/menu_win/gray.svg",
+						icon: "./icons/app_menu/gray.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = null;
@@ -98,7 +102,7 @@ onMount(() => {
 					},
 					{
 						name: "Red",
-						icon: "./icons/menu_win/red.svg",
+						icon: "./icons/app_menu/red.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(5, 54%, 33%)";
@@ -106,7 +110,7 @@ onMount(() => {
 					},
 					{
 						name: "Orange",
-						icon: "./icons/menu_win/orange.svg",
+						icon: "./icons/app_menu/orange.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(25.4deg 66% 37%)";
@@ -114,7 +118,7 @@ onMount(() => {
 					},
 					{
 						name: "Green",
-						icon: "./icons/menu_win/green.svg",
+						icon: "./icons/app_menu/green.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(102deg 62% 30%)";
@@ -122,7 +126,7 @@ onMount(() => {
 					},
 					{
 						name: "Teal",
-						icon: "./icons/menu_win/teal.svg",
+						icon: "./icons/app_menu/teal.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(169.44deg 62% 30%)";
@@ -130,7 +134,7 @@ onMount(() => {
 					},
 					{
 						name: "Blue",
-						icon: "./icons/menu_win/blue.svg",
+						icon: "./icons/app_menu/blue.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(205.44deg 62% 30%)";
@@ -138,7 +142,7 @@ onMount(() => {
 					},
 					{
 						name: "Purple",
-						icon: "./icons/menu_win/purple.svg",
+						icon: "./icons/app_menu/purple.svg",
 						iconColor: true,
 						action: () => {
 							$playlist[id].annotation.color = "hsl(274.67deg 53.55% 26.67%)";
@@ -149,12 +153,12 @@ onMount(() => {
 			console.log($contextMenu, e);
 		}
 	}}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
-	on:drop={handleDrop}
-	on:dragenter={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:click={e => {
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
+	ondrop={handleDrop}
+	ondragenter={handleDragEnter}
+	ondragleave={handleDragLeave}
+	onclick={e => {
 		selectedItem.set(id);
 	}}
 >
@@ -172,10 +176,10 @@ onMount(() => {
 			class="input"
 			contenteditable={$selectedItem == id && $editMode}
 			bind:this={annotationEl}
-			on:focus={e => {
+			onfocus={e => {
 				isEditing.update(e => e + 1);
 			}}
-			on:blur={() => {
+			onblur={() => {
 				isEditing.update(e => e - 1);
 				track.annotation.text = annotationEl.innerHTML;
 			}}

@@ -5,7 +5,6 @@ import sveltePreprocess from "svelte-preprocess";
 import * as path from "path";
 import { processIcons } from "./src/pureUI/modules/pureIconPlugin";
 
-// @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
 
 // https://vitejs.dev/config/
@@ -18,6 +17,12 @@ export default defineConfig(({ command }) => {
 						typescript: true,
 					}),
 				],
+				compilerOptions: {
+					runes: true,
+					compatibility: {
+						componentApi: 5,
+					},
+				},
 			}),
 
 			{

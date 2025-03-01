@@ -7,13 +7,16 @@ import {
 	currentDragging,
 	draggingOrigin,
 	settings,
-} from "../ts/Stores";
+} from "../ts/Stores.svelte";
 import { onMount } from "svelte";
 import Annotation from "./Annotation.svelte";
 import type { PlaylistItem } from "@/ts/Types";
 
-export let track: PlaylistItem;
-export let id: number;
+interface Props {
+	track: PlaylistItem;
+	id: number;
+}
+let { track = $bindable(), id }: Props = $props();
 
 let dragging = false;
 let dragover: "top" | "bottom" | "content" | null = null;
@@ -56,7 +59,7 @@ function handleDrop(e: DragEvent) {
 		track.items?.push({
 			type: "image",
 			path: $currentDragging.path,
-			pathSource: $currentDragging.pathSource
+			pathSource: $currentDragging.pathSource,
 		});
 	} else {
 		let newPosition = id + 1;
@@ -72,13 +75,13 @@ function handleDragEnter(e: DragEvent) {
 	let y = e.clientY - rec.top;
 	if (y < 40) {
 		dragover = "top";
-		console.log("drag top")
+		console.log("drag top");
 	} else if ($currentDragging?.type == "image") {
 		dragover = "content";
-		console.log("drag content")
+		console.log("drag content");
 	} else {
 		dragover = "bottom";
-		console.log("drag bottom")
+		console.log("drag bottom");
 	}
 }
 
@@ -96,11 +99,13 @@ export function stop() {}
 
 onMount(() => {});
 
-$: $currentDragging == null ? (dragover = null) : null;
+$effect(() => {
+	$currentDragging == null ? (dragover = null) : null;
+});
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="playlist-item loop"
 	class:selected={$selectedItem == id}
@@ -108,12 +113,12 @@ $: $currentDragging == null ? (dragover = null) : null;
 	class:drag-bottom={dragover == "top"}
 	class:drag-content={dragover == "content"}
 	draggable={$editMode}
-	on:dragstart={handleDragStart}
-	on:dragend={handleDragEnd}
-	on:drop={handleDrop}
-	on:dragenter={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:click={e => {
+	ondragstart={handleDragStart}
+	ondragend={handleDragEnd}
+	ondrop={handleDrop}
+	ondragenter={handleDragEnter}
+	ondragleave={handleDragLeave}
+	onclick={e => {
 		selectedItem.set(id);
 	}}
 >
@@ -138,11 +143,11 @@ $: $currentDragging == null ? (dragover = null) : null;
 			id="btn-reset"
 			class="play-btn"
 			title="Reset"
-			on:click={() => {
+			onclick={() => {
 				stop(true);
 			}}
 		>
-			<img src="./icons/top_bar/reset.svg" alt="" draggable="false" />
+			<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
 		</button>
 
 		<!--play Button-->
@@ -151,19 +156,19 @@ $: $currentDragging == null ? (dragover = null) : null;
 			class="play-btn"
 			title="Play"
 			class:active={track.playing}
-			on:click={playPause}
+			onclick={playPause}
 		>
 			{#if track.inFade != null}
 				<img
-					src="./icons/top_bar/fade.svg"
+					src="./icons/topbar/fade.svg"
 					alt=""
 					draggable="false"
 					class="fade-state-icon"
 				/>
 			{:else if track.playing}
-				<img src="./icons/top_bar/pause.svg" alt="" draggable="false" />
+				<img src="./icons/topbar/pause.svg" alt="" draggable="false" />
 			{:else}
-				<img src="./icons/top_bar/play.svg" alt="" draggable="false" />
+				<img src="./icons/topbar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
 
@@ -171,8 +176,8 @@ $: $currentDragging == null ? (dragover = null) : null;
 		<div class="title">
 			<input
 				bind:this={titleEl}
-				on:focus={() => isEditing.update(e => e + 1)}
-				on:blur={() => isEditing.update(e => e - 1)}
+				onfocus={() => isEditing.update(e => e + 1)}
+				onblur={() => isEditing.update(e => e - 1)}
 				bind:value={track.name}
 				disabled={!$editMode}
 			/>
