@@ -84,7 +84,11 @@ function handlePanDrag(e: any) {
           );
         `}
 			></div>
-			<div class="knob" style={`rotate: ${volume * 2.7 - 135}deg;`} title="Volume">
+			<div
+				class="knob"
+				style={`rotate: ${volume * 2.7 - 135}deg;`}
+				title="Volume"
+			>
 				<div class="mark"></div>
 			</div>
 		</span>

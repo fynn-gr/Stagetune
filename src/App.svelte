@@ -54,7 +54,6 @@ import {
 } from "./ts/SaveLoad";
 import { createNativeMenu } from "./ts/Menus";
 import { lastFolderFromPath } from "./ts/FileUtils";
-import { type PlaylistTrack } from "./ts/Types";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = $state(25);
@@ -129,15 +128,21 @@ function skip() {
 
 function deleteTrack() {
 	if ($selectedItem) {
+		const selected = $playlist[$selectedItem];
+
 		// Stop track if playing
-		if ($playlist[$selectedItem].playing)
+		if (
+			(selected.type === "track" || selected.type === "video") &&
+			selected.playing
+		) {
 			$playlistElements[$selectedItem].stop();
+		}
 
 		let toDelete = $selectedItem;
 
 		// Remove hotkey if present
-		if (typeof $playlist[$selectedItem].hotkey === "number") {
-			let hotkeyRm = $playlist[$selectedItem].hotkey;
+		if (selected.type === "track" && typeof selected.hotkey === "number") {
+			let hotkeyRm = selected.hotkey;
 			$hotkeys[(hotkeyRm as number) - 1].track = null;
 		}
 
@@ -304,42 +309,43 @@ $effect(() => {
 	<!--SideBar-->
 	{#if $editMode && showTracklist}
 		<div class="tracklist">
-			<div class="trackList">
-				{#each $srcFiles as p, i}
-					<p
-						class="category"
-						title={p.path}
-						oncontextmenu={e => {
-							if ($editMode) {
-								$contextMenu = {
-									position: { x: e.clientX, y: e.clientY },
-									content: [
-										{
-											name: "Relink",
-											icon: "",
-											iconColor: false,
-											action: () => {
-												relinkDir(i);
-											},
+			{#each $srcFiles as p, i}
+				<p
+					class="folder-name"
+					title={p.path}
+					oncontextmenu={e => {
+						if ($editMode) {
+							$contextMenu = {
+								position: { x: e.clientX, y: e.clientY },
+								content: [
+									{
+										name: "Relink",
+										icon: "",
+										iconColor: false,
+										action: () => {
+											relinkDir(i);
 										},
-									],
-								};
-							}
-						}}
-					>
-						{lastFolderFromPath(p.path)}
-					</p>
-					{#each p.files as e, j}
-						<TrackListItem entry={e} {ctx} {masterGain} />
-					{/each}
-				{/each}
-				<button
-					class="placeholder"
-					onclick={() => {
-						openDir();
-					}}>Add Source Directory</button
+									},
+								],
+							};
+						}
+					}}
 				>
-			</div>
+					{lastFolderFromPath(p.path)}
+				</p>
+				{#each p.files as e, j}
+					<TrackListItem entry={e} {ctx} {masterGain} />
+				{/each}
+			{/each}
+			<button
+				class="add"
+				onclick={() => {
+					openDir();
+				}}
+			>
+				<img src="/icons/topbar/plus.svg" alt="" />
+				<p>Source</p>
+			</button>
 		</div>
 	{:else}
 		<div></div>
