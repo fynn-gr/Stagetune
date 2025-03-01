@@ -15,7 +15,6 @@ import { emit } from "@tauri-apps/api/event";
 import type { Monitor } from "@tauri-apps/api/window";
 import type { PlaylistElement } from "@/lib/Components";
 import { settingsDefault, type Settings } from "./SettingsDefault";
-import type PlayListAnotation from "@/lib/PlayListAnnotation.svelte";
 
 export const settings = writable<Settings>(settingsDefault);
 export const showProjector = writable<boolean>(false);

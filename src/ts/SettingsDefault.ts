@@ -10,6 +10,7 @@ export type Settings = {
 	showAnnotations: boolean;
 	showFadeOptions: boolean;
 	showVolumeOptions: boolean;
+	useSliders: boolean;
 	allowSkipLive: boolean;
 };
 
@@ -25,5 +26,6 @@ export const settingsDefault = {
 	showAnnotations: true,
 	showFadeOptions: true,
 	showVolumeOptions: true,
+	useSliders: true,
 	allowSkipLive: true,
 };

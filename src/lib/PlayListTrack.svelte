@@ -557,7 +557,7 @@ $effect(() => {
 
 		<!--volume Pan-->
 		{#if $settings.showVolumeOptions}
-			<VolumeControl bind:volume bind:pan slider={true} />
+			<VolumeControl bind:volume bind:pan slider={$settings.useSliders} />
 		{/if}
 	</div>
 </div>

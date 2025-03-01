@@ -40,6 +40,7 @@ function handlePanDrag(e: any) {
 				max="100"
 				step="10"
 				disabled={!$editMode}
+				title="Volume"
 			/>
 		</span>
 
@@ -53,6 +54,7 @@ function handlePanDrag(e: any) {
 				max={1}
 				step={0.25}
 				disabled={!$editMode}
+				title="Pan"
 			/>
 		</span>
 	</div>
@@ -82,7 +84,7 @@ function handlePanDrag(e: any) {
           );
         `}
 			></div>
-			<div class="knob" style={`rotate: ${volume * 2.7 - 135}deg;`}>
+			<div class="knob" style={`rotate: ${volume * 2.7 - 135}deg;`} title="Volume">
 				<div class="mark"></div>
 			</div>
 		</span>
@@ -123,7 +125,7 @@ function handlePanDrag(e: any) {
             rgb(77, 77, 77) 360deg
           );`}
 			></div>
-			<div class="knob" style={`rotate: ${pan * 135}deg;`}>
+			<div class="knob" style={`rotate: ${pan * 135}deg;`} title="Pan">
 				<div class="mark"></div>
 			</div>
 		</span>

@@ -53,15 +53,19 @@ function onChange() {
 
 function save() {
 	let currentVersion: string;
+	const toSave = {
+		settings: $settings,
+		uiPlatform: $uiPlatform,
+	};
 	getVersion()
 		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
 		})
 		.then(() => {
-			console.log("save: ", $settings);
+			console.log("save: ", toSave);
 			writeTextFile(
 				`Stagetune/${currentVersion}/settings.json`,
-				JSON.stringify($settings),
+				JSON.stringify(toSave),
 				{
 					baseDir: BaseDirectory.Config,
 				},
@@ -78,7 +82,9 @@ async function load() {
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			baseDir: BaseDirectory.Config,
 		}).then(async e => {
-			$settings = JSON.parse(e);
+			const obj = JSON.parse(e);
+			settings.set(obj.settings);
+			uiPlatform.set(obj.uiPlatform);
 			console.log("loaded settings", $settings);
 		});
 	});

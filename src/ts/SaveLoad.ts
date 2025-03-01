@@ -23,6 +23,7 @@ import {
 	hotkeys,
 	settings,
 	splash,
+	uiPlatform,
 } from "./Stores.svelte";
 import type { PlaylistItem, SaveFile } from "./Types";
 
@@ -230,15 +231,19 @@ export async function savePlaylist() {
 
 export function saveSettings() {
 	let currentVersion: string;
+	const toSave = {
+		settings: get(settings),
+		uiPlatform: get(uiPlatform),
+	};
 	getVersion()
 		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
 		})
 		.then(() => {
-			console.log("save: ", get(settings));
+			console.log("save: ", toSave);
 			writeTextFile(
 				`Stagetune/${currentVersion}/settings.json`,
-				JSON.stringify(get(settings)),
+				JSON.stringify(toSave),
 				{
 					baseDir: BaseDirectory.Config,
 				},
@@ -255,8 +260,10 @@ export async function loadSettings(activateSplash = false) {
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			baseDir: BaseDirectory.Config,
 		}).then(e => {
-			settings.set(JSON.parse(e));
-			console.log("loaded settings", get(settings));
+			const obj = JSON.parse(e);
+			settings.set(obj.settings);
+			uiPlatform.set(obj.uiPlatform);
+			console.log("loaded settings", obj);
 
 			if (activateSplash) splash.set(get(settings).show_splash);
 			console.log("ui scale. ", get(settings).ui_scale);

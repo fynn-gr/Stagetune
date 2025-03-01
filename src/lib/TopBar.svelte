@@ -177,7 +177,7 @@ onMount(async () => {
 
 		<!--Debug menu-->
 		{#if $settings.debug}
-			<AppMenuDev platforms={["mac", "win"]} themes={false}>
+			<AppMenuDev platforms={["mac", "win"]} themes={false} appName="Stagetune">
 				<div class="seperator"></div>
 				<button
 					class="app-menu-item"
@@ -222,6 +222,13 @@ onMount(async () => {
 				onChange={() => {
 					$settings.showVolumeOptions = !$settings.showVolumeOptions;
 				}}
+			/>
+			<TopBarDropdownItem
+				name={$settings.useSliders ? "Use Knobs" : "Use Sliders"}
+				onChange={() => {
+					$settings.useSliders = !$settings.useSliders;
+				}}
+				disabled={!$settings.showVolumeOptions}
 			/>
 			<TopBarDropdownItem
 				name="Scrubbing in Live Mode"
