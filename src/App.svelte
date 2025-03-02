@@ -54,6 +54,7 @@ import {
 } from "./ts/SaveLoad";
 import { createNativeMenu } from "./ts/Menus";
 import { lastFolderFromPath } from "./ts/FileUtils";
+import TracklistBuildIn from "./lib/TracklistBuildIn.svelte";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = $state(25);
@@ -309,6 +310,11 @@ $effect(() => {
 	<!--SideBar-->
 	{#if $editMode && showTracklist}
 		<div class="tracklist">
+			<!--Build in-->
+			<TracklistBuildIn name="Annotation" />
+			<TracklistBuildIn name="Loop" />
+
+			<!--Source Folders-->
 			{#each $srcFiles as p, i}
 				<p
 					class="folder-name"

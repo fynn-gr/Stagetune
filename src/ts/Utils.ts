@@ -10,6 +10,7 @@ import type {
 	ItemType,
 	PlaylistAnnotation,
 	PlaylistImage,
+	PlaylistLoop,
 	PlaylistTrack,
 	PlaylistVideo,
 	videoListElement,
@@ -31,7 +32,7 @@ export function createPlaylistItem(
 				name: name,
 				length: 0,
 				playing: false,
-				state: 0,
+				timeCode: 0,
 				volume: 80,
 				pan: 0,
 				repeat: false,
@@ -60,7 +61,7 @@ export function createPlaylistItem(
 				name: name,
 				length: 0,
 				playing: false,
-				state: 0,
+				timeCode: 0,
 				annotation: null,
 				startedAt: 0,
 				pausedAt: 0,
@@ -79,12 +80,32 @@ export function createPlaylistItem(
 				pathSource: pathSource,
 				name: name,
 				playing: false,
-				state: 0,
+				timeCode: 0,
 				missing: false,
 				loaded: false,
 			};
 			playlist.update(e => {
 				e.splice(get(playlist).length, 0, newImage);
+				return e;
+			});
+			break;
+		case "loop":
+			let newLoop: PlaylistLoop = {
+				type: "loop",
+				annotation: null,
+			};
+			playlist.update(e => {
+				e.splice(get(playlist).length, 0, newLoop);
+				return e;
+			});
+			break;
+		case "annotation":
+			let newAnnotation: PlaylistAnnotation = {
+				type: "annotation",
+				annotation: { text: name, color: null },
+			};
+			playlist.update(e => {
+				e.splice(get(playlist).length, 0, newAnnotation);
 				return e;
 			});
 			break;
