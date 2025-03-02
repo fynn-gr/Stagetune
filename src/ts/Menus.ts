@@ -61,7 +61,7 @@ export function createNativeMenu() {
 		});
 		let openPlaylist = await MenuItem.new({
 			id: "open",
-			text: "Open Plalist",
+			text: "Open Playlist",
 			accelerator: "cmd+O",
 		});
 		let savePlaylist = await MenuItem.new({
@@ -76,7 +76,7 @@ export function createNativeMenu() {
 
 		subFile = await Submenu.new({
 			text: "File",
-			items: [newPlaylist, openPlaylist, savePlaylist, addSource],
+			items: [newPlaylist, openPlaylist, savePlaylist, sep, addSource],
 		});
 
 		// Edit

@@ -13,7 +13,6 @@ import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { onMount, tick } from "svelte";
 import { writable } from "svelte/store";
 
-import { uiPlatform } from "./ts/Stores.svelte";
 import Keymap from "./pureUI/components//settings/Keymap.svelte";
 import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
@@ -26,12 +25,15 @@ import { emit } from "@tauri-apps/api/event";
 import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svelte";
 import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
 import { settingsDefault, type Settings } from "./ts/SettingsDefault";
+import SettingsValue from "./pureUI/components/settings/SettingsValue.svelte";
 
 const settings = writable<Settings>(settingsDefault);
+const uiPlatform = writable<string>("win");
+
 const appWindow = getCurrentWindow();
 let tab: string = $state("general");
-let stagetuneVersion: string;
-let tauriVersion: string;
+let stagetuneVersion: string = $state("");
+let tauriVersion: string = $state("");
 
 load();
 console.log($settings);
@@ -97,11 +99,12 @@ onMount(async () => {
 	console.log("all av Monitors: ", await availableMonitors());
 	console.log("current Monitor: ", await currentMonitor());
 	console.log("primary Monitor: ", await primaryMonitor());
+	setWindowHeight();
 });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <main class={"window-body settings dark " + $uiPlatform}>
 	<div class="topbar title-bar" data-tauri-drag-region>
 		<div class="topbar-container">
@@ -136,6 +139,9 @@ onMount(async () => {
 			class:active={tab == "general"}
 			onclick={() => {
 				tab = "general";
+				tick().then(() => {
+					setWindowHeight();
+				});
 			}}
 		>
 			<img src="./icons/settings_tabs/general.svg" alt="" />
@@ -147,6 +153,9 @@ onMount(async () => {
 			class:active={tab == "keymap"}
 			onclick={() => {
 				tab = "keymap";
+				tick().then(() => {
+					setWindowHeight();
+				});
 			}}
 		>
 			<img src="./icons/settings_tabs/keymap.svg" alt="" />
@@ -158,6 +167,9 @@ onMount(async () => {
 			class:active={tab == "update"}
 			onclick={() => {
 				tab = "update";
+				tick().then(() => {
+					setWindowHeight();
+				});
 			}}
 		>
 			<img src="./icons/settings_tabs/update.svg" alt="" />
@@ -169,6 +181,9 @@ onMount(async () => {
 			class:active={tab == "developer"}
 			onclick={() => {
 				tab = "developer";
+				tick().then(() => {
+					setWindowHeight();
+				});
 			}}
 		>
 			<img src="./icons/settings_tabs/dev.svg" alt="" />
@@ -192,15 +207,30 @@ onMount(async () => {
 						{onChange}
 					/>
 					-->
+					<!--
 					<SettingsSelect
 						name="UI size:"
 						bind:value={$settings.ui_scale}
 						options={[
-							{ value: 1, name: "Small" },
-							{ value: 1.3, name: "Standart" },
-							{ value: 1.6, name: "Large" },
-							{ value: 2, name: "Double" },
+							{ value: 0.8, name: "0.8x" },
+							{ value: 1, name: "1x" },
+							{ value: 1.3, name: "1.3x" },
+							{ value: 1.6, name: "1.6x" },
+							{ value: 2, name: "2x" },
 						]}
+						{onChange}
+					/>
+					-->
+					<SettingsValue
+						name="UI size: "
+						bind:value={$settings.ui_scale}
+						min={0.1}
+						max={10}
+						softMin={0.4}
+						softMax={2}
+						decimalDisplay={2}
+						step={0.1}
+						unit="x"
 						{onChange}
 					/>
 					<SettingsCheckbox
@@ -247,6 +277,6 @@ onMount(async () => {
 	</div>
 
 	{#if $uiPlatform == "mac"}
-		<div class="window-rim" />
+		<div class="window-rim"></div>
 	{/if}
 </main>

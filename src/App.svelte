@@ -4,7 +4,7 @@ import "../src/pureUI/scss/index.scss";
 import "./style/App.scss";
 
 // Svelte, Tauri
-import { onMount, tick } from "svelte";
+import { onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
