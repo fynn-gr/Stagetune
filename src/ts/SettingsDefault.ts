@@ -1,5 +1,4 @@
 export type Settings = {
-	recent: Array<string>;
 	lang: string;
 	show_splash: boolean;
 	ui_scale: number;
@@ -15,7 +14,6 @@ export type Settings = {
 };
 
 export const settingsDefault = {
-	recent: [],
 	lang: "en",
 	show_splash: true,
 	ui_scale: 1,

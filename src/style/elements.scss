@@ -31,6 +31,24 @@
 			pointer-events: none;
 		}
 
+		.top {
+			position: absolute;
+			inset: 18px 28px;
+			color: white;
+
+			h1 b {
+				font-size: 50px;
+				font-family: "Outfit";
+			}
+
+			.version {
+				height: 46px;
+				line-height: 46px;
+				font-family: "Outfit";
+				font-size: 34px;
+			}
+		}
+
 		.box {
 			position: absolute;
 			inset: 70px;
@@ -45,18 +63,18 @@
 			z-index: 20;
 			position: absolute;
 			bottom: 0;
-			display: grid;
-			grid-template-columns: auto auto;
-			gap: 14px;
-			width: 500px;
-			height: 188px;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			width: 250px;
+			height: 208px;
 			padding: 28px;
 
 			button {
 				position: relative;
 				display: flex;
 				height: 32px;
-				width: 200px;
+				width: 194px;
 				padding: 6px;
 				line-height: 20px;
 				font-size: 18px;
@@ -71,7 +89,11 @@
 				&:hover {
 					font-weight: 600;
 					letter-spacing: 0px;
-					background-color: rgba(0, 0, 0, 0.3);
+					background-color: rgba(0, 0, 0, 0.2);
+				}
+
+				&:nth-child(n + 5) {
+					display: none;
 				}
 
 				* {

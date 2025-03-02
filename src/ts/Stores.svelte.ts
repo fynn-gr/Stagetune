@@ -18,6 +18,7 @@ import { settingsDefault, type Settings } from "./SettingsDefault";
 
 export const settings = writable<Settings>(settingsDefault);
 export const showProjector = writable<boolean>(false);
+export const recent = writable<Array<string>>([]);
 
 // screens for projector
 export const screens = writable<Monitor[]>([]);

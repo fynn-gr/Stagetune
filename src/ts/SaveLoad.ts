@@ -24,25 +24,32 @@ import {
 	settings,
 	splash,
 	uiPlatform,
+	recent,
 } from "./Stores.svelte";
-import type { PlaylistItem, SaveFile } from "./Types";
+import type { SaveFile } from "./Types";
+import { createNativeMenu } from "./Menus.svelte";
 
-export async function openPlaylist() {
+export async function openPlaylist(path?: string) {
 	try {
-		const sel = await open({
-			multiple: false,
-			filters: [
-				{
-					name: "Playlist",
-					extensions: ["spl"],
-				},
-			],
-		});
+		let srcPath: string;
+		if (!path) {
+			const sel = await open({
+				multiple: false,
+				filters: [
+					{
+						name: "Playlist",
+						extensions: ["spl"],
+					},
+				],
+			});
+			if (!sel) return;
+			srcPath = sel;
+		} else {
+			srcPath = path;
+		}
 
-		if (!sel) return;
-
-		playlistPath.set(sel as string);
-		readTextFile(sel, {}).then(e => {
+		playlistPath.set(srcPath as string);
+		readTextFile(srcPath, {}).then(e => {
 			const obj = JSON.parse(e);
 			srcFiles.set(obj.srcFiles);
 			playlist.set(obj.playlist);
@@ -55,6 +62,20 @@ export async function openPlaylist() {
 				}
 			});
 		});
+
+		//update recent
+		recent.update(e => {
+			e.unshift(srcPath);
+			return e;
+		});
+		if (get(recent).length > 10) {
+			recent.update(e => {
+				e.pop();
+				return e;
+			});
+		}
+		createNativeMenu();
+		saveSettings();
 	} catch (err) {
 		console.error(err);
 	}
@@ -175,15 +196,18 @@ export async function scanSrcPaths(selPath: string) {
 	}
 }
 
-export async function savePlaylist() {
+export async function savePlaylist(saveAs = false) {
 	//test if allready saved
-	if (get(playlistPath) == "") {
+	if (get(playlistPath) == "" || saveAs) {
 		// save as
-		const sel = await save({
+		let sel = await save({
 			title: "save Playlist as",
 			defaultPath: "Playlist.spl",
 		});
 		if (!sel) return;
+		if (!sel.endsWith(".spl")) {
+			sel += ".spl";
+		}
 		playlistPath.set(sel);
 	}
 
@@ -201,7 +225,7 @@ export async function savePlaylist() {
 	};
 
 	// Remove unwanted attributes, remove Buffer
-	saveObj.playlist.forEach((e: PlaylistItem) => {
+	saveObj.playlist.forEach((e: any) => {
 		e.playing = false;
 		e.state = 0;
 		e.startedAt = 0;
@@ -227,6 +251,21 @@ export async function savePlaylist() {
 
 	// Write file to disk
 	writeTextFile(path, JSON.stringify(saveObj), {});
+
+	//update recent
+	console.log("recent: ", get(recent));
+	recent.update(e => {
+		e.unshift(path);
+		return e;
+	});
+	if (get(recent).length > 10) {
+		recent.update(e => {
+			e.pop();
+			return e;
+		});
+	}
+	createNativeMenu();
+	saveSettings();
 }
 
 export function saveSettings() {
@@ -234,6 +273,7 @@ export function saveSettings() {
 	const toSave = {
 		settings: get(settings),
 		uiPlatform: get(uiPlatform),
+		recent: get(recent),
 	};
 	getVersion()
 		.then(v => {
@@ -263,6 +303,7 @@ export async function loadSettings(activateSplash = false) {
 			const obj = JSON.parse(e);
 			settings.set(obj.settings);
 			uiPlatform.set(obj.uiPlatform);
+			recent.set(obj.recent);
 			console.log("loaded settings", obj);
 
 			if (activateSplash) splash.set(get(settings).show_splash);

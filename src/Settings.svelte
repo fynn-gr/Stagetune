@@ -29,6 +29,7 @@ import SettingsValue from "./pureUI/components/settings/SettingsValue.svelte";
 
 const settings = writable<Settings>(settingsDefault);
 const uiPlatform = writable<string>("win");
+const recent = writable<string[]>([]);
 
 const appWindow = getCurrentWindow();
 let tab: string = $state("general");
@@ -58,6 +59,7 @@ function save() {
 	const toSave = {
 		settings: $settings,
 		uiPlatform: $uiPlatform,
+		recent: $recent,
 	};
 	getVersion()
 		.then(v => {
@@ -87,6 +89,7 @@ async function load() {
 			const obj = JSON.parse(e);
 			settings.set(obj.settings);
 			uiPlatform.set(obj.uiPlatform);
+			recent.set(obj.recent);
 			console.log("loaded settings", $settings);
 		});
 	});

@@ -27,6 +27,7 @@ pnpm-lock.yaml
 
 /public/icons/*
 /public/videos/*
+/public/fonts/*
 
 /src-tauri/capabilities/ref.xml
 /target/

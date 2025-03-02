@@ -6,7 +6,7 @@ import "./style/App.scss";
 // Svelte, Tauri
 import { onMount } from "svelte";
 import { emit, listen } from "@tauri-apps/api/event";
-import { confirm } from "@tauri-apps/plugin-dialog";
+import { confirm, save } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { exit } from "@tauri-apps/plugin-process";
 
@@ -42,6 +42,7 @@ import {
 	selectedScreen,
 	currentDragging,
 	contextMenu,
+	recent,
 } from "./ts/Stores.svelte";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -51,8 +52,9 @@ import {
 	checkSettingsExist,
 	openPlaylist,
 	relinkDir,
+	saveSettings,
 } from "./ts/SaveLoad";
-import { createNativeMenu } from "./ts/Menus";
+import { createNativeMenu } from "./ts/Menus.svelte";
 import { lastFolderFromPath } from "./ts/FileUtils";
 import TracklistBuildIn from "./lib/TracklistBuildIn.svelte";
 
@@ -189,8 +191,14 @@ const Listeners = () => {
 			// TODO
 		} else if (id == "openPlaylist" && $editMode) {
 			openPlaylist();
-		} else if (id == "savePlaylist") {
+		} else if (id == "clearRecent") {
+			$recent = [];
+			saveSettings();
+			createNativeMenu();
+		} else if (id == "save") {
 			savePlaylist();
+		} else if (id == "saveAs") {
+			savePlaylist(true);
 		} else if (id == "addSource") {
 			openDir();
 		} else if (id == "projector") {

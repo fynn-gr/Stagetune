@@ -1,12 +1,16 @@
 import {
+	IconMenuItem,
 	Menu,
 	MenuItem,
 	PredefinedMenuItem,
 	type AboutMetadata,
 } from "@tauri-apps/api/menu";
 import { Submenu } from "@tauri-apps/api/menu/submenu";
+import { recent } from "./Stores.svelte";
+import { get } from "svelte/store";
+import { fileNameFromPath } from "./FileUtils";
 
-export function createNativeMenu() {
+export async function createNativeMenu() {
 	let menu;
 	let subMain: Submenu;
 	let subFile: Submenu;
@@ -14,6 +18,21 @@ export function createNativeMenu() {
 	let subWindow: Submenu;
 	let subHelp: Submenu;
 
+	let recentItems: Array<MenuItem | PredefinedMenuItem> = [];
+	get(recent).forEach(async e => {
+		recentItems.push(
+			await MenuItem.new({
+				id: e,
+				text: e,
+			}),
+		);
+	});
+	recentItems.push(await PredefinedMenuItem.new({ item: "Separator" }));
+	recentItems.push(
+		await MenuItem.new({ id: "clearRecent", text: "Clear Menu" }),
+	);
+
+	// Menu bar
 	async function createSubmenu() {
 		// App
 		let meta: AboutMetadata = { license: "GPL 3.0", authors: ["Fyn Gr."] };
@@ -56,18 +75,27 @@ export function createNativeMenu() {
 
 		// File
 		let newPlaylist = await MenuItem.new({
-			id: "new",
-			text: "New Playlist",
+			id: "newPlaylist",
+			text: "New",
 		});
 		let openPlaylist = await MenuItem.new({
-			id: "open",
-			text: "Open Playlist",
+			id: "openPlaylist",
+			text: "Open",
 			accelerator: "cmd+O",
 		});
-		let savePlaylist = await MenuItem.new({
+		let save = await MenuItem.new({
 			id: "save",
-			text: "Save Playlist",
+			text: "Save",
 			accelerator: "cmd+S",
+		});
+		let saveAs = await MenuItem.new({
+			id: "saveAs",
+			text: "Save As",
+			accelerator: "cmd+S",
+		});
+		let recent = await Submenu.new({
+			text: "Open Recent",
+			items: recentItems,
 		});
 		let addSource = await MenuItem.new({
 			id: "addSource",
@@ -76,7 +104,16 @@ export function createNativeMenu() {
 
 		subFile = await Submenu.new({
 			text: "File",
-			items: [newPlaylist, openPlaylist, savePlaylist, sep, addSource],
+			items: [
+				newPlaylist,
+				openPlaylist,
+				recent,
+				sep,
+				save,
+				saveAs,
+				sep,
+				addSource,
+			],
 		});
 
 		// Edit

@@ -125,17 +125,9 @@ onMount(async () => {
 		<!--menus on windows-->
 		{#if $uiPlatform == "win"}
 			<AppMenu name="File">
-				<AppMenuItem id="newPlaylist" name="New Playlist" />
-				<AppMenuItem
-					id="openPlaylist"
-					name="Open Playlist"
-					accelerator="ctrl O"
-				/>
-				<AppMenuItem
-					id="savePlaylist"
-					name="Save Playlist"
-					accelerator="ctrl S"
-				/>
+				<AppMenuItem id="newPlaylist" name="New" />
+				<AppMenuItem id="openPlaylist" name="Open" accelerator="ctrl O" />
+				<AppMenuItem id="savePlaylist" name="Save" accelerator="ctrl S" />
 				<AppMenuItem id="addSource" name="Add Source" />
 				<div class="seperator" />
 				<AppMenuItem

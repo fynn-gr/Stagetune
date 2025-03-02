@@ -2,11 +2,13 @@
 import { onMount } from "svelte";
 import { getVersion } from "@tauri-apps/api/app";
 import { open } from "@tauri-apps/plugin-shell";
+import { recent } from "@/ts/Stores.svelte";
+import { fileNameFromPath } from "@/ts/FileUtils";
+import { openPlaylist } from "@/ts/SaveLoad";
 
-const links = {
+const links: any = {
 	Website: "https://fynn.gr/apps/stagetune",
 	Repository: "https://github.com/fynn-gr/stagetune",
-	License: "https://www.gnu.org/licenses/gpl-3.0.html#license-text",
 	BugReport: "https://github.com/fynn-gr/stagetune/issues",
 	Documentation: "https://github.com/fynn-gr/stagetune/docs",
 };
@@ -15,7 +17,7 @@ interface Props {
 	splashScreen: boolean;
 }
 let { splashScreen = $bindable() }: Props = $props();
-let version: string;
+let version: string = $state("");
 
 onMount(async () => {
 	//loadSettings();
@@ -35,13 +37,14 @@ onMount(async () => {
 >
 	<div class="wrapper">
 		<img src={`./splash_dark.png`} class="splash-art" />
-		<!-- <div class="top">
-			<h1><b>Stagetune</b></h1>
-			<p class="version">{version || ""} Aquädukt</p>
-		</div> -->
 
 		<div class="box">
-			<span>
+			<div class="top">
+				<h1><b>Stagetune</b></h1>
+				<p class="version">{version || ""} Aquädukt</p>
+			</div>
+
+			<span style="left: 0;">
 				{#each Object.keys(links) as key}
 					<button
 						title={links[key]}
@@ -53,6 +56,19 @@ onMount(async () => {
 					>
 						<img src="./icons/std/web.svg" alt="" />
 						<p>{key}</p>
+					</button>
+				{/each}
+			</span>
+			<span style="right: 0;">
+				{#each $recent as file}
+					<button
+						onclick={() => {
+							openPlaylist(file);
+							splashScreen = false;
+						}}
+					>
+						<img src="./icons/std/file.svg" alt="" />
+						<p>{fileNameFromPath(file)}</p>
 					</button>
 				{/each}
 			</span>
