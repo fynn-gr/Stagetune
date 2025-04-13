@@ -12,19 +12,31 @@ let {
 	pan = $bindable(),
 	slider = true,
 }: Props = $props();
+let draggingKnobVolume = $state(false);
+let draggingKnobPan = $state(false);
+let volumeDisplay = $state(volume);
+let panDisplay = $state(pan);
 
 function handleVolumeDrag(e: any) {
 	e.preventDefault();
 	e.stopPropagation();
-	volume -= Math.round(e.movementY * 0.4);
+	volume -= e.movementY * 0.4;
 	volume = Math.max(0, Math.min(volume, 100));
+	volumeDisplay = Math.round(volume);
+	if (volume > 74 && volume < 86) {
+		volumeDisplay = 80;
+	}
 }
 
 function handlePanDrag(e: any) {
 	e.preventDefault();
 	e.stopPropagation();
-	pan -= e.movementY * 0.01;
+	pan -= e.movementY * 0.0001;
 	pan = Math.max(-1, Math.min(pan, 1));
+	panDisplay = Math.round(pan * 50) / 50;
+	if (pan > -0.2 && pan < 0.2) {
+		panDisplay = 0;
+	}
 }
 </script>
 
@@ -64,8 +76,11 @@ function handlePanDrag(e: any) {
 		<span
 			onmousedown={e => {
 				console.log("start drag");
+				draggingKnobVolume = true;
 				document.addEventListener("mousemove", handleVolumeDrag);
 				document.addEventListener("mouseup", f => {
+					draggingKnobVolume = false;
+					volume = volumeDisplay;
 					document.removeEventListener("mousemove", handleVolumeDrag);
 				});
 			}}
@@ -76,52 +91,64 @@ function handlePanDrag(e: any) {
           background-image: conic-gradient(
             from 225deg,
             var(--accent) 0deg,
-            var(--accent) ${volume * 2.7}deg,
-            rgb(77, 77, 77) ${volume * 2.7}deg,
+            var(--accent) ${volumeDisplay * 2.7}deg,
+            rgb(77, 77, 77) ${volumeDisplay * 2.7}deg,
             rgb(77, 77, 77) 270deg,
             transparent 270deg,
             transparent 360deg
           );
         `}
 			></div>
+			<div class="default-mark" style="transform: rotate(260deg);"></div>
 			<div
 				class="knob"
-				style={`rotate: ${volume * 2.7 - 135}deg;`}
+				style={`rotate: ${volumeDisplay * 2.7 - 135}deg;`}
 				title="Volume"
 			>
 				<div class="mark"></div>
 			</div>
+			<div class="number-display" class:drag={draggingKnobVolume}>{volumeDisplay}</div>
 		</span>
 
 		<!--Pan-->
 		<span
 			onmousedown={e => {
 				console.log("start drag");
+				draggingKnobPan = true;
 				document.addEventListener("mousemove", handlePanDrag);
 				document.addEventListener("mouseup", f => {
+					draggingKnobPan = false;
+					pan = panDisplay;
 					document.removeEventListener("mousemove", handlePanDrag);
 				});
 			}}
 		>
 			<div
 				class="arch"
-				style={pan == 0
-					? "background: rgb(77, 77, 77);"
-					: pan < 0
+				style={panDisplay == 0
+					? `background-image: conic-gradient(
+            rgb(77 ,77, 77) 0deg,
+            rgb(77, 77, 77) 135deg,
+            transparent 135deg,
+            transparent 225deg,
+						rgb(77, 77, 77) 225deg,
+						rgb(77, 77, 77) 360deg
+					);`
+					: panDisplay < 0
 						? `background-image: conic-gradient(
             rgb(77 ,77, 77) 0deg,
             rgb(77, 77, 77) 135deg,
             transparent 135deg,
             transparent 225deg,
             rgb(77, 77, 77) 225deg,
-            rgb(77, 77, 77) ${360 - pan * -135}deg,
-            var(--accent) ${360 - pan * -135}deg,
+            rgb(77, 77, 77) ${360 - panDisplay * -135}deg,
+            var(--accent) ${360 - panDisplay * -135}deg,
             var(--accent) 360deg
           );`
 						: `background-image: conic-gradient(
             var(--accent) 0deg,
-            var(--accent) ${pan * 135}deg,
-            rgb(77, 77, 77) ${pan * 135}deg,
+            var(--accent) ${panDisplay * 135}deg,
+            rgb(77, 77, 77) ${panDisplay * 135}deg,
             rgb(77, 77, 77) 135deg,
             transparent 135deg,
             transparent 225deg,
@@ -129,9 +156,10 @@ function handlePanDrag(e: any) {
             rgb(77, 77, 77) 360deg
           );`}
 			></div>
-			<div class="knob" style={`rotate: ${pan * 135}deg;`} title="Pan">
+			<div class="knob" style={`rotate: ${panDisplay * 135}deg;`} title="Pan">
 				<div class="mark"></div>
 			</div>
+			<div class="number-display" class:drag={draggingKnobPan}>{panDisplay}</div>
 		</span>
 	</div>
 {/if}
