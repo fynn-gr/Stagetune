@@ -1,43 +1,27 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { mapRange } from "../ts/Utils";
 
 interface Props {
-	analyser: any;
-	ctx: AudioContext;
+	analyser: AnalyserNode;
 }
-let { analyser, ctx }: Props = $props();
+let { analyser }: Props = $props();
 let meterCanvas: HTMLCanvasElement;
 let meterCtx: CanvasRenderingContext2D;
-let lastDB = -100;
 
 analyser.fftSize = 256;
-const bufferLength = analyser.frequencyBinCount;
-const sampleBuffer = new Float32Array(bufferLength);
+const sampleBuffer = new Float32Array(analyser.fftSize);
 
 function drawMeter() {
 	requestAnimationFrame(drawMeter);
 
 	analyser.getFloatTimeDomainData(sampleBuffer);
-	meterCtx.fillStyle = "rgb(40, 40, 40)";
-	meterCtx.fillRect(0, 0, meterCanvas.width, meterCanvas.height);
-
-	let sumPeak = 0;
-	for (let i = 0; i < sampleBuffer.length; i++) {
-		sumPeak += sampleBuffer[i] ** 2;
-	}
+	const sumPeak = sampleBuffer.reduce((sum, value) => sum + value ** 2, 0);
 	const avgDecibels = 10 * Math.log10(sumPeak / sampleBuffer.length);
-	const smoothDecibels = avgDecibels > lastDB ? avgDecibels : lastDB - 0.2;
-	const displayY = mapRange(smoothDecibels, -50, 0, 0, meterCanvas.height);
-	lastDB = smoothDecibels;
+	const displayHeight = Math.max(0, Math.min(1, (avgDecibels + 50) / 50)) * meterCanvas.height;
 
+	meterCtx.clearRect(0, 0, meterCanvas.width, meterCanvas.height);
 	meterCtx.fillStyle = "rgb(256, 0, 0)";
-	meterCtx.fillRect(
-		0,
-		meterCanvas.height - displayY,
-		meterCanvas.width,
-		meterCanvas.height,
-	);
+	meterCtx.fillRect(0, meterCanvas.height - displayHeight, meterCanvas.width, displayHeight);
 }
 
 onMount(() => {
@@ -47,5 +31,5 @@ onMount(() => {
 </script>
 
 <div class="meter">
-	<canvas class="can-meter" bind:this={meterCanvas} width="30" height="500" />
+	<canvas bind:this={meterCanvas} width="30" height="500"></canvas>
 </div>
