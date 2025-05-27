@@ -67,6 +67,8 @@ function handleDragLeave(e: any) {
 	dragover = null;
 }
 
+export function getBuffer() {}
+
 export function update() {}
 
 export function playPause() {}

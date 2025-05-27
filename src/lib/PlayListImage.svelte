@@ -88,6 +88,8 @@ export function stop(reset: boolean = false) {
 	track.playing = false;
 }
 
+export function getBuffer() {}
+
 export function update() {}
 
 const unlistenState = listen("video_state", (e: any) => {

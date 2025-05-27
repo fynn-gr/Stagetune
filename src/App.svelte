@@ -467,7 +467,7 @@ $effect(() => {
 	<!--editor-->
 	{#if showEditor && $editMode}
 		<div class="editor">
-			{#if $selectedItem && $playlist[$selectedItem].buffer != null && $playlist[$selectedItem].type === "track"}
+			{#if $selectedItem && $playlist[$selectedItem].type === "track" && $playlist[$selectedItem].buffer}
 				<div class="prop-bar">
 					<label>cut start</label>
 					<PropNumber

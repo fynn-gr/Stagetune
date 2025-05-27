@@ -104,6 +104,8 @@ export function stop(reset: boolean = false) {
 	track.playing = false;
 }
 
+export function getBuffer() {}
+
 export function update() {}
 
 onMount(async () => {
