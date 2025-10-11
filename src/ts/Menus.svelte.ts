@@ -19,7 +19,7 @@ export async function createNativeMenu() {
 	let subHelp: Submenu;
 
 	let recentItems: Array<MenuItem | PredefinedMenuItem> = [];
-	get(recent).forEach(async e => {
+	get(recent).forEach(async (e) => {
 		recentItems.push(
 			await MenuItem.new({
 				id: e,

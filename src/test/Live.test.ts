@@ -29,7 +29,7 @@ export function testLive() {
 		}),
 	);
 	editMode.set(false);
-	document.addEventListener("keydown", e => {
+	document.addEventListener("keydown", (e) => {
 		if (e.code == "Escape") stop = true;
 	});
 	selectedItem.set(getRndInteger(0, get(playlist).length - 1));

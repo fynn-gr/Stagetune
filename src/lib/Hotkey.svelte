@@ -19,7 +19,7 @@ interface Props {
 let { key, track = $bindable() }: Props = $props();
 
 onMount(async () => {
-	document.addEventListener("keydown", e => {
+	document.addEventListener("keydown", (e) => {
 		if (track == null) return;
 		if ($isEditing > 0 || e.ctrlKey || e.code != `Digit${key}`) {
 			return;

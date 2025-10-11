@@ -62,7 +62,7 @@ import type {
 	PlaylistVideo,
 	PlaylistAnnotation,
 	PlaylistImage,
-	PlaylistLoop
+	PlaylistLoop,
 } from "./ts/Types";
 
 let playlistEl: HTMLElement;
@@ -162,7 +162,7 @@ function deleteTrack() {
 		else $selectedItem = undefined;
 
 		// Delete from playlist
-		playlist.update(e => {
+		playlist.update((e) => {
 			e.splice(toDelete, 1);
 			return e;
 		});
@@ -184,7 +184,7 @@ function resetAll() {
 
 // Event listeners
 const Listeners = () => {
-	listen("menu", async event => {
+	listen("menu", async (event) => {
 		let id = event.payload;
 		console.log(event);
 
@@ -193,7 +193,7 @@ const Listeners = () => {
 				title: "Quit?",
 				kind: "warning",
 				okLabel: "Quit",
-			}).then(isOK => (isOK ? exit(0) : null));
+			}).then((isOK) => (isOK ? exit(0) : null));
 		} else if (id == "newPlaylist") {
 			// TODO
 		} else if (id == "openPlaylist" && $editMode) {
@@ -225,7 +225,7 @@ const Listeners = () => {
 		}
 	});
 
-	listen("projctorReq", e => {
+	listen("projctorReq", (e) => {
 		updateProjectorList();
 		emit("projector_set_location", { screen: $screens[$selectedScreen] });
 	});
@@ -238,7 +238,7 @@ const Listeners = () => {
 
 // Shortcuts
 const Shortcuts = () => {
-	document.addEventListener("keydown", e => {
+	document.addEventListener("keydown", (e) => {
 		if ($isEditing > 0) return;
 
 		if ($editMode) {
@@ -288,7 +288,7 @@ const Shortcuts = () => {
 		}
 	});
 
-	document.addEventListener("contextmenu", e => e.preventDefault());
+	document.addEventListener("contextmenu", (e) => e.preventDefault());
 };
 
 // On mount lifecycle

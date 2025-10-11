@@ -29,7 +29,7 @@ export function testEdit() {
 		"auto-reset",
 		"add-attached-anotation",
 	];
-	document.addEventListener("keydown", e => {
+	document.addEventListener("keydown", (e) => {
 		if (e.code == "Escape") stop = true;
 	});
 	selectedItem.set(getRndInteger(0, get(playlist).length - 1));
