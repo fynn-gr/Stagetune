@@ -57,6 +57,13 @@ import {
 import { createNativeMenu } from "./ts/Menus.svelte";
 import { lastFolderFromPath } from "./ts/FileUtils";
 import TracklistBuildIn from "./lib/TracklistBuildIn.svelte";
+import type {
+	PlaylistTrack,
+	PlaylistVideo,
+	PlaylistAnnotation,
+	PlaylistImage,
+	PlaylistLoop
+} from "./ts/Types";
 
 let playlistEl: HTMLElement;
 let annotationWidth: number = $state(25);
@@ -407,27 +414,27 @@ $effect(() => {
 			{#if t.type === "track"}
 				<PlayListTrack
 					bind:this={$playlistElements[i]}
-					bind:type={t.type}
-					bind:path={t.path}
-					bind:pathSource={t.pathSource}
-					bind:name={t.name}
-					bind:length={t.length}
-					bind:playing={t.playing}
-					bind:timeCode={t.timeCode}
-					bind:volume={t.volume}
-					bind:pan={t.pan}
-					bind:repeat={t.repeat}
-					bind:autoReset={t.autoReset}
-					bind:edit={t.edit}
-					bind:fade={t.fade}
-					bind:annotation={t.annotation}
-					bind:buffer={t.buffer}
-					bind:startedAt={t.startedAt}
-					bind:pausedAt={t.pausedAt}
-					bind:inFade={t.inFade}
-					bind:hotkey={t.hotkey}
-					bind:missing={t.missing}
-					bind:loaded={t.loaded}
+					bind:type={($playlist[i] as PlaylistTrack).type}
+					bind:path={($playlist[i] as PlaylistTrack).path}
+					bind:pathSource={($playlist[i] as PlaylistTrack).pathSource}
+					bind:name={($playlist[i] as PlaylistTrack).name}
+					bind:length={($playlist[i] as PlaylistTrack).length}
+					bind:playing={($playlist[i] as PlaylistTrack).playing}
+					bind:timeCode={($playlist[i] as PlaylistTrack).timeCode}
+					bind:volume={($playlist[i] as PlaylistTrack).volume}
+					bind:pan={($playlist[i] as PlaylistTrack).pan}
+					bind:repeat={($playlist[i] as PlaylistTrack).repeat}
+					bind:autoReset={($playlist[i] as PlaylistTrack).autoReset}
+					bind:edit={($playlist[i] as PlaylistTrack).edit}
+					bind:fade={($playlist[i] as PlaylistTrack).fade}
+					bind:annotation={($playlist[i] as PlaylistTrack).annotation}
+					bind:buffer={($playlist[i] as PlaylistTrack).buffer}
+					bind:startedAt={($playlist[i] as PlaylistTrack).startedAt}
+					bind:pausedAt={($playlist[i] as PlaylistTrack).pausedAt}
+					bind:inFade={($playlist[i] as PlaylistTrack).inFade}
+					bind:hotkey={($playlist[i] as PlaylistTrack).hotkey}
+					bind:missing={($playlist[i] as PlaylistTrack).missing}
+					bind:loaded={($playlist[i] as PlaylistTrack).loaded}
 					id={i}
 					{ctx}
 					{masterGain}
@@ -435,25 +442,25 @@ $effect(() => {
 			{:else if t.type === "video"}
 				<PlayListVideo
 					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i]}
+					bind:track={$playlist[i] as PlaylistVideo}
 					id={i}
 				/>
 			{:else if t.type === "image"}
 				<PlayListImage
 					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i]}
+					bind:track={$playlist[i] as PlaylistImage}
 					id={i}
 				/>
 			{:else if t.type === "annotation"}
 				<PlayListAnotation
 					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i]}
+					bind:track={$playlist[i] as PlaylistAnnotation}
 					id={i}
 				/>
 			{:else if t.type === "loop"}
 				<PlayListLoop
 					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i]}
+					bind:track={$playlist[i] as PlaylistLoop}
 					id={i}
 				/>
 			{/if}
@@ -467,13 +474,15 @@ $effect(() => {
 	<!--editor-->
 	{#if showEditor && $editMode}
 		<div class="editor">
-			{#if $selectedItem && $playlist[$selectedItem].type === "track" && $playlist[$selectedItem].buffer}
+			{#if $selectedItem !== undefined && 
+				$playlist[$selectedItem].type === "track" && 
+				($playlist[$selectedItem] as PlaylistTrack).buffer != null}
 				<div class="prop-bar">
 					<label>cut start</label>
 					<PropNumber
-						bind:value={$playlist[$selectedItem].edit.in}
+						bind:value={($playlist[$selectedItem] as PlaylistTrack).edit.in}
 						min={0}
-						max={$playlist[$selectedItem].length}
+						max={($playlist[$selectedItem] as PlaylistTrack).length}
 						step={1}
 						unit="s"
 						onFocus={() => {
@@ -496,12 +505,12 @@ $effect(() => {
 								90deg,
 								#111 0%,
 								#111 calc(100% * ${
-									$playlist[$selectedItem].edit.in /
-									$playlist[$selectedItem].length
+									($playlist[$selectedItem] as PlaylistTrack).edit.in /
+									($playlist[$selectedItem] as PlaylistTrack).length
 								}),
 								#fff calc(100% * ${
-									$playlist[$selectedItem].edit.in /
-									$playlist[$selectedItem].length
+									($playlist[$selectedItem] as PlaylistTrack).edit.in /
+									($playlist[$selectedItem] as PlaylistTrack).length
 								}),
 								#fff 100%
 							);`}
@@ -517,19 +526,18 @@ $effect(() => {
 						<input
 							type="range"
 							min="0"
-							max={$playlist[$selectedItem].length}
+							max={($playlist[$selectedItem] as PlaylistTrack).length}
 							step="0.01"
-							bind:value={$playlist[$selectedItem].edit.in}
+							bind:value={($playlist[$selectedItem] as PlaylistTrack).edit.in}
 						/>
 					</div>
 					<div
 						class="border"
-						style={`left: ${($playlist[$selectedItem].edit.in / $playlist[$selectedItem].length) * 100}%;`}
+						style={`left: ${(($playlist[$selectedItem] as PlaylistTrack).edit.in / ($playlist[$selectedItem] as PlaylistTrack).length) * 100}%;`}
 					></div>
 				</div>
-			{:else}
-				<p class="placeholder">No track selected</p>
 			{/if}
+			<p class="placeholder">No track selected</p>
 		</div>
 	{/if}
 
@@ -540,18 +548,18 @@ $effect(() => {
 			{#if showCurrent}
 				<div class="current">
 					{#each $playlist as e, i}
-						{#if e.type != "annotation" && e.playing && e.state != 0}
+						{#if e.type != "annotation" && e.playing && (e.state ?? 0) != 0}
 							<div class="song">
 								<div
 									class="state"
 									class:playing={e.playing}
-									style={`width: calc(100% * ${e.state != undefined ? e.state / e.length : 0});`}
+									style={`width: calc(100% * ${e.state != undefined ? e.state / (e.length ?? 1) : 0});`}
 								></div>
 								<button
 									title="current playing"
 									onclick={() => $playlistElements[i].stop(!e.playing, false)}
 								>
-									{#if e.inFade != null}
+									{#if e.type === "track" && (e as PlaylistTrack).inFade != null}
 										<img
 											src="./icons/topbar/fade.svg"
 											alt=""

@@ -10,10 +10,10 @@ import {
 } from "../ts/Stores.svelte";
 import { onMount } from "svelte";
 import Annotation from "./Annotation.svelte";
-import type { PlaylistItem } from "@/ts/Types";
+import type { PlaylistLoop } from "@/ts/Types";
 
 interface Props {
-	track: PlaylistItem;
+	track: PlaylistLoop;
 	id: number;
 }
 let { track = $bindable(), id }: Props = $props();
@@ -29,8 +29,8 @@ function handleDragStart(e: DragEvent) {
 	let x = e.clientX - rec.left;
 
 	//drag if pointer on drag area
-	if (x < 80) {
-		const dataTransfer = e.dataTransfer as DataTransfer;
+	if (x < 80 && e.dataTransfer) {
+		const dataTransfer = e.dataTransfer;
 		dataTransfer.dropEffect = "copy";
 		dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = track;
@@ -56,7 +56,8 @@ function handleDrop(e: DragEvent) {
 		let newPosition = id;
 		DropHandler(newPosition);
 	} else if ($currentDragging?.type == "image") {
-		track.items?.push({
+		if (!track.items) track.items = [];
+		track.items.push({
 			type: "image",
 			path: $currentDragging.path,
 			pathSource: $currentDragging.pathSource,
@@ -95,7 +96,9 @@ export function update() {}
 
 export function playPause() {}
 
-export function play() {}
+export function play(resume?: boolean) {
+	track.playing = true;
+}
 
 export function stop() {}
 

@@ -8,7 +8,7 @@ import Annotation from "./Annotation.svelte";
 
 // Stores, Utils
 import { DropHandler, updateProjectorList } from "@/ts/Utils";
-import type { PlaylistItem } from "@/ts/Types";
+import type { PlaylistVideo } from "@/ts/Types";
 import {
 	editMode,
 	selectedItem,
@@ -19,7 +19,7 @@ import {
 } from "../ts/Stores.svelte";
 
 interface Props {
-	track: PlaylistItem;
+	track: PlaylistVideo;
 	id: number;
 }
 let { track = $bindable(), id }: Props = $props();
@@ -37,7 +37,7 @@ function handleDragStart(e: DragEvent) {
 	let x = e.clientX - rec.left;
 
 	//drag if pointer on drag area
-	if (x < 80) {
+	if (x < 80 && e.dataTransfer) {
 		e.dataTransfer.dropEffect = "copy";
 		e.dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = track;
@@ -87,10 +87,10 @@ function handleSkip(e: MouseEvent) {
 }
 
 export function playPause() {
-	track.playing ? stop() : play(track.state > 0);
+	track.playing ? stop() : play((track.state ?? 0) > 0);
 }
 
-export function play() {
+export function play(resume?: boolean) {
 	emit("play_video", { name: track.name });
 	track.playing = true;
 }
@@ -111,7 +111,7 @@ export function update() {}
 onMount(async () => {
 	unlistenState = await listen("video_state", (e: any) => {
 		if (track.playing && e.payload.name === track.name) {
-			track.state = e.payload.state;
+			track.state = e.payload.state ?? 0;
 			track.length = e.payload.duration;
 		}
 	});

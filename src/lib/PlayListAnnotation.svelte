@@ -10,9 +10,10 @@ import {
 	draggingOrigin,
 } from "../ts/Stores.svelte";
 import { onMount } from "svelte";
+import type { PlaylistAnnotation } from "@/ts/Types";
 
 interface Props {
-	track: any;
+	track: PlaylistAnnotation;
 	id: number;
 }
 let { track = $bindable(), id }: Props = $props();
@@ -28,8 +29,8 @@ function handleDragStart(e: DragEvent) {
 	let x = e.clientX - rec.left;
 
 	//drag if pointer on drag area
-	if (x < 80) {
-		const dataTransfer = e.dataTransfer as DataTransfer;
+	if (x < 80 && e.dataTransfer) {
+		const dataTransfer = e.dataTransfer;
 		dataTransfer.dropEffect = "copy";
 		dataTransfer.setData("text/plain", "placehold");
 		$currentDragging = track;
@@ -73,12 +74,12 @@ export function update() {}
 
 export function playPause() {}
 
-export function play() {}
+export function play(resume?: boolean) {}
 
 export function stop() {}
 
 onMount(() => {
-	if (track.annotation != null) annotationEl.innerHTML = track.annotation.text;
+	if (track.annotation) annotationEl.innerHTML = track.annotation.text;
 });
 </script>
 
