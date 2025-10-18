@@ -198,7 +198,7 @@ $effect(() => {
 					</div>
 				{/each}
 			{/if}
-			<p class="placeholder">Drop Image or Video to add</p>
+			<p class="placeholder">Drop Image or Video</p>
 		</div>
 	</div>
 </div>

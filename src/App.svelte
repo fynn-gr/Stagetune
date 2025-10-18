@@ -311,7 +311,7 @@ $effect(() => {
 });
 $effect(() => {
 	invoke("show_projector", {
-		show: $showProjector ? true : false,
+		show: $showProjector,
 	});
 });
 </script>
