@@ -1,6 +1,6 @@
 <script lang="ts">
 // Svelte, Tauri
-import { onMount } from "svelte";
+import { onMount, tick } from "svelte";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { join } from "@tauri-apps/api/path";
 import { exists } from "@tauri-apps/plugin-fs";
@@ -81,6 +81,7 @@ let hotkeySelect: number | undefined = $state(undefined);
 let dragging = $state(false);
 let dragover: "top" | "bottom" | null = $state(null);
 let titleEl: HTMLElement;
+let titleIsEditing = $state(false);
 let cutIn: number = $state(0);
 let cutTrackLength: number = $state(0);
 
@@ -409,16 +410,34 @@ $effect(() => {
 		</button>
 
 		<!--name-->
-		{#if buffer}
+		{#if buffer} //loaded successfully
 			<div class="title">
-				<input
-					bind:this={titleEl}
-					onfocus={() => isEditing.update(e => e + 1)}
-					onblur={() => isEditing.update(e => e - 1)}
-					bind:value={name}
-					disabled={!$editMode}
-				/>
-				<div class="title-display">{name}</div>
+				{#if titleIsEditing}
+					<input
+						class="title-input"
+						type="text"
+						bind:this={titleEl}
+						bind:value={name}
+						onblur={() => {
+							titleIsEditing = false;
+						}}
+						onkeydown={e => {
+							if (e.key === "Enter") {
+								titleIsEditing = false;
+							}
+						}}
+					/>
+				{:else}
+					<span
+						class="title-display"
+						ondblclick={() => {
+							titleIsEditing = true;
+							tick().then(() => {
+								titleEl.focus();
+							});
+						}}>{name}</span
+					>
+				{/if}
 			</div>
 		{:else if missing}
 			<div class="title">
