@@ -346,9 +346,9 @@
 			background-color: var(--annotation);
 			border-radius: 10rem;
 
-			.input {
+			input.name-input {
 				width: 100%;
-				min-height: 100%;
+				min-height: 24rem;
 				padding: 8rem;
 				font-size: 18rem;
 				line-height: 22rem;
@@ -362,6 +362,17 @@
 					background-color: var(--accent);
 				}
 			}
+
+      .name-display {
+        flex: 1;
+        position: relative;
+        padding: 8rem;
+        display: flex;
+        justify-content: left;
+        font-size: 18rem;
+        font-weight: 500;
+        color: white;
+      }
 		}
 	}
 

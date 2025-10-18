@@ -45,16 +45,6 @@
 				line-height: 30rem;
 				font-size: 20rem;
 
-				&:has(input:focus) {
-					input {
-						opacity: 100%;
-					}
-
-					.title-display {
-						opacity: 0%;
-					}
-				}
-
 				input {
 					display: block;
 					position: absolute;

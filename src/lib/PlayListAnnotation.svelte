@@ -9,7 +9,7 @@ import {
 	contextMenu,
 	draggingOrigin,
 } from "../ts/Stores.svelte";
-import { onMount } from "svelte";
+import { onMount, tick } from "svelte";
 import type { PlaylistAnnotation } from "@/ts/Types";
 
 interface Props {
@@ -21,6 +21,7 @@ let { track = $bindable(), id }: Props = $props();
 let dragging = false;
 let dragover: "top" | "bottom" | null = null;
 let annotationEl: HTMLElement;
+let nameIsEditing = $state(false);
 
 function handleDragStart(e: DragEvent) {
 	//calc pointer position
@@ -79,7 +80,7 @@ export function play(resume?: boolean) {}
 export function stop() {}
 
 onMount(() => {
-	if (track.annotation) annotationEl.innerHTML = track.annotation.text;
+	//if (track.annotation) annotationEl.innerHTML = track.annotation.text;
 });
 </script>
 
@@ -175,19 +176,33 @@ onMount(() => {
 				pointer-events: ${$currentDragging == null ? "" : "none"};
 		`}
 	>
-		<div
-			class="input"
-			contenteditable={$selectedItem == id && $editMode}
-			bind:this={annotationEl}
-			onfocus={e => {
-				isEditing.update(e => e + 1);
-			}}
-			onblur={() => {
-				isEditing.update(e => e - 1);
-				track.annotation.text = annotationEl.innerHTML;
-			}}
-		>
-			<p>{track.annotation.text}</p>
-		</div>
+		{#if nameIsEditing}
+			<input
+				class="name-input"
+				type="text"
+				bind:this={annotationEl}
+				bind:value={track.annotation.text}
+				onblur={() => {
+					nameIsEditing = false;
+				}}
+				onkeydown={e => {
+					if (e.key === "Enter") {
+						nameIsEditing = false;
+					}
+				}}
+			>
+		{:else}
+			<span
+				class="name-display"
+				ondblclick={() => {
+					nameIsEditing = true;
+					tick().then(() => {
+						annotationEl.focus();
+					});
+				}}
+			>
+				{track.annotation.text}
+			</span>
+		{/if}
 	</div>
 </div>

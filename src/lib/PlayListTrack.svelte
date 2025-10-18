@@ -369,8 +369,8 @@ $effect(() => {
 		></div>
 
 		<Waveform
-			data={waveformCalc(buffer, 300, cutIn / length)}
-			samples={300}
+			data={waveformCalc(buffer, 1000, cutIn / length)}
+			samples={1000}
 			resY={50}
 		/>
 
