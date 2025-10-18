@@ -59,27 +59,24 @@ const unlistenUpdate = listen("update_play", (e: any) => {
 });
 
 //update the video list
-const unlistenUpdateList = listen("updateList", (e) => {
+const unlistenUpdateList = listen("updateList", e => {
 	list = e.payload.list;
 });
 
 //update the edit Mode value
-const unlistenEditMode = listen("editMode", (e) => {
+const unlistenEditMode = listen("editMode", e => {
 	editMode = e.payload.edit;
 });
 
 //set the window to Monitor
-const unlistenProjectorLocation = listen(
-	"projector_set_location",
-	async (e) => {
-		const pos = e.payload.screen.position;
-		const size = e.payload.screen.size;
-		console.log(e.payload.screen, pos, size);
-		await getCurrentWindow().setPosition(new PhysicalPosition(pos.x, pos.y));
-		await getCurrentWindow().setSize(new PhysicalSize(size.width, size.height));
-		await getCurrentWindow().setFullscreen(true);
-	},
-);
+const unlistenProjectorLocation = listen("projector_set_location", async e => {
+	const pos = e.payload.screen.position;
+	const size = e.payload.screen.size;
+	console.log(e.payload.screen, pos, size);
+	await getCurrentWindow().setPosition(new PhysicalPosition(pos.x, pos.y));
+	await getCurrentWindow().setSize(new PhysicalSize(size.width, size.height));
+	await getCurrentWindow().setFullscreen(true);
+});
 
 onMount(() => {
 	emit("projctorReq", {});

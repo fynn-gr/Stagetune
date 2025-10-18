@@ -162,7 +162,7 @@ function deleteTrack() {
 		else $selectedItem = undefined;
 
 		// Delete from playlist
-		playlist.update((e) => {
+		playlist.update(e => {
 			e.splice(toDelete, 1);
 			return e;
 		});
@@ -184,7 +184,7 @@ function resetAll() {
 
 // Event listeners
 const Listeners = () => {
-	listen("menu", async (event) => {
+	listen("menu", async event => {
 		let id = event.payload;
 		console.log(event);
 
@@ -193,7 +193,7 @@ const Listeners = () => {
 				title: "Quit?",
 				kind: "warning",
 				okLabel: "Quit",
-			}).then((isOK) => (isOK ? exit(0) : null));
+			}).then(isOK => (isOK ? exit(0) : null));
 		} else if (id == "newPlaylist") {
 			// TODO
 		} else if (id == "openPlaylist" && $editMode) {
@@ -225,7 +225,7 @@ const Listeners = () => {
 		}
 	});
 
-	listen("projctorReq", (e) => {
+	listen("projctorReq", e => {
 		updateProjectorList();
 		emit("projector_set_location", { screen: $screens[$selectedScreen] });
 	});
@@ -238,7 +238,7 @@ const Listeners = () => {
 
 // Shortcuts
 const Shortcuts = () => {
-	document.addEventListener("keydown", (e) => {
+	document.addEventListener("keydown", e => {
 		if ($isEditing > 0) return;
 
 		if ($editMode) {
@@ -288,7 +288,7 @@ const Shortcuts = () => {
 		}
 	});
 
-	document.addEventListener("contextmenu", (e) => e.preventDefault());
+	document.addEventListener("contextmenu", e => e.preventDefault());
 };
 
 // On mount lifecycle
@@ -414,27 +414,27 @@ $effect(() => {
 			{#if t.type === "track"}
 				<PlayListTrack
 					bind:this={$playlistElements[i]}
-					bind:type={($playlist[i] as PlaylistTrack).type}
-					bind:path={($playlist[i] as PlaylistTrack).path}
-					bind:pathSource={($playlist[i] as PlaylistTrack).pathSource}
-					bind:name={($playlist[i] as PlaylistTrack).name}
-					bind:length={($playlist[i] as PlaylistTrack).length}
-					bind:playing={($playlist[i] as PlaylistTrack).playing}
-					bind:timeCode={($playlist[i] as PlaylistTrack).timeCode}
-					bind:volume={($playlist[i] as PlaylistTrack).volume}
-					bind:pan={($playlist[i] as PlaylistTrack).pan}
-					bind:repeat={($playlist[i] as PlaylistTrack).repeat}
-					bind:autoReset={($playlist[i] as PlaylistTrack).autoReset}
-					bind:edit={($playlist[i] as PlaylistTrack).edit}
-					bind:fade={($playlist[i] as PlaylistTrack).fade}
-					bind:annotation={($playlist[i] as PlaylistTrack).annotation}
-					bind:buffer={($playlist[i] as PlaylistTrack).buffer}
-					bind:startedAt={($playlist[i] as PlaylistTrack).startedAt}
-					bind:pausedAt={($playlist[i] as PlaylistTrack).pausedAt}
-					bind:inFade={($playlist[i] as PlaylistTrack).inFade}
-					bind:hotkey={($playlist[i] as PlaylistTrack).hotkey}
-					bind:missing={($playlist[i] as PlaylistTrack).missing}
-					bind:loaded={($playlist[i] as PlaylistTrack).loaded}
+					bind:type={$playlist[i] as PlaylistTrack).type}
+					bind:path={$playlist[i] as PlaylistTrack).path}
+					bind:pathSource={$playlist[i] as PlaylistTrack).pathSource}
+					bind:name={$playlist[i] as PlaylistTrack).name}
+					bind:length={$playlist[i] as PlaylistTrack).length}
+					bind:playing={$playlist[i] as PlaylistTrack).playing}
+					bind:timeCode={$playlist[i] as PlaylistTrack).timeCode}
+					bind:volume={$playlist[i] as PlaylistTrack).volume}
+					bind:pan={$playlist[i] as PlaylistTrack).pan}
+					bind:repeat={$playlist[i] as PlaylistTrack).repeat}
+					bind:autoReset={$playlist[i] as PlaylistTrack).autoReset}
+					bind:edit={$playlist[i] as PlaylistTrack).edit}
+					bind:fade={$playlist[i] as PlaylistTrack).fade}
+					bind:annotation={$playlist[i] as PlaylistTrack).annotation}
+					bind:buffer={$playlist[i] as PlaylistTrack).buffer}
+					bind:startedAt={$playlist[i] as PlaylistTrack).startedAt}
+					bind:pausedAt={$playlist[i] as PlaylistTrack).pausedAt}
+					bind:inFade={$playlist[i] as PlaylistTrack).inFade}
+					bind:hotkey={$playlist[i] as PlaylistTrack).hotkey}
+					bind:missing={$playlist[i] as PlaylistTrack).missing}
+					bind:loaded={$playlist[i] as PlaylistTrack).loaded}
 					id={i}
 					{ctx}
 					{masterGain}
@@ -474,13 +474,11 @@ $effect(() => {
 	<!--editor-->
 	{#if showEditor && $editMode}
 		<div class="editor">
-			{#if $selectedItem !== undefined && 
-				$playlist[$selectedItem].type === "track" && 
-				($playlist[$selectedItem] as PlaylistTrack).buffer != null}
+			{#if $selectedItem !== undefined && $playlist[$selectedItem].type === "track" && ($playlist[$selectedItem] as PlaylistTrack).buffer != null}
 				<div class="prop-bar">
 					<label>cut start</label>
 					<PropNumber
-						bind:value={($playlist[$selectedItem] as PlaylistTrack).edit.in}
+						bind:value={$playlist[$selectedItem] as PlaylistTrack).edit.in}
 						min={0}
 						max={($playlist[$selectedItem] as PlaylistTrack).length}
 						step={1}
@@ -528,7 +526,7 @@ $effect(() => {
 							min="0"
 							max={($playlist[$selectedItem] as PlaylistTrack).length}
 							step="0.01"
-							bind:value={($playlist[$selectedItem] as PlaylistTrack).edit.in}
+							bind:value={$playlist[$selectedItem] as PlaylistTrack).edit.in}
 						/>
 					</div>
 					<div

@@ -48,7 +48,7 @@ export function createPlaylistItem(
 				missing: false,
 				loaded: false,
 			};
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(get(playlist).length, 0, newTrack);
 				return e;
 			});
@@ -68,7 +68,7 @@ export function createPlaylistItem(
 				missing: false,
 				loaded: false,
 			};
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(get(playlist).length, 0, newVideo);
 				return e;
 			});
@@ -84,7 +84,7 @@ export function createPlaylistItem(
 				missing: false,
 				loaded: false,
 			};
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(get(playlist).length, 0, newImage);
 				return e;
 			});
@@ -94,7 +94,7 @@ export function createPlaylistItem(
 				type: "loop",
 				annotation: null,
 			};
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(get(playlist).length, 0, newLoop);
 				return e;
 			});
@@ -104,7 +104,7 @@ export function createPlaylistItem(
 				type: "annotation",
 				annotation: { text: name, color: null },
 			};
-			playlist.update((e) => {
+			playlist.update(e => {
 				e.splice(get(playlist).length, 0, newAnnotation);
 				return e;
 			});
@@ -139,7 +139,7 @@ export function waveformCalc(
 		}
 
 		const multiplier = Math.pow(Math.max(...filteredData), -1);
-		return filteredData.map((n) => n * multiplier);
+		return filteredData.map(n => n * multiplier);
 	} else {
 		return [0];
 	}
@@ -148,7 +148,7 @@ export function waveformCalc(
 export async function updateProjectorList() {
 	let list: Array<videoListElement> = [];
 
-	const promises = get(playlist).map(async (e) => {
+	const promises = get(playlist).map(async e => {
 		if ((e.type === "video" || e.type == "image") && e.name && e.path) {
 			const path = await join(e.pathSource, e.path);
 			console.log("path: ", path);
@@ -192,7 +192,7 @@ export function DropHandler(newPosition: number) {
 	if (dragOrigin === "playlist" && currentDrag) {
 		// move in Playlist
 		const oldPosition = get(playlist).indexOf(currentDrag);
-		playlist.update((e) => {
+		playlist.update(e => {
 			e.splice(oldPosition, 1);
 			e.splice(newPosition, 0, currentDrag);
 			return e;
@@ -200,13 +200,13 @@ export function DropHandler(newPosition: number) {
 	} else if (dragOrigin === "src" && currentDrag) {
 		// add new to Playlist
 		console.log("drag form src to playlist: ", currentDrag);
-		createPlaylistItem(
+		(createPlaylistItem(
 			currentDrag.type,
 			currentDrag.path!,
 			currentDrag.pathSource!,
 			currentDrag.name!,
 		),
-			selectedItem.set(newPosition);
+			selectedItem.set(newPosition));
 	}
 
 	currentDragging.set(null);

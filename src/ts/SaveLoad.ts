@@ -49,13 +49,13 @@ export async function openPlaylist(path?: string) {
 		}
 
 		playlistPath.set(srcPath as string);
-		readTextFile(srcPath, {}).then((e) => {
+		readTextFile(srcPath, {}).then(e => {
 			const obj = JSON.parse(e);
 			srcFiles.set(obj.srcFiles);
 			playlist.set(obj.playlist);
 			hotkeys.set(obj.hotkeys);
 
-			get(hotkeys).forEach((e) => {
+			get(hotkeys).forEach(e => {
 				if (e.track != null) {
 					const ref = get(playlist)[e.track];
 					e.track = ref;
@@ -64,12 +64,12 @@ export async function openPlaylist(path?: string) {
 		});
 
 		//update recent
-		recent.update((e) => {
+		recent.update(e => {
 			e.unshift(srcPath);
 			return e;
 		});
 		if (get(recent).length > 10) {
-			recent.update((e) => {
+			recent.update(e => {
 				e.pop();
 				return e;
 			});
@@ -100,7 +100,7 @@ export async function openDir() {
 				return;
 			}
 		}
-		srcFiles.update((e) => {
+		srcFiles.update(e => {
 			e.push({ path: sel, files: [] });
 			return e;
 		});
@@ -118,7 +118,7 @@ export async function relinkDir(pathIndex: number) {
 		});
 		if (!sel) return;
 
-		srcFiles.update((e) => {
+		srcFiles.update(e => {
 			for (let i = 0; i < e.length; i++) {
 				e[i].path = sel;
 			}
@@ -151,8 +151,8 @@ export async function scanSrcPaths(selPath: string) {
 						path: modifiedPath,
 						pathSource: selPath,
 					};
-					srcFiles.update((items) => {
-						let index = items.findIndex((obj) => obj.path === selPath);
+					srcFiles.update(items => {
+						let index = items.findIndex(obj => obj.path === selPath);
 						items[index].files.push(obj);
 						return items;
 					});
@@ -165,8 +165,8 @@ export async function scanSrcPaths(selPath: string) {
 						path: modifiedPath,
 						pathSource: selPath,
 					};
-					srcFiles.update((items) => {
-						let index = items.findIndex((obj) => obj.path === selPath);
+					srcFiles.update(items => {
+						let index = items.findIndex(obj => obj.path === selPath);
 						items[index].files.push(obj);
 						return items;
 					});
@@ -179,8 +179,8 @@ export async function scanSrcPaths(selPath: string) {
 						path: modifiedPath,
 						pathSource: selPath,
 					};
-					srcFiles.update((items) => {
-						let index = items.findIndex((obj) => obj.path === selPath);
+					srcFiles.update(items => {
+						let index = items.findIndex(obj => obj.path === selPath);
 						items[index].files.push(obj);
 						return items;
 					});
@@ -235,7 +235,7 @@ export async function savePlaylist(saveAs = false) {
 	});
 
 	// Save every Hotkey slot
-	get(hotkeys).forEach((e) => {
+	get(hotkeys).forEach(e => {
 		if (e.track != null) {
 			saveObj.hotkeys.push({
 				key: e.key,
@@ -254,12 +254,12 @@ export async function savePlaylist(saveAs = false) {
 
 	//update recent
 	console.log("recent: ", get(recent));
-	recent.update((e) => {
+	recent.update(e => {
 		e.unshift(path);
 		return e;
 	});
 	if (get(recent).length > 10) {
-		recent.update((e) => {
+		recent.update(e => {
 			e.pop();
 			return e;
 		});
@@ -276,7 +276,7 @@ export function saveSettings() {
 		recent: get(recent),
 	};
 	getVersion()
-		.then((v) => {
+		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
 		})
 		.then(() => {
@@ -295,11 +295,11 @@ export function saveSettings() {
 export async function loadSettings(activateSplash = false) {
 	let currentVersion;
 
-	getVersion().then((v) => {
+	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			baseDir: BaseDirectory.Config,
-		}).then((e) => {
+		}).then(e => {
 			const obj = JSON.parse(e);
 			settings.set(obj.settings);
 			uiPlatform.set(obj.uiPlatform);
@@ -318,11 +318,11 @@ export async function loadSettings(activateSplash = false) {
 export function checkSettingsExist() {
 	let currentVersion: string;
 
-	getVersion().then((v) => {
+	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		exists(`Stagetune/${currentVersion}/settings.json`, {
 			baseDir: BaseDirectory.Config,
-		}).then((e) => {
+		}).then(e => {
 			if (e) {
 				loadSettings(true);
 			} else {

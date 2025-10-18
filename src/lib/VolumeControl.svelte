@@ -107,7 +107,9 @@ function handlePanDrag(e: any) {
 			>
 				<div class="mark"></div>
 			</div>
-			<div class="number-display" class:drag={draggingKnobVolume}>{volumeDisplay}</div>
+			<div class="number-display" class:drag={draggingKnobVolume}>
+				{volumeDisplay}
+			</div>
 		</span>
 
 		<!--Pan-->
@@ -159,7 +161,9 @@ function handlePanDrag(e: any) {
 			<div class="knob" style={`rotate: ${panDisplay * 135}deg;`} title="Pan">
 				<div class="mark"></div>
 			</div>
-			<div class="number-display" class:drag={draggingKnobPan}>{panDisplay}</div>
+			<div class="number-display" class:drag={draggingKnobPan}>
+				{panDisplay}
+			</div>
 		</span>
 	</div>
 {/if}

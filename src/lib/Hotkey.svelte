@@ -19,7 +19,7 @@ interface Props {
 let { key, track = $bindable() }: Props = $props();
 
 onMount(async () => {
-	document.addEventListener("keydown", (e) => {
+	document.addEventListener("keydown", e => {
 		if (track == null) return;
 		if ($isEditing > 0 || e.ctrlKey || e.code != `Digit${key}`) {
 			return;
@@ -88,6 +88,10 @@ onMount(async () => {
 >
 	<p class="key">{key}</p>
 	<p class="name" class:placeholder={track == null}>
-		{track ? track.name : ($currentDragging && $currentDragging.type === "track") ? "Drop to link Hotkey" : ""}
+		{track
+			? track.name
+			: $currentDragging && $currentDragging.type === "track"
+				? "Drop to link Hotkey"
+				: ""}
 	</p>
 </div>

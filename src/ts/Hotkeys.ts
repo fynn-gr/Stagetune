@@ -19,11 +19,11 @@ export function addHotkey(key: number) {
 			get(currentDragging)?.pathSource!,
 			get(currentDragging)!.name!,
 		);
-		playlist.update((e) => {
+		playlist.update(e => {
 			e[e.length - 1].hotkey = key;
 			return e;
 		});
-		hotkeys.update((e) => {
+		hotkeys.update(e => {
 			e[key - 1].track = get(playlist)[get(playlist).length - 1];
 			return e;
 		});
@@ -35,15 +35,15 @@ export function addHotkey(key: number) {
 	) {
 		// Dropping Track from Playlist, adding existing track to Hotkey
 		rmHotkeyForSameTrack();
-		currentDragging.update((e) => {
+		currentDragging.update(e => {
 			e!.hotkey = key;
 			return e;
 		});
-		hotkeys.update((e) => {
+		hotkeys.update(e => {
 			e[key - 1].track = get(currentDragging);
 			return e;
 		});
-		playlist.update((e) => {
+		playlist.update(e => {
 			return e;
 		});
 
@@ -55,20 +55,20 @@ export function addHotkey(key: number) {
 }
 
 export function rmHotkey(key: number) {
-	hotkeys.update((h) => {
+	hotkeys.update(h => {
 		h[key - 1].track!.hotkey = null;
 		h[key - 1].track = null;
 
 		return h;
 	});
-	playlist.update((e) => {
+	playlist.update(e => {
 		return e;
 	});
 }
 
 function rmHotkeyForSameTrack() {
-	hotkeys.update((i) => {
-		i.forEach((e) => {
+	hotkeys.update(i => {
+		i.forEach(e => {
 			if (e.track === get(currentDragging)) {
 				e.track!.hotkey = null;
 				e.track = null;

@@ -62,7 +62,7 @@ function save() {
 		recent: $recent,
 	};
 	getVersion()
-		.then((v) => {
+		.then(v => {
 			currentVersion = v.slice(0, v.lastIndexOf("."));
 		})
 		.then(() => {
@@ -81,11 +81,11 @@ function save() {
 async function load() {
 	let currentVersion;
 
-	getVersion().then((v) => {
+	getVersion().then(v => {
 		currentVersion = v.slice(0, v.lastIndexOf("."));
 		readTextFile(`Stagetune/${currentVersion}/settings.json`, {
 			baseDir: BaseDirectory.Config,
-		}).then(async (e) => {
+		}).then(async e => {
 			const obj = JSON.parse(e);
 			settings.set(obj.settings);
 			uiPlatform.set(obj.uiPlatform);

@@ -190,7 +190,7 @@ onMount(() => {
 						nameIsEditing = false;
 					}
 				}}
-			>
+			/>
 		{:else}
 			<span
 				class="name-display"
