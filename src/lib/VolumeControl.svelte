@@ -31,10 +31,10 @@ function handleVolumeDrag(e: any) {
 function handlePanDrag(e: any) {
 	e.preventDefault();
 	e.stopPropagation();
-	pan -= e.movementY * 0.0001;
+	pan -= e.movementY * 0.01;
 	pan = Math.max(-1, Math.min(pan, 1));
 	panDisplay = Math.round(pan * 50) / 50;
-	if (pan > -0.2 && pan < 0.2) {
+	if (pan > -0.1 && pan < 0.1) {
 		panDisplay = 0;
 	}
 }
