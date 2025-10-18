@@ -46,7 +46,7 @@ export type PlaylistVideo = {
 
 export type PlaylistAnnotation = {
 	type: "annotation"; // type of item
-	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
+	annotation: { text: string; color: string | null }; //annotation text and color, if the item is an annotation, this is also the prop used
 	state?: number; // For compatibility
 	length?: number; // For compatibility
 	edit?: { in: number; out: number }; // For compatibility with editor
