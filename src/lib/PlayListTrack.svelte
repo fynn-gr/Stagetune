@@ -305,13 +305,17 @@ $effect(() => {
 	cutTrackLength = length ? length - cutIn : 0;
 });
 $effect(() => {
-	panNode ? (panNode.pan.value = pan) : null;
+	if (panNode) {
+		panNode.pan.value = pan;
+	}
 });
 $effect(() => {
 	gainNode.gain.setValueAtTime(volume / 100, ctx.currentTime);
 });
 $effect(() => {
-	$currentDragging == null ? (dragover = null) : null;
+	if ($currentDragging == null) {
+		dragover = null;
+	}
 });
 $effect(() => {
 	if (!loaded) {

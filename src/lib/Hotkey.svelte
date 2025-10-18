@@ -27,7 +27,7 @@ onMount(async () => {
 			//play
 			e.preventDefault();
 			let id = $playlist.indexOf(track);
-			$playlistElements[id].play(null, true);
+			$playlistElements[id].play(undefined, true);
 		} else if (!e.altKey && track.playing) {
 			//stop
 			e.preventDefault();
@@ -38,8 +38,7 @@ onMount(async () => {
 			e.preventDefault();
 			track.hotkey = undefined;
 			track = null;
-
-			$playlist = $playlist;
+			//$playlist = $playlist;
 		}
 	});
 });
@@ -89,6 +88,6 @@ onMount(async () => {
 >
 	<p class="key">{key}</p>
 	<p class="name" class:placeholder={track == null}>
-		{track ? track.name : $currentDragging != null ? "Drop to link Hotkey" : ""}
+		{track ? track.name : ($currentDragging && $currentDragging.type === "track") ? "Drop to link Hotkey" : ""}
 	</p>
 </div>
