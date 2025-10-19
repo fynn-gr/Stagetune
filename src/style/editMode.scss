@@ -140,12 +140,8 @@
 							font-weight: 800;
 
 							&.unset {
-								line-height: 16rem;
-								font-size: 12rem;
-								font-weight: 600;
-								color: rgb(133, 133, 133);
-								background-color: var(--panel2);
-								border: 2rem solid rgb(133, 133, 133);
+								color: var(--panel2);
+								background-color: rgb(133, 133, 133);
 							}
 						}
 
