@@ -109,7 +109,7 @@ onMount(() => {
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
-<div class="wrapper" class:editMode>
+<div class="wrapper">
 	{#each list as item, i}
 		{#if item.type == "video"}
 			<video
@@ -161,19 +161,19 @@ onMount(() => {
 	}
 }
 
-.wrapper.editMode {
-	overflow: scroll;
+// .wrapper.editMode {
+// 	overflow: scroll;
 
-	&::-webkit-scrollbar {
-		width: 0px;
-	}
+// 	&::-webkit-scrollbar {
+// 		width: 0px;
+// 	}
 
-	video,
-	img {
-		width: 50%;
-		height: auto;
-		position: relative;
-		opacity: 1 !important;
-	}
-}
+// 	video,
+// 	img {
+// 		width: 50%;
+// 		height: auto;
+// 		position: relative;
+// 		opacity: 1 !important;
+// 	}
+// }
 </style>
