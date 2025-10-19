@@ -114,7 +114,7 @@ onMount(() => {
 		{#if item.type == "video"}
 			<video
 				id="video"
-				controls={editMode}
+				controls={false}
 				src={convertFileSrc(item.url)}
 				preload="auto"
 				class:vis={i == active}

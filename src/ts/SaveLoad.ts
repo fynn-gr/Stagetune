@@ -52,12 +52,12 @@ export async function openPlaylist(path?: string) {
 		readTextFile(srcPath, {}).then(e => {
 			const obj = JSON.parse(e);
 			srcFiles.set(obj.srcFiles);
-			playlist.set(obj.playlist);
+			playlist.push(...obj.playlist);
 			hotkeys.set(obj.hotkeys);
 
 			get(hotkeys).forEach(e => {
 				if (e.track != null) {
-					const ref = get(playlist)[e.track];
+					const ref = playlist[e.track];
 					e.track = ref;
 				}
 			});
@@ -219,7 +219,7 @@ export async function savePlaylist(saveAs = false) {
 		meta: {
 			version: await getVersion(),
 		},
-		playlist: JSON.parse(JSON.stringify(get(playlist))),
+		playlist: JSON.parse(JSON.stringify(playlist)),
 		hotkeys: [],
 		srcFiles: get(srcFiles),
 	};
@@ -239,7 +239,7 @@ export async function savePlaylist(saveAs = false) {
 		if (e.track != null) {
 			saveObj.hotkeys.push({
 				key: e.key,
-				track: get(playlist).indexOf(e.track),
+				track: playlist.indexOf(e.track),
 			});
 		} else {
 			saveObj.hotkeys.push({
