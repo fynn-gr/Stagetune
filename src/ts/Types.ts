@@ -24,7 +24,6 @@ export type PlaylistTrack = {
 	hotkey: number | null; //hotkey number assigned, null if not assigned
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
-	state?: number; // Current playback state
 };
 
 export type PlaylistVideo = {
@@ -40,14 +39,12 @@ export type PlaylistVideo = {
 	pausedAt: number; // track was paused at seconds
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
-	state?: number; // Current playback state
 	edit?: { in: number; out: number }; // For compatibility with editor
 };
 
 export type PlaylistAnnotation = {
 	type: "annotation"; // type of item
 	annotation: { text: string; color: string | null }; //annotation text and color, if the item is an annotation, this is also the prop used
-	state?: number; // For compatibility
 	length?: number; // For compatibility
 	edit?: { in: number; out: number }; // For compatibility with editor
 };
@@ -61,7 +58,6 @@ export type PlaylistImage = {
 	timeCode: number; //seconds playhead is at, not including cut In
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
-	state?: number; // For compatibility
 	length?: number; // For compatibility
 	edit?: { in: number; out: number }; // For compatibility with editor
 	annotation?: { text: string; color: string | null } | null; // For compatibility
@@ -75,8 +71,7 @@ export type PlaylistLoop = {
 	volume?: number; //sound volume, deafult is 80 out of 100
 	pan?: number; //stereo pan -1 to 1
 	annotation: { text: string; color: string | null } | null; //annotation text and color, if the item is an annotation, this is also the prop used
-	items?: Array<{ type: string; path: string; pathSource: string }>; //Loop items
-	state?: number; // For compatibility
+	items: Array<{ type: string; path: string; pathSource: string }>; //Loop items
 	length?: number; // For compatibility
 	edit?: { in: number; out: number }; // For compatibility with editor
 };

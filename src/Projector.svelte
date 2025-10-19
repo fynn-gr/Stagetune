@@ -1,10 +1,11 @@
 <script lang="ts">
-import { emit, listen } from "@tauri-apps/api/event";
+import { emit, listen, type EventCallback } from "@tauri-apps/api/event";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { PhysicalPosition, PhysicalSize } from "@tauri-apps/api/window";
 import { onMount } from "svelte";
 import type { videoListElement } from "./ts/Types";
+import type { event } from "@tauri-apps/api";
 
 let editMode = $state(true);
 let list: Array<videoListElement> = $state([]);
@@ -12,38 +13,39 @@ let listElements: Array<HTMLVideoElement | HTMLImageElement> = $state([]);
 let active = $state(-1);
 
 //play call to a video
-const unlistenPlay = listen("play_video", (event: any) => {
+const listenerPlay = listen("play_video", (event: any) => {
 	console.log(event);
 
 	list.forEach((e, i) => {
-		if (e.name == event.payload.name) active = i;
+		if (e.name == event.payload.name) active = i; // set active Element
 	});
 	if (list[active].type == "video") {
-		listElements[active].play();
+		let video = listElements[active] as HTMLVideoElement;
+		video.play();
 	}
 });
 
 //skip, pause, stop or resume the active video
-const unlistenUpdate = listen("update_play", (e: any) => {
+const listenerUpdate = listen("update_play", (e) => {
 	console.log(e.payload);
 
 	if (list[active].type == "video") {
+		let video = listElements[active] as HTMLVideoElement;
 		switch (e.payload.action) {
 			case "stop":
-				listElements[active].pause();
+				video.pause();
 				break;
 			case "skip":
-				listElements[active].currentTime =
-					listElements[active].duration * e.payload.position;
+				video.currentTime = video.duration * e.payload.position;
 				break;
 			case "pause":
-				listElements[active].pause();
+				video.pause();
 				break;
 			case "resume":
-				listElements[active].play();
+				video.play();
 				break;
 		}
-	} else {
+	} else if (list[active].type == "image") {
 		switch (e.payload.action) {
 			case "stop":
 				active = -1;
@@ -55,21 +57,23 @@ const unlistenUpdate = listen("update_play", (e: any) => {
 			case "resume":
 				break;
 		}
+	} else {
 	}
 });
 
 //update the video list
-const unlistenUpdateList = listen("updateList", e => {
-	list = e.payload.list;
+const listenerUpdateList = listen("updateList", e => {
+	let payload = e.payload as { list: Array<videoListElement> };
+	list = payload.list;
 });
 
 //update the edit Mode value
-const unlistenEditMode = listen("editMode", e => {
+const listenerEditMode = listen("editMode", e => {
 	editMode = e.payload.edit;
 });
 
 //set the window to Monitor
-const unlistenProjectorLocation = listen("projector_set_location", async e => {
+const listenerProjectorLocation = listen("projector_set_location", async e => {
 	const pos = e.payload.screen.position;
 	const size = e.payload.screen.size;
 	console.log(e.payload.screen, pos, size);
@@ -86,7 +90,7 @@ onMount(() => {
 			if (list[active].type == "video") {
 				//video
 				emit("video_state", {
-					state: listElements[active].currentTime,
+					timeCode: listElements[active].currentTime,
 					duration: listElements[active].duration,
 					name: list[active].name,
 				});

@@ -25,7 +25,7 @@ interface Props {
 let { track = $bindable(), id }: Props = $props();
 
 let dragging = false;
-let dragover: "top" | "bottom" | null = null;
+let dragover: "top" | "bottom" | null = $state(null);
 let titleEl: HTMLElement;
 let titleIsEditing = $state(false);
 let unlistenState: UnlistenFn;
@@ -88,7 +88,7 @@ function handleSkip(e: MouseEvent) {
 }
 
 export function playPause() {
-	track.playing ? stop() : play((track.state ?? 0) > 0);
+	track.playing ? stop() : play(undefined, true);
 }
 
 export function play(startTime?: number, useFade?: boolean) {
@@ -99,7 +99,7 @@ export function play(startTime?: number, useFade?: boolean) {
 export function stop(reset: boolean = false, useFade?: boolean) {
 	emit("update_play", { action: reset ? "pause" : "stop" });
 	if (reset) {
-		track.state = 0;
+		track.timeCode = 0;
 		emit("update_play", { action: "skip", position: 0 });
 	}
 	track.playing = false;
@@ -112,7 +112,7 @@ export function update() {}
 onMount(async () => {
 	unlistenState = await listen("video_state", (e: any) => {
 		if (track.playing && e.payload.name === track.name) {
-			track.state = e.payload.state ?? 0;
+			track.timeCode = e.payload.timeCode ?? 0;
 			track.length = e.payload.duration;
 		}
 	});
@@ -120,7 +120,7 @@ onMount(async () => {
 	unlistenEnd = await listen("video_ended", (e: any) => {
 		if (e.payload.name === track.name) {
 			track.playing = false;
-			track.state = 0;
+			track.timeCode = 0;
 		}
 	});
 
@@ -177,8 +177,8 @@ $effect(() => {
 					background: linear-gradient(
 						90deg,
 						var(--accent) 0%,
-						var(--accent) calc(100% * ${track.state / track.length || 0}),
-						#555 calc(100% * ${track.state / track.length || 0}),
+						var(--accent) calc(100% * ${track.timeCode / track.length || 0}),
+						#555 calc(100% * ${track.timeCode / track.length || 0}),
 						#555 100%
 					);`}
 			role="button"

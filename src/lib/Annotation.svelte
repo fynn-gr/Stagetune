@@ -19,7 +19,7 @@ let annotationEl: HTMLElement;
 let annotationIsEditing = $state(false);
 
 onMount(() => {
-	if (annotation != null) annotationEl.innerHTML = annotation.text;
+	//if (annotation != null) annotationEl.innerHTML = annotation.text;
 });
 </script>
 
