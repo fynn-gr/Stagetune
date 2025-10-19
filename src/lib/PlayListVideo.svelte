@@ -90,12 +90,12 @@ export function playPause() {
 	track.playing ? stop() : play((track.state ?? 0) > 0);
 }
 
-export function play(resume?: boolean) {
+export function play(startTime?: number, useFade?: boolean) {
 	emit("play_video", { name: track.name });
 	track.playing = true;
 }
 
-export function stop(reset: boolean = false) {
+export function stop(reset: boolean = false, useFade?: boolean) {
 	emit("update_play", { action: reset ? "pause" : "stop" });
 	if (reset) {
 		track.state = 0;
