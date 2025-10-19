@@ -158,20 +158,16 @@
 				font-size: 24rem;
 				font-weight: 500;
 				color: white;
+			
 
-				.title-display {
-					pointer-events: none;
-					display: block;
-					margin: auto 0;
-					color: inherit;
-					background-color: transparent;
-					font-size: inherit;
-					font-weight: inherit;
-				}
-
-				input {
-					display: none;
-				}
+			.title-display {
+				display: block;
+				margin: auto 0;
+				color: inherit;
+				background-color: transparent;
+				font-size: inherit;
+				font-weight: inherit;
+			}
 			}
 
 			.hotkey-display {

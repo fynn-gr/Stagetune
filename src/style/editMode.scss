@@ -45,21 +45,16 @@
 				line-height: 30rem;
 				font-size: 20rem;
 
-				input {
+				.title-input {
 					display: block;
 					position: absolute;
-					opacity: 0%;
 					width: inherit;
 					height: inherit;
 					margin: auto 0;
-					color: inherit;
+					color: var(--accent);
 					background-color: transparent;
 					font-size: inherit;
 					font-weight: inherit;
-
-					&:focus {
-						color: var(--accent);
-					}
 
 					&::selection {
 						color: white;

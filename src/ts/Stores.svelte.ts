@@ -43,15 +43,14 @@ export const theme = writable("dark"); //unused, just for compatibility with pur
 export const splash = writable<boolean>(false); //splash screen visible
 
 export const selectedItem = writable<number | undefined>(undefined);
-export const playlist = writable<
-	Array<
-		| PlaylistTrack
-		| PlaylistVideo
-		| PlaylistAnnotation
-		| PlaylistImage
-		| PlaylistLoop
-	>
->([]);
+export const playlist: Array<
+	| PlaylistTrack
+	| PlaylistVideo
+	| PlaylistAnnotation
+	| PlaylistImage
+	| PlaylistLoop
+> = $state([]);
+
 export const hotkeys = writable<Hotkey[]>([
 	{
 		key: 1,
@@ -90,7 +89,7 @@ export const hotkeys = writable<Hotkey[]>([
 		track: null,
 	},
 ]);
-export const playlistElements = writable<PlaylistElement[]>([]);
+export const playlistElements: Array<PlaylistElement> = $state([]);
 export const hotkeyElements = writable<any[]>([]);
 
 export const srcFiles = writable<SrcDirectory[]>([]); // media Files

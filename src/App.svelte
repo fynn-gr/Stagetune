@@ -65,6 +65,7 @@ import type {
 	PlaylistLoop,
 } from "./ts/Types";
 
+// States
 let playlistEl: HTMLElement;
 let annotationWidth: number = $state(25);
 let showTracklist = $state(true);
@@ -88,7 +89,7 @@ function openSettings() {
 function handleDropPlaylist(e: Event) {
 	console.log("add to playlist: ", $currentDragging);
 	e.preventDefault();
-	DropHandler($playlist.length);
+	DropHandler(playlist.length);
 	dragOverPlaylist = false;
 }
 
@@ -104,7 +105,7 @@ function handleDragOverPlaylist(e: DragEvent) {
 function moveUp() {
 	if (selectedItem) {
 		for (let i = $selectedItem! - 1; i > -1; i--) {
-			if ($playlist[i].type != "annotation") {
+			if (playlist[i].type != "annotation") {
 				$selectedItem = i;
 				break;
 			}
@@ -114,8 +115,8 @@ function moveUp() {
 
 function moveDown() {
 	if (selectedItem) {
-		for (let i = $selectedItem! + 1; i < $playlist.length; i++) {
-			if ($playlist[i].type != "annotation") {
+		for (let i = $selectedItem! + 1; i < playlist.length; i++) {
+			if (playlist[i].type != "annotation") {
 				$selectedItem = i;
 				break;
 			}
@@ -125,11 +126,11 @@ function moveDown() {
 
 function skip() {
 	if (selectedItem) {
-		for (let i = $selectedItem! + 1; i < $playlist.length; i++) {
-			if ($playlist[i].type != "annotation") {
-				$playlistElements[$selectedItem!].stop(true);
+		for (let i = $selectedItem! + 1; i < playlist.length; i++) {
+			if (playlist[i].type != "annotation") {
+				playlistElements[$selectedItem!].stop(true);
 				$selectedItem = i;
-				$playlistElements[$selectedItem].play(0);
+				playlistElements[$selectedItem].play(0);
 				break;
 			}
 		}
@@ -138,14 +139,14 @@ function skip() {
 
 function deleteTrack() {
 	if ($selectedItem) {
-		const selected = $playlist[$selectedItem];
+		const selected = playlist[$selectedItem];
 
 		// Stop track if playing
 		if (
 			(selected.type === "track" || selected.type === "video") &&
 			selected.playing
 		) {
-			$playlistElements[$selectedItem].stop();
+			playlistElements[$selectedItem].stop();
 		}
 
 		let toDelete = $selectedItem;
@@ -157,27 +158,23 @@ function deleteTrack() {
 		}
 
 		// Find new selected item
-		if ($playlist.length - 1 > $selectedItem) $selectedItem++;
+		if (playlist.length - 1 > $selectedItem) $selectedItem++;
 		else if ($selectedItem > 0) $selectedItem--;
 		else $selectedItem = undefined;
 
 		// Delete from playlist
-		playlist.update(e => {
-			e.splice(toDelete, 1);
-			return e;
-		});
-		$playlist = $playlist;
+		playlist.splice(toDelete, 1);
 	}
 }
 
 function pauseAll() {
-	for (let element of $playlistElements) {
+	for (let element of playlistElements) {
 		element.stop(false, false);
 	}
 }
 
 function resetAll() {
-	for (let element of $playlistElements) {
+	for (let element of playlistElements) {
 		element.stop(true, false);
 	}
 }
@@ -276,14 +273,14 @@ const Shortcuts = () => {
 				break;
 			case "KeyA":
 			case "ArrowLeft":
-				if ($selectedItem) $playlistElements[$selectedItem].stop(true);
+				if ($selectedItem) playlistElements[$selectedItem].stop(true);
 				break;
 			case "KeyD":
 			case "ArrowRight":
 				skip();
 				break;
 			case "Space":
-				if ($selectedItem) $playlistElements[$selectedItem].playPause();
+				if ($selectedItem) playlistElements[$selectedItem].playPause();
 				break;
 		}
 	});
@@ -298,7 +295,7 @@ onMount(() => {
 	createNativeMenu();
 
 	const updateInterval = setInterval(() => {
-		for (let element of $playlistElements) {
+		for (let element of playlistElements) {
 			element.update();
 		}
 	}, 300);
@@ -410,57 +407,37 @@ $effect(() => {
 				bind:value={annotationWidth}
 			/>
 		{/if}
-		{#each $playlist as t, i}
+		{#each playlist as t, i}
 			{#if t.type === "track"}
 				<PlayListTrack
-					bind:this={$playlistElements[i]}
-					bind:type={$playlist[i] as PlaylistTrack).type}
-					bind:path={$playlist[i] as PlaylistTrack).path}
-					bind:pathSource={$playlist[i] as PlaylistTrack).pathSource}
-					bind:name={$playlist[i] as PlaylistTrack).name}
-					bind:length={$playlist[i] as PlaylistTrack).length}
-					bind:playing={$playlist[i] as PlaylistTrack).playing}
-					bind:timeCode={$playlist[i] as PlaylistTrack).timeCode}
-					bind:volume={$playlist[i] as PlaylistTrack).volume}
-					bind:pan={$playlist[i] as PlaylistTrack).pan}
-					bind:repeat={$playlist[i] as PlaylistTrack).repeat}
-					bind:autoReset={$playlist[i] as PlaylistTrack).autoReset}
-					bind:edit={$playlist[i] as PlaylistTrack).edit}
-					bind:fade={$playlist[i] as PlaylistTrack).fade}
-					bind:annotation={$playlist[i] as PlaylistTrack).annotation}
-					bind:buffer={$playlist[i] as PlaylistTrack).buffer}
-					bind:startedAt={$playlist[i] as PlaylistTrack).startedAt}
-					bind:pausedAt={$playlist[i] as PlaylistTrack).pausedAt}
-					bind:inFade={$playlist[i] as PlaylistTrack).inFade}
-					bind:hotkey={$playlist[i] as PlaylistTrack).hotkey}
-					bind:missing={$playlist[i] as PlaylistTrack).missing}
-					bind:loaded={$playlist[i] as PlaylistTrack).loaded}
+					bind:this={playlistElements[i]}
+					bind:track={playlist[i] as PlaylistTrack}
 					id={i}
 					{ctx}
 					{masterGain}
 				/>
 			{:else if t.type === "video"}
 				<PlayListVideo
-					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i] as PlaylistVideo}
+					bind:this={playlistElements[i]}
+					bind:track={playlist[i] as PlaylistVideo}
 					id={i}
 				/>
 			{:else if t.type === "image"}
 				<PlayListImage
-					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i] as PlaylistImage}
+					bind:this={playlistElements[i]}
+					bind:track={playlist[i] as PlaylistImage}
 					id={i}
 				/>
 			{:else if t.type === "annotation"}
 				<PlayListAnotation
-					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i] as PlaylistAnnotation}
+					bind:this={playlistElements[i]}
+					bind:track={playlist[i] as PlaylistAnnotation}
 					id={i}
 				/>
 			{:else if t.type === "loop"}
 				<PlayListLoop
-					bind:this={$playlistElements[i]}
-					bind:track={$playlist[i] as PlaylistLoop}
+					bind:this={playlistElements[i]}
+					bind:track={playlist[i] as PlaylistLoop}
 					id={i}
 				/>
 			{/if}
@@ -474,13 +451,13 @@ $effect(() => {
 	<!--editor-->
 	{#if showEditor && $editMode}
 		<div class="editor">
-			{#if $selectedItem !== undefined && $playlist[$selectedItem].type === "track" && ($playlist[$selectedItem] as PlaylistTrack).buffer != null}
+			{#if $selectedItem !== undefined && playlist[$selectedItem].type === "track" && (playlist[$selectedItem] as PlaylistTrack).buffer != null}
 				<div class="prop-bar">
 					<label>cut start</label>
 					<PropNumber
-						bind:value={$playlist[$selectedItem] as PlaylistTrack).edit.in}
+						bind:value={playlist[$selectedItem] as PlaylistTrack.edit.in}
 						min={0}
-						max={($playlist[$selectedItem] as PlaylistTrack).length}
+						max={(playlist[$selectedItem] as PlaylistTrack).length}
 						step={1}
 						unit="s"
 						onFocus={() => {
@@ -503,19 +480,19 @@ $effect(() => {
 								90deg,
 								#111 0%,
 								#111 calc(100% * ${
-									($playlist[$selectedItem] as PlaylistTrack).edit.in /
-									($playlist[$selectedItem] as PlaylistTrack).length
+									(playlist[$selectedItem] as PlaylistTrack).edit.in /
+									(playlist[$selectedItem] as PlaylistTrack).length
 								}),
 								#fff calc(100% * ${
-									($playlist[$selectedItem] as PlaylistTrack).edit.in /
-									($playlist[$selectedItem] as PlaylistTrack).length
+									(playlist[$selectedItem] as PlaylistTrack).edit.in /
+									(playlist[$selectedItem] as PlaylistTrack).length
 								}),
 								#fff 100%
 							);`}
 					>
 						<Waveform
 							data={waveformCalc(
-								$playlistElements[$selectedItem].getBuffer(),
+								playlistElements[$selectedItem].getBuffer(),
 								window.innerWidth,
 							)}
 							samples={window.innerWidth}
@@ -524,14 +501,14 @@ $effect(() => {
 						<input
 							type="range"
 							min="0"
-							max={($playlist[$selectedItem] as PlaylistTrack).length}
+							max={(playlist[$selectedItem] as PlaylistTrack).length}
 							step="0.01"
-							bind:value={$playlist[$selectedItem] as PlaylistTrack).edit.in}
+							bind:value={playlist[$selectedItem] as PlaylistTrack.edit.in}
 						/>
 					</div>
 					<div
 						class="border"
-						style={`left: ${(($playlist[$selectedItem] as PlaylistTrack).edit.in / ($playlist[$selectedItem] as PlaylistTrack).length) * 100}%;`}
+						style={`left: ${((playlist[$selectedItem] as PlaylistTrack).edit.in / (playlist[$selectedItem] as PlaylistTrack).length) * 100}%;`}
 					></div>
 				</div>
 			{/if}
@@ -545,7 +522,7 @@ $effect(() => {
 			<!--current playing-->
 			{#if showCurrent}
 				<div class="current">
-					{#each $playlist as e, i}
+					{#each playlist as e, i}
 						{#if e.type != "annotation" && e.playing && (e.state ?? 0) != 0}
 							<div class="song">
 								<div
@@ -555,7 +532,7 @@ $effect(() => {
 								></div>
 								<button
 									title="current playing"
-									onclick={() => $playlistElements[i].stop(!e.playing, false)}
+									onclick={() => playlistElements[i].stop(!e.playing, false)}
 								>
 									{#if e.type === "track" && (e as PlaylistTrack).inFade != null}
 										<img

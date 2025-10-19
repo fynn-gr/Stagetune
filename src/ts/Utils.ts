@@ -48,10 +48,7 @@ export function createPlaylistItem(
 				missing: false,
 				loaded: false,
 			};
-			playlist.update(e => {
-				e.splice(get(playlist).length, 0, newTrack);
-				return e;
-			});
+			playlist.splice(playlist.length, 0, newTrack);
 			break;
 		case "video":
 			let newVideo: PlaylistVideo = {
@@ -68,10 +65,7 @@ export function createPlaylistItem(
 				missing: false,
 				loaded: false,
 			};
-			playlist.update(e => {
-				e.splice(get(playlist).length, 0, newVideo);
-				return e;
-			});
+			playlist.splice(playlist.length, 0, newVideo);
 			break;
 		case "image":
 			let newImage: PlaylistImage = {
@@ -81,33 +75,25 @@ export function createPlaylistItem(
 				name: name,
 				playing: false,
 				timeCode: 0,
+				annotation: null,
 				missing: false,
 				loaded: false,
 			};
-			playlist.update(e => {
-				e.splice(get(playlist).length, 0, newImage);
-				return e;
-			});
+			playlist.splice(playlist.length, 0, newImage);
 			break;
 		case "loop":
 			let newLoop: PlaylistLoop = {
 				type: "loop",
 				annotation: null,
 			};
-			playlist.update(e => {
-				e.splice(get(playlist).length, 0, newLoop);
-				return e;
-			});
+			playlist.splice(playlist.length, 0, newLoop);
 			break;
 		case "annotation":
 			let newAnnotation: PlaylistAnnotation = {
 				type: "annotation",
 				annotation: { text: name, color: null },
 			};
-			playlist.update(e => {
-				e.splice(get(playlist).length, 0, newAnnotation);
-				return e;
-			});
+			playlist.splice(playlist.length, 0, newAnnotation);
 			break;
 	}
 }
@@ -148,7 +134,7 @@ export function waveformCalc(
 export async function updateProjectorList() {
 	let list: Array<videoListElement> = [];
 
-	const promises = get(playlist).map(async e => {
+	const promises = playlist.map(async e => {
 		if ((e.type === "video" || e.type == "image") && e.name && e.path) {
 			const path = await join(e.pathSource, e.path);
 			console.log("path: ", path);
@@ -191,12 +177,9 @@ export function DropHandler(newPosition: number) {
 
 	if (dragOrigin === "playlist" && currentDrag) {
 		// move in Playlist
-		const oldPosition = get(playlist).indexOf(currentDrag);
-		playlist.update(e => {
-			e.splice(oldPosition, 1);
-			e.splice(newPosition, 0, currentDrag);
-			return e;
-		});
+		const oldPosition = playlist.indexOf(currentDrag);
+		playlist.splice(oldPosition, 1);
+		playlist.splice(newPosition, 0, currentDrag);
 	} else if (dragOrigin === "src" && currentDrag) {
 		// add new to Playlist
 		console.log("drag form src to playlist: ", currentDrag);
