@@ -26,19 +26,18 @@ onMount(async () => {
 		} else if (!e.altKey && !track.playing) {
 			//play
 			e.preventDefault();
-			let id = $playlist.indexOf(track);
-			$playlistElements[id].play(undefined, true);
+			let id = playlist.indexOf(track);
+			playlistElements[id].play(undefined, true);
 		} else if (!e.altKey && track.playing) {
 			//stop
 			e.preventDefault();
-			let id = $playlist.indexOf(track);
-			$playlistElements[id].stop(true, true);
+			let id = playlist.indexOf(track);
+			playlistElements[id].stop(true, true);
 		} else if (e.altKey && $editMode) {
 			//deleting hotkey
 			e.preventDefault();
 			track.hotkey = undefined;
 			track = null;
-			//$playlist = $playlist;
 		}
 	});
 });
@@ -65,8 +64,8 @@ onMount(async () => {
 						iconColor: false,
 						accelerator: `${key}`,
 						action: () => {
-							let id = $playlist.indexOf(track);
-							$playlistElements[id].play(null, true);
+							let id = playlist.indexOf(track);
+							playlistElements[id].play(undefined, true);
 						},
 					},
 					{
