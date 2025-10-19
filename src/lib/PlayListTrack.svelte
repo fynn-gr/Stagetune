@@ -32,12 +32,7 @@ interface Props {
 	ctx: AudioContext;
 	masterGain: GainNode;
 }
-let {
-	track = $bindable(),
-	id,
-	ctx,
-	masterGain,
-}: Props = $props();
+let { track = $bindable(), id, ctx, masterGain }: Props = $props();
 
 //states
 let hotkeySelect: number | undefined = $state(undefined);
@@ -231,7 +226,10 @@ export function stop(reset: boolean = false, useFade: boolean = false) {
 			end();
 		} else if (track.fade.out > 0 && !track.inFade && useFade) {
 			track.inFade = "out";
-			fadeNode.gain.linearRampToValueAtTime(0.01, ctx.currentTime + track.fade.out);
+			fadeNode.gain.linearRampToValueAtTime(
+				0.01,
+				ctx.currentTime + track.fade.out,
+			);
 			setTimeout(() => {
 				input.stop();
 				end();
@@ -383,6 +381,7 @@ $effect(() => {
 						bind:value={track.name}
 						onblur={() => {
 							titleIsEditing = false;
+							isEditing.update(e => e - 1);
 						}}
 						onkeydown={e => {
 							if (e.key === "Enter") {
@@ -394,7 +393,9 @@ $effect(() => {
 					<span
 						class="title-display"
 						ondblclick={() => {
+							if (!$editMode) return;
 							titleIsEditing = true;
+							isEditing.update(e => e + 1);
 							tick().then(() => {
 								titleEl.focus();
 							});
@@ -404,10 +405,10 @@ $effect(() => {
 			</div>
 		{:else if track.missing}
 			<div class="title">
-				<p class="input">{"File not found: " + track.path}</p>
+				<p class="title-display">{"File not found: " + track.path}</p>
 			</div>
 		{:else}
-			<div class="title"><p class="input">Loading...</p></div>
+			<div class="title"><p class="title-display">Loading...</p></div>
 		{/if}
 
 		<!--Hotkey Display-->
@@ -543,7 +544,11 @@ $effect(() => {
 
 		<!--volume Pan-->
 		{#if $settings.showVolumeOptions}
-			<VolumeControl bind:volume={track.volume} bind:pan={track.pan} slider={$settings.useSliders} />
+			<VolumeControl
+				bind:volume={track.volume}
+				bind:pan={track.pan}
+				slider={$settings.useSliders}
+			/>
 		{/if}
 	</div>
 </div>

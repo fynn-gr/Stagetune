@@ -8,5 +8,5 @@ export default defineConfig([
 			"prefer-const": "error",
 		},
 	},
-  globalIgnores(["**/dist/**", "**/node_modules/**", "**/.tauri/**"])
+	globalIgnores(["**/dist/**", "**/node_modules/**", "**/.tauri/**"]),
 ]);

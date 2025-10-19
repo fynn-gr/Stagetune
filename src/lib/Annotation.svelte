@@ -6,7 +6,7 @@ import {
 	selectedItem,
 	playlist,
 } from "@/ts/Stores.svelte";
-import { onMount } from "svelte";
+import { onMount, tick } from "svelte";
 
 interface Props {
 	id: number;
@@ -16,6 +16,7 @@ let { id, annotation = $bindable() }: Props = $props();
 
 // svelte-ignore non_reactive_update
 let annotationEl: HTMLElement;
+let annotationIsEditing = $state(false);
 
 onMount(() => {
 	if (annotation != null) annotationEl.innerHTML = annotation.text;
@@ -47,7 +48,7 @@ onMount(() => {
 							icon: "./icons/app_menu/gray.svg",
 							iconColor: true,
 							action: () => {
-								$playlist[id].annotation.color = null;
+								annotation.color = null;
 							},
 						},
 						{
@@ -55,7 +56,7 @@ onMount(() => {
 							icon: "./icons/app_menu/red.svg",
 							iconColor: true,
 							action: () => {
-								$playlist[id].annotation.color = "hsl(5, 54%, 33%)";
+								annotation.color = "hsl(5, 54%, 33%)";
 							},
 						},
 						{
@@ -63,7 +64,7 @@ onMount(() => {
 							icon: "./icons/app_menu/orange.svg",
 							iconColor: true,
 							action: () => {
-								$playlist[id].annotation.color = "hsl(25.4deg 66% 37%)";
+								annotation.color = "hsl(25.4deg 66% 37%)";
 							},
 						},
 						{
@@ -71,7 +72,7 @@ onMount(() => {
 							icon: "./icons/app_menu/green.svg",
 							iconColor: true,
 							action: () => {
-								$playlist[id].annotation.color = "hsl(102deg 62% 30%)";
+								annotation.color = "hsl(102deg 62% 30%)";
 							},
 						},
 						{
@@ -79,7 +80,7 @@ onMount(() => {
 							icon: "./icons/app_menu/teal.svg",
 							iconColor: true,
 							action: () => {
-								$playlist[id].annotation.color = "hsl(169.44deg 62% 30%)";
+								annotation.color = "hsl(169.44deg 62% 30%)";
 							},
 						},
 						{
@@ -87,7 +88,7 @@ onMount(() => {
 							icon: "./icons/app_menu/blue.svg",
 							iconColor: true,
 							action: () => {
-								$playlist[id].annotation.color = "hsl(205.44deg 62% 30%)";
+								annotation.color = "hsl(205.44deg 62% 30%)";
 							},
 						},
 						{
@@ -95,7 +96,7 @@ onMount(() => {
 							icon: "./icons/app_menu/purple.svg",
 							iconColor: true,
 							action: () => {
-								$playlist[id].annotation.color = "hsl(274.67deg 53.55% 26.67%)";
+								annotation.color = "hsl(274.67deg 53.55% 26.67%)";
 							},
 						},
 					],
@@ -107,20 +108,35 @@ onMount(() => {
 			//e.stopPropagation();
 		}}
 	>
-		<div
-			class="input"
-			contenteditable={$selectedItem == id && $editMode}
-			bind:this={annotationEl}
-			onfocus={e => {
-				isEditing.update(e => e + 1);
-			}}
-			onblur={() => {
-				isEditing.update(e => e - 1);
-				annotation!.text = annotationEl.innerHTML;
-			}}
-		>
-			{@html annotation.text}
-		</div>
+		{#if annotationIsEditing}
+			<input
+				class="annotation-input"
+				type="text"
+				bind:this={annotationEl}
+				bind:value={annotation.text}
+				onblur={() => {
+					annotationIsEditing = false;
+					isEditing.update(e => e - 1);
+				}}
+				onkeydown={e => {
+					if (e.key === "Enter") {
+						annotationIsEditing = false;
+					}
+				}}
+			/>
+		{:else}
+			<span
+				class="annotation-display"
+				ondblclick={() => {
+					if (!$editMode) return;
+					annotationIsEditing = true;
+					isEditing.update(e => e + 1);
+					tick().then(() => {
+						annotationEl.focus();
+					});
+				}}>{annotation.text}</span
+			>
+		{/if}
 	</div>
 {:else}
 	<div class="annotation-placeholder">

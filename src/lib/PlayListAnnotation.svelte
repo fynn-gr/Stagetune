@@ -101,7 +101,7 @@ onMount(() => {
 						icon: "./icons/app_menu/gray.svg",
 						iconColor: true,
 						action: () => {
-							$playlist[id].annotation.color = null;
+							track.annotation.color = null;
 						},
 					},
 					{
@@ -109,7 +109,7 @@ onMount(() => {
 						icon: "./icons/app_menu/red.svg",
 						iconColor: true,
 						action: () => {
-							$playlist[id].annotation.color = "hsl(5, 54%, 33%)";
+							track.annotation.color = "hsl(5, 54%, 33%)";
 						},
 					},
 					{
@@ -117,7 +117,7 @@ onMount(() => {
 						icon: "./icons/app_menu/orange.svg",
 						iconColor: true,
 						action: () => {
-							$playlist[id].annotation.color = "hsl(25.4deg 66% 37%)";
+							track.annotation.color = "hsl(25.4deg 66% 37%)";
 						},
 					},
 					{
@@ -125,7 +125,7 @@ onMount(() => {
 						icon: "./icons/app_menu/green.svg",
 						iconColor: true,
 						action: () => {
-							$playlist[id].annotation.color = "hsl(102deg 62% 30%)";
+							track.annotation.color = "hsl(102deg 62% 30%)";
 						},
 					},
 					{
@@ -133,7 +133,7 @@ onMount(() => {
 						icon: "./icons/app_menu/teal.svg",
 						iconColor: true,
 						action: () => {
-							$playlist[id].annotation.color = "hsl(169.44deg 62% 30%)";
+							track.annotation.color = "hsl(169.44deg 62% 30%)";
 						},
 					},
 					{
@@ -141,7 +141,7 @@ onMount(() => {
 						icon: "./icons/app_menu/blue.svg",
 						iconColor: true,
 						action: () => {
-							$playlist[id].annotation.color = "hsl(205.44deg 62% 30%)";
+							track.annotation.color = "hsl(205.44deg 62% 30%)";
 						},
 					},
 					{
@@ -149,7 +149,7 @@ onMount(() => {
 						icon: "./icons/app_menu/purple.svg",
 						iconColor: true,
 						action: () => {
-							$playlist[id].annotation.color = "hsl(274.67deg 53.55% 26.67%)";
+							track.annotation.color = "hsl(274.67deg 53.55% 26.67%)";
 						},
 					},
 				],

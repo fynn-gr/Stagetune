@@ -158,16 +158,15 @@
 				font-size: 24rem;
 				font-weight: 500;
 				color: white;
-			
 
-			.title-display {
-				display: block;
-				margin: auto 0;
-				color: inherit;
-				background-color: transparent;
-				font-size: inherit;
-				font-weight: inherit;
-			}
+				.title-display {
+					display: block;
+					margin: auto 0;
+					color: inherit;
+					background-color: transparent;
+					font-size: inherit;
+					font-weight: inherit;
+				}
 			}
 
 			.hotkey-display {
@@ -443,7 +442,7 @@
 			box-shadow: 0 0 0 3rem var(--accent);
 		}
 
-		.input {
+		.annotation-input {
 			width: 100%;
 			min-height: 100%;
 			padding: 8rem;
@@ -459,6 +458,18 @@
 				color: white;
 				background-color: var(--accent);
 			}
+		}
+
+		.annotation-display {
+			display: block;
+			width: 100%;
+			min-height: 100%;
+			padding: 8rem;
+			font-size: 18rem;
+			line-height: 22rem;
+			text-align: left;
+			color: white;
+			overflow: hidden;
 		}
 	}
 
