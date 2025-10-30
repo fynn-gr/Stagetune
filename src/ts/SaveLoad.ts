@@ -28,6 +28,7 @@ import {
 } from "./Stores.svelte";
 import type { SaveFile } from "./Types";
 import { createNativeMenu } from "./Menus.svelte";
+import { setUIScale } from "./Utils";
 
 export async function openPlaylist(path?: string) {
 	try {
@@ -308,9 +309,7 @@ export async function loadSettings(activateSplash = false) {
 
 			if (activateSplash) splash.set(get(settings).show_splash);
 			console.log("ui scale. ", get(settings).ui_scale);
-			document.documentElement.style.cssText = `font-size: ${
-				get(settings).ui_scale
-			}px`;
+			setUIScale(get(settings).ui_scale);
 		});
 	});
 }
