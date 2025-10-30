@@ -31,10 +31,10 @@ async fn open_settings(handle: tauri::AppHandle, invoke_message: String) {
 	)
 	.transparent(true)
 	.theme(Some(tauri::Theme::Dark))
+	.resizable(false)
+	.decorations(false)
 	.build()
 	.unwrap();
-	settings_window.set_resizable(false);
-	settings_window.set_decorations(false);
 	settings_window.emit("settings", invoke_message);
 }
 

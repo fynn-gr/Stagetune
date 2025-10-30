@@ -13,7 +13,7 @@ import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { onMount, tick } from "svelte";
 import { writable } from "svelte/store";
 
-import Keymap from "./pureUI/components//settings/Keymap.svelte";
+import Keymap from "./pureUI/components/settings/Keymap.svelte";
 import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
 import {
