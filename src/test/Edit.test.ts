@@ -18,7 +18,6 @@ export function testEdit() {
 		"toggle-editor",
 		"toggle-tracks-playing",
 		"toggle-hotkeys",
-		//"Toggle Mode",
 		"comment-add",
 		"reset-all-tracks",
 		"stop-all-tracks",
@@ -32,7 +31,7 @@ export function testEdit() {
 	document.addEventListener("keydown", e => {
 		if (e.code == "Escape") stop = true;
 	});
-	selectedItem.set(getRndInteger(0, get(playlist).length - 1));
+	selectedItem.set(getRndInteger(0, playlist.length - 1));
 
 	const loop = () => {
 		rnd = getRndInteger(0, 5);
@@ -43,7 +42,7 @@ export function testEdit() {
 				console.log(counter + " - move selecion");
 				if (getRndInteger(0, 1))
 					for (let i = get(selectedItem) - 1; i > -1; i--) {
-						if (get(playlist)[i].type != "annotation") {
+						if (playlist[i].type != "annotation") {
 							selectedItem.set(i);
 							break;
 						}
@@ -51,22 +50,22 @@ export function testEdit() {
 				break;
 			case 1: //play pause
 				console.log(counter + " - play or pause track");
-				get(playlistElements)[get(selectedItem)].playPause(null, true);
+				playlistElements[get(selectedItem)].playPause(null, true);
 				break;
 			case 2: //skip
 				console.log(counter + " - skip");
-				for (let i = get(selectedItem) + 1; i < get(playlist).length; i++) {
-					if (get(playlist)[i].type != "annotation") {
-						get(playlistElements)[get(selectedItem)].stop(true);
+				for (let i = get(selectedItem) + 1; i < playlist.length; i++) {
+					if (playlist[i].type != "annotation") {
+						playlistElements[get(selectedItem)].stop(true);
 						selectedItem.set(i);
-						get(playlistElements)[get(selectedItem)].play(0);
+						playlistElements[get(selectedItem)].play(0);
 						break;
 					}
 				}
 				break;
 			case 3: //reset
 				console.log(counter + " - reset");
-				get(playlistElements)[get(selectedItem)].stop(true, false);
+				playlistElements[get(selectedItem)].stop(true, false);
 				break;
 			case 4: //hotkey
 				console.log(counter + " - hotkey");
@@ -99,6 +98,6 @@ export function testEdit() {
 	loop();
 }
 
-function getRndInteger(min, max) {
+function getRndInteger(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
