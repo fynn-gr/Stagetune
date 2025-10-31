@@ -325,7 +325,9 @@ $effect(() => {
 		<div class="tracklist">
 			<!--Build in-->
 			<TracklistBuildIn name="Annotation" />
-			<TracklistBuildIn name="Loop" />
+			{#if $settings.debug}
+				<TracklistBuildIn name="Loop" />
+			{/if}
 
 			<!--Source Folders-->
 			{#each $srcFiles as p, i}
