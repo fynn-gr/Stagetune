@@ -75,7 +75,7 @@ export function update() {}
 
 export function playPause() {}
 
-export function play(startTime?:number, useFade?: boolean) {}
+export function play(startTime?: number, useFade?: boolean) {}
 
 export function stop(reset?: boolean, useFade?: boolean) {}
 

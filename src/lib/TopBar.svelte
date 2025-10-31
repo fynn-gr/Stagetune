@@ -53,7 +53,9 @@ function handleProjector(screen: number | null) {
 		emit("projector_set_location", { screen: projector.screens[screen] });
 	} else {
 		console.log(projector.screens[projector.selectedScreen]);
-		emit("projector_set_location", { screen: projector.screens[projector.selectedScreen] });
+		emit("projector_set_location", {
+			screen: projector.screens[projector.selectedScreen],
+		});
 	}
 }
 

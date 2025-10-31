@@ -79,13 +79,11 @@ export function play(startTime?: number, useFade?: boolean) {
 
 export function stop(reset?: boolean = false, useFade?: boolean = false) {
 	emit("update_play", { action: "stop" });
-	track.state = 0;
+	track.timeCode = 0;
 	track.playing = false;
 }
 
-export function playPause() {
-
-}
+export function playPause() {}
 
 export function getBuffer() {}
 
@@ -93,14 +91,14 @@ export function update() {}
 
 const unlistenState = listen("video_state", (e: any) => {
 	if (track.playing && e.payload.name === track.name) {
-		track.state = e.payload.state;
+		track.timeCode = e.payload.state;
 	}
 });
 
 const unlistenEnd = listen("video_ended", (e: any) => {
 	if (e.payload.name === track.name) {
 		track.playing = false;
-		track.state = 0;
+		track.timeCode = 0;
 	}
 });
 
@@ -149,7 +147,7 @@ $effect(() => {
 		<div
 			class="progress"
 			style={`
-					background: ${track.state > 0.5 ? "var(--accent)" : "#555"};`}
+					background: ${track.timeCode > 0.5 ? "var(--accent)" : "#555"};`}
 			role="button"
 			tabindex="0"
 		></div>

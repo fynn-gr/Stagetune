@@ -140,7 +140,6 @@ export async function updateProjectorList() {
 			console.log("path: ", path);
 			list.push({ type: e.type, name: e.name, url: path });
 		} else if (e.type === "loop") {
-
 			// for each element in loop
 			let loop = e as PlaylistLoop;
 			for (let i = 0; i < loop.items.length; i++) {

@@ -223,7 +223,9 @@ const Listeners = () => {
 
 	listen("projctorReq", e => {
 		updateProjectorList();
-		emit("projector_set_location", { screen: projector.screens[projector.selectedScreen] });
+		emit("projector_set_location", {
+			screen: projector.screens[projector.selectedScreen],
+		});
 	});
 
 	listen("reload_settings", () => {
@@ -522,12 +524,12 @@ $effect(() => {
 			{#if showCurrent}
 				<div class="current">
 					{#each playlist as e, i}
-						{#if e.type != "annotation" && e.playing && (e.state ?? 0) != 0}
+						{#if e.type != "annotation" && e.playing && (e.timeCode ?? 0) != 0}
 							<div class="song">
 								<div
 									class="state"
 									class:playing={e.playing}
-									style={`width: calc(100% * ${e.state != undefined ? e.state / (e.length ?? 1) : 0});`}
+									style={`width: calc(100% * ${e.timeCode != undefined ? e.timeCode / (e.length ?? 1) : 0});`}
 								></div>
 								<button
 									title="current playing"

@@ -26,7 +26,7 @@ const listenerPlay = listen("play_video", (event: any) => {
 });
 
 //skip, pause, stop or resume the active video
-const listenerUpdate = listen("update_play", (e) => {
+const listenerUpdate = listen("update_play", e => {
 	console.log(e.payload);
 
 	if (list[active].type == "video") {

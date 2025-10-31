@@ -228,7 +228,7 @@ export async function savePlaylist(saveAs = false) {
 	// Remove unwanted attributes, remove Buffer
 	saveObj.playlist.forEach((e: any) => {
 		e.playing = false;
-		e.state = 0;
+		e.timeCode = 0;
 		e.startedAt = 0;
 		e.pausedAt = 0;
 		e.inFade = null;

@@ -40,7 +40,6 @@ let dragging = $state(false);
 let dragover: "top" | "bottom" | null = $state(null);
 let titleEl: HTMLElement;
 let titleIsEditing = $state(false);
-let cutIn: number = $state(0);
 let cutTrackLength: number = $state(0);
 
 //Audio
@@ -119,7 +118,7 @@ function handleHotkeySelect(e: any) {
 }
 
 function onEnd() {
-	if (ctx.currentTime - track.startedAt! >= (length! - cutIn) * 0.96) {
+	if (ctx.currentTime - track.startedAt! >= (track.length! - track.edit.in) * 0.96) {
 		if (track.repeat) {
 			stop(true, false);
 			play(0);
@@ -160,7 +159,7 @@ async function load() {
 		track.buffer = await ctx.decodeAudioData(arrayBuffer);
 		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
 		track.loaded = true;
-		length = track.buffer.duration;
+		track.length = track.buffer.duration;
 	} else {
 		//file not found
 		console.error(convertFileSrc(absPath), "track not found");
@@ -206,7 +205,7 @@ export function play(
 			track.inFade = null;
 		}, track.fade.in * 1000);
 	}
-	input.start(0, (startTime ?? track.pausedAt) + cutIn);
+	input.start(0, (startTime ?? track.pausedAt) + track.edit.in);
 	track.startedAt = ctx.currentTime - (startTime ?? track.pausedAt);
 	track.playing = true;
 }
@@ -260,25 +259,27 @@ onMount(() => {
 	load();
 });
 
+//length of track after editing
 $effect(() => {
-	cutIn = track.edit.in;
+	cutTrackLength = track.length ? track.length - track.edit.in : 0;
 });
-$effect(() => {
-	cutTrackLength = length ? length - cutIn : 0;
-});
+//set pan value
 $effect(() => {
 	if (panNode) {
 		panNode.pan.value = track.pan;
 	}
 });
+//set volume
 $effect(() => {
 	gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime);
 });
+//reset dragover
 $effect(() => {
 	if ($currentDragging == null) {
 		dragover = null;
 	}
 });
+//load if not loaded or missing
 $effect(() => {
 	if (!track.loaded) {
 		if (!track.missing) load();
@@ -331,7 +332,7 @@ $effect(() => {
 		></div>
 
 		<Waveform
-			data={waveformCalc(track.buffer, 1000, cutIn / length)}
+			data={waveformCalc(track.buffer, 1000, track.edit.in / track.length)}
 			samples={1000}
 			resY={50}
 		/>
@@ -521,7 +522,7 @@ $effect(() => {
 					onFocus={() => isEditing.update(e => e + 1)}
 					onBlur={() => isEditing.update(e => e - 1)}
 					min={0}
-					max={length}
+					max={track.length}
 					decimalDisplay={0}
 					unit="s"
 					disabled={!$editMode}
@@ -533,7 +534,7 @@ $effect(() => {
 					onFocus={() => isEditing.update(e => e + 1)}
 					onBlur={() => isEditing.update(e => e - 1)}
 					min={0}
-					max={length}
+					max={track.length}
 					decimalDisplay={0}
 					unit="s"
 					disabled={!$editMode}
