@@ -19,14 +19,8 @@ export function addHotkey(key: number) {
 			get(currentDragging)?.pathSource!,
 			get(currentDragging)!.name!,
 		);
-		playlist.update(e => {
-			e[e.length - 1].hotkey = key;
-			return e;
-		});
-		hotkeys.update(e => {
-			e[key - 1].track = get(playlist)[get(playlist).length - 1];
-			return e;
-		});
+		playlist[playlist.length - 1].hotkey = key;
+		hotkeys[key - 1].track = playlist[playlist.length - 1];
 
 		currentDragging.set(null);
 	} else if (
@@ -39,13 +33,7 @@ export function addHotkey(key: number) {
 			e!.hotkey = key;
 			return e;
 		});
-		hotkeys.update(e => {
-			e[key - 1].track = get(currentDragging);
-			return e;
-		});
-		playlist.update(e => {
-			return e;
-		});
+		hotkeys[key - 1].track = get(currentDragging);
 
 		currentDragging.set(null);
 	} else {
@@ -55,25 +43,16 @@ export function addHotkey(key: number) {
 }
 
 export function rmHotkey(key: number) {
-	hotkeys.update(h => {
-		h[key - 1].track!.hotkey = null;
-		h[key - 1].track = null;
-
-		return h;
-	});
-	playlist.update(e => {
-		return e;
-	});
+	hotkeys[key - 1].track!.hotkey = null;
+	hotkeys[key - 1].track = null;
 }
 
 function rmHotkeyForSameTrack() {
-	hotkeys.update(i => {
-		i.forEach(e => {
-			if (e.track === get(currentDragging)) {
-				e.track!.hotkey = null;
-				e.track = null;
-			}
-		});
-		return i;
+
+	hotkeys.forEach(e => {
+		if (e.track === get(currentDragging)) {
+			e.track!.hotkey = null;
+			e.track = null;
+		}
 	});
 }
