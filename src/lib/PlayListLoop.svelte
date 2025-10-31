@@ -96,11 +96,11 @@ export function update() {}
 
 export function playPause() {}
 
-export function play(resume?: boolean) {
+export function play(startTime?:number, useFade?: boolean) {
 	track.playing = true;
 }
 
-export function stop() {}
+export function stop(reset?: boolean, useFade?: boolean) {}
 
 onMount(() => {});
 

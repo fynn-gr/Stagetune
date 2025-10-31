@@ -77,10 +77,14 @@ export function play(startTime?: number, useFade?: boolean) {
 	track.playing = true;
 }
 
-export function stop(reset: boolean = false) {
+export function stop(reset?: boolean = false, useFade?: boolean = false) {
 	emit("update_play", { action: "stop" });
 	track.state = 0;
 	track.playing = false;
+}
+
+export function playPause() {
+
 }
 
 export function getBuffer() {}

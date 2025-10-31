@@ -75,9 +75,9 @@ export function update() {}
 
 export function playPause() {}
 
-export function play(resume?: boolean) {}
+export function play(startTime?:number, useFade?: boolean) {}
 
-export function stop() {}
+export function stop(reset?: boolean, useFade?: boolean) {}
 
 onMount(() => {
 	//if (track.annotation) annotationEl.innerHTML = track.annotation.text;
