@@ -38,11 +38,10 @@ import {
 	settings,
 	splash,
 	showProjector,
-	screens,
-	selectedScreen,
 	currentDragging,
 	contextMenu,
 	recent,
+	projector,
 } from "./ts/Stores.svelte";
 import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -154,7 +153,7 @@ function deleteTrack() {
 		// Remove hotkey if present
 		if (selected.type === "track" && typeof selected.hotkey === "number") {
 			let hotkeyRm = selected.hotkey;
-			$hotkeys[(hotkeyRm as number) - 1].track = null;
+			hotkeys[(hotkeyRm as number) - 1].track = null;
 		}
 
 		// Find new selected item
@@ -224,7 +223,7 @@ const Listeners = () => {
 
 	listen("projctorReq", e => {
 		updateProjectorList();
-		emit("projector_set_location", { screen: $screens[$selectedScreen] });
+		emit("projector_set_location", { screen: projector.screens[projector.selectedScreen] });
 	});
 
 	listen("reload_settings", () => {
@@ -566,10 +565,10 @@ $effect(() => {
 			<!--hotkeys-->
 			{#if showHotkeys}
 				<div class="hotkeys">
-					{#each $hotkeys as a, i}
+					{#each hotkeys as a, i}
 						<Hotkey
-							bind:this={$hotkeyElements[i]}
-							bind:track={$hotkeys[i].track}
+							bind:this={hotkeyElements[i]}
+							bind:track={hotkeys[i].track}
 							key={a.key}
 						/>
 					{/each}

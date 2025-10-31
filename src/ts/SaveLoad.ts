@@ -54,9 +54,9 @@ export async function openPlaylist(path?: string) {
 			const obj = JSON.parse(e);
 			srcFiles.set(obj.srcFiles);
 			playlist.push(...obj.playlist);
-			hotkeys.set(obj.hotkeys);
+			hotkeys.push(...hotkeys);
 
-			get(hotkeys).forEach(e => {
+			hotkeys.forEach(e => {
 				if (e.track != null) {
 					const ref = playlist[e.track];
 					e.track = ref;
@@ -236,7 +236,7 @@ export async function savePlaylist(saveAs = false) {
 	});
 
 	// Save every Hotkey slot
-	get(hotkeys).forEach(e => {
+	hotkeys.forEach(e => {
 		if (e.track != null) {
 			saveObj.hotkeys.push({
 				key: e.key,

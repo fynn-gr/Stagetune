@@ -9,9 +9,8 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
 	editMode,
 	playlist,
-	screens,
+	projector,
 	selectedItem,
-	selectedScreen,
 	settings,
 	showProjector,
 	uiPlatform,
@@ -50,34 +49,34 @@ let mainID: number = $state(0);
 
 function handleProjector(screen: number | null) {
 	if (screen) {
-		console.log($screens[screen]);
-		emit("projector_set_location", { screen: $screens[screen] });
+		console.log(projector.screens[screen]);
+		emit("projector_set_location", { screen: projector.screens[screen] });
 	} else {
-		console.log($screens[$selectedScreen]);
-		emit("projector_set_location", { screen: $screens[$selectedScreen] });
+		console.log(projector.screens[projector.selectedScreen]);
+		emit("projector_set_location", { screen: projector.screens[projector.selectedScreen] });
 	}
 }
 
 onMount(async () => {
-	$screens = await availableMonitors();
+	projector.screens = await availableMonitors();
 	let main = await primaryMonitor();
 	mainID = 0;
 
-	$screens.forEach((e, i) => {
+	projector.screens.forEach((e, i) => {
 		if (e.name == main?.name) mainID = i;
 	});
-	console.log("screens", $state.snapshot($screens));
+	console.log("screens", $state.snapshot(projector.screens));
 	console.log("main", main);
 	console.log("main ID", mainID);
 
-	if ($screens.length < 2) {
-		$selectedScreen = 0;
-	} else if ($screens.length - 1 > mainID) {
-		$selectedScreen = mainID++;
+	if (projector.screens.length < 2) {
+		projector.selectedScreen = 0;
+	} else if (projector.screens.length - 1 > mainID) {
+		projector.selectedScreen = mainID++;
 	} else if (mainID > 0) {
-		$selectedScreen = mainID--;
+		projector.selectedScreen = mainID--;
 	} else {
-		$selectedScreen = 0;
+		projector.selectedScreen = 0;
 	}
 });
 </script>
@@ -279,12 +278,12 @@ onMount(async () => {
 			/>
 
 			<TopBarDropdown icon={null} toolTip="Projector">
-				{#each $screens as screen, i}
+				{#each projector.screens as screen, i}
 					<TopBarDropdownItem
 						name={i == mainID ? `Main` : `Display ${i + 1}`}
-						checked={$selectedScreen == i}
+						checked={projector.selectedScreen == i}
 						onChange={() => {
-							$selectedScreen = i;
+							projector.selectedScreen = i;
 							handleProjector(i);
 						}}
 					/>

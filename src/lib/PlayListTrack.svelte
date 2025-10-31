@@ -99,21 +99,21 @@ function handleHotkeySelect(e: any) {
 	console.log(hotkeySelect);
 	if (hotkeySelect != undefined) {
 		//selected Number
-		if ($hotkeys[hotkeySelect - 1].track != null) {
+		if (hotkeys[hotkeySelect - 1].track != null) {
 			//remove old track at hotkey
-			$hotkeys[hotkeySelect - 1].track!.hotkey = null;
-			$hotkeys[hotkeySelect - 1].track = null;
+			hotkeys[hotkeySelect - 1].track!.hotkey = null;
+			hotkeys[hotkeySelect - 1].track = null;
 		}
 		if (track.hotkey != undefined) {
 			//remove old hotkey from current track first
-			$hotkeys[track.hotkey].track = null;
+			hotkeys[track.hotkey].track = null;
 		}
 		//set new hotkey
 		track.hotkey = hotkeySelect;
-		$hotkeys[hotkeySelect - 1].track = track;
+		hotkeys[hotkeySelect - 1].track = track;
 	} else {
 		//selected undefined
-		$hotkeys[track.hotkey!].track = null;
+		hotkeys[track.hotkey!].track = null;
 		track.hotkey = null;
 	}
 }

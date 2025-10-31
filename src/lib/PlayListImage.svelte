@@ -73,7 +73,7 @@ function handleDragLeave() {
 	dragover = null;
 }
 
-export function play(resume?: boolean) {
+export function play(startTime?: number, useFade?: boolean) {
 	track.playing = true;
 }
 

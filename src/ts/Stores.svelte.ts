@@ -19,9 +19,15 @@ export const showProjector = writable<boolean>(false);
 export const recent = writable<Array<string>>([]);
 
 // screens for projector
-export const screens = writable<Monitor[]>([]);
-export const selectedScreen = writable<number>(0);
-export const mainScreenID = writable<number>(0);
+export const projector: {
+	screens: Array<Monitor>;
+	selectedScreen: number;
+	mainScreenID: number;
+} = $state({
+	screens: [],
+	selectedScreen: 0,
+	mainScreenID: 0,
+});
 
 // context menu content
 export const contextMenu = writable<ContextMenu | null>(null);
@@ -51,7 +57,7 @@ export const playlist: Array<
 	| PlaylistLoop
 > = $state([]);
 
-export const hotkeys = writable<Hotkey[]>([
+export const hotkeys: Array<Hotkey> = $state([
 	{
 		key: 1,
 		track: null,
@@ -90,7 +96,7 @@ export const hotkeys = writable<Hotkey[]>([
 	},
 ]);
 export const playlistElements: Array<PlaylistElement> = $state([]);
-export const hotkeyElements = writable<any[]>([]);
+export const hotkeyElements: Array<any> = $state([]);
 
 export const srcFiles = writable<SrcDirectory[]>([]); // media Files
 export const playlistPath = writable<string>(""); // playlist save path
