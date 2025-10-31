@@ -13,7 +13,7 @@ import VolumeControl from "./VolumeControl.svelte";
 import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 
 // Stores, Utils
-import { DropHandler, secondsToMinutes, waveformCalc } from "@/ts/Utils";
+import { DropHandler, secondsToMinutes } from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
@@ -332,7 +332,8 @@ $effect(() => {
 		></div>
 
 		<Waveform
-			data={waveformCalc(track.buffer, 1000, track.edit.in / track.length)}
+			buffer={track.buffer}
+			cutInFac={track.edit.in / track.length}
 			samples={1000}
 			resY={50}
 		/>

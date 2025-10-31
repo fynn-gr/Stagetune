@@ -1,20 +1,42 @@
 <script lang="ts">
 interface Props {
-	data: Array<number>;
+	buffer: AudioBuffer | null;
+	cutInFac: number;
 	samples: number;
 	resY: number;
 }
-let { data, samples, resY }: Props = $props();
+let { buffer, cutInFac, samples, resY }: Props = $props();
 
 let resX = window.innerWidth;
 let step = resX / samples;
-
 let canvas: HTMLCanvasElement;
 let can: CanvasRenderingContext2D;
 
+function waveformCalc(): number[] {
+	if (buffer) {
+		let rawData = buffer.getChannelData(0);
+		let cutData = rawData.subarray(Math.floor(rawData.length * cutInFac));
+		const blockSize = Math.floor(cutData.length / samples);
+		const filteredData = [];
+		for (let i = 0; i < samples; i++) {
+			let blockStart = blockSize * i;
+			let sum = 0;
+			for (let j = 0; j < blockSize; j++) {
+				sum = sum + Math.abs(cutData[blockStart + j]);
+			}
+			filteredData.push(sum / blockSize);
+		}
+
+		const multiplier = Math.pow(Math.max(...filteredData), -1);
+		return filteredData.map(n => n * multiplier);
+	} else {
+		return [0];
+	}
+}
+
 $effect(() => {
-	if (data != undefined && canvas != undefined) {
-		//let data = waveformCalc(buffer, samples, cutInFac);
+	if (buffer != undefined && canvas != undefined) {
+		let data = waveformCalc();
 		can = canvas.getContext("2d");
 		can.fillStyle = "rgb(45, 45, 45)";
 

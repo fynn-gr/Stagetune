@@ -43,7 +43,7 @@ import {
 	recent,
 	projector,
 } from "./ts/Stores.svelte";
-import { waveformCalc, updateProjectorList, DropHandler } from "./ts/Utils";
+import { updateProjectorList, DropHandler } from "./ts/Utils";
 import {
 	savePlaylist,
 	openDir,
@@ -492,10 +492,8 @@ $effect(() => {
 							);`}
 					>
 						<Waveform
-							data={waveformCalc(
-								playlistElements[$selectedItem].getBuffer(),
-								window.innerWidth,
-							)}
+							buffer={playlistElements[$selectedItem].getBuffer()}
+							cutInFac={0}
 							samples={window.innerWidth}
 							resY={200}
 						/>
