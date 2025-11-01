@@ -27,6 +27,7 @@ let { track = $bindable(), id }: Props = $props();
 let dragging = false;
 let dragover: "top" | "bottom" | null = null;
 let titleEl: HTMLElement;
+let titleIsEditing = false;
 
 function handleDragStart(e: DragEvent) {
 	//calc pointer position
@@ -74,6 +75,7 @@ function handleDragLeave() {
 }
 
 export function play(startTime?: number, useFade?: boolean) {
+	emit("play_video", {name: track.name})
 	track.playing = true;
 }
 
@@ -111,6 +113,7 @@ $effect(() => {
 });
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="playlist-item video"
@@ -179,14 +182,35 @@ $effect(() => {
 
 		<!--Title-->
 		<div class="title">
-			<input
-				bind:this={titleEl}
-				onfocus={() => isEditing.update(e => e + 1)}
-				onblur={() => isEditing.update(e => e - 1)}
-				bind:value={track.name}
-				disabled={!$editMode}
-			/>
-			<div class="title-display">{track.name}</div>
-		</div>
+				{#if titleIsEditing}
+					<input
+						class="title-input"
+						type="text"
+						bind:this={titleEl}
+						bind:value={track.name}
+						onblur={() => {
+							titleIsEditing = false;
+							isEditing.update(e => e - 1);
+						}}
+						onkeydown={e => {
+							if (e.key === "Enter") {
+								titleIsEditing = false;
+							}
+						}}
+					/>
+				{:else}
+					<span
+						class="title-display"
+						ondblclick={() => {
+							if (!$editMode) return;
+							titleIsEditing = true;
+							isEditing.update(e => e + 1);
+							tick().then(() => {
+								titleEl.focus();
+							});
+						}}>{track.name}</span
+					>
+				{/if}
+			</div>
 	</div>
 </div>

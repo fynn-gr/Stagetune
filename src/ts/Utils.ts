@@ -84,6 +84,7 @@ export function createPlaylistItem(
 		case "loop":
 			let newLoop: PlaylistLoop = {
 				type: "loop",
+				name: "New Loop",
 				annotation: null,
 				items: [],
 			};
