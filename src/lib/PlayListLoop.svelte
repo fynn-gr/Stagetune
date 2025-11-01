@@ -141,7 +141,7 @@ $effect(() => {
 		class="inner"
 		style={`
 			pointer-events: ${$currentDragging == null ? "auto" : "none"};
-			height: ${track.items?.length * 32 + 70}rem;
+			height: ${track.items?.length * 34 + 72}rem;
 		`}
 	>
 		<!--reset-btn-->
