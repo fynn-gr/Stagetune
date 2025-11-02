@@ -17,12 +17,11 @@ import PlayListVideo from "./lib/PlayListVideo.svelte";
 import TrackListItem from "./lib/TrackListItem.svelte";
 import TopBar from "./lib/TopBar.svelte";
 import Hotkey from "./lib/Hotkey.svelte";
-import Waveform from "./lib/Waveform.svelte";
 import Splash from "./lib/Splash.svelte";
 import ContextMenu from "./pureUI/components/ContextMenu.svelte";
-import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 import PlayListImage from "./lib/PlayListImage.svelte";
 import PlayListLoop from "./lib/PlayListLoop.svelte";
+import Editor from "./lib/Editor.svelte"
 
 // Stores, Utils
 import {
@@ -453,68 +452,7 @@ $effect(() => {
 
 	<!--editor-->
 	{#if showEditor && $editMode}
-		<div class="editor">
-			{#if $selectedItem !== undefined && playlist[$selectedItem].type === "track" && (playlist[$selectedItem] as PlaylistTrack).buffer != null}
-				<div class="prop-bar">
-					<label>cut start</label>
-					<PropNumber
-						bind:value={playlist[$selectedItem].edit.in}
-						min={0}
-						max={playlist[$selectedItem].length}
-						step={1}
-						unit="s"
-						onFocus={() => {
-							isEditing.update(e => e + 1);
-							console.log($isEditing);
-						}}
-						onBlur={() => {
-							isEditing.update(e => e - 1);
-							console.log($isEditing);
-						}}
-						title="cut in"
-					/>
-				</div>
-
-				<div class="track-wrapper">
-					<div
-						class="track"
-						style={`
-							background: linear-gradient(
-								90deg,
-								#111 0%,
-								#111 calc(100% * ${
-									(playlist[$selectedItem] as PlaylistTrack).edit.in /
-									(playlist[$selectedItem] as PlaylistTrack).length
-								}),
-								#fff calc(100% * ${
-									(playlist[$selectedItem] as PlaylistTrack).edit.in /
-									(playlist[$selectedItem] as PlaylistTrack).length
-								}),
-								#fff 100%
-							);`}
-					>
-						<Waveform
-							buffer={playlistElements[$selectedItem].getBuffer()}
-							cutInFac={0}
-							samples={window.innerWidth}
-							resY={200}
-						/>
-						<input
-							type="range"
-							min="0"
-							max={playlist[$selectedItem].length}
-							step="0.01"
-							bind:value={playlist[$selectedItem].edit.in}
-						/>
-					</div>
-					<div
-						class="border"
-						style={`left: ${(playlist[$selectedItem].edit.in / playlist[$selectedItem].length) * 100}%;`}
-					></div>
-				</div>
-			{/if}
-			<p class="placeholder">No track selected</p>
-		</div>
+		<Editor />
 	{/if}
 
 	<!--palettes on the right-->
