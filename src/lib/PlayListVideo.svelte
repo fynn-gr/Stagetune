@@ -186,15 +186,17 @@ $effect(() => {
 		></div>
 
 		<!--reset-btn-->
-		<button
-			class="play-btn"
-			title="Reset"
-			onclick={() => {
-				stop(true);
-			}}
-		>
-			<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
-		</button>
+		{#if $settings.resetButton}
+			<button
+				class="play-btn"
+				title="Reset"
+				onclick={() => {
+					stop(true);
+				}}
+			>
+				<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
+			</button>
+		{/if}
 
 		<!--play Button-->
 		<button
@@ -209,6 +211,9 @@ $effect(() => {
 				<img src="./icons/topbar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
+
+		<!--Icon-->
+		<img src="./icons/topbar/film.svg" alt="" class="icon" />
 
 		<!--Title-->
 		<div class="title">

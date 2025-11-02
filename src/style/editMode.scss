@@ -42,8 +42,7 @@
 			.title {
 				height: 60rem;
 				min-width: 60rem;
-				line-height: 30rem;
-				font-size: 20rem;
+				line-height: 60rem;
 
 				.title-input {
 					display: block;
@@ -218,6 +217,14 @@
 
 			.waveform {
 				display: none;
+			}
+		}
+
+		&.track {
+			.inner {
+				.icon {
+					margin: 12rem 0;
+				}
 			}
 		}
 

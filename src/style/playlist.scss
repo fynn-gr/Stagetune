@@ -145,12 +145,17 @@
 				}
 			}
 
+			.icon {
+				width: 36rem;
+				height: 36rem;
+				filter: invert(90%);
+			}
+
 			.title {
 				flex: 1;
 				position: relative;
 				display: flex;
 				justify-content: left;
-				margin-left: 12rem;
 				height: 54rem;
 				line-height: 54rem;
 				text-overflow: ellipsis;
@@ -264,6 +269,10 @@
 					margin: 8rem 0 8rem 8rem;
 				}
 			}
+
+			.icon {
+				margin: 8rem 0;
+			}
 		}
 
 		&.missing {
@@ -318,6 +327,10 @@
 				&:first-of-type {
 					margin: 6rem 0 6rem 6rem;
 				}
+			}
+
+			.icon {
+				margin: 8rem 0;
 			}
 
 			.progress {
@@ -389,6 +402,10 @@
 				}
 			}
 
+			.icon {
+				margin: 12rem 0;
+			}
+
 			.content {
 				min-height: 30rem;
 				position: absolute;
@@ -413,7 +430,7 @@
 				.placeholder {
 					display: none;
 					height: 30rem;
-					margin: 0;
+					margin: -4rem;
 					height: auto;
 					border: none;
 					text-align: center;

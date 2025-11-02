@@ -75,7 +75,7 @@ function handleDragLeave() {
 }
 
 export function play(startTime?: number, useFade?: boolean) {
-	emit("play_video", {name: track.name})
+	emit("play_video", { name: track.name });
 	track.playing = true;
 }
 
@@ -156,15 +156,17 @@ $effect(() => {
 		></div>
 
 		<!--reset-btn-->
-		<button
-			class="play-btn"
-			title="Reset"
-			onclick={() => {
-				stop(true);
-			}}
-		>
-			<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
-		</button>
+		{#if $settings.resetButton}
+			<button
+				class="play-btn"
+				title="Reset"
+				onclick={() => {
+					stop(true);
+				}}
+			>
+				<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
+			</button>
+		{/if}
 
 		<!--play Button-->
 		<button
@@ -180,37 +182,40 @@ $effect(() => {
 			{/if}
 		</button>
 
+		<!--Icon-->
+		<img src="./icons/topbar/image.svg" alt="" class="icon" />
+
 		<!--Title-->
 		<div class="title">
-				{#if titleIsEditing}
-					<input
-						class="title-input"
-						type="text"
-						bind:this={titleEl}
-						bind:value={track.name}
-						onblur={() => {
+			{#if titleIsEditing}
+				<input
+					class="title-input"
+					type="text"
+					bind:this={titleEl}
+					bind:value={track.name}
+					onblur={() => {
+						titleIsEditing = false;
+						isEditing.update(e => e - 1);
+					}}
+					onkeydown={e => {
+						if (e.key === "Enter") {
 							titleIsEditing = false;
-							isEditing.update(e => e - 1);
-						}}
-						onkeydown={e => {
-							if (e.key === "Enter") {
-								titleIsEditing = false;
-							}
-						}}
-					/>
-				{:else}
-					<span
-						class="title-display"
-						ondblclick={() => {
-							if (!$editMode) return;
-							titleIsEditing = true;
-							isEditing.update(e => e + 1);
-							tick().then(() => {
-								titleEl.focus();
-							});
-						}}>{track.name}</span
-					>
-				{/if}
-			</div>
+						}
+					}}
+				/>
+			{:else}
+				<span
+					class="title-display"
+					ondblclick={() => {
+						if (!$editMode) return;
+						titleIsEditing = true;
+						isEditing.update(e => e + 1);
+						tick().then(() => {
+							titleEl.focus();
+						});
+					}}>{track.name}</span
+				>
+			{/if}
+		</div>
 	</div>
 </div>

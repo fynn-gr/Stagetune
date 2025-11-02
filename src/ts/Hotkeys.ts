@@ -48,7 +48,6 @@ export function rmHotkey(key: number) {
 }
 
 function rmHotkeyForSameTrack() {
-
 	hotkeys.forEach(e => {
 		if (e.track === get(currentDragging)) {
 			e.track!.hotkey = null;

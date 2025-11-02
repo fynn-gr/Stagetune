@@ -224,6 +224,14 @@ onMount(async () => {
 				disabled={!$settings.showVolumeOptions}
 			/>
 			<TopBarDropdownItem
+				name="Reset Button"
+				bind:checked={$settings.resetButton}
+				onChange={() => {
+					$settings.resetButton = !$settings.resetButton;
+				}}
+			/>
+			<div class="seperator"></div>
+			<TopBarDropdownItem
 				name="Scrubbing in Live Mode"
 				bind:checked={$settings.allowSkipLive}
 				onChange={() => {

@@ -118,7 +118,10 @@ function handleHotkeySelect(e: any) {
 }
 
 function onEnd() {
-	if (ctx.currentTime - track.startedAt! >= (track.length! - track.edit.in) * 0.96) {
+	if (
+		ctx.currentTime - track.startedAt! >=
+		(track.length! - track.edit.in) * 0.96
+	) {
 		if (track.repeat) {
 			stop(true, false);
 			play(0);
@@ -339,16 +342,18 @@ $effect(() => {
 		/>
 
 		<!--reset-btn-->
-		<button
-			id="btn-reset"
-			class="play-btn"
-			title="Reset"
-			onclick={() => {
-				stop(true);
-			}}
-		>
-			<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
-		</button>
+		{#if $settings.resetButton}
+			<button
+				id="btn-reset"
+				class="play-btn"
+				title="Reset"
+				onclick={() => {
+					stop(true);
+				}}
+			>
+				<img src="./icons/topbar/reset.svg" alt="" draggable="false" />
+			</button>
+		{/if}
 
 		<!--play Button-->
 		<button
@@ -371,6 +376,9 @@ $effect(() => {
 				<img src="./icons/topbar/play.svg" alt="" draggable="false" />
 			{/if}
 		</button>
+
+		<!--Icon-->
+		<img src="./icons/topbar/music.svg" alt="" class="icon" />
 
 		<!--name-->
 		{#if track.buffer}

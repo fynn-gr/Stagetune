@@ -10,6 +10,7 @@ export type Settings = {
 	showFadeOptions: boolean;
 	showVolumeOptions: boolean;
 	useSliders: boolean;
+	resetButton: boolean;
 	allowSkipLive: boolean;
 };
 
@@ -25,5 +26,6 @@ export const settingsDefault = {
 	showFadeOptions: true,
 	showVolumeOptions: true,
 	useSliders: true,
+	resetButton: false,
 	allowSkipLive: true,
 };
