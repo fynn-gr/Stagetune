@@ -458,9 +458,9 @@ $effect(() => {
 				<div class="prop-bar">
 					<label>cut start</label>
 					<PropNumber
-						bind:value={playlist[$selectedItem] as PlaylistTrack.edit.in}
+						bind:value={playlist[$selectedItem].edit.in}
 						min={0}
-						max={(playlist[$selectedItem] as PlaylistTrack).length}
+						max={playlist[$selectedItem].length}
 						step={1}
 						unit="s"
 						onFocus={() => {
@@ -502,14 +502,14 @@ $effect(() => {
 						<input
 							type="range"
 							min="0"
-							max={(playlist[$selectedItem] as PlaylistTrack).length}
+							max={playlist[$selectedItem].length}
 							step="0.01"
-							bind:value={playlist[$selectedItem] as PlaylistTrack.edit.in}
+							bind:value={playlist[$selectedItem].edit.in}
 						/>
 					</div>
 					<div
 						class="border"
-						style={`left: ${((playlist[$selectedItem] as PlaylistTrack).edit.in / (playlist[$selectedItem] as PlaylistTrack).length) * 100}%;`}
+						style={`left: ${(playlist[$selectedItem].edit.in / playlist[$selectedItem].length) * 100}%;`}
 					></div>
 				</div>
 			{/if}
