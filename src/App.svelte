@@ -17,11 +17,13 @@ import PlayListVideo from "./lib/PlayListVideo.svelte";
 import TrackListItem from "./lib/TrackListItem.svelte";
 import TopBar from "./lib/TopBar.svelte";
 import Hotkey from "./lib/Hotkey.svelte";
+import Waveform from "./lib/Waveform.svelte";
 import Splash from "./lib/Splash.svelte";
 import ContextMenu from "./pureUI/components/ContextMenu.svelte";
+import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 import PlayListImage from "./lib/PlayListImage.svelte";
 import PlayListLoop from "./lib/PlayListLoop.svelte";
-import Editor from "./lib/Editor.svelte"
+import Editor from "./lib/Editor.svelte";
 
 // Stores, Utils
 import {
@@ -41,6 +43,7 @@ import {
 	contextMenu,
 	recent,
 	projector,
+	playlistZoom,
 } from "./ts/Stores.svelte";
 import { updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -98,6 +101,17 @@ function handleDragOverPlaylist(e: DragEvent) {
 		console.log("dragover Playlist");
 		dragOverPlaylist = true;
 	}
+}
+
+function handlePlaylistZoom(e: WheelEvent) {
+	if (!e.shiftKey) return;
+	e.preventDefault();
+	if (e.deltaY < 0) {
+		$playlistZoom = Math.min($playlistZoom + 1, 100);
+	} else if (e.deltaY > 0) {
+		$playlistZoom = Math.max($playlistZoom - 1, 32);
+	}
+	console.log($playlistZoom);
 }
 
 function moveUp() {
@@ -388,13 +402,14 @@ $effect(() => {
 		class:edit-mode={$editMode}
 		style={`--annotation-width: calc(${annotationWidth}% - ${
 			$editMode ? 46 : 9
-		}rem);`}
+		}rem); --playlist-zoom: ${$playlistZoom};`}
 		ondrop={handleDropPlaylist}
 		ondragover={handleDragOverPlaylist}
 		ondragleave={e => {
 			e.preventDefault();
 			dragOverPlaylist = false;
 		}}
+		onwheel={handlePlaylistZoom}
 		role="button"
 		tabindex="0"
 		bind:this={playlistEl}

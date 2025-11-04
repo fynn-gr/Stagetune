@@ -153,7 +153,6 @@ $effect(() => {
 	onclick={e => {
 		selectedItem.set(id);
 	}}
-	role="button"
 	tabindex="0"
 >
 	<div class="drag-area">

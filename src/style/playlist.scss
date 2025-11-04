@@ -1,6 +1,4 @@
-// playlist
 .playlist {
-	position: relative;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden scroll;
@@ -108,23 +106,114 @@
 		gap: 12rem;
 		padding: 12rem 12rem 0 12rem;
 
+		//item hover effect
+		&:has(.drag-area:hover) {
+			&::after {
+				content: "";
+				position: absolute;
+				pointer-events: none;
+				inset: 4rem 4rem -8rem 6rem;
+				background-color: rgba(255, 255, 255, 0.06);
+				border-radius: 16rem;
+			}
+		}
+
 		.drag-area {
+			cursor: grab;
+			width: 28rem;
+			min-width: 28rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			border-radius: 6rem;
+
+			& > p {
+				display: block;
+				pointer-events: none;
+				margin: auto;
+				font-size: 12rem;
+				font-weight: 800;
+			}
+		}
+
+		.annotation-attached {
+			z-index: 1;
+			position: relative;
 			display: none;
+			width: var(--annotation-width);
+			background: var(--annotation);
+			border-radius: 10rem;
+
+			&:has(:focus) {
+				box-shadow: 0 0 0 3rem var(--accent);
+			}
+
+			.annotation-input {
+				width: 100%;
+				min-height: 100%;
+				padding: 8rem;
+				font-size: 18rem;
+				line-height: 22rem;
+				text-align: left;
+				color: var(--text);
+				background-color: transparent;
+				overflow: hidden;
+
+				&::selection,
+				*::selection {
+					color: white;
+					background-color: var(--accent);
+				}
+			}
+
+			.annotation-display {
+				display: block;
+				width: 100%;
+				min-height: 100%;
+				padding: 8rem;
+				font-size: 18rem;
+				line-height: 22rem;
+				text-align: left;
+				color: white;
+				overflow: hidden;
+			}
+		}
+
+		.annotation-placeholder {
+			width: var(--annotation-width);
+			flex-direction: column;
+			justify-content: center;
+
+			button {
+				width: 40rem;
+				height: 40rem;
+				margin: auto 0 auto auto;
+				border-radius: 6rem;
+				background-color: transparent;
+
+				&:hover {
+					background-color: var(--hover);
+				}
+
+				img {
+					filter: invert(1);
+				}
+			}
 		}
 
 		.inner {
 			position: relative;
-			z-index: 10;
+			min-height: var(--playlist-zoom);
+			height: var(--playlist-zoom);
 			flex: 1;
-			height: 72rem;
 			display: flex;
 			flex-direction: row;
+			align-items: center;
 			overflow: hidden;
 			background-color: var(--playlist-item-BG);
 			border-radius: 10rem;
 
 			.play-btn {
-				position: relative;
 				width: 40rem;
 				height: 40rem;
 				border-radius: 6rem;
@@ -145,24 +234,41 @@
 				}
 			}
 
-			.icon {
-				width: 36rem;
-				height: 36rem;
-				filter: invert(90%);
-			}
-
 			.title {
-				flex: 1;
 				position: relative;
+				flex: 1;
 				display: flex;
 				justify-content: left;
-				height: 54rem;
-				line-height: 54rem;
+				height: 40rem;
+				line-height: 40rem;
 				text-overflow: ellipsis;
 				overflow: hidden;
 				font-size: 24rem;
 				font-weight: 500;
 				color: white;
+
+				.icon {
+					width: 36rem;
+					height: 36rem;
+					filter: invert(90%);
+				}
+
+				.title-input {
+					display: block;
+					position: absolute;
+					width: inherit;
+					height: inherit;
+					margin: auto 0;
+					color: var(--accent);
+					background-color: transparent;
+					font-size: inherit;
+					font-weight: inherit;
+
+					&::selection {
+						color: white;
+						background-color: var(--accent);
+					}
+				}
 
 				.title-display {
 					display: block;
@@ -174,68 +280,118 @@
 				}
 			}
 
-			.hotkey-display {
-				width: 20rem;
-				height: 20rem;
-				margin: 18rem 10rem;
-				color: var(--panel2);
-				background-color: var(--text);
-				border-radius: 6rem;
-				text-align: center;
-				line-height: 20rem;
-				font-size: 12rem;
-				font-weight: 800;
-			}
-
-			.option-display {
-				width: 40rem;
-				height: 40rem;
-				margin: 8rem 0;
-				filter: invert(100%);
-			}
-
-			.fade-display {
-				width: 40rem;
-				height: 40rem;
-				margin: 8rem 0;
-				filter: invert(100%);
-			}
-
-			.options {
-				display: none;
-			}
-
-			.timecode {
-				position: relative;
-				width: 68rem;
-				height: 54rem;
-				line-height: 54rem;
-				text-align: right;
-				font-size: 20rem;
-				font-weight: 600;
-
-				&::after {
-					content: "/";
-					padding: 0 6rem;
-				}
-			}
-
 			.length {
 				position: relative;
 				width: 56rem;
-				height: 54rem;
-				line-height: 54rem;
-				text-align: left;
+				height: 40rem;
+				line-height: 40rem;
+				text-align: right;
 				font-size: 20rem;
 				font-weight: 600;
 			}
 
-			.fade {
-				display: none;
+			.options {
+				display: flex;
+				flex-direction: row;
+
+				.option {
+					position: relative;
+					width: 40rem;
+					height: 40rem;
+					border-radius: 5rem;
+					background-color: transparent;
+
+					&:hover {
+						background-color: var(--hover);
+					}
+
+					&.active {
+						background-color: var(--accent);
+					}
+
+					&.active:has(+ .active) {
+						border-radius: 5rem 0 0 5rem;
+					}
+
+					&.active + .active {
+						border-radius: 0 5rem 5rem 0;
+					}
+
+					&.hotkey {
+						display: block;
+						position: relative;
+
+						&:hover {
+							background-color: transparent;
+						}
+
+						p {
+							pointer-events: none;
+							position: absolute;
+							inset: 0;
+							width: 50%;
+							height: 50%;
+							margin: 10rem;
+							color: var(--panel2);
+							background-color: var(--text);
+							border-radius: 6rem;
+							text-align: center;
+							line-height: 20rem;
+							font-size: 14rem;
+							font-weight: 800;
+
+							&.unset {
+								color: var(--panel2);
+								background-color: rgb(92, 92, 92);
+							}
+						}
+
+						select {
+							width: 50%;
+							height: 50%;
+							margin: 10rem;
+							border-radius: 6rem;
+							background-color: transparent;
+						}
+					}
+
+					img {
+						width: 100%;
+						line-height: 100%;
+						filter: invert(90%);
+					}
+				}
 			}
 
-			.volume {
-				display: none;
+			.fade {
+				position: relative;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				padding: 6rem 0;
+
+				.fader {
+					display: flex;
+					flex-direction: row;
+
+					.fade-icon {
+						width: 18rem;
+						height: 18rem;
+						font-size: 12rem;
+						filter: invert(1);
+					}
+
+					.prop-number {
+						input {
+							width: 40rem;
+							color: var(--text);
+
+							&:focus {
+								box-shadow: 0 0 0 3rem var(--accent);
+							}
+						}
+					}
+				}
 			}
 
 			.progress {
@@ -255,264 +411,54 @@
 				width: 100%;
 			}
 		}
+
 	}
+  
+  .annotation {
+    display: none;
+    border-radius: 8rem;
+    background-color: transparent;
 
-	.track {
-		z-index: 1;
-		opacity: 40%;
+    .container {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      z-index: 10;
+      background-color: var(--annotation);
+      border-radius: 10rem;
 
-		.inner {
-			.play-btn {
-				margin: 8rem 0;
+      input.name-input {
+        width: 100%;
+        min-height: 24rem;
+        padding: 8rem;
+        font-size: 18rem;
+        line-height: 22rem;
+        text-align: left;
+        color: var(--text);
+        background-color: transparent;
 
-				&:first-of-type {
-					margin: 8rem 0 8rem 8rem;
-				}
-			}
+        &::selection,
+        *::selection {
+          color: white;
+          background-color: var(--accent);
+        }
+      }
 
-			.icon {
-				margin: 8rem 0;
-			}
-		}
+      .name-display {
+        flex: 1;
+        position: relative;
+        padding: 8rem;
+        display: flex;
+        justify-content: left;
+        font-size: 18rem;
+        font-weight: 500;
+        color: white;
+      }
+    }
+  }
 
-		&.missing {
-			opacity: 100%;
-
-			.annotation-attached {
-				background-color: #dd0000;
-			}
-
-			.inner {
-				background-color: #dd0000;
-
-				& > :not(.title) {
-					display: none;
-				}
-			}
-		}
-
-		&.loaded {
-			opacity: 100%;
-		}
-	}
-
-	.video {
-		z-index: 1;
-		border-radius: 8rem;
-
-		&.missing {
-			.annotationStart {
-				background-color: #aa0000;
-			}
-
-			.inner {
-				background-color: #dd0000;
-
-				* {
-					opacity: 70%;
-				}
-			}
-
-			.annotationEnd {
-				background-color: #aa0000;
-			}
-		}
-
-		.inner {
-			height: 60rem;
-
-			.play-btn {
-				margin: 6rem 0;
-
-				&:first-of-type {
-					margin: 6rem 0 6rem 6rem;
-				}
-			}
-
-			.icon {
-				margin: 8rem 0;
-			}
-
-			.progress {
-				height: 6rem;
-			}
-		}
-	}
-
-	.annotation {
-		z-index: 1;
-		display: none;
-		border-radius: 8rem;
-		background-color: transparent;
-
-		.container {
-			position: relative;
-			flex: 1;
-			display: flex;
-			flex-direction: row;
-			z-index: 10;
-			background-color: var(--annotation);
-			border-radius: 10rem;
-
-			input.name-input {
-				width: 100%;
-				min-height: 24rem;
-				padding: 8rem;
-				font-size: 18rem;
-				line-height: 22rem;
-				text-align: left;
-				color: var(--text);
-				background-color: transparent;
-
-				&::selection,
-				*::selection {
-					color: white;
-					background-color: var(--accent);
-				}
-			}
-
-			.name-display {
-				flex: 1;
-				position: relative;
-				padding: 8rem;
-				display: flex;
-				justify-content: left;
-				font-size: 18rem;
-				font-weight: 500;
-				color: white;
-			}
-		}
-	}
-
-	.loop {
-		&.drop-content {
-			.inner .content {
-				background-color: var(--accent) !important;
-			}
-		}
-
-		.inner {
-			min-height: 98rem;
-
-			.play-btn {
-				margin: 6rem 0;
-
-				&:first-of-type {
-					margin: 6rem 0 6rem 6rem;
-				}
-			}
-
-			.icon {
-				margin: 12rem 0;
-			}
-
-			.content {
-				min-height: 30rem;
-				position: absolute;
-				inset: 62rem 6rem 6rem 6rem;
-				display: flex;
-				flex-direction: column;
-				gap: 4rem;
-				padding: 4rem;
-				background-color: var(--playlist-BG);
-				border-radius: 6rem;
-
-				.loop-item {
-					height: 30rem;
-					background-color: var(--playlist-item-BG);
-					line-height: 30rem;
-					font-size: 13rem;
-					font-weight: 600;
-					padding: 0 10rem;
-					border-radius: 3rem;
-				}
-
-				.placeholder {
-					display: none;
-					height: 30rem;
-					margin: -4rem;
-					height: auto;
-					border: none;
-					text-align: center;
-					font-size: 16rem;
-					line-height: 30rem;
-					font-weight: 700;
-					color: rgb(143, 143, 143);
-
-					&:nth-child(1) {
-						display: block;
-					}
-				}
-			}
-		}
-	}
-
-	.annotation-attached {
-		z-index: 1;
-		position: relative;
-		display: none;
-		width: var(--annotation-width);
-		background: var(--annotation);
-		border-radius: 10rem;
-
-		&:has(:focus) {
-			box-shadow: 0 0 0 3rem var(--accent);
-		}
-
-		.annotation-input {
-			width: 100%;
-			min-height: 100%;
-			padding: 8rem;
-			font-size: 18rem;
-			line-height: 22rem;
-			text-align: left;
-			color: var(--text);
-			background-color: transparent;
-			overflow: hidden;
-
-			&::selection,
-			*::selection {
-				color: white;
-				background-color: var(--accent);
-			}
-		}
-
-		.annotation-display {
-			display: block;
-			width: 100%;
-			min-height: 100%;
-			padding: 8rem;
-			font-size: 18rem;
-			line-height: 22rem;
-			text-align: left;
-			color: white;
-			overflow: hidden;
-		}
-	}
-
-	.annotation-placeholder {
-		display: none;
-		width: var(--annotation-width);
-		flex-direction: column;
-		justify-content: center;
-
-		button {
-			width: 40rem;
-			height: 40rem;
-			margin: auto 0 auto auto;
-			border-radius: 6rem;
-			background-color: transparent;
-
-			&:hover {
-				background-color: var(--hover);
-			}
-
-			img {
-				filter: invert(1);
-			}
-		}
-	}
-
+	//placeholde in empty playlist
 	.placeholder {
 		display: none;
 		position: relative;
@@ -530,9 +476,5 @@
 		&:first-child {
 			display: block;
 		}
-	}
-
-	.annotation-slider + .placeholder {
-		display: block;
 	}
 }

@@ -377,12 +377,12 @@ $effect(() => {
 			{/if}
 		</button>
 
-		<!--Icon-->
-		<img src="./icons/topbar/music.svg" alt="" class="icon" />
-
 		<!--name-->
 		{#if track.buffer}
 			<div class="title">
+				<!--Icon-->
+				<img src="./icons/topbar/music.svg" alt="" class="icon" />
+
 				{#if titleIsEditing}
 					<input
 						class="title-input"
@@ -468,92 +468,100 @@ $effect(() => {
 		{/if}
 
 		<!--time-->
-		<p class="timecode">{secondsToMinutes(track.timeCode)}</p>
+		{#if !$editMode}
+			<p class="timecode">{secondsToMinutes(track.timeCode)}</p>
+		{/if}
 		<p class="length">
 			{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
 		</p>
 
-		<div class="options">
-			<!--Hotkey-->
-			<div class="option hotkey" class:assigned={track.hotkey != undefined}>
-				<select bind:value={hotkeySelect} onchange={handleHotkeySelect}>
-					<option value={undefined}>none</option>
-					<option value={1}>1</option>
-					<option value={2}>2</option>
-					<option value={3}>3</option>
-					<option value={4}>4</option>
-					<option value={5}>5</option>
-					<option value={6}>6</option>
-					<option value={7}>7</option>
-					<option value={8}>8</option>
-					<option value={9}>9</option>
-				</select>
-				<p class:unset={track.hotkey == undefined}>{track.hotkey || "?"}</p>
+		{#if $editMode}
+			<div class="options">
+				<!--Hotkey-->
+				<div class="option hotkey" class:assigned={track.hotkey != undefined}>
+					<select bind:value={hotkeySelect} onchange={handleHotkeySelect}>
+						<option value={undefined}>none</option>
+						<option value={1}>1</option>
+						<option value={2}>2</option>
+						<option value={3}>3</option>
+						<option value={4}>4</option>
+						<option value={5}>5</option>
+						<option value={6}>6</option>
+						<option value={7}>7</option>
+						<option value={8}>8</option>
+						<option value={9}>9</option>
+					</select>
+					<p class:unset={track.hotkey == undefined}>{track.hotkey || "?"}</p>
+				</div>
+
+				<!--repeat-->
+				<button
+					id="btn-repeat"
+					class="option repeat-btn"
+					class:active={track.repeat}
+					onclick={() => {
+						track.repeat = $editMode ? !track.repeat : track.repeat;
+					}}
+					title="repeat track"
+				>
+					<img src="./icons/topbar/repeat.svg" alt="repeat" draggable="false" />
+				</button>
+
+				<!--auto reset-->
+				<button
+					id="btn-auto-reset"
+					class="option auto-reset-btn"
+					class:active={track.autoReset}
+					onclick={() => {
+						track.autoReset = $editMode ? !track.autoReset : track.autoReset;
+					}}
+					title="auto reset track on pause"
+				>
+					<img
+						src="./icons/topbar/auto_reset.svg"
+						alt="auto reset"
+						draggable="false"
+					/>
+				</button>
 			</div>
-
-			<!--repeat-->
-			<button
-				id="btn-repeat"
-				class="option repeat-btn"
-				class:active={track.repeat}
-				onclick={() => {
-					track.repeat = $editMode ? !track.repeat : track.repeat;
-				}}
-				title="repeat track"
-			>
-				<img src="./icons/topbar/repeat.svg" alt="repeat" draggable="false" />
-			</button>
-
-			<!--auto reset-->
-			<button
-				id="btn-auto-reset"
-				class="option auto-reset-btn"
-				class:active={track.autoReset}
-				onclick={() => {
-					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
-				}}
-				title="auto reset track on pause"
-			>
-				<img
-					src="./icons/topbar/auto_reset.svg"
-					alt="auto reset"
-					draggable="false"
-				/>
-			</button>
-		</div>
+		{/if}
 
 		<!--fade-->
-		{#if $settings.showFadeOptions}
+		{#if $settings.showFadeOptions && $editMode}
 			<span class="fade">
-				<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
-				<PropNumber
-					bind:value={track.fade.in}
-					onFocus={() => isEditing.update(e => e + 1)}
-					onBlur={() => isEditing.update(e => e - 1)}
-					min={0}
-					max={track.length}
-					decimalDisplay={0}
-					unit="s"
-					disabled={!$editMode}
-					title="Fade In"
-				/>
-				<img class="fade-icon" src="./icons/topbar/fade_out.svg" alt="" />
-				<PropNumber
-					bind:value={track.fade.out}
-					onFocus={() => isEditing.update(e => e + 1)}
-					onBlur={() => isEditing.update(e => e - 1)}
-					min={0}
-					max={track.length}
-					decimalDisplay={0}
-					unit="s"
-					disabled={!$editMode}
-					title="Fade out"
-				/>
+				<div class="fader">
+					<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
+					<PropNumber
+						bind:value={track.fade.in}
+						onFocus={() => isEditing.update(e => e + 1)}
+						onBlur={() => isEditing.update(e => e - 1)}
+						min={0}
+						max={track.length}
+						decimalDisplay={0}
+						unit="s"
+						disabled={!$editMode}
+						title="Fade In"
+					/>
+				</div>
+				<div class="fader">
+					<img class="fade-icon" src="./icons/topbar/fade_out.svg" alt="" />
+					<PropNumber
+						bind:value={track.fade.out}
+						onFocus={() => isEditing.update(e => e + 1)}
+						onBlur={() => isEditing.update(e => e - 1)}
+						min={0}
+						max={track.length}
+						decimalDisplay={0}
+						unit="s"
+						disabled={!$editMode}
+						title="Fade out"
+					/>
+				</div>
 			</span>
 		{/if}
 
 		<!--volume Pan-->
-		{#if $settings.showVolumeOptions}
+		{#if $settings.showVolumeOptions && $editMode}
 			<VolumeControl
 				bind:volume={track.volume}
 				bind:pan={track.pan}

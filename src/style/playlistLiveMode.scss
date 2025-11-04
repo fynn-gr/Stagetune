@@ -1,0 +1,55 @@
+.playlist:not(.edit-mode) {
+	.playlist-item {
+		.drag-area {
+			display: none;
+		}
+
+		.annotation-attached {
+		}
+
+		.annotation-placeholder {
+			display: block;
+		}
+
+		.inner {
+			.hotkey-display {
+				width: 20rem;
+				height: 20rem;
+				margin: 10rem 10rem;
+				color: var(--panel2);
+				background-color: var(--text);
+				border-radius: 6rem;
+				text-align: center;
+				line-height: 20rem;
+				font-size: 12rem;
+				font-weight: 800;
+			}
+
+			.option-display,
+			.fade-display {
+				width: 40rem;
+				height: 40rem;
+				filter: invert(100%);
+			}
+
+			.timecode {
+				position: relative;
+				width: 68rem;
+				height: 40rem;
+				line-height: 40rem;
+				text-align: right;
+				font-size: 20rem;
+				font-weight: 600;
+
+				&::after {
+					content: "/";
+					padding: 0 6rem;
+				}
+			}
+
+      .length {
+        text-align: left;
+      }
+		}
+	}
+}
