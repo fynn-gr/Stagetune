@@ -25,26 +25,27 @@
 
 	.volume.knobs {
 		position: relative;
-		grid-area: volume;
 		display: flex;
 		flex-direction: row;
-		height: 40rem;
 
 		span {
 			position: relative;
-			height: 64rem;
-			width: 64rem;
+			height: 40rem;
+			width: 40rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 
 			&:first-child {
-				margin-right: -12rem;
+				margin-right: 4rem;
 			}
 
 			.default-mark {
 				position: absolute;
 				width: 2rem;
 				height: 18rem;
-				top: 32rem;
-				left: 32rem;
+				top: 20rem;
+				left: 20rem;
 				transform-origin: center top;
 				background-color: rgba(0, 0, 0, 0.4);
 				border-radius: 2rem;
@@ -55,7 +56,6 @@
 				z-index: 2;
 				width: 30rem;
 				height: 30rem;
-				margin: 17rem;
 				background-color: gray;
 				border-radius: 50%;
 
@@ -76,7 +76,6 @@
 				position: absolute;
 				width: 38rem;
 				height: 38rem;
-				margin: 13rem;
 				border-radius: 50%;
 			}
 

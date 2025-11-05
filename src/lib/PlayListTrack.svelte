@@ -324,6 +324,7 @@ $effect(() => {
 			height: ${$playlistZoom}rem;
 			padding-bottom: ${$playlistZoom > 60 ? 20 : 0 }rem;
 			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			padding-right: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
 		`}
 	>
 		<!--progress-->
@@ -484,7 +485,7 @@ $effect(() => {
 		</p>
 
 		{#if $editMode}
-			<div class="options">
+			<div class="options" class:stacked={$playlistZoom > 94}>
 				<!--Hotkey-->
 				<div class="option hotkey" class:assigned={track.hotkey != undefined}>
 					<select bind:value={hotkeySelect} onchange={handleHotkeySelect}>
@@ -536,7 +537,7 @@ $effect(() => {
 
 		<!--fade-->
 		{#if $settings.showFadeOptions && $editMode}
-			<span class="fade">
+			<span class="fade" class:stacked={$playlistZoom > 94}>
 				<div class="fader">
 					<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
 					<PropNumber

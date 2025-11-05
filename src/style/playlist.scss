@@ -206,6 +206,7 @@
 			flex: 1;
 			display: flex;
 			flex-direction: row;
+			gap: 8rem;
 			align-items: center;
 			overflow: hidden;
 			background-color: var(--playlist-item-BG);
@@ -291,11 +292,17 @@
 			.options {
 				display: flex;
 				flex-direction: row;
+				gap: 4rem;
+
+				&.stacked {
+					flex-wrap: wrap;
+					width: 70rem;
+				}
 
 				.option {
 					position: relative;
-					width: 40rem;
-					height: 40rem;
+					width: 32rem;
+					height: 32rem;
 					border-radius: 5rem;
 					background-color: transparent;
 
@@ -305,14 +312,6 @@
 
 					&.active {
 						background-color: var(--accent);
-					}
-
-					&.active:has(+ .active) {
-						border-radius: 5rem 0 0 5rem;
-					}
-
-					&.active + .active {
-						border-radius: 0 5rem 5rem 0;
 					}
 
 					&.hotkey {
@@ -327,14 +326,13 @@
 							pointer-events: none;
 							position: absolute;
 							inset: 0;
-							width: 50%;
-							height: 50%;
-							margin: 10rem;
+							width: 32rem;
+							height: 32rem;
 							color: var(--panel2);
 							background-color: var(--text);
 							border-radius: 6rem;
 							text-align: center;
-							line-height: 20rem;
+							line-height: 32rem;
 							font-size: 14rem;
 							font-weight: 800;
 
@@ -345,17 +343,17 @@
 						}
 
 						select {
-							width: 50%;
-							height: 50%;
-							margin: 10rem;
+							width: 100%;
+							height: 100%;
 							border-radius: 6rem;
 							background-color: transparent;
 						}
 					}
 
 					img {
-						width: 100%;
-						line-height: 100%;
+						width: 34rem;
+						height: 34rem;
+						margin: -1rem;
 						filter: invert(90%);
 					}
 				}
@@ -366,15 +364,20 @@
 				display: flex;
 				flex-direction: row;
 				flex-wrap: wrap;
-				padding: 6rem 0;
+
+				&.stacked {
+					flex-direction: column;
+					gap: 4rem;
+				}
 
 				.fader {
 					display: flex;
 					flex-direction: row;
+					align-items: center;
 
 					.fade-icon {
-						width: 18rem;
-						height: 18rem;
+						width: 32rem;
+						height: 32rem;
 						font-size: 12rem;
 						filter: invert(1);
 					}
@@ -405,6 +408,7 @@
 				pointer-events: none;
 				position: absolute;
 				bottom: 6.2rem;
+				left: 0;
 				height: 18rem;
 				width: 100%;
 			}

@@ -158,6 +158,7 @@ function handlePanDrag(e: any) {
             rgb(77, 77, 77) 360deg
           );`}
 			></div>
+			<div class="default-mark" style="transform: rotate(180deg);"></div>
 			<div class="knob" style={`rotate: ${panDisplay * 135}deg;`} title="Pan">
 				<div class="mark"></div>
 			</div>
