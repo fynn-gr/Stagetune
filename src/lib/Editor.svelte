@@ -19,7 +19,7 @@ function handleMouseWheel(e: WheelEvent) {
 		// zoom out (larger value -> farther)
 		zoom = Math.min(1, zoom * factor);
 	}
-	console.log(zoom)
+	console.log(zoom);
 }
 
 $effect(() => {
@@ -55,8 +55,12 @@ $effect(() => {
 
 		<div
 			class="track-wrapper"
-			onmouseenter={() => {trackWrapperEL.addEventListener("wheel", handleMouseWheel)}}
-			onmouseleave={() => {trackWrapperEL.removeEventListener("wheel", handleMouseWheel)}}
+			onmouseenter={() => {
+				trackWrapperEL.addEventListener("wheel", handleMouseWheel);
+			}}
+			onmouseleave={() => {
+				trackWrapperEL.removeEventListener("wheel", handleMouseWheel);
+			}}
 			bind:this={trackWrapperEL}
 		>
 			<div class="track" bind:this={trackEL}>

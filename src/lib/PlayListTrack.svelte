@@ -22,6 +22,7 @@ import {
 	settings,
 	draggingOrigin,
 	hotkeys,
+	playlistZoom,
 } from "../ts/Stores.svelte";
 import type { PlaylistTrack } from "@/ts/Types";
 
@@ -318,9 +319,15 @@ $effect(() => {
 
 	<div
 		class="inner"
-		style={$currentDragging == null ? "" : "pointer-events: none;"}
+		style={`
+			${$currentDragging == null ? "" : "pointer-events: none;"}
+			height: ${$playlistZoom}rem;
+			padding-bottom: ${$playlistZoom > 60 ? 20 : 0 }rem;
+			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+		`}
 	>
 		<!--progress-->
+		{#if $playlistZoom > 60}
 		<div
 			class="progress"
 			onclick={handleSkip}
@@ -340,6 +347,7 @@ $effect(() => {
 			samples={1000}
 			resY={50}
 		/>
+		{/if}
 
 		<!--reset-btn-->
 		{#if $settings.resetButton}

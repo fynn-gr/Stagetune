@@ -1,6 +1,6 @@
 <script lang="ts">
 import "../style/VolumeOptions.scss";
-import { editMode } from "@/ts/Stores.svelte";
+import { editMode, playlistZoom } from "@/ts/Stores.svelte";
 
 interface Props {
 	volume: number;
@@ -71,7 +71,7 @@ function handlePanDrag(e: any) {
 		</span>
 	</div>
 {:else}
-	<div class="volume knobs">
+	<div class="volume knobs" class:slim={$playlistZoom < 64}>
 		<!--Volume-->
 		<span
 			onmousedown={e => {

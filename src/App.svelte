@@ -109,7 +109,7 @@ function handlePlaylistZoom(e: WheelEvent) {
 	if (e.deltaY < 0) {
 		$playlistZoom = Math.min($playlistZoom + 1, 100);
 	} else if (e.deltaY > 0) {
-		$playlistZoom = Math.max($playlistZoom - 1, 32);
+		$playlistZoom = Math.max($playlistZoom - 1, 40);
 	}
 	console.log($playlistZoom);
 }

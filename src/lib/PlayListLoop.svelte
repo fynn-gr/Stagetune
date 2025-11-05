@@ -7,6 +7,7 @@ import {
 	currentDragging,
 	draggingOrigin,
 	settings,
+	playlistZoom,
 } from "../ts/Stores.svelte";
 import { onMount } from "svelte";
 import Annotation from "./Annotation.svelte";
@@ -140,8 +141,8 @@ $effect(() => {
 	<div
 		class="inner"
 		style={`
-			pointer-events: ${$currentDragging == null ? "auto" : "none"};
-			height: ${track.items?.length * 34 + 72}rem;
+			${$currentDragging == null ? "" : "pointer-events: none;"}
+			height: ${Math.max(70, $playlistZoom)}px;
 		`}
 	>
 		<!--reset-btn-->
@@ -180,11 +181,11 @@ $effect(() => {
 			{/if}
 		</button>
 
-		<!--Icon-->
-		<img src="./icons/topbar/loop.svg" alt="" class="icon" />
-
 		<!--name-->
 		<div class="title">
+			<!--Icon-->
+			<img src="./icons/topbar/loop.svg" alt="" class="icon" />
+
 			{#if titleIsEditing}
 				<input
 					class="title-input"
