@@ -172,3 +172,44 @@ export function DropHandler(newPosition: number) {
 
 	currentDragging.set(null);
 }
+
+
+export function audioBufferToTopWaveformSVG(
+  buffer: AudioBuffer,
+  width = 1000,
+  height = 200,
+  color = "#4fc3f7"
+): string {
+  const channelData = buffer.getChannelData(0);
+  const samplesPerPixel = Math.floor(channelData.length / width);
+  const halfH = height / 2;
+
+  // Collect max (absolute) peaks for each pixel slice
+  const peaks: number[] = [];
+  for (let x = 0; x < width; x++) {
+    const start = x * samplesPerPixel;
+    let peak = 0;
+    for (let i = 0; i < samplesPerPixel; i++) {
+      const val = Math.abs(channelData[start + i] || 0);
+      if (val > peak) peak = val;
+    }
+    peaks.push(peak);
+  }
+
+  // Build SVG path
+  let path = `M 0 ${height}`; // start bottom-left
+  for (let x = 0; x < width; x++) {
+    const y = height - peaks[x] * height; // invert Y: 0 at top
+    path += ` L ${x} ${y}`;
+  }
+  // close shape back down to bottom-right
+  path += ` L ${width} ${height} Z`;
+
+  // Build SVG string
+  const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+  <path d="${path}" fill="${color}" />
+</svg>`.trim();
+
+  return svg;
+}

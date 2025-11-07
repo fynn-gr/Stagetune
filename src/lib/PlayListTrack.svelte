@@ -10,10 +10,13 @@ import { message } from "@tauri-apps/plugin-dialog";
 import Annotation from "./Annotation.svelte";
 import Waveform from "./Waveform.svelte";
 import VolumeControl from "./VolumeControl.svelte";
-import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 
 // Stores, Utils
-import { DropHandler, secondsToMinutes } from "@/ts/Utils";
+import {
+	audioBufferToTopWaveformSVG,
+	DropHandler,
+	secondsToMinutes,
+} from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
@@ -25,6 +28,7 @@ import {
 	playlistZoom,
 } from "../ts/Stores.svelte";
 import type { PlaylistTrack } from "@/ts/Types";
+import PropNumber from "./PropNumber.svelte";
 
 // Props
 interface Props {
@@ -48,6 +52,8 @@ let input: AudioBufferSourceNode = $state(new AudioBufferSourceNode(ctx));
 let gainNode: GainNode = $state(new GainNode(ctx));
 let fadeNode: GainNode = $state(new GainNode(ctx));
 let panNode: StereoPannerNode = $state(new StereoPannerNode(ctx));
+
+let dataURL = $state("");
 
 function handleDragStart(e: DragEvent) {
 	//calc pointer position
@@ -164,6 +170,12 @@ async function load() {
 		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
 		track.loaded = true;
 		track.length = track.buffer.duration;
+
+		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, "#f00");
+
+		// Convert SVG string to base64 data URL
+		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
+		dataURL = `url("data:image/svg+xml;base64,${svgBase64}")`;
 	} else {
 		//file not found
 		console.error(convertFileSrc(absPath), "track not found");
@@ -263,6 +275,15 @@ onMount(() => {
 	load();
 });
 
+$effect(() => {
+	if (track.buffer) {
+		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, "#f00");
+
+		// Convert SVG string to base64 data URL
+		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
+		dataURL = `url("data:image/svg+xml;base64,${svgBase64}")`;
+	}
+})
 //length of track after editing
 $effect(() => {
 	cutTrackLength = track.length ? track.length - track.edit.in : 0;
@@ -322,32 +343,41 @@ $effect(() => {
 		style={`
 			${$currentDragging == null ? "" : "pointer-events: none;"}
 			height: ${$playlistZoom}rem;
-			padding-bottom: ${$playlistZoom > 60 ? 20 : 0 }rem;
+			padding-bottom: ${$playlistZoom > 60 ? 20 : 0}rem;
 			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
 			padding-right: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			background: linear-gradient(
+					90deg,
+					rgb(55, 55, 55) 0%,
+					rgb(55, 55, 55) calc(100% * ${track.timeCode / cutTrackLength}),
+					var(--playlist-item-BG) calc(100% * ${track.timeCode / cutTrackLength}),
+					var(--playlist-item-BG) 100%
+				);
 		`}
 	>
 		<!--progress-->
 		{#if $playlistZoom > 60}
-		<div
-			class="progress"
-			onclick={handleSkip}
-			style={`
+			<div
+				class="progress"
+				onclick={handleSkip}
+				style={`
 				background: linear-gradient(
 					90deg,
 					var(--accent) 0%,
 					var(--accent) calc(100% * ${track.timeCode / cutTrackLength}),
 					#555 calc(100% * ${track.timeCode / cutTrackLength}),
 					#555 100%
-				);`}
-		></div>
+				);
+				mask-image: ${dataURL};
+				`}
+			></div>
 
-		<Waveform
+			<!-- <Waveform
 			buffer={track.buffer}
 			cutInFac={track.edit.in / track.length}
 			samples={1000}
 			resY={50}
-		/>
+		/> -->
 		{/if}
 
 		<!--reset-btn-->

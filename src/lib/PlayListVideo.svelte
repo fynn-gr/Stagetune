@@ -172,24 +172,15 @@ $effect(() => {
 			${$currentDragging == null ? "" : "pointer-events: none;"}
 			height: ${$playlistZoom}px;
 			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			background: linear-gradient(
+				90deg,
+				rgb(55, 55, 55) 0%,
+				rgb(55, 55, 55) calc(100% * ${track.timeCode}),
+				var(--playlist-item-BG) calc(100% * ${track.timeCode}),
+				var(--playlist-item-BG) 100%
+			);
 		`}
 	>
-		<!--progress-->
-		<div
-			class="progress"
-			onclick={handleSkip}
-			style={`
-					background: linear-gradient(
-						90deg,
-						var(--accent) 0%,
-						var(--accent) calc(100% * ${track.timeCode / track.length || 0}),
-						#555 calc(100% * ${track.timeCode / track.length || 0}),
-						#555 100%
-					);`}
-			role="button"
-			tabindex="0"
-		></div>
-
 		<!--reset-btn-->
 		{#if $settings.resetButton}
 			<button

@@ -151,14 +151,6 @@ $effect(() => {
 			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
 		`}
 	>
-		<!--progress-->
-		<div
-			class="progress"
-			style={`
-					background: ${track.timeCode > 0.5 ? "var(--accent)" : "#555"};`}
-			role="button"
-			tabindex="0"
-		></div>
 
 		<!--reset-btn-->
 		{#if $settings.resetButton}
