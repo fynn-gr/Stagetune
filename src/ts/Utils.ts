@@ -178,34 +178,46 @@ export function audioBufferToTopWaveformSVG(
   buffer: AudioBuffer,
   width = 1000,
   height = 200,
-  color = "#4fc3f7"
+  cutInFac = 0 // seconds to cut from start
 ): string {
+  const color = "#f00";
   const channelData = buffer.getChannelData(0);
-  const samplesPerPixel = Math.floor(channelData.length / width);
-  const halfH = height / 2;
 
-  // Collect max (absolute) peaks for each pixel slice
+  // number of samples to skip based on cut-in time
+  const sampleRate = buffer.sampleRate;
+  const cutSamples = Math.floor(sampleRate * cutInFac);
+
+  // ensure we don't exceed the buffer length
+  const usableLength = Math.max(0, channelData.length - cutSamples);
+  const samplesPerPixel = Math.max(1, Math.floor(usableLength / width));
+
+  // collect peaks from the cut-in point onward
   const peaks: number[] = [];
   for (let x = 0; x < width; x++) {
-    const start = x * samplesPerPixel;
+    const start = cutSamples + x * samplesPerPixel;
+    if (start >= channelData.length) {
+      peaks.push(0);
+      continue;
+    }
+
     let peak = 0;
-    for (let i = 0; i < samplesPerPixel; i++) {
-      const val = Math.abs(channelData[start + i] || 0);
+    const end = Math.min(start + samplesPerPixel, channelData.length);
+    for (let i = start; i < end; i++) {
+      const val = Math.abs(channelData[i]);
       if (val > peak) peak = val;
     }
     peaks.push(peak);
   }
 
-  // Build SVG path
-  let path = `M 0 ${height}`; // start bottom-left
+  // build SVG path (single-sided waveform)
+  let path = `M 0 ${height}`; // bottom-left start
   for (let x = 0; x < width; x++) {
-    const y = height - peaks[x] * height; // invert Y: 0 at top
+    const y = height - peaks[x] * height;
     path += ` L ${x} ${y}`;
   }
-  // close shape back down to bottom-right
-  path += ` L ${width} ${height} Z`;
+  path += ` L ${width} ${height} Z`; // close shape
 
-  // Build SVG string
+  // return SVG string
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
   <path d="${path}" fill="${color}" />

@@ -8,8 +8,8 @@ import { message } from "@tauri-apps/plugin-dialog";
 
 // Components
 import Annotation from "./Annotation.svelte";
-import Waveform from "./Waveform.svelte";
 import VolumeControl from "./VolumeControl.svelte";
+import PropNumber from "./PropNumber.svelte";
 
 // Stores, Utils
 import {
@@ -28,7 +28,6 @@ import {
 	playlistZoom,
 } from "../ts/Stores.svelte";
 import type { PlaylistTrack } from "@/ts/Types";
-import PropNumber from "./PropNumber.svelte";
 
 // Props
 interface Props {
@@ -46,14 +45,13 @@ let dragover: "top" | "bottom" | null = $state(null);
 let titleEl: HTMLElement;
 let titleIsEditing = $state(false);
 let cutTrackLength: number = $state(0);
+let dataURL = $state("");
 
 //Audio
 let input: AudioBufferSourceNode = $state(new AudioBufferSourceNode(ctx));
 let gainNode: GainNode = $state(new GainNode(ctx));
 let fadeNode: GainNode = $state(new GainNode(ctx));
 let panNode: StereoPannerNode = $state(new StereoPannerNode(ctx));
-
-let dataURL = $state("");
 
 function handleDragStart(e: DragEvent) {
 	//calc pointer position
@@ -276,10 +274,8 @@ onMount(() => {
 });
 
 $effect(() => {
-	if (track.buffer) {
-		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, "#f00");
-
-		// Convert SVG string to base64 data URL
+	if (track.buffer != undefined) {
+		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, track.edit.in);
 		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
 		dataURL = `url("data:image/svg+xml;base64,${svgBase64}")`;
 	}
@@ -461,7 +457,7 @@ $effect(() => {
 		{/if}
 
 		<!--Hotkey Display-->
-		{#if track.hotkey != undefined}
+		{#if track.hotkey != undefined && !editMode}
 			<div class="hotkey-display">
 				<p>{track.hotkey}</p>
 			</div>
@@ -530,7 +526,7 @@ $effect(() => {
 						<option value={8}>8</option>
 						<option value={9}>9</option>
 					</select>
-					<p class:unset={track.hotkey == undefined}>{track.hotkey || "?"}</p>
+					<p class:unset={track.hotkey == undefined}>{track.hotkey || "Key"}</p>
 				</div>
 
 				<!--repeat-->
@@ -572,28 +568,20 @@ $effect(() => {
 					<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
 					<PropNumber
 						bind:value={track.fade.in}
-						onFocus={() => isEditing.update(e => e + 1)}
-						onBlur={() => isEditing.update(e => e - 1)}
 						min={0}
 						max={track.length}
-						decimalDisplay={0}
 						unit="s"
 						disabled={!$editMode}
-						title="Fade In"
 					/>
 				</div>
 				<div class="fader">
 					<img class="fade-icon" src="./icons/topbar/fade_out.svg" alt="" />
 					<PropNumber
 						bind:value={track.fade.out}
-						onFocus={() => isEditing.update(e => e + 1)}
-						onBlur={() => isEditing.update(e => e - 1)}
 						min={0}
 						max={track.length}
-						decimalDisplay={0}
 						unit="s"
 						disabled={!$editMode}
-						title="Fade out"
 					/>
 				</div>
 			</span>
@@ -604,7 +592,7 @@ $effect(() => {
 			<VolumeControl
 				bind:volume={track.volume}
 				bind:pan={track.pan}
-				slider={$settings.useSliders}
+				slider={$playlistZoom > 94}
 			/>
 		{/if}
 	</div>
