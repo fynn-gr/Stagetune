@@ -43,7 +43,16 @@ function handlePanDrag(e: any) {
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if slider}
 	<div class="volume slider">
-		<span>
+		<span
+			style={`
+				--slider-bg: linear-gradient(
+					90deg,
+					var(--accent),
+					var(--accent) ${volume}%,
+					#1b1b1b ${volume}%,
+					#1b1b1b);
+				`}
+		>
 			<p>Vol</p>
 			<input
 				bind:value={volume}
@@ -56,7 +65,19 @@ function handlePanDrag(e: any) {
 			/>
 		</span>
 
-		<span>
+		<span
+			style={`
+				--slider-bg: linear-gradient(
+					90deg,
+					#1b1b1b 0%,
+					#1b1b1b ${pan < 0 ? 50 + pan * 50 : 50}%,
+					var(--accent) ${pan < 0 ? 50 + pan * 50 : 50}%,
+					var(--accent) ${pan < 0 ? 50 : 50 + pan * 50}%,
+					#1b1b1b ${pan < 0 ? 50 : 50 + pan * 50}%,
+					#1b1b1b 100%
+				);
+			`}
+		>
 			<p>Pan</p>
 			<input
 				class="pan"
