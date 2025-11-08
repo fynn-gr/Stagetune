@@ -25,7 +25,7 @@ export const settingsDefault = {
 	showAnnotations: true,
 	showFadeOptions: true,
 	showVolumeOptions: true,
-	useSliders: true,
+	useSliders: false,
 	resetButton: false,
 	allowSkipLive: true,
 };

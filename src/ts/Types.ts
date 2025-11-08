@@ -21,7 +21,7 @@ export type PlaylistTrack = {
 	startedAt: number; //track was started at seconds
 	pausedAt: number; // track was paused at seconds
 	inFade: "in" | "out" | null; //track is currently in fade or null
-	hotkey: number | null; //hotkey number assigned, null if not assigned
+	hotkey: number | undefined; //hotkey number assigned, undfined if not assigned
 	missing: boolean; //true if file could not be found
 	loaded: boolean; //if track finished loading
 };

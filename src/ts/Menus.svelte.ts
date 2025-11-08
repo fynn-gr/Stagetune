@@ -6,9 +6,9 @@ import {
 	type AboutMetadata,
 } from "@tauri-apps/api/menu";
 import { Submenu } from "@tauri-apps/api/menu/submenu";
-import { recent } from "./Stores.svelte";
 import { get } from "svelte/store";
 import { fileNameFromPath } from "./FileUtils";
+import { paths } from "./Stores.svelte";
 
 export async function createNativeMenu() {
 	let menu;
@@ -19,7 +19,7 @@ export async function createNativeMenu() {
 	let subHelp: Submenu;
 
 	let recentItems: Array<MenuItem | PredefinedMenuItem> = [];
-	get(recent).forEach(async e => {
+	paths.recent.forEach(async e => {
 		recentItems.push(
 			await MenuItem.new({
 				id: e,

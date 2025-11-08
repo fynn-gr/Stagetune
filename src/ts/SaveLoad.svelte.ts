@@ -18,13 +18,11 @@ import { isAudioFile, isVideoFile, isImageFile } from "./FileUtils";
 import { get } from "svelte/store";
 import {
 	playlist,
-	playlistPath,
-	srcFiles,
 	hotkeys,
 	settings,
 	splash,
 	uiPlatform,
-	recent,
+	paths,
 } from "./Stores.svelte";
 import type { SaveFile } from "./Types";
 import { createNativeMenu } from "./Menus.svelte";
@@ -49,12 +47,13 @@ export async function openPlaylist(path?: string) {
 			srcPath = path;
 		}
 
-		playlistPath.set(srcPath as string);
+		paths.playlist = srcPath as string;
 		readTextFile(srcPath, {}).then(e => {
 			const obj = JSON.parse(e);
-			srcFiles.set(obj.srcFiles);
+			paths.srcFiles = obj.srcFiles;
 			playlist.push(...obj.playlist);
-			hotkeys.push(...hotkeys);
+			hotkeys.length = 0;
+			hotkeys.push(...obj.hotkeys);
 
 			hotkeys.forEach(e => {
 				if (e.track != null) {
@@ -65,15 +64,11 @@ export async function openPlaylist(path?: string) {
 		});
 
 		//update recent
-		recent.update(e => {
-			e.unshift(srcPath);
-			return e;
-		});
-		if (get(recent).length > 10) {
-			recent.update(e => {
-				e.pop();
-				return e;
-			});
+		const index = paths.recent.indexOf(srcPath);
+		if (index != -1) paths.recent.splice(index, 1);
+		paths.recent.unshift(srcPath);
+		if (paths.recent.length > 10) {
+			paths.recent.pop();
 		}
 		createNativeMenu();
 		saveSettings();
@@ -91,7 +86,7 @@ export async function openDir() {
 
 		if (!sel) return;
 
-		let src = get(srcFiles);
+		let src = paths.srcFiles;
 		for (let i = 0; i < src.length; i++) {
 			if (src[i].path === sel) {
 				message("Directory already added", {
@@ -101,10 +96,7 @@ export async function openDir() {
 				return;
 			}
 		}
-		srcFiles.update(e => {
-			e.push({ path: sel, files: [] });
-			return e;
-		});
+		paths.srcFiles.push({ path: sel, files: [] });
 		scanSrcPaths(sel as string);
 	} catch (err) {
 		console.error(err);
@@ -119,12 +111,9 @@ export async function relinkDir(pathIndex: number) {
 		});
 		if (!sel) return;
 
-		srcFiles.update(e => {
-			for (let i = 0; i < e.length; i++) {
-				e[i].path = sel;
-			}
-			return e;
-		});
+		for (let i = 0; i < paths.srcFiles.length; i++) {
+			paths.srcFiles[i].path = sel;
+		}
 	} catch (err) {
 		console.error(err);
 	}
@@ -152,11 +141,8 @@ export async function scanSrcPaths(selPath: string) {
 						path: modifiedPath,
 						pathSource: selPath,
 					};
-					srcFiles.update(items => {
-						let index = items.findIndex(obj => obj.path === selPath);
-						items[index].files.push(obj);
-						return items;
-					});
+					let index = paths.srcFiles.findIndex(obj => obj.path === selPath);
+					paths.srcFiles[index].files.push(obj);
 				} else if (isVideoFile(entry.name)) {
 					// Video File
 					const modifiedPath = await basename(entry.name);
@@ -166,11 +152,8 @@ export async function scanSrcPaths(selPath: string) {
 						path: modifiedPath,
 						pathSource: selPath,
 					};
-					srcFiles.update(items => {
-						let index = items.findIndex(obj => obj.path === selPath);
-						items[index].files.push(obj);
-						return items;
-					});
+					let index = paths.srcFiles.findIndex(obj => obj.path === selPath);
+					paths.srcFiles[index].files.push(obj);
 				} else if (isImageFile(entry.name)) {
 					// Image File
 					const modifiedPath = await basename(entry.name);
@@ -180,11 +163,8 @@ export async function scanSrcPaths(selPath: string) {
 						path: modifiedPath,
 						pathSource: selPath,
 					};
-					srcFiles.update(items => {
-						let index = items.findIndex(obj => obj.path === selPath);
-						items[index].files.push(obj);
-						return items;
-					});
+					let index = paths.srcFiles.findIndex(obj => obj.path === selPath);
+					paths.srcFiles[index].files.push(obj);
 				} else {
 					// Other cases
 				}
@@ -199,7 +179,7 @@ export async function scanSrcPaths(selPath: string) {
 
 export async function savePlaylist(saveAs = false) {
 	//test if allready saved
-	if (get(playlistPath) == "" || saveAs) {
+	if (paths.playlist == "" || saveAs) {
 		// save as
 		let sel = await save({
 			title: "save Playlist as",
@@ -209,10 +189,10 @@ export async function savePlaylist(saveAs = false) {
 		if (!sel.endsWith(".spl")) {
 			sel += ".spl";
 		}
-		playlistPath.set(sel);
+		paths.playlist = sel;
 	}
 
-	const path = get(playlistPath);
+	const path = paths.playlist;
 	console.log("Save to path:", path);
 
 	// Create object with version and playlist
@@ -222,7 +202,7 @@ export async function savePlaylist(saveAs = false) {
 		},
 		playlist: JSON.parse(JSON.stringify(playlist)),
 		hotkeys: [],
-		srcFiles: get(srcFiles),
+		srcFiles: paths.srcFiles,
 	};
 
 	// Remove unwanted attributes, remove Buffer
@@ -254,16 +234,12 @@ export async function savePlaylist(saveAs = false) {
 	writeTextFile(path, JSON.stringify(saveObj), {});
 
 	//update recent
-	console.log("recent: ", get(recent));
-	recent.update(e => {
-		e.unshift(path);
-		return e;
-	});
-	if (get(recent).length > 10) {
-		recent.update(e => {
-			e.pop();
-			return e;
-		});
+	console.log("recent: ", paths.recent);
+	const index = paths.recent.indexOf(path);
+	if (index != -1) paths.recent.splice(index, 1);
+	paths.recent.unshift(path);
+	if (paths.recent.length > 10) {
+		paths.recent.pop();
 	}
 	createNativeMenu();
 	saveSettings();
@@ -274,7 +250,7 @@ export function saveSettings() {
 	const toSave = {
 		settings: get(settings),
 		uiPlatform: get(uiPlatform),
-		recent: get(recent),
+		recent: paths.recent,
 	};
 	getVersion()
 		.then(v => {
@@ -304,7 +280,7 @@ export async function loadSettings(activateSplash = false) {
 			const obj = JSON.parse(e);
 			settings.set(obj.settings);
 			uiPlatform.set(obj.uiPlatform);
-			recent.set(obj.recent);
+			paths.recent = obj.recent;
 			console.log("loaded settings", obj);
 
 			if (activateSplash) splash.set(get(settings).show_splash);

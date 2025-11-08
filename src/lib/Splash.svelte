@@ -2,9 +2,9 @@
 import { onMount } from "svelte";
 import { getVersion } from "@tauri-apps/api/app";
 import { open } from "@tauri-apps/plugin-shell";
-import { recent } from "@/ts/Stores.svelte";
 import { fileNameFromPath } from "@/ts/FileUtils";
-import { openPlaylist } from "@/ts/SaveLoad";
+import { openPlaylist } from "@/ts/SaveLoad.svelte";
+import { paths } from "@/ts/Stores.svelte";
 
 const links: any = {
 	Website: "https://fynn.gr/apps/stagetune",
@@ -60,7 +60,7 @@ onMount(async () => {
 				{/each}
 			</span>
 			<span style="right: 0;">
-				{#each $recent as file}
+				{#each paths.recent as file}
 					<button
 						onclick={() => {
 							openPlaylist(file);

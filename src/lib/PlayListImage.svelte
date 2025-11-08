@@ -151,7 +151,6 @@ $effect(() => {
 			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : Math.max(($playlistZoom - 60) / 2, 10)}px;
 		`}
 	>
-
 		<!--reset-btn-->
 		{#if $settings.resetButton}
 			<button

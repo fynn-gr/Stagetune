@@ -10,11 +10,12 @@ import {
 	playlistElements,
 	contextMenu,
 } from "@/ts/Stores.svelte";
+import type { PlaylistTrack } from "@/ts/Types";
 import { onMount } from "svelte";
 
 interface Props {
 	key: number;
-	track: any;
+	track: PlaylistTrack | null;
 }
 let { key, track = $bindable() }: Props = $props();
 

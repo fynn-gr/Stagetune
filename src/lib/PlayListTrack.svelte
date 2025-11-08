@@ -28,6 +28,7 @@ import {
 	playlistZoom,
 } from "../ts/Stores.svelte";
 import type { PlaylistTrack } from "@/ts/Types";
+import Hotkey from "./Hotkey.svelte";
 
 // Props
 interface Props {
@@ -100,7 +101,7 @@ function handleDragLeave() {
 }
 
 function handleHotkeySelect(e: any) {
-	console.log(hotkeySelect);
+	console.log("hotkey selcted: ", hotkeySelect);
 	if (hotkeySelect != undefined) {
 		//selected Number
 		if (hotkeys[hotkeySelect - 1].track != null) {
@@ -117,8 +118,9 @@ function handleHotkeySelect(e: any) {
 		hotkeys[hotkeySelect - 1].track = track;
 	} else {
 		//selected undefined
+		const keyNumber = hotkeys.indexOf(track.hotkey);
 		hotkeys[track.hotkey!].track = null;
-		track.hotkey = null;
+		track.hotkey = undefined;
 	}
 }
 
@@ -169,7 +171,12 @@ async function load() {
 		track.loaded = true;
 		track.length = track.buffer.duration;
 
-		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, track.edit.in);
+		const svg = audioBufferToTopWaveformSVG(
+			track.buffer,
+			1200,
+			30,
+			track.edit.in,
+		);
 
 		// Convert SVG string to base64 data URL
 		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
@@ -275,11 +282,16 @@ onMount(() => {
 
 $effect(() => {
 	if (track.buffer != undefined) {
-		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, track.edit.in);
+		const svg = audioBufferToTopWaveformSVG(
+			track.buffer,
+			1200,
+			30,
+			track.edit.in,
+		);
 		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
 		dataURL = `url("data:image/svg+xml;base64,${svgBase64}")`;
 	}
-})
+});
 //length of track after editing
 $effect(() => {
 	cutTrackLength = track.length ? track.length - track.edit.in : 0;
@@ -339,7 +351,7 @@ $effect(() => {
 		style={`
 			${$currentDragging == null ? "" : "pointer-events: none;"}
 			height: ${$playlistZoom}rem;
-			padding-bottom: ${$playlistZoom > 60 ? $playlistZoom > 100 ? $playlistZoom - 80 : 20 : 0}rem;
+			padding-bottom: ${$playlistZoom > 60 ? ($playlistZoom > 100 ? $playlistZoom - 80 : 20) : 0}rem;
 			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : Math.max(($playlistZoom - 60) / 2, 10)}px;
 			padding-right: ${Math.max($playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2, 12)}px;
 			background: linear-gradient(
@@ -410,7 +422,12 @@ $effect(() => {
 		{#if track.buffer}
 			<div class="title">
 				<!--Icon-->
-				<img src="./icons/topbar/music.svg" alt="" class="icon" />
+				<img
+					src="./icons/topbar/music.svg"
+					alt=""
+					class="icon"
+					style="translate: 0 4rem;"
+				/>
 
 				{#if titleIsEditing}
 					<input
@@ -521,9 +538,13 @@ $effect(() => {
 						<option value={9}>9</option>
 					</select>
 					{#if $playlistZoom < 94}
-						<p class:unset={track.hotkey == undefined}>{track.hotkey == undefined ? "K" : track.hotkey}</p>
+						<p class:unset={track.hotkey == undefined}>
+							{track.hotkey == undefined ? "K" : track.hotkey}
+						</p>
 					{:else}
-						<p class:unset={track.hotkey == undefined}>{track.hotkey == undefined ? "Key" : track.hotkey}</p>
+						<p class:unset={track.hotkey == undefined}>
+							{track.hotkey == undefined ? "Key" : track.hotkey}
+						</p>
 					{/if}
 				</div>
 

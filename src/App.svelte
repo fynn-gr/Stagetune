@@ -31,7 +31,6 @@ import {
 	uiPlatform,
 	playlist,
 	selectedItem,
-	srcFiles,
 	playlistElements,
 	hotkeyElements,
 	isEditing,
@@ -41,10 +40,10 @@ import {
 	showProjector,
 	currentDragging,
 	contextMenu,
-	recent,
 	projector,
 	playlistZoom,
 	playlistZoomExact,
+	paths,
 } from "./ts/Stores.svelte";
 import { updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -55,7 +54,7 @@ import {
 	openPlaylist,
 	relinkDir,
 	saveSettings,
-} from "./ts/SaveLoad";
+} from "./ts/SaveLoad.svelte";
 import { createNativeMenu } from "./ts/Menus.svelte";
 import { lastFolderFromPath } from "./ts/FileUtils";
 import TracklistBuildIn from "./lib/TracklistBuildIn.svelte";
@@ -107,11 +106,14 @@ function handleDragOverPlaylist(e: DragEvent) {
 function handlePlaylistZoom(e: WheelEvent) {
 	if (!e.shiftKey) return;
 	const points = [72, 95];
-	const snap = e.deltaY < 4 && e.deltaY > -4 ? 8 : 1 ;
+	const snap = e.deltaY < 4 && e.deltaY > -4 ? 8 : 1;
 	const speed = 0.3;
 
 	e.preventDefault();
-	$playlistZoomExact = Math.min(Math.max($playlistZoomExact -e.deltaY * speed, 40), 140);
+	$playlistZoomExact = Math.min(
+		Math.max($playlistZoomExact - e.deltaY * speed, 40),
+		140,
+	);
 	for (const i of points) {
 		const dist = Math.abs($playlistZoomExact - i);
 		if (dist < snap) {
@@ -121,7 +123,6 @@ function handlePlaylistZoom(e: WheelEvent) {
 			$playlistZoom = $playlistZoomExact;
 		}
 	}
-	console.log(e.deltaY)
 }
 
 function moveUp() {
@@ -218,7 +219,7 @@ const Listeners = () => {
 		} else if (id == "openPlaylist" && $editMode) {
 			openPlaylist();
 		} else if (id == "clearRecent") {
-			$recent = [];
+			paths.recent = [];
 			saveSettings();
 			createNativeMenu();
 		} else if (id == "save") {
@@ -353,7 +354,7 @@ $effect(() => {
 			{/if}
 
 			<!--Source Folders-->
-			{#each $srcFiles as p, i}
+			{#each paths.srcFiles as p, i}
 				<p
 					class="folder-name"
 					title={p.path}
@@ -533,7 +534,7 @@ $effect(() => {
 					{#each hotkeys as a, i}
 						<Hotkey
 							bind:this={hotkeyElements[i]}
-							bind:track={hotkeys[i].track}
+							bind:track={a.track}
 							key={a.key}
 						/>
 					{/each}

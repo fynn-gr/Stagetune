@@ -173,55 +173,54 @@ export function DropHandler(newPosition: number) {
 	currentDragging.set(null);
 }
 
-
 export function audioBufferToTopWaveformSVG(
-  buffer: AudioBuffer,
-  width = 1000,
-  height = 200,
-  cutInFac = 0 // seconds to cut from start
+	buffer: AudioBuffer,
+	width = 1000,
+	height = 200,
+	cutInFac = 0, // seconds to cut from start
 ): string {
-  const color = "#f00";
-  const channelData = buffer.getChannelData(0);
+	const color = "#f00";
+	const channelData = buffer.getChannelData(0);
 
-  // number of samples to skip based on cut-in time
-  const sampleRate = buffer.sampleRate;
-  const cutSamples = Math.floor(sampleRate * cutInFac);
+	// number of samples to skip based on cut-in time
+	const sampleRate = buffer.sampleRate;
+	const cutSamples = Math.floor(sampleRate * cutInFac);
 
-  // ensure we don't exceed the buffer length
-  const usableLength = Math.max(0, channelData.length - cutSamples);
-  const samplesPerPixel = Math.max(1, Math.floor(usableLength / width));
+	// ensure we don't exceed the buffer length
+	const usableLength = Math.max(0, channelData.length - cutSamples);
+	const samplesPerPixel = Math.max(1, Math.floor(usableLength / width));
 
-  // collect peaks from the cut-in point onward
-  const peaks: number[] = [];
-  for (let x = 0; x < width; x++) {
-    const start = cutSamples + x * samplesPerPixel;
-    if (start >= channelData.length) {
-      peaks.push(0);
-      continue;
-    }
+	// collect peaks from the cut-in point onward
+	const peaks: number[] = [];
+	for (let x = 0; x < width; x++) {
+		const start = cutSamples + x * samplesPerPixel;
+		if (start >= channelData.length) {
+			peaks.push(0);
+			continue;
+		}
 
-    let peak = 0;
-    const end = Math.min(start + samplesPerPixel, channelData.length);
-    for (let i = start; i < end; i++) {
-      const val = Math.abs(channelData[i]);
-      if (val > peak) peak = val;
-    }
-    peaks.push(peak);
-  }
+		let peak = 0;
+		const end = Math.min(start + samplesPerPixel, channelData.length);
+		for (let i = start; i < end; i++) {
+			const val = Math.abs(channelData[i]);
+			if (val > peak) peak = val;
+		}
+		peaks.push(peak);
+	}
 
-  // build SVG path (single-sided waveform)
-  let path = `M 0 ${height}`; // bottom-left start
-  for (let x = 0; x < width; x++) {
-    const y = height - peaks[x] * height;
-    path += ` L ${x} ${y}`;
-  }
-  path += ` L ${width} ${height} Z`; // close shape
+	// build SVG path (single-sided waveform)
+	let path = `M 0 ${height}`; // bottom-left start
+	for (let x = 0; x < width; x++) {
+		const y = height - peaks[x] * height;
+		path += ` L ${x} ${y}`;
+	}
+	path += ` L ${width} ${height} Z`; // close shape
 
-  // return SVG string
-  const svg = `
+	// return SVG string
+	const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
   <path d="${path}" fill="${color}" />
 </svg>`.trim();
 
-  return svg;
+	return svg;
 }

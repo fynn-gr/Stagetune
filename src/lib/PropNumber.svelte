@@ -88,7 +88,7 @@ $effect(() => {
 			onfocus={e => {
 				const target = e.target as HTMLInputElement;
 				target.select();
-				target.scrollLeft = 0
+				target.scrollLeft = 0;
 			}}
 			onchange={handleChange}
 			onblur={() => {

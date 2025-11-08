@@ -16,7 +16,15 @@ import { settingsDefault, type Settings } from "./SettingsDefault";
 
 export const settings = writable<Settings>(settingsDefault);
 export const showProjector = writable<boolean>(false);
-export const recent = writable<Array<string>>([]);
+export const paths: {
+	playlist: string;
+	srcFiles: Array<SrcDirectory>;
+	recent: Array<string>;
+} = $state({
+	playlist: "",
+	srcFiles: [],
+	recent: [],
+});
 
 // screens for projector
 export const projector: {
@@ -99,9 +107,6 @@ export const hotkeys: Array<Hotkey> = $state([
 ]);
 export const playlistElements: Array<PlaylistElement> = $state([]);
 export const hotkeyElements: Array<any> = $state([]);
-
-export const srcFiles = writable<SrcDirectory[]>([]); // media Files
-export const playlistPath = writable<string>(""); // playlist save path
 
 export const isEditing = writable<number>(0); //input currently in focus counter
 export const menuHandler = readable({
