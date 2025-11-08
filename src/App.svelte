@@ -44,6 +44,7 @@ import {
 	recent,
 	projector,
 	playlistZoom,
+	playlistZoomExact,
 } from "./ts/Stores.svelte";
 import { updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -74,7 +75,6 @@ let showEditor = $state(false);
 let showCurrent = $state(true);
 let showHotkeys = $state(true);
 let dragOverPlaylist = $state(false);
-let zoomExact = $state(72);
 
 checkSettingsExist();
 
@@ -106,19 +106,19 @@ function handleDragOverPlaylist(e: DragEvent) {
 
 function handlePlaylistZoom(e: WheelEvent) {
 	if (!e.shiftKey) return;
-	const points = [64, 95];
-	const snap = 1;
+	const points = [72, 95];
+	const snap = 3;
 	const speed = 0.3;
 
 	e.preventDefault();
-	zoomExact = Math.min(Math.max(zoomExact -e.deltaY * speed, 40), 140);
+	$playlistZoomExact = Math.min(Math.max($playlistZoomExact -e.deltaY * speed, 40), 140);
 	for (const i of points) {
-		const dist = Math.abs(zoomExact - i);
+		const dist = Math.abs($playlistZoomExact - i);
 		if (dist < snap) {
 			$playlistZoom = i;
 			break;
 		} else {
-			$playlistZoom = zoomExact;
+			$playlistZoom = $playlistZoomExact;
 		}
 	}
 }

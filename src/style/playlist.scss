@@ -300,6 +300,10 @@
 
 					.option.hotkey {
 						width: 68rem;
+
+						.unset {
+							width: 58rem;
+						}
 					}
 				}
 
@@ -325,7 +329,7 @@
 						height: 32rem;
 
 						&:hover {
-							background-color: transparent;
+							background-color: var(--hover);
 						}
 
 						p {
@@ -334,8 +338,8 @@
 							inset: 0;
 							width: 100%;
 							height: 100%;
-							color: var(--panel2);
-							background-color: var(--text);
+							color: var(--text);
+							background-color: var(--accent);
 							border-radius: 6rem;
 							text-align: center;
 							line-height: 32rem;
@@ -343,12 +347,18 @@
 							font-weight: 800;
 
 							&.unset {
-								color: var(--panel2);
-								background-color: rgb(92, 92, 92);
+								height: 22rem;
+								width: 22rem;
+								inset: 5rem;
+								line-height: 18rem;
+								color: var(--text);
+								background-color: transparent;
+								border: 2rem solid var(--text);
 							}
 						}
-
+						
 						select {
+							opacity: 0;
 							width: 100%;
 							height: 100%;
 							border-radius: 6rem;

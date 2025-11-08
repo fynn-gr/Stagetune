@@ -9,6 +9,8 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
 	editMode,
 	playlist,
+	playlistZoom,
+	playlistZoomExact,
 	projector,
 	selectedItem,
 	settings,
@@ -236,6 +238,39 @@ onMount(async () => {
 				bind:checked={$settings.allowSkipLive}
 				onChange={() => {
 					$settings.allowSkipLive = !$settings.allowSkipLive;
+				}}
+			/>
+			<div class="seperator"></div>
+			<TopBarDropdownItem
+				name="mini"
+				checked={$playlistZoom == 40}
+				onChange={() => {
+					$playlistZoom = 40;
+					$playlistZoomExact = 40;
+				}}
+			/>
+			<TopBarDropdownItem
+				name="small"
+				checked={$playlistZoom == 59}
+				onChange={() => {
+					$playlistZoom = 59;
+					$playlistZoomExact = 59;
+				}}
+			/>
+			<TopBarDropdownItem
+				name="default"
+				checked={$playlistZoom == 72}
+				onChange={() => {
+					$playlistZoom = 72;
+					$playlistZoomExact = 72;
+				}}
+			/>
+			<TopBarDropdownItem
+				name="large"
+				checked={$playlistZoom == 95}
+				onChange={() => {
+					$playlistZoom = 95;
+					$playlistZoomExact = 95;
 				}}
 			/>
 		</TopBarDropdown>

@@ -352,7 +352,7 @@ $effect(() => {
 		`}
 	>
 		<!--progress-->
-		{#if $playlistZoom >= 64}
+		{#if $playlistZoom >= 60}
 			<div
 				class="progress"
 				onclick={handleSkip}
@@ -520,7 +520,11 @@ $effect(() => {
 						<option value={8}>8</option>
 						<option value={9}>9</option>
 					</select>
-					<p class:unset={track.hotkey == undefined}>{track.hotkey || "Key"}</p>
+					{#if $playlistZoom < 94}
+						<p class:unset={track.hotkey == undefined}>{track.hotkey == undefined ? "K" : track.hotkey}</p>
+					{:else}
+						<p class:unset={track.hotkey == undefined}>{track.hotkey == undefined ? "Key" : track.hotkey}</p>
+					{/if}
 				</div>
 
 				<!--repeat-->
