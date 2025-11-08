@@ -471,7 +471,7 @@ $effect(() => {
 		{#if track.autoReset && !$editMode}
 			<img
 				class="option-display"
-				src="./icons/topbar/reset.svg"
+				src="./icons/topbar/auto_reset.svg"
 				alt=""
 				draggable="false"
 			/>

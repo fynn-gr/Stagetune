@@ -7,7 +7,6 @@ let trackEL: HTMLElement;
 let trackWrapperEL: HTMLElement;
 let zoom: number = $state(1);
 let tempEdit: number = $state(0);
-tempEdit = playlist[$selectedItem].edit.in;
 
 function handleMouseWheel(e: WheelEvent) {
 	e.preventDefault();
@@ -23,13 +22,15 @@ function handleMouseWheel(e: WheelEvent) {
 }
 
 $effect(() => {
+	if (!$selectedItem) return;
+	if (!playlist[$selectedItem].edit) return;
 	tempEdit = playlist[$selectedItem].edit.in;
 });
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="editor">
-	{#if $selectedItem !== undefined && playlist[$selectedItem].type === "track" && (playlist[$selectedItem] as PlaylistTrack).buffer != null}
+	{#if $selectedItem && playlist[$selectedItem].type === "track" && (playlist[$selectedItem] as PlaylistTrack).buffer != null}
 		<div class="prop-bar">
 			<label>cut start</label>
 			<PropNumber

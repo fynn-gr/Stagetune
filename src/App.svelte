@@ -107,7 +107,7 @@ function handleDragOverPlaylist(e: DragEvent) {
 function handlePlaylistZoom(e: WheelEvent) {
 	if (!e.shiftKey) return;
 	const points = [72, 95];
-	const snap = 3;
+	const snap = e.deltaY < 4 && e.deltaY > -4 ? 8 : 1 ;
 	const speed = 0.3;
 
 	e.preventDefault();
@@ -121,6 +121,7 @@ function handlePlaylistZoom(e: WheelEvent) {
 			$playlistZoom = $playlistZoomExact;
 		}
 	}
+	console.log(e.deltaY)
 }
 
 function moveUp() {
