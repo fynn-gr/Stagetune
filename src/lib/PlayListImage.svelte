@@ -148,7 +148,7 @@ $effect(() => {
 		style={`
 			${$currentDragging == null ? "" : "pointer-events: none;"}
 			height: ${$playlistZoom}px;
-			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : Math.max(($playlistZoom - 60) / 2, 10)}px;
 		`}
 	>
 

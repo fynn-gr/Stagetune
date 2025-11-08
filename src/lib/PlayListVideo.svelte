@@ -171,7 +171,7 @@ $effect(() => {
 		style={`
 			${$currentDragging == null ? "" : "pointer-events: none;"}
 			height: ${$playlistZoom}px;
-			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : Math.max(($playlistZoom - 60) / 2, 10)}px;
 			background: linear-gradient(
 				90deg,
 				rgb(55, 55, 55) 0%,

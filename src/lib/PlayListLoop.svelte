@@ -142,7 +142,9 @@ $effect(() => {
 		class="inner"
 		style={`
 			${$currentDragging == null ? "" : "pointer-events: none;"}
-			height: ${Math.max(70, $playlistZoom)}px;
+			height: ${$playlistZoom + Math.max(track.items.length, 1) * 36 + 8}rem;
+			padding-bottom: ${Math.max(track.items.length, 1) * 36 + 8}rem;
+			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : Math.max(($playlistZoom - 60) / 2, 10)}px;
 		`}
 	>
 		<!--reset-btn-->
@@ -167,14 +169,7 @@ $effect(() => {
 			class:active={track.playing}
 			onclick={playPause}
 		>
-			{#if track.inFade != null}
-				<img
-					src="./icons/topbar/fade.svg"
-					alt=""
-					draggable="false"
-					class="fade-state-icon"
-				/>
-			{:else if track.playing}
+			{#if track.playing}
 				<img src="./icons/topbar/pause.svg" alt="" draggable="false" />
 			{:else}
 				<img src="./icons/topbar/play.svg" alt="" draggable="false" />
@@ -218,7 +213,10 @@ $effect(() => {
 		</div>
 
 		<!--Content-->
-		<div class="content">
+		<div
+			class="content"
+			style={`height: ${Math.max(track.items.length, 1) * 36}rem;`}
+		>
 			{#if track.items}
 				{#each track.items as item}
 					<div class="loop-item">
