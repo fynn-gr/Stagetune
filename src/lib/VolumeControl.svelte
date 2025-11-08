@@ -42,7 +42,10 @@ function handlePanDrag(e: any) {
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if slider}
-	<div class="volume slider">
+	<div
+		class="volume slider"
+		style={`flex-direction: ${$playlistZoom < 94 ? "row" : "colum"};`}
+	>
 		<span
 			style={`
 				--slider-bg: linear-gradient(
@@ -92,7 +95,11 @@ function handlePanDrag(e: any) {
 		</span>
 	</div>
 {:else}
-	<div class="volume knobs" class:slim={$playlistZoom < 64}>
+	<div
+		class="volume knobs"
+		class:slim={$playlistZoom < 64}
+		style={`gap: ${($playlistZoom - 40) * 0.3}rem;`}
+	>
 		<!--Volume-->
 		<span
 			onmousedown={e => {

@@ -74,6 +74,7 @@ let showEditor = $state(false);
 let showCurrent = $state(true);
 let showHotkeys = $state(true);
 let dragOverPlaylist = $state(false);
+let zoomExact = $state(72);
 
 checkSettingsExist();
 
@@ -105,13 +106,21 @@ function handleDragOverPlaylist(e: DragEvent) {
 
 function handlePlaylistZoom(e: WheelEvent) {
 	if (!e.shiftKey) return;
+	const points = [64, 95];
+	const snap = 1;
+	const speed = 0.3;
+
 	e.preventDefault();
-	if (e.deltaY < 0) {
-		$playlistZoom = Math.min($playlistZoom + 1, 100);
-	} else if (e.deltaY > 0) {
-		$playlistZoom = Math.max($playlistZoom - 1, 40);
+	zoomExact = Math.min(Math.max(zoomExact -e.deltaY * speed, 40), 140);
+	for (const i of points) {
+		const dist = Math.abs(zoomExact - i);
+		if (dist < snap) {
+			$playlistZoom = i;
+			break;
+		} else {
+			$playlistZoom = zoomExact;
+		}
 	}
-	console.log($playlistZoom);
 }
 
 function moveUp() {

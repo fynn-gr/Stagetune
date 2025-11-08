@@ -169,7 +169,7 @@ async function load() {
 		track.loaded = true;
 		track.length = track.buffer.duration;
 
-		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, "#f00");
+		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, track.edit.in);
 
 		// Convert SVG string to base64 data URL
 		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
@@ -339,9 +339,9 @@ $effect(() => {
 		style={`
 			${$currentDragging == null ? "" : "pointer-events: none;"}
 			height: ${$playlistZoom}rem;
-			padding-bottom: ${$playlistZoom > 60 ? 20 : 0}rem;
+			padding-bottom: ${$playlistZoom > 60 ? $playlistZoom > 100 ? $playlistZoom - 80 : 20 : 0}rem;
 			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
-			padding-right: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			padding-right: ${Math.max($playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2, 12)}px;
 			background: linear-gradient(
 					90deg,
 					rgb(55, 55, 55) 0%,
@@ -352,11 +352,12 @@ $effect(() => {
 		`}
 	>
 		<!--progress-->
-		{#if $playlistZoom > 60}
+		{#if $playlistZoom >= 64}
 			<div
 				class="progress"
 				onclick={handleSkip}
 				style={`
+				height: ${Math.max(28, $playlistZoom - 72)}rem;
 				background: linear-gradient(
 					90deg,
 					var(--accent) 0%,
@@ -367,13 +368,6 @@ $effect(() => {
 				mask-image: ${dataURL};
 				`}
 			></div>
-
-			<!-- <Waveform
-			buffer={track.buffer}
-			cutInFac={track.edit.in / track.length}
-			samples={1000}
-			resY={50}
-		/> -->
 		{/if}
 
 		<!--reset-btn-->
@@ -592,7 +586,7 @@ $effect(() => {
 			<VolumeControl
 				bind:volume={track.volume}
 				bind:pan={track.pan}
-				slider={$playlistZoom > 94}
+				slider={$settings.useSliders}
 			/>
 		{/if}
 	</div>
