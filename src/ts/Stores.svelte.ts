@@ -56,6 +56,8 @@ export const playlist: Array<
 	| PlaylistImage
 	| PlaylistLoop
 > = $state([]);
+export const playlistZoom = writable<number>(72);
+export const playlistZoomExact = writable<number>(72);
 
 export const hotkeys: Array<Hotkey> = $state([
 	{

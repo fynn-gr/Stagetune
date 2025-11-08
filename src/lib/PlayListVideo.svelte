@@ -16,6 +16,7 @@ import {
 	currentDragging,
 	draggingOrigin,
 	settings,
+	playlistZoom,
 } from "../ts/Stores.svelte";
 
 interface Props {
@@ -138,6 +139,7 @@ $effect(() => {
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
 	class="playlist-item video"
 	class:selected={$selectedItem == id}
@@ -153,7 +155,6 @@ $effect(() => {
 	onclick={e => {
 		selectedItem.set(id);
 	}}
-	role="button"
 	tabindex="0"
 >
 	<div class="drag-area">
@@ -167,24 +168,19 @@ $effect(() => {
 
 	<div
 		class="inner"
-		style={$currentDragging == null ? "" : "pointer-events: none;"}
+		style={`
+			${$currentDragging == null ? "" : "pointer-events: none;"}
+			height: ${$playlistZoom}px;
+			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			background: linear-gradient(
+				90deg,
+				rgb(55, 55, 55) 0%,
+				rgb(55, 55, 55) calc(100% * ${track.timeCode}),
+				var(--playlist-item-BG) calc(100% * ${track.timeCode}),
+				var(--playlist-item-BG) 100%
+			);
+		`}
 	>
-		<!--progress-->
-		<div
-			class="progress"
-			onclick={handleSkip}
-			style={`
-					background: linear-gradient(
-						90deg,
-						var(--accent) 0%,
-						var(--accent) calc(100% * ${track.timeCode / track.length || 0}),
-						#555 calc(100% * ${track.timeCode / track.length || 0}),
-						#555 100%
-					);`}
-			role="button"
-			tabindex="0"
-		></div>
-
 		<!--reset-btn-->
 		{#if $settings.resetButton}
 			<button
@@ -212,11 +208,11 @@ $effect(() => {
 			{/if}
 		</button>
 
-		<!--Icon-->
-		<img src="./icons/topbar/film.svg" alt="" class="icon" />
-
 		<!--Title-->
 		<div class="title">
+			<!--Icon-->
+			<img src="./icons/topbar/film.svg" alt="" class="icon" />
+
 			{#if titleIsEditing}
 				<input
 					class="title-input"

@@ -1,6 +1,6 @@
 <script lang="ts">
 import "../style/VolumeOptions.scss";
-import { editMode } from "@/ts/Stores.svelte";
+import { editMode, playlistZoom } from "@/ts/Stores.svelte";
 
 interface Props {
 	volume: number;
@@ -42,8 +42,20 @@ function handlePanDrag(e: any) {
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if slider}
-	<div class="volume slider">
-		<span>
+	<div
+		class="volume slider"
+		style={`flex-direction: ${$playlistZoom < 94 ? "row" : "colum"};`}
+	>
+		<span
+			style={`
+				--slider-bg: linear-gradient(
+					90deg,
+					var(--accent),
+					var(--accent) ${volume}%,
+					#1b1b1b ${volume}%,
+					#1b1b1b);
+				`}
+		>
 			<p>Vol</p>
 			<input
 				bind:value={volume}
@@ -56,7 +68,19 @@ function handlePanDrag(e: any) {
 			/>
 		</span>
 
-		<span>
+		<span
+			style={`
+				--slider-bg: linear-gradient(
+					90deg,
+					#1b1b1b 0%,
+					#1b1b1b ${pan < 0 ? 50 + pan * 50 : 50}%,
+					var(--accent) ${pan < 0 ? 50 + pan * 50 : 50}%,
+					var(--accent) ${pan < 0 ? 50 : 50 + pan * 50}%,
+					#1b1b1b ${pan < 0 ? 50 : 50 + pan * 50}%,
+					#1b1b1b 100%
+				);
+			`}
+		>
 			<p>Pan</p>
 			<input
 				class="pan"
@@ -71,7 +95,11 @@ function handlePanDrag(e: any) {
 		</span>
 	</div>
 {:else}
-	<div class="volume knobs">
+	<div
+		class="volume knobs"
+		class:slim={$playlistZoom < 64}
+		style={`gap: ${($playlistZoom - 40) * 0.3}rem;`}
+	>
 		<!--Volume-->
 		<span
 			onmousedown={e => {
@@ -158,6 +186,7 @@ function handlePanDrag(e: any) {
             rgb(77, 77, 77) 360deg
           );`}
 			></div>
+			<div class="default-mark" style="transform: rotate(180deg);"></div>
 			<div class="knob" style={`rotate: ${panDisplay * 135}deg;`} title="Pan">
 				<div class="mark"></div>
 			</div>

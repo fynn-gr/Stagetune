@@ -17,11 +17,13 @@ import PlayListVideo from "./lib/PlayListVideo.svelte";
 import TrackListItem from "./lib/TrackListItem.svelte";
 import TopBar from "./lib/TopBar.svelte";
 import Hotkey from "./lib/Hotkey.svelte";
+import Waveform from "./lib/Waveform.svelte";
 import Splash from "./lib/Splash.svelte";
 import ContextMenu from "./pureUI/components/ContextMenu.svelte";
+import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 import PlayListImage from "./lib/PlayListImage.svelte";
 import PlayListLoop from "./lib/PlayListLoop.svelte";
-import Editor from "./lib/Editor.svelte"
+import Editor from "./lib/Editor.svelte";
 
 // Stores, Utils
 import {
@@ -41,6 +43,8 @@ import {
 	contextMenu,
 	recent,
 	projector,
+	playlistZoom,
+	playlistZoomExact,
 } from "./ts/Stores.svelte";
 import { updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -97,6 +101,25 @@ function handleDragOverPlaylist(e: DragEvent) {
 	if (target.classList.contains("playlist")) {
 		console.log("dragover Playlist");
 		dragOverPlaylist = true;
+	}
+}
+
+function handlePlaylistZoom(e: WheelEvent) {
+	if (!e.shiftKey) return;
+	const points = [72, 95];
+	const snap = 3;
+	const speed = 0.3;
+
+	e.preventDefault();
+	$playlistZoomExact = Math.min(Math.max($playlistZoomExact -e.deltaY * speed, 40), 140);
+	for (const i of points) {
+		const dist = Math.abs($playlistZoomExact - i);
+		if (dist < snap) {
+			$playlistZoom = i;
+			break;
+		} else {
+			$playlistZoom = $playlistZoomExact;
+		}
 	}
 }
 
@@ -388,13 +411,14 @@ $effect(() => {
 		class:edit-mode={$editMode}
 		style={`--annotation-width: calc(${annotationWidth}% - ${
 			$editMode ? 46 : 9
-		}rem);`}
+		}rem); --playlist-zoom: ${$playlistZoom};`}
 		ondrop={handleDropPlaylist}
 		ondragover={handleDragOverPlaylist}
 		ondragleave={e => {
 			e.preventDefault();
 			dragOverPlaylist = false;
 		}}
+		onwheel={handlePlaylistZoom}
 		role="button"
 		tabindex="0"
 		bind:this={playlistEl}

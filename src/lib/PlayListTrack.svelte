@@ -8,12 +8,15 @@ import { message } from "@tauri-apps/plugin-dialog";
 
 // Components
 import Annotation from "./Annotation.svelte";
-import Waveform from "./Waveform.svelte";
 import VolumeControl from "./VolumeControl.svelte";
-import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
+import PropNumber from "./PropNumber.svelte";
 
 // Stores, Utils
-import { DropHandler, secondsToMinutes } from "@/ts/Utils";
+import {
+	audioBufferToTopWaveformSVG,
+	DropHandler,
+	secondsToMinutes,
+} from "@/ts/Utils";
 import {
 	editMode,
 	selectedItem,
@@ -22,6 +25,7 @@ import {
 	settings,
 	draggingOrigin,
 	hotkeys,
+	playlistZoom,
 } from "../ts/Stores.svelte";
 import type { PlaylistTrack } from "@/ts/Types";
 
@@ -41,6 +45,7 @@ let dragover: "top" | "bottom" | null = $state(null);
 let titleEl: HTMLElement;
 let titleIsEditing = $state(false);
 let cutTrackLength: number = $state(0);
+let dataURL = $state("");
 
 //Audio
 let input: AudioBufferSourceNode = $state(new AudioBufferSourceNode(ctx));
@@ -163,6 +168,12 @@ async function load() {
 		input = new AudioBufferSourceNode(ctx, { buffer: track.buffer });
 		track.loaded = true;
 		track.length = track.buffer.duration;
+
+		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, track.edit.in);
+
+		// Convert SVG string to base64 data URL
+		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
+		dataURL = `url("data:image/svg+xml;base64,${svgBase64}")`;
 	} else {
 		//file not found
 		console.error(convertFileSrc(absPath), "track not found");
@@ -262,6 +273,13 @@ onMount(() => {
 	load();
 });
 
+$effect(() => {
+	if (track.buffer != undefined) {
+		const svg = audioBufferToTopWaveformSVG(track.buffer, 1200, 30, track.edit.in);
+		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
+		dataURL = `url("data:image/svg+xml;base64,${svgBase64}")`;
+	}
+})
 //length of track after editing
 $effect(() => {
 	cutTrackLength = track.length ? track.length - track.edit.in : 0;
@@ -318,28 +336,39 @@ $effect(() => {
 
 	<div
 		class="inner"
-		style={$currentDragging == null ? "" : "pointer-events: none;"}
+		style={`
+			${$currentDragging == null ? "" : "pointer-events: none;"}
+			height: ${$playlistZoom}rem;
+			padding-bottom: ${$playlistZoom > 60 ? $playlistZoom > 100 ? $playlistZoom - 80 : 20 : 0}rem;
+			padding-left: ${$playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2}px;
+			padding-right: ${Math.max($playlistZoom < 60 ? ($playlistZoom - 40) / 2 : ($playlistZoom - 60) / 2, 12)}px;
+			background: linear-gradient(
+					90deg,
+					rgb(55, 55, 55) 0%,
+					rgb(55, 55, 55) calc(100% * ${track.timeCode / cutTrackLength}),
+					var(--playlist-item-BG) calc(100% * ${track.timeCode / cutTrackLength}),
+					var(--playlist-item-BG) 100%
+				);
+		`}
 	>
 		<!--progress-->
-		<div
-			class="progress"
-			onclick={handleSkip}
-			style={`
+		{#if $playlistZoom >= 60}
+			<div
+				class="progress"
+				onclick={handleSkip}
+				style={`
+				height: ${Math.max(28, $playlistZoom - 72)}rem;
 				background: linear-gradient(
 					90deg,
 					var(--accent) 0%,
 					var(--accent) calc(100% * ${track.timeCode / cutTrackLength}),
 					#555 calc(100% * ${track.timeCode / cutTrackLength}),
 					#555 100%
-				);`}
-		></div>
-
-		<Waveform
-			buffer={track.buffer}
-			cutInFac={track.edit.in / track.length}
-			samples={1000}
-			resY={50}
-		/>
+				);
+				mask-image: ${dataURL};
+				`}
+			></div>
+		{/if}
 
 		<!--reset-btn-->
 		{#if $settings.resetButton}
@@ -377,12 +406,12 @@ $effect(() => {
 			{/if}
 		</button>
 
-		<!--Icon-->
-		<img src="./icons/topbar/music.svg" alt="" class="icon" />
-
 		<!--name-->
 		{#if track.buffer}
 			<div class="title">
+				<!--Icon-->
+				<img src="./icons/topbar/music.svg" alt="" class="icon" />
+
 				{#if titleIsEditing}
 					<input
 						class="title-input"
@@ -422,7 +451,7 @@ $effect(() => {
 		{/if}
 
 		<!--Hotkey Display-->
-		{#if track.hotkey != undefined}
+		{#if track.hotkey != undefined && !editMode}
 			<div class="hotkey-display">
 				<p>{track.hotkey}</p>
 			</div>
@@ -468,92 +497,96 @@ $effect(() => {
 		{/if}
 
 		<!--time-->
-		<p class="timecode">{secondsToMinutes(track.timeCode)}</p>
+		{#if !$editMode}
+			<p class="timecode">{secondsToMinutes(track.timeCode)}</p>
+		{/if}
 		<p class="length">
 			{cutTrackLength != null ? secondsToMinutes(cutTrackLength) : "--:--"}
 		</p>
 
-		<div class="options">
-			<!--Hotkey-->
-			<div class="option hotkey" class:assigned={track.hotkey != undefined}>
-				<select bind:value={hotkeySelect} onchange={handleHotkeySelect}>
-					<option value={undefined}>none</option>
-					<option value={1}>1</option>
-					<option value={2}>2</option>
-					<option value={3}>3</option>
-					<option value={4}>4</option>
-					<option value={5}>5</option>
-					<option value={6}>6</option>
-					<option value={7}>7</option>
-					<option value={8}>8</option>
-					<option value={9}>9</option>
-				</select>
-				<p class:unset={track.hotkey == undefined}>{track.hotkey || "?"}</p>
+		{#if $editMode}
+			<div class="options" class:stacked={$playlistZoom > 94}>
+				<!--Hotkey-->
+				<div class="option hotkey" class:assigned={track.hotkey != undefined}>
+					<select bind:value={hotkeySelect} onchange={handleHotkeySelect}>
+						<option value={undefined}>none</option>
+						<option value={1}>1</option>
+						<option value={2}>2</option>
+						<option value={3}>3</option>
+						<option value={4}>4</option>
+						<option value={5}>5</option>
+						<option value={6}>6</option>
+						<option value={7}>7</option>
+						<option value={8}>8</option>
+						<option value={9}>9</option>
+					</select>
+					{#if $playlistZoom < 94}
+						<p class:unset={track.hotkey == undefined}>{track.hotkey == undefined ? "K" : track.hotkey}</p>
+					{:else}
+						<p class:unset={track.hotkey == undefined}>{track.hotkey == undefined ? "Key" : track.hotkey}</p>
+					{/if}
+				</div>
+
+				<!--repeat-->
+				<button
+					id="btn-repeat"
+					class="option repeat-btn"
+					class:active={track.repeat}
+					onclick={() => {
+						track.repeat = $editMode ? !track.repeat : track.repeat;
+					}}
+					title="repeat track"
+				>
+					<img src="./icons/topbar/repeat.svg" alt="repeat" draggable="false" />
+				</button>
+
+				<!--auto reset-->
+				<button
+					id="btn-auto-reset"
+					class="option auto-reset-btn"
+					class:active={track.autoReset}
+					onclick={() => {
+						track.autoReset = $editMode ? !track.autoReset : track.autoReset;
+					}}
+					title="auto reset track on pause"
+				>
+					<img
+						src="./icons/topbar/auto_reset.svg"
+						alt="auto reset"
+						draggable="false"
+					/>
+				</button>
 			</div>
-
-			<!--repeat-->
-			<button
-				id="btn-repeat"
-				class="option repeat-btn"
-				class:active={track.repeat}
-				onclick={() => {
-					track.repeat = $editMode ? !track.repeat : track.repeat;
-				}}
-				title="repeat track"
-			>
-				<img src="./icons/topbar/repeat.svg" alt="repeat" draggable="false" />
-			</button>
-
-			<!--auto reset-->
-			<button
-				id="btn-auto-reset"
-				class="option auto-reset-btn"
-				class:active={track.autoReset}
-				onclick={() => {
-					track.autoReset = $editMode ? !track.autoReset : track.autoReset;
-				}}
-				title="auto reset track on pause"
-			>
-				<img
-					src="./icons/topbar/auto_reset.svg"
-					alt="auto reset"
-					draggable="false"
-				/>
-			</button>
-		</div>
+		{/if}
 
 		<!--fade-->
-		{#if $settings.showFadeOptions}
-			<span class="fade">
-				<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
-				<PropNumber
-					bind:value={track.fade.in}
-					onFocus={() => isEditing.update(e => e + 1)}
-					onBlur={() => isEditing.update(e => e - 1)}
-					min={0}
-					max={track.length}
-					decimalDisplay={0}
-					unit="s"
-					disabled={!$editMode}
-					title="Fade In"
-				/>
-				<img class="fade-icon" src="./icons/topbar/fade_out.svg" alt="" />
-				<PropNumber
-					bind:value={track.fade.out}
-					onFocus={() => isEditing.update(e => e + 1)}
-					onBlur={() => isEditing.update(e => e - 1)}
-					min={0}
-					max={track.length}
-					decimalDisplay={0}
-					unit="s"
-					disabled={!$editMode}
-					title="Fade out"
-				/>
+		{#if $settings.showFadeOptions && $editMode}
+			<span class="fade" class:stacked={$playlistZoom > 94}>
+				<div class="fader">
+					<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
+					<PropNumber
+						bind:value={track.fade.in}
+						min={0}
+						max={track.length}
+						unit="s"
+						disabled={!$editMode}
+					/>
+				</div>
+				<div class="fader">
+					<img class="fade-icon" src="./icons/topbar/fade_out.svg" alt="" />
+					<PropNumber
+						bind:value={track.fade.out}
+						min={0}
+						max={track.length}
+						unit="s"
+						disabled={!$editMode}
+					/>
+				</div>
 			</span>
 		{/if}
 
 		<!--volume Pan-->
-		{#if $settings.showVolumeOptions}
+		{#if $settings.showVolumeOptions && $editMode}
 			<VolumeControl
 				bind:volume={track.volume}
 				bind:pan={track.pan}
