@@ -58,7 +58,13 @@
 				"scope": ["**"],
 				"enable": true
 			},
-			"csp": "default-src 'self' data: blob:; img-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' data:; style-src 'self' 'unsafe-inline'; connect-src *; frame-src *;"
+			"csp": {
+				"default-src": "'self' customprotocol: asset:",
+				"connect-src": "ipc: http://ipc.localhost asset: asset://localhost",
+				"font-src": ["https://fonts.gstatic.com"],
+				"img-src": "'self' asset: http://asset.localhost blob: data:",
+				"style-src": "'unsafe-inline' 'self' https://fonts.googleapis.com"
+			}
 		}
 	}
 }
