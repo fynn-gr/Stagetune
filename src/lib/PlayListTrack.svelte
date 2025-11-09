@@ -106,20 +106,19 @@ function handleHotkeySelect(e: any) {
 		//selected Number
 		if (hotkeys[hotkeySelect - 1].track != null) {
 			//remove old track at hotkey
-			hotkeys[hotkeySelect - 1].track!.hotkey = null;
+			hotkeys[hotkeySelect - 1].track!.hotkey = undefined;
 			hotkeys[hotkeySelect - 1].track = null;
 		}
 		if (track.hotkey != undefined) {
 			//remove old hotkey from current track first
-			hotkeys[track.hotkey].track = null;
+			hotkeys[track.hotkey - 1].track = null;
 		}
 		//set new hotkey
 		track.hotkey = hotkeySelect;
 		hotkeys[hotkeySelect - 1].track = track;
 	} else {
 		//selected undefined
-		const keyNumber = hotkeys.indexOf(track.hotkey);
-		hotkeys[track.hotkey!].track = null;
+		hotkeys[track.hotkey! - 1].track = null;
 		track.hotkey = undefined;
 	}
 }
@@ -306,6 +305,10 @@ $effect(() => {
 $effect(() => {
 	gainNode.gain.setValueAtTime(track.volume / 100, ctx.currentTime);
 });
+//hotkey
+$effect(() => {
+	hotkeySelect = track.hotkey;
+})
 //reset dragover
 $effect(() => {
 	if ($currentDragging == null) {
