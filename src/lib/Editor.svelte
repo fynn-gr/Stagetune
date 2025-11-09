@@ -1,24 +1,50 @@
 <script lang="ts">
 import PropNumber from "@/pureUI/components/props/PropNumber.svelte";
 import { selectedItem, isEditing, playlist } from "@/ts/Stores.svelte";
-import { mapRange } from "@/ts/Utils";
+import type { PlaylistTrack } from "@/ts/Types";
+import { editorWaveformSVG } from "@/ts/Utils";
 
 let trackEL: HTMLElement;
 let trackWrapperEL: HTMLElement;
-let zoom: number = $state(1);
 let tempEdit: number = $state(0);
+let zoom: number = $state(1);
+let zoomPosition: number = $state(0);
+let svg: string = $state("");
 
 function handleMouseWheel(e: WheelEvent) {
-	e.preventDefault();
-	const factor = 1.15; // zoom step
-	if (e.deltaY < 0) {
-		// zoom in (smaller value -> closer)
-		zoom = Math.max(0.01, zoom / factor);
-	} else if (e.deltaY > 0) {
-		// zoom out (larger value -> farther)
-		zoom = Math.min(1, zoom * factor);
-	}
-	console.log(zoom);
+  e.preventDefault();
+
+  const zoomSpeed = 0.001;
+  const panSpeed = 0.0015;
+  const minZoom = 0.01;
+  const maxZoom = 10;
+
+  // If Shift is held, pan horizontally instead of zooming
+  if (e.shiftKey) {
+    // Adjust zoom position (horizontal scroll)
+    zoomPosition += e.deltaY * panSpeed / zoom;
+    zoomPosition = Math.max(0, Math.min(1, zoomPosition));
+    console.log("Pan → zoomPosition:", zoomPosition.toFixed(3));
+    return;
+  }
+
+  // Get mouse X position relative to container
+  const rect = trackEL.getBoundingClientRect();
+  const mouseX = (e.clientX - rect.left) / rect.width; // 0–1 within container
+
+  // Compute new zoom value
+  const delta = e.deltaY * zoomSpeed;
+  const newZoom = Math.max(minZoom, Math.min(maxZoom, zoom * (1 - delta)));
+
+  // Adjust zoomPosition to zoom toward cursor
+  // If zooming in, focus more on cursor position
+  const zoomRatio = newZoom / zoom;
+  zoomPosition = mouseX - (mouseX - zoomPosition) * zoomRatio;
+  zoomPosition = Math.max(0, Math.min(1, zoomPosition));
+
+  zoom = newZoom;
+
+  console.log("Zoom:", zoom.toFixed(3), "ZoomPosition:", zoomPosition.toFixed(3));
 }
 
 $effect(() => {
@@ -26,6 +52,21 @@ $effect(() => {
 	if (!playlist[$selectedItem].edit) return;
 	tempEdit = playlist[$selectedItem].edit.in;
 });
+
+$effect(() => {
+	if(!$selectedItem) return;
+	if(!playlist[$selectedItem].edit) return;
+	svg = editorWaveformSVG(
+		trackEL.clientWidth,
+		trackEL.clientHeight,
+		1,
+		0,
+		playlist[$selectedItem].buffer,
+		0,
+		0
+	);
+	console.log("rerender")
+})
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -54,62 +95,23 @@ $effect(() => {
 			/>
 		</div>
 
-		<div
-			class="track-wrapper"
-			onmouseenter={() => {
-				trackWrapperEL.addEventListener("wheel", handleMouseWheel);
-			}}
-			onmouseleave={() => {
-				trackWrapperEL.removeEventListener("wheel", handleMouseWheel);
-			}}
-			bind:this={trackWrapperEL}
-		>
-			<div class="track" bind:this={trackEL}>
-				<svg
-					class="waveform"
-					width="100%"
-					height="48"
-					viewBox="0 0 1200 48"
-					preserveAspectRatio="none"
-					aria-hidden="true"
-				>
-					{#if playlist[$selectedItem]?.buffer}
-						<path
-							d={(() => {
-								const buf = playlist[$selectedItem].buffer;
-								const samples = buf.getChannelData
-									? buf.getChannelData(0)
-									: buf;
-								if (!samples || samples.length === 0) return "";
-								const W = 1200; // Increased from 600 to 1200 for more detail
-								const H = 48;
-								const mid = H / 2;
-								const step = Math.max(1, Math.floor(samples.length / W) / 2); // Reduced step size
-								let dTop = "";
-								let dBottom = "";
-								for (let x = 0, i = 0; x < W; x++, i += step) {
-									let min = 1,
-										max = -1;
-									const start = Math.floor(i);
-									const end = Math.min(samples.length, Math.floor(i + step));
-									for (let j = start; j < end; j++) {
-										const v = samples[j];
-										if (v < min) min = v;
-										if (v > max) max = v;
-									}
-									const yMax = mid - max * mid;
-									const yMin = mid - min * mid;
-									dTop +=
-										x === 0 ? "M" + x + " " + yMax : " L" + x + " " + yMax;
-									dBottom = " L" + x + " " + yMin + dBottom;
-								}
-								return dTop + dBottom + " Z";
-							})()}
-							fill="rgba(255,255,255,0.08)"
-							stroke="rgba(255,255,255,0.15)"
-							stroke-width="0.4"
-						/>
-					{:else}
+		<div class="track-wrapper">
+			<div
+				class="track"
+				bind:this={trackEL}
+				bind:this={trackWrapperEL}
+			>
+				{#if playlist[$selectedItem]?.buffer}
+					{@html svg}
+				{:else}
+					<svg
+						class="waveform"
+						width="100%"
+						height="48"
+						viewBox="0 0 1200 48"
+						preserveAspectRatio="none"
+						aria-hidden="true"
+					>
 						<rect
 							x="0"
 							y="0"
@@ -117,8 +119,8 @@ $effect(() => {
 							height="100%"
 							fill="rgba(255,255,255,0.02)"
 						/>
-					{/if}
-				</svg>
+					</svg>
+				{/if}
 				<input
 					type="range"
 					min="0"

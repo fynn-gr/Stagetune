@@ -224,3 +224,105 @@ export function audioBufferToTopWaveformSVG(
 
 	return svg;
 }
+
+export function editorWaveformSVG(
+  width: number,
+  height: number,
+  zoomFactor: number,
+  zoomPosition: number,
+  audioBuffer: AudioBuffer,
+  cutIn: number,
+  cutOut: number
+): string {
+	console.time("waveform");
+  if (width <= 0 || height <= 0 || !audioBuffer.length) {
+    return `<svg class="waveform" xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"></svg>`;
+  }
+
+  // --- Clamp & prepare ---
+  zoomFactor = Math.max(0.01, zoomFactor);
+  zoomPosition = Math.min(1, Math.max(0, zoomPosition));
+
+  const totalSamples = audioBuffer.length;
+  const sampleRate = audioBuffer.sampleRate;
+  const channels = audioBuffer.numberOfChannels;
+
+  // Compute samples per pixel based on zoom
+  const samplesPerPixel = Math.max(1, Math.floor(totalSamples / (width * zoomFactor)));
+
+  // Compute visible sample window
+  const viewportSamples = width * samplesPerPixel;
+  const startSample = Math.floor((totalSamples - viewportSamples) * zoomPosition);
+  const endSample = Math.min(totalSamples, startSample + viewportSamples);
+
+  const halfHeight = height / 2;
+  const ampToY = (a: number) => halfHeight - a * halfHeight;
+
+  // --- Precompute cut region in sample space ---
+  const cutInSample = Math.max(0, Math.floor(cutIn * sampleRate));
+  const cutOutSample = Math.max(0, Math.floor(totalSamples - cutOut * sampleRate));
+
+  // Normalize to the visible window (0–width)
+  const cutStartX = ((cutInSample - startSample) / (endSample - startSample)) * width;
+  const cutEndX = ((cutOutSample - startSample) / (endSample - startSample)) * width;
+
+  // --- Preallocate min/max arrays ---
+  const minVals = new Float32Array(width);
+  const maxVals = new Float32Array(width);
+
+  // --- Get channel data ---
+  const channelData = Array.from({ length: channels }, (_, i) => audioBuffer.getChannelData(i));
+
+  // --- Downsample efficiently ---
+  for (let x = 0; x < width; x++) {
+    const s0 = startSample + x * samplesPerPixel;
+    const s1 = Math.min(s0 + samplesPerPixel, endSample);
+
+    let min = 1.0;
+    let max = -1.0;
+
+    for (let ch = 0; ch < channels; ch++) {
+      const data = channelData[ch];
+      for (let i = s0; i < s1; i++) {
+        const v = data[i];
+        if (v < min) min = v;
+        if (v > max) max = v;
+      }
+    }
+
+    minVals[x] = min;
+    maxVals[x] = max;
+  }
+
+  // --- Build SVG path efficiently ---
+  const top: string[] = [];
+  const bottom: string[] = [];
+
+  for (let x = 0; x < width; x++) {
+    const yMax = ampToY(maxVals[x]);
+    const yMin = ampToY(minVals[x]);
+
+    if (x === 0) top.push(`M${x},${yMax}`);
+    else top.push(`L${x},${yMax}`);
+
+    bottom.unshift(`L${x},${yMin}`);
+  }
+
+  const path = top.join("") + bottom.join("") + "Z";
+
+  // --- Build highlight rectangle ---
+  // Only draw if the cut region is visible
+  const highlightVisible =
+    cutStartX < width && cutEndX > 0 && cutStartX < cutEndX;
+
+  const highlightRect = highlightVisible
+    ? `<rect x="${Math.max(0, cutStartX).toFixed(1)}" y="0" width="${Math.min(width, cutEndX) - Math.max(0, cutStartX)}" height="${height}" fill="currentColor" fill-opacity="0.1"/>`
+    : "";
+
+  // --- Compose SVG ---
+	console.timeEnd("waveform")
+  return `<svg class="waveform" xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+		<path d="${path}" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+	</svg>`;
+}
+

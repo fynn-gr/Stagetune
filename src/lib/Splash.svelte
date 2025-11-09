@@ -45,19 +45,42 @@ onMount(async () => {
 			</div>
 
 			<span style="left: 0;">
-				{#each Object.keys(links) as key}
-					<button
-						title={links[key]}
-						onclick={e => {
-							e.stopPropagation();
-							console.log("link: ", e);
-							open(links[key]);
-						}}
-					>
-						<img src="./icons/std/web.svg" alt="" />
-						<p>{key}</p>
-					</button>
-				{/each}
+				<button
+					onclick={e => {
+						e.stopPropagation();
+						open("https://fynn.gr/apps/stagetune");
+					}}
+				>
+					<img src="./icons/std/web.svg" alt="" />
+					<p>Website</p>
+				</button>
+				<button
+					onclick={e => {
+						e.stopPropagation();
+						open("https://github.com/fynn-gr/stagetune");
+					}}
+				>
+					<img src="./icons/std/web.svg" alt="" />
+					<p>Repository</p>
+				</button>
+				<button
+					onclick={e => {
+						e.stopPropagation();
+						open("https://github.com/fynn-gr/stagetune/issues");
+					}}
+				>
+					<img src="./icons/std/web.svg" alt="" />
+					<p>Bug Report</p>
+				</button>
+				<button
+					onclick={e => {
+						e.stopPropagation();
+						open("https://fynn.gr/apps/stagetune/docs");
+					}}
+				>
+					<img src="./icons/std/web.svg" alt="" />
+					<p>Documentation</p>
+				</button>
 			</span>
 			<span style="right: 0;">
 				{#each paths.recent as file}

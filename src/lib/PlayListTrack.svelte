@@ -471,7 +471,7 @@ $effect(() => {
 		{/if}
 
 		<!--Hotkey Display-->
-		{#if track.hotkey != undefined && !editMode}
+		{#if track.hotkey != undefined && !$editMode}
 			<div class="hotkey-display">
 				<p>{track.hotkey}</p>
 			</div>

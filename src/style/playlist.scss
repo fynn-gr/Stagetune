@@ -341,17 +341,17 @@
 							height: 100%;
 							color: var(--text);
 							background-color: var(--accent);
-							border-radius: 6rem;
+							border-radius: 5rem;
 							text-align: center;
 							line-height: 32rem;
-							font-size: 14rem;
+							font-size: 12rem;
 							font-weight: 800;
 
 							&.unset {
-								height: 22rem;
-								width: 22rem;
-								inset: 5rem;
-								line-height: 18rem;
+								height: 20rem;
+								width: 20rem;
+								inset: 6rem;
+								line-height: 16rem;
 								color: var(--text);
 								background-color: transparent;
 								border: 2rem solid var(--text);
