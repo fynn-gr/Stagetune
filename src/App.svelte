@@ -342,6 +342,8 @@ $effect(() => {
 	<Splash bind:splashScreen={$splash} />
 {/if}
 
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_label_has_associated_control -->
 <main class={"window-body dark " + $uiPlatform}>
 	<!--SideBar-->
@@ -421,8 +423,6 @@ $effect(() => {
 			dragOverPlaylist = false;
 		}}
 		onwheel={handlePlaylistZoom}
-		role="button"
-		tabindex="0"
 		bind:this={playlistEl}
 	>
 		{#if $settings.showAnnotations}
