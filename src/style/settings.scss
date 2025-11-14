@@ -55,8 +55,32 @@
 	display: flex;
 	flex-direction: column;
 	text-align: center;
+	align-items: center;
 	font-size: 13px;
 	line-height: 20px;
 	font-weight: 600;
 	padding: 30px 100px;
+
+	
+	.update-box {
+		background-color: var(--hover);
+		border-radius: 8px;
+		padding: 12px;
+		margin: 6px;
+
+		b {
+			font-weight: 900;
+		}
+
+		button {
+			width: 80px;
+			margin: 8px;
+			color: var(--text);
+			background-color: var(--accent);
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 24px;
+		}
+	}
 }

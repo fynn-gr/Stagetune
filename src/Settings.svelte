@@ -8,6 +8,7 @@ import {
 	currentMonitor,
 	primaryMonitor,
 } from "@tauri-apps/api/window";
+import { open } from "@tauri-apps/plugin-shell";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { onMount, tick } from "svelte";
@@ -26,6 +27,7 @@ import SettingsCheckbox from "./pureUI/components/settings/SettingsCheckbox.svel
 import SettingsSelect from "./pureUI/components/settings/SettingsSelect.svelte";
 import { settingsDefault, type Settings } from "./ts/SettingsDefault";
 import SettingsValue from "./pureUI/components/settings/SettingsValue.svelte";
+import { checkUpdate } from "./ts/Update";
 
 const settings = writable<Settings>(settingsDefault);
 const uiPlatform = writable<string>("win");
@@ -35,6 +37,7 @@ let tab: string = $state("general");
 let stagetuneVersion: string = $state("");
 let tauriVersion: string = $state("");
 let recent: Array<string> = []; //keep to save settings file
+let update: null | {version: string, notes: string, url: string} = $state(null);
 
 load();
 console.log($settings);
@@ -103,6 +106,8 @@ onMount(async () => {
 	console.log("current Monitor: ", await currentMonitor());
 	console.log("primary Monitor: ", await primaryMonitor());
 	setWindowHeight();
+
+	update = await checkUpdate();
 });
 </script>
 
@@ -176,7 +181,7 @@ onMount(async () => {
 			}}
 		>
 			<img src="./icons/settings_tabs/update.svg" alt="" />
-			<p>About</p>
+			<p>Update</p>
 		</div>
 
 		<div
@@ -261,7 +266,16 @@ onMount(async () => {
 			{:else if tab == "update"}
 				<div class="content update">
 					<p class="update">Stagetune {stagetuneVersion || ""}</p>
-					<p>Tauri {tauriVersion}</p>
+					{#if $settings.debug}
+						<p>Tauri {tauriVersion}</p>
+					{/if}
+					{#if update != null}
+					<div class="update-box">
+						<p>Stagetune <b>{update.version}</b> is available</p>
+						<p>{update.notes}</p>
+						<button onclick={() => {open(update!.url)}}>Download</button>
+					</div>
+					{/if}
 					<br />
 					<p>created by Fynn Gr.</p>
 					<p>GPL 3.0 License</p>
