@@ -122,7 +122,7 @@ onMount(async () => {
 			icon="sidebar"
 			bind:active={showTracklist}
 			activeColor="var(--hover)"
-			toolTip="Toggle Tracklist"
+			toolTip={$_("tracklist")}
 			disabled={!$editMode}
 		/>
 
@@ -197,7 +197,7 @@ onMount(async () => {
 		<div class="spacer" data-tauri-drag-region=""></div>
 
 		<!--Playlist options-->
-		<TopBarDropdown icon="settings" toolTip="Playlist Settings">
+		<TopBarDropdown icon="settings" toolTip={$_("playlistSettings")}>
 			<TopBarDropdownItem
 				name={$_("annotations")}
 				bind:checked={$settings.showAnnotations}
@@ -284,7 +284,7 @@ onMount(async () => {
 			icon="lock"
 			iconActive="lock_open"
 			bind:active={$editMode}
-			toolTip="Toggle Mode"
+			toolTip={$_("toggleMode")}
 		/>
 
 		<div class="spacer-fix" data-tauri-drag-region=""></div>
@@ -294,7 +294,7 @@ onMount(async () => {
 			<TopBarButton
 				id="reset-all-tracks"
 				icon="reset"
-				toolTip="Reset all tracks"
+				toolTip={$_("resetAllTracks")}
 				onClick={resetAll}
 			/>
 
@@ -302,7 +302,7 @@ onMount(async () => {
 			<TopBarButton
 				id="stop-all-tracks"
 				icon="stop"
-				toolTip="Stop all tracks"
+				toolTip={$_("stopAllTracks")}
 				onClick={pauseAll}
 			/>
 		</div>
@@ -319,11 +319,11 @@ onMount(async () => {
 					handleProjector(null);
 				}}
 				activeColor="var(--hover)"
-				toolTip="Toggle Edior"
+				toolTip={$_("projector")}
 				disabled={!$editMode}
 			/>
 
-			<TopBarDropdown icon={null} toolTip="Projector">
+			<TopBarDropdown icon={null} toolTip={$_("projectorDisplay")}>
 				{#each projector.screens as screen, i}
 					<TopBarDropdownItem
 						name={i == mainID ? `Main` : `Display ${i + 1}`}
@@ -339,11 +339,11 @@ onMount(async () => {
 
 		<!--editor-->
 		<TopBarToggle
-			id="toggle-editor"
+			id={"toggle-editor"}
 			icon="cut"
 			bind:active={showEditor}
 			activeColor="var(--hover)"
-			toolTip="Toggle Edior"
+			toolTip={$_("editor")}
 			disabled={!$editMode}
 		/>
 
@@ -354,7 +354,7 @@ onMount(async () => {
 				icon="active_play"
 				bind:active={showCurrent}
 				activeColor="var(--hover)"
-				toolTip="Toggle Tracks playing"
+				toolTip={$_("tracksPlaying")}
 			/>
 
 			<!--hotkeys-->
@@ -363,7 +363,7 @@ onMount(async () => {
 				icon="hotkeys"
 				bind:active={showHotkeys}
 				activeColor="var(--hover)"
-				toolTip="Toggle Hotkeys"
+				toolTip={$_("hotkeys")}
 			/>
 		</div>
 

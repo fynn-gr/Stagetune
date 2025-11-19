@@ -32,3 +32,4 @@ pnpm-lock.yaml
 /src-tauri/capabilities/ref.xml
 /target/
 /gen/
+/src/lang/*

@@ -1,6 +1,7 @@
 <script lang="ts">
 import { onMount } from "svelte";
 import { editMode } from "@/ts/Stores.svelte";
+import { _ } from "svelte-i18n";
 
 interface Props {
 	id: string;
@@ -53,7 +54,7 @@ onMount(() => {
 	<img src={active ? iconPathActive : iconPath} alt={toolTip} />
 
 	<div>
-		<p style={`visibility: ${$editMode ? "visible" : "hidden"}`}>Edit</p>
-		<p style={`visibility: ${$editMode ? "hidden" : "visible"}`}>Live</p>
+		<p style={`visibility: ${$editMode ? "visible" : "hidden"}`}>{$_("edit")}</p>
+		<p style={`visibility: ${$editMode ? "hidden" : "visible"}`}>{$_("live")}</p>
 	</div>
 </button>

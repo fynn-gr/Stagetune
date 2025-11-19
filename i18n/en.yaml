@@ -20,7 +20,17 @@ small: Small
 default: Default
 large: Large
 none: None
+tracklist: Tracklist
+playlistSettings: Playlist Settings
+toggleMode: Toggle Mode
+resetAllTracks: Reset All Tracks
+stopAllTracks: Stop All Tracks
+editor: Editor
+projectorDisplay: Projector Display
+tracksPlaying: currently Playing
+hotkeys: Hotkeys
 
+# setttings
 settings: Settings
 general: General
 language: Language
@@ -33,6 +43,7 @@ available: is available
 developer: Developer
 developerFeatures: Developer Features
 
+# keymap
 play: Play
 play/pause: Play/Pause
 playlistUp: Playlist Up

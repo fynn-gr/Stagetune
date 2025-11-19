@@ -3,7 +3,7 @@ import { currentDragging, draggingOrigin } from "@/ts/Stores.svelte";
 import { _ } from "svelte-i18n";
 
 interface Props {
-	name: string;
+	name: "annotation" | "loop" ;
 }
 let { name }: Props = $props();
 
@@ -13,7 +13,7 @@ function handleDragStart(e: any) {
 	e.dataTransfer.dropEffect = "copy";
 	e.dataTransfer.setData("text/plain", "placehold");
 	$currentDragging = {
-		type: name == "Annotation" ? "annotation" : "loop",
+		type: name,
 		name: name,
 		path: "",
 		pathSource: "",
@@ -38,9 +38,9 @@ function handleDragEnd(e: any) {
 	ondragstart={handleDragStart}
 	ondragend={handleDragEnd}
 >
-	{#if name == "Annotation"}
+	{#if name == "annotation"}
 		<img src="./icons/topbar/comment.svg" alt="" />
-	{:else if name == "Loop"}
+	{:else if name == "loop"}
 		<img src="./icons/topbar/loop.svg" alt="" />
 	{/if}
 	<p>{$_(name)}</p>

@@ -1,10 +1,10 @@
 edit: Bearbeiten
-live: Live
+live: Live Modus
 noTrackPlaying: Kein Track wird abgespielt
 source: Ordner
 annotation: Anmerkung
 annotations: Anmerkungen
-loop: Schleife
+loop: 
 website: website
 repository: Quellcode
 bugReport: Fehler melden
@@ -20,7 +20,17 @@ small: Klein
 default: Standard
 large: Groß
 none: Keiner
+tracklist: Track Liste
+playlistSettings: Wiedergabelisten Einstellungen
+toggleMode: Modus wechseln
+resetAllTracks: Alle Tracks zurücksetzen
+stopAllTracks: Alle Tracks stoppen
+editor: Editor
+projectorDisplay: Projektor Bildschirm
+tracksPlaying: laufende Tracks
+hotkeys: Hotkeys
 
+# settings
 settings: Einstellungen
 general: Allgemein
 language: Sprache
@@ -33,6 +43,7 @@ available: ist Verfügbar
 developer: Entwickler
 developerFeatures: Entwickler Optionen
 
+# keymap
 play: Abspielen
 play/pause: Abspielen/Pausieren
 playlistUp: Wiedergabeliste nach oben
@@ -57,7 +68,6 @@ clearHotkey6: Hotkey 6 löschen
 clearHotkey7: Hotkey 7 löschen
 clearHotkey8: Hotkey 8 löschen
 clearHotkey9: Hotkey 9 löschen
-clearHotkey: Hotkey löschen
 projector: Projektor
 saveProject: Projekt speichern
 openProject: Projekt öffnen

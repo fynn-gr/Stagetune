@@ -364,9 +364,9 @@ $effect((() => {
 	{#if $editMode && showTracklist}
 		<div class="tracklist">
 			<!--Build in-->
-			<TracklistBuildIn name="Annotation" />
+			<TracklistBuildIn name="annotation" />
 			{#if $settings.debug}
-				<TracklistBuildIn name="Loop" />
+				<TracklistBuildIn name="loop" />
 			{/if}
 
 			<!--Source Folders-->
