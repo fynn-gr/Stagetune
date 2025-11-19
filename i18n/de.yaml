@@ -71,3 +71,9 @@ clearHotkey9: Hotkey 9 löschen
 projector: Projektor
 saveProject: Projekt speichern
 openProject: Projekt öffnen
+
+# menu
+file: Datei
+newProject: Neues Projekt
+addSource: Quelle hinzufügen
+window: Fenster

@@ -71,3 +71,9 @@ clearHotkey9: Clear Hotkey 9
 projector: Projector
 saveProject: Save Playlist
 openProject: Open Playlist
+
+# menu
+file: File
+newProject: New Project
+addSource: Add Source
+window: Window

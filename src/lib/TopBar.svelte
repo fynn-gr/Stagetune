@@ -128,46 +128,46 @@ onMount(async () => {
 
 		<!--menus on windows-->
 		{#if $uiPlatform == "win"}
-			<AppMenu name="File">
-				<AppMenuItem id="newPlaylist" name="New" />
-				<AppMenuItem id="openPlaylist" name="Open" accelerator="ctrl O" />
-				<AppMenuItem id="savePlaylist" name="Save" accelerator="ctrl S" />
-				<AppMenuItem id="addSource" name="Add Source" />
+			<AppMenu name={$_("file")}>
+				<AppMenuItem id="newPlaylist" name={$_("newProject")} />
+				<AppMenuItem id="openPlaylist" name={$_("openProject")} accelerator="ctrl O" />
+				<AppMenuItem id="savePlaylist" name={$_("saveProject")} accelerator="ctrl S" />
+				<AppMenuItem id="addSource" name={$_("addSource")} />
 				<div class="seperator" />
 				<AppMenuItem
 					id="settings"
-					name="Settings"
+					name={$_("settings")}
 					accelerator="ctrl ,"
 					disabled={!$editMode}
 				/>
 			</AppMenu>
-			<AppMenu name="Window">
+			<AppMenu name={$_("window")}>
 				<AppMenuItem
 					id="showTracklist"
-					name="Track List"
+					name={$_("tracklist")}
 					checked={showTracklist && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
 				<AppMenuItem
 					id="showCurrent"
-					name="Tracks playing"
+					name={$_("tracksPlaying")}
 					checked={showCurrent ? "true" : "false"}
 				/>
 				<AppMenuItem
 					id="showHotkeys"
-					name="Hotkeys"
+					name={$_("hotkeys")}
 					checked={showHotkeys ? "true" : "false"}
 				/>
 				<AppMenuItem
 					id="showEditor"
-					name="Editor"
+					name={$_("editor")}
 					checked={showEditor && $editMode ? "true" : "false"}
 					disabled={!$editMode}
 				/>
 				<div class="seperator"></div>
-				<AppMenuItem id="projector" name="Projector" accelerator="ctrl P" />
+				<AppMenuItem id="projector" name={$_("projector")} accelerator="ctrl P" />
 				<div class="seperator"></div>
-				<AppMenuItem id="showSplash" name="Splash Screen" />
+				<AppMenuItem id="showSplash" name={$_("splashScreen")} />
 			</AppMenu>
 		{/if}
 
