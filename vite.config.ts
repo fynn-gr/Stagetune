@@ -3,7 +3,8 @@ import { resolve } from "path";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import sveltePreprocess from "svelte-preprocess";
 import * as path from "path";
-import { processIcons } from "./src/pureUI/modules/pureIconPlugin";
+import { buildI18N, processIcons } from "./src/pureUI/modules/pureIconPlugin";
+import json from "@rollup/plugin-json";
 
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
 
@@ -24,13 +25,13 @@ export default defineConfig(({ command }) => {
 					},
 				},
 			}),
-
 			{
 				name: "pureIcons pull",
 				buildStart(options) {
 					if (command === "serve") return;
 
 					processIcons();
+					buildI18N();
 				},
 			},
 		],

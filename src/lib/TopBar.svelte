@@ -28,6 +28,7 @@ import { onMount } from "svelte";
 import { emit } from "@tauri-apps/api/event";
 import AppMenuDev from "@/pureUI/components/AppMenuDev.svelte";
 import { testEdit } from "@/test/Edit.test";
+import { _ } from "svelte-i18n";
 
 interface Props {
 	showTracklist: boolean;
@@ -198,35 +199,35 @@ onMount(async () => {
 		<!--Playlist options-->
 		<TopBarDropdown icon="settings" toolTip="Playlist Settings">
 			<TopBarDropdownItem
-				name="Annotations"
+				name={$_("annotations")}
 				bind:checked={$settings.showAnnotations}
 				onChange={() => {
 					$settings.showAnnotations = !$settings.showAnnotations;
 				}}
 			/>
 			<TopBarDropdownItem
-				name="Fade Options"
+				name={$_("fadeOptions")}
 				bind:checked={$settings.showFadeOptions}
 				onChange={() => {
 					$settings.showFadeOptions = !$settings.showFadeOptions;
 				}}
 			/>
 			<TopBarDropdownItem
-				name="Volume Options"
+				name={$_("volumeOptions")}
 				bind:checked={$settings.showVolumeOptions}
 				onChange={() => {
 					$settings.showVolumeOptions = !$settings.showVolumeOptions;
 				}}
 			/>
 			<TopBarDropdownItem
-				name={$settings.useSliders ? "Use Knobs" : "Use Sliders"}
+				name={$settings.useSliders ? $_("useKnobs") : $_("useSlider")}
 				onChange={() => {
 					$settings.useSliders = !$settings.useSliders;
 				}}
 				disabled={!$settings.showVolumeOptions}
 			/>
 			<TopBarDropdownItem
-				name="Reset Button"
+				name={$_("resetButton")}
 				bind:checked={$settings.resetButton}
 				onChange={() => {
 					$settings.resetButton = !$settings.resetButton;
@@ -234,7 +235,7 @@ onMount(async () => {
 			/>
 			<div class="seperator"></div>
 			<TopBarDropdownItem
-				name="Scrubbing in Live Mode"
+				name={$_("scrubbingInLiveMode")}
 				bind:checked={$settings.allowSkipLive}
 				onChange={() => {
 					$settings.allowSkipLive = !$settings.allowSkipLive;
@@ -242,7 +243,7 @@ onMount(async () => {
 			/>
 			<div class="seperator"></div>
 			<TopBarDropdownItem
-				name="mini"
+				name={$_("mini")}
 				checked={$playlistZoom == 40}
 				onChange={() => {
 					$playlistZoom = 40;
@@ -250,7 +251,7 @@ onMount(async () => {
 				}}
 			/>
 			<TopBarDropdownItem
-				name="small"
+				name={$_("small")}
 				checked={$playlistZoom == 59}
 				onChange={() => {
 					$playlistZoom = 59;
@@ -258,7 +259,7 @@ onMount(async () => {
 				}}
 			/>
 			<TopBarDropdownItem
-				name="default"
+				name={$_("default")}
 				checked={$playlistZoom == 72}
 				onChange={() => {
 					$playlistZoom = 72;
@@ -266,7 +267,7 @@ onMount(async () => {
 				}}
 			/>
 			<TopBarDropdownItem
-				name="large"
+				name={$_("large")}
 				checked={$playlistZoom == 95}
 				onChange={() => {
 					$playlistZoom = 95;

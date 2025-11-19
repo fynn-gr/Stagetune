@@ -5,6 +5,7 @@ import { open } from "@tauri-apps/plugin-shell";
 import { fileNameFromPath } from "@/ts/FileUtils";
 import { openPlaylist } from "@/ts/SaveLoad.svelte";
 import { paths } from "@/ts/Stores.svelte";
+import { _ } from "svelte-i18n";
 
 const links: any = {
 	Website: "https://fynn.gr/apps/stagetune",
@@ -61,7 +62,7 @@ onMount(async () => {
 					}}
 				>
 					<img src="./icons/std/web.svg" alt="" />
-					<p>Repository</p>
+					<p>{$_("repository")}</p>
 				</button>
 				<button
 					onclick={e => {
@@ -70,7 +71,7 @@ onMount(async () => {
 					}}
 				>
 					<img src="./icons/std/web.svg" alt="" />
-					<p>Bug Report</p>
+					<p>{$_("bugReport")}</p>
 				</button>
 				<button
 					onclick={e => {
@@ -79,7 +80,7 @@ onMount(async () => {
 					}}
 				>
 					<img src="./icons/std/web.svg" alt="" />
-					<p>Documentation</p>
+					<p>{$_("documentation")}</p>
 				</button>
 			</span>
 			<span style="right: 0;">

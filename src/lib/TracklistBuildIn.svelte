@@ -1,5 +1,6 @@
 <script lang="ts">
 import { currentDragging, draggingOrigin } from "@/ts/Stores.svelte";
+import { _ } from "svelte-i18n";
 
 interface Props {
 	name: string;
@@ -42,5 +43,5 @@ function handleDragEnd(e: any) {
 	{:else if name == "Loop"}
 		<img src="./icons/topbar/loop.svg" alt="" />
 	{/if}
-	<p>{name}</p>
+	<p>{$_(name)}</p>
 </div>

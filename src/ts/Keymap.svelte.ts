@@ -5,7 +5,7 @@ import type { Operator } from "./Types";
 export const keymap = writable<Operator[]>([
 	{
 		operator: "play_pause",
-		name: "Play/Pause",
+		name: "play/pause",
 		key: "Spacebar",
 		ctrl: false,
 		alt: false,
@@ -13,7 +13,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "up",
-		name: "Playlist up",
+		name: "playlistUp",
 		key: "KeyW",
 		ctrl: false,
 		alt: false,
@@ -21,7 +21,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "up",
-		name: "Playlist up",
+		name: "PlaylistUp",
 		key: "arrowUp",
 		ctrl: false,
 		alt: false,
@@ -29,7 +29,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "down",
-		name: "Playlist down",
+		name: "PlaylistDown",
 		key: "KeyS",
 		ctrl: false,
 		alt: false,
@@ -37,7 +37,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "down",
-		name: "Playlist down",
+		name: "PlaylistDown",
 		key: "arrowDown",
 		ctrl: false,
 		alt: false,
@@ -45,7 +45,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "reset",
-		name: "Reset Song",
+		name: "resetTrack",
 		key: "KeyA",
 		ctrl: false,
 		alt: false,
@@ -53,7 +53,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "reset",
-		name: "Reset Song",
+		name: "resetTrack",
 		key: "arrowLeft",
 		ctrl: false,
 		alt: false,
@@ -61,7 +61,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "skip",
-		name: "Skip song",
+		name: "skipTrack",
 		key: "KeyD",
 		ctrl: false,
 		alt: false,
@@ -69,7 +69,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "skip",
-		name: "Skip song",
+		name: "skipTrack",
 		key: "arrowRight",
 		ctrl: false,
 		alt: false,
@@ -77,7 +77,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey1",
-		name: "Hotkey 1",
+		name: "hotkey1",
 		key: "Digit1",
 		ctrl: false,
 		alt: false,
@@ -85,7 +85,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey2",
-		name: "Hotkey 2",
+		name: "hotkey2",
 		key: "Digit2",
 		ctrl: false,
 		alt: false,
@@ -93,7 +93,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey3",
-		name: "Hotkey 3",
+		name: "hotkey3",
 		key: "Digit3",
 		ctrl: false,
 		alt: false,
@@ -101,7 +101,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey4",
-		name: "Hotkey 4",
+		name: "hotkey4",
 		key: "Digit4",
 		ctrl: false,
 		alt: false,
@@ -109,7 +109,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey5",
-		name: "Hotkey 5",
+		name: "hotkey5",
 		key: "Digit5",
 		ctrl: false,
 		alt: false,
@@ -117,7 +117,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey6",
-		name: "Hotkey 6",
+		name: "hotkey6",
 		key: "Digit6",
 		ctrl: false,
 		alt: false,
@@ -125,7 +125,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey7",
-		name: "Hotkey 7",
+		name: "hotkey7",
 		key: "Digit7",
 		ctrl: false,
 		alt: false,
@@ -133,7 +133,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey8",
-		name: "Hotkey 8",
+		name: "hotkey8",
 		key: "Digit8",
 		ctrl: false,
 		alt: false,
@@ -141,7 +141,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey9",
-		name: "Hotkey 9",
+		name: "hotkey9",
 		key: "Digit9",
 		ctrl: false,
 		alt: false,
@@ -149,7 +149,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey1_clear",
-		name: "Clear Hotkey 1",
+		name: "clearHotkey1",
 		key: "Digit1",
 		ctrl: false,
 		alt: true,
@@ -157,7 +157,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey2_clear",
-		name: "Clear Hotkey 2",
+		name: "clearHotkey2",
 		key: "Digit2",
 		ctrl: false,
 		alt: true,
@@ -165,7 +165,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey3_clear",
-		name: "Clear Hotkey 3",
+		name: "clearHotkey3",
 		key: "Digit3",
 		ctrl: false,
 		alt: true,
@@ -173,7 +173,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey4_clear",
-		name: "Clear Hotkey 4",
+		name: "clearHotkey4",
 		key: "Digit4",
 		ctrl: false,
 		alt: true,
@@ -181,7 +181,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey5_clear",
-		name: "Clear Hotkey 5",
+		name: "clearHotkey5",
 		key: "Digit5",
 		ctrl: false,
 		alt: true,
@@ -189,7 +189,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey6_clear",
-		name: "Clear Hotkey 6",
+		name: "clearHotkey6",
 		key: "Digit6",
 		ctrl: false,
 		alt: true,
@@ -197,7 +197,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey7_clear",
-		name: "Clear Hotkey 7",
+		name: "clearHotkey7",
 		key: "Digit7",
 		ctrl: false,
 		alt: true,
@@ -205,7 +205,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey8_clear",
-		name: "Clear Hotkey 8",
+		name: "clearHotkey8",
 		key: "Digit8",
 		ctrl: false,
 		alt: true,
@@ -213,7 +213,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "hotkey9_clear",
-		name: "Clear Hotkey 9",
+		name: "clearHotkey9",
 		key: "Digit9",
 		ctrl: false,
 		alt: true,
@@ -221,7 +221,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "projector",
-		name: "Projector",
+		name: "projector",
 		key: "KeyP",
 		ctrl: true,
 		alt: false,
@@ -229,7 +229,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "settings",
-		name: "Settings",
+		name: "settings",
 		key: "Comma",
 		ctrl: true,
 		alt: false,
@@ -237,7 +237,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "save",
-		name: "Save Playlist",
+		name: "saveProject",
 		key: "KeyS",
 		ctrl: true,
 		alt: false,
@@ -245,7 +245,7 @@ export const keymap = writable<Operator[]>([
 	},
 	{
 		operator: "open",
-		name: "Open Directory",
+		name: "openProject",
 		key: "KeyO",
 		ctrl: true,
 		alt: false,

@@ -14,6 +14,7 @@ import { getTauriVersion, getVersion } from "@tauri-apps/api/app";
 import { onMount, tick } from "svelte";
 import { writable } from "svelte/store";
 
+
 import Keymap from "./pureUI/components/settings/Keymap.svelte";
 import WinButtonsMac from "./pureUI/components/WinButtonsMac.svelte";
 import WinButtonsMs from "./pureUI/components/WinButtonsMS.svelte";
@@ -29,6 +30,10 @@ import { settingsDefault, type Settings } from "./ts/SettingsDefault";
 import SettingsValue from "./pureUI/components/settings/SettingsValue.svelte";
 import { checkUpdate } from "./ts/Update";
 
+import { _, addMessages, init, locale } from "svelte-i18n";
+import en from "./lang/en.json";
+import de from "./lang/de.json";
+
 const settings = writable<Settings>(settingsDefault);
 const uiPlatform = writable<string>("win");
 
@@ -41,6 +46,12 @@ let update: null | {version: string, notes: string, url: string} = $state(null);
 
 load();
 console.log($settings);
+addMessages("en", en);
+addMessages("de", de);
+init({
+	initialLocale: "de",
+	fallbackLocale: "de",
+});
 
 async function setWindowHeight() {
 	if ($uiPlatform == "mac") {
@@ -109,6 +120,9 @@ onMount(async () => {
 
 	update = await checkUpdate();
 });
+$effect(() => {
+	locale.set($settings.lang);
+});
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -126,7 +140,7 @@ onMount(async () => {
 				/>
 			{/if}
 
-			<p class="window-title" data-tauri-drag-region>Settings</p>
+			<p class="window-title" data-tauri-drag-region>{$_("settings")}</p>
 
 			{#if $uiPlatform == "win"}
 				<WinButtonsMs
@@ -153,7 +167,7 @@ onMount(async () => {
 			}}
 		>
 			<img src="./icons/settings_tabs/general.svg" alt="" />
-			<p>General</p>
+			<p>{$_("general")}</p>
 		</div>
 
 		<div
@@ -167,7 +181,7 @@ onMount(async () => {
 			}}
 		>
 			<img src="./icons/settings_tabs/keymap.svg" alt="" />
-			<p>Keymap</p>
+			<p>{$_("keymap")}</p>
 		</div>
 
 		<div
@@ -181,7 +195,7 @@ onMount(async () => {
 			}}
 		>
 			<img src="./icons/settings_tabs/update.svg" alt="" />
-			<p>Update</p>
+			<p>{$_("update")}</p>
 		</div>
 
 		<div
@@ -195,7 +209,7 @@ onMount(async () => {
 			}}
 		>
 			<img src="./icons/settings_tabs/dev.svg" alt="" />
-			<p>Developer</p>
+			<p>{$_("developer")}</p>
 		</div>
 	</div>
 
@@ -204,33 +218,19 @@ onMount(async () => {
 		{#if settings != null}
 			{#if tab == "general"}
 				<div class="content">
-					<!--
 					<SettingsSelect
-						name="Language: "
+						name={$_("language")}
 						bind:value={$settings.lang}
 						options={[
 							{ value: "en", name: "English" },
 							{ value: "de", name: "Deutsch" },
 						]}
-						{onChange}
+						onChange={() => {
+							onChange();
+						}}
 					/>
-					-->
-					<!--
-					<SettingsSelect
-						name="UI size:"
-						bind:value={$settings.ui_scale}
-						options={[
-							{ value: 0.8, name: "0.8x" },
-							{ value: 1, name: "1x" },
-							{ value: 1.3, name: "1.3x" },
-							{ value: 1.6, name: "1.6x" },
-							{ value: 2, name: "2x" },
-						]}
-						{onChange}
-					/>
-					-->
 					<SettingsValue
-						name="UI size: "
+						name={$_("uiSize")}
 						bind:value={$settings.ui_scale}
 						min={0.1}
 						max={10}
@@ -242,9 +242,9 @@ onMount(async () => {
 						{onChange}
 					/>
 					<SettingsCheckbox
-						name="Splash Screen:"
+						name={$_("showSplash")}
 						bind:checked={$settings.show_splash}
-						checkboxName="Show on startup"
+						checkboxName={$_("showOnStartup")}
 						{onChange}
 					/>
 					<!--
@@ -271,7 +271,7 @@ onMount(async () => {
 					{/if}
 					{#if update != null}
 					<div class="update-box">
-						<p>Stagetune <b>{update.version}</b> is available</p>
+						<p>Stagetune <b>{update.version}</b>{$_("available")}</p>
 						<p>{update.notes}</p>
 						<button onclick={() => {open(update!.url)}}>Download</button>
 					</div>
@@ -283,9 +283,9 @@ onMount(async () => {
 			{:else}
 				<div class="content dev">
 					<SettingsCheckbox
-						name="Developer Features:"
+						name=""
 						bind:checked={$settings.debug}
-						checkboxName="Enable developer features"
+						checkboxName={$_("developerFeatures")}
 						{onChange}
 					/>
 				</div>

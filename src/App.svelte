@@ -17,10 +17,8 @@ import PlayListVideo from "./lib/PlayListVideo.svelte";
 import TrackListItem from "./lib/TrackListItem.svelte";
 import TopBar from "./lib/TopBar.svelte";
 import Hotkey from "./lib/Hotkey.svelte";
-import Waveform from "./lib/Waveform.svelte";
 import Splash from "./lib/Splash.svelte";
 import ContextMenu from "./pureUI/components/ContextMenu.svelte";
-import PropNumber from "./pureUI/components/props/PropNumber.svelte";
 import PlayListImage from "./lib/PlayListImage.svelte";
 import PlayListLoop from "./lib/PlayListLoop.svelte";
 import Editor from "./lib/Editor.svelte";
@@ -43,7 +41,7 @@ import {
 	projector,
 	playlistZoom,
 	playlistZoomExact,
-	paths,
+	paths
 } from "./ts/Stores.svelte";
 import { updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -53,7 +51,7 @@ import {
 	checkSettingsExist,
 	openPlaylist,
 	relinkDir,
-	saveSettings,
+	saveSettings
 } from "./ts/SaveLoad.svelte";
 import { createNativeMenu } from "./ts/Menus.svelte";
 import { lastFolderFromPath } from "./ts/FileUtils";
@@ -66,6 +64,13 @@ import type {
 	PlaylistLoop,
 } from "./ts/Types";
 
+// i18n
+import { addMessages, init } from "svelte-i18n";
+import en from "./lang/en.json";
+import de from "./lang/de.json";
+import { _ } from "svelte-i18n";
+import { locale } from "svelte-i18n";
+
 // States
 let playlistEl: HTMLElement;
 let annotationWidth: number = $state(25);
@@ -76,6 +81,12 @@ let showHotkeys = $state(true);
 let dragOverPlaylist = $state(false);
 
 checkSettingsExist();
+addMessages("en", en);
+addMessages("de", de);
+init({
+	initialLocale: "en",
+	fallbackLocale: "en",
+});
 
 // Audio context setup
 const ctx = new AudioContext();
@@ -336,6 +347,9 @@ $effect(() => {
 		show: $showProjector,
 	});
 });
+$effect((() => {
+	locale.set($settings.lang as string);
+}))
 </script>
 
 {#if $splash}
@@ -391,7 +405,7 @@ $effect(() => {
 				}}
 			>
 				<img src="/icons/topbar/plus.svg" alt="" />
-				<p>Source</p>
+				<p>{$_("source")}</p>
 			</button>
 		</div>
 	{:else}
@@ -524,7 +538,7 @@ $effect(() => {
 							</div>
 						{/if}
 					{/each}
-					<p class="placeholder">No track playing</p>
+					<p class="placeholder">{$_("noTrackPlaying")}</p>
 				</div>
 			{/if}
 
