@@ -10,6 +10,7 @@ interface Props {
 	unit?: string;
 	disabled?: boolean;
 	onChange?: Function;
+	icon?: string;
 }
 let {
 	value = $bindable(),
@@ -19,6 +20,7 @@ let {
 	unit = "",
 	disabled = false,
 	onChange = () => {},
+	icon = "",
 }: Props = $props();
 
 let dispValue: number = $state(0);
@@ -30,19 +32,19 @@ function handleChange() {
 }
 
 function handleMouseDown(e: MouseEvent) {
-	if (!e.shiftKey) return;
+	//if (!e.shiftKey) return;
 	document.body.addEventListener("mousemove", handleMouseMove);
 	document.body.addEventListener("mouseup", (e: MouseEvent) => {
-		document.body.removeEventListener("mousemove", handleMouseMove);
 		e.preventDefault();
 		e.stopPropagation();
+		document.body.removeEventListener("mousemove", handleMouseMove);
 	});
 	e.preventDefault();
 	e.stopPropagation();
 }
 
 function handleMouseMove(e: MouseEvent) {
-	if (!e.shiftKey) return;
+	//if (!e.shiftKey) return;
 	e.stopPropagation();
 	e.preventDefault();
 	value = Math.min(Math.max(value + e.movementX * 0.04, 0), 9);
@@ -61,6 +63,9 @@ $effect(() => {
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="input-number" onmousedown={handleMouseDown}>
+	{#if icon != ""}
+		<img src={`./icons/topbar/${icon}.svg`} alt="icon" class="fade-icon" />
+	{/if}
 	{#if !numberIsEditing}
 		<p
 			class="display"

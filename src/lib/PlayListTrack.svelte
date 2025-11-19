@@ -586,26 +586,22 @@ $effect(() => {
 		<!--fade-->
 		{#if $settings.showFadeOptions && $editMode}
 			<span class="fade" class:stacked={$playlistZoom > 94}>
-				<div class="fader">
-					<img class="fade-icon" src="./icons/topbar/fade_in.svg" alt="" />
-					<PropNumber
-						bind:value={track.fade.in}
-						min={0}
-						max={track.length}
-						unit="s"
-						disabled={!$editMode}
-					/>
-				</div>
-				<div class="fader">
-					<img class="fade-icon" src="./icons/topbar/fade_out.svg" alt="" />
-					<PropNumber
-						bind:value={track.fade.out}
-						min={0}
-						max={track.length}
-						unit="s"
-						disabled={!$editMode}
-					/>
-				</div>
+				<PropNumber
+					bind:value={track.fade.in}
+					min={0}
+					max={track.length}
+					unit="s"
+					disabled={!$editMode}
+					icon="fade_in"
+				/>
+				<PropNumber
+					bind:value={track.fade.out}
+					min={0}
+					max={track.length}
+					unit="s"
+					disabled={!$editMode}
+					icon="fade_out"
+				/>
 			</span>
 		{/if}
 
