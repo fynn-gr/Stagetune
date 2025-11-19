@@ -54,7 +54,8 @@ $effect(() => {
 });
 
 $effect(() => {
-	if(!$selectedItem) return;
+	console.log("editor rerender effect")
+	if($selectedItem == undefined) return;
 	if(!playlist[$selectedItem].edit) return;
 	svg = editorWaveformSVG(
 		trackEL.clientWidth,
@@ -65,13 +66,12 @@ $effect(() => {
 		0,
 		0
 	);
-	console.log("rerender")
 })
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="editor">
-	{#if $selectedItem && playlist[$selectedItem].type === "track" && (playlist[$selectedItem] as PlaylistTrack).buffer != null}
+	{#if $selectedItem != undefined && playlist[$selectedItem].type === "track" && (playlist[$selectedItem] as PlaylistTrack).buffer != null}
 		<div class="prop-bar">
 			<label>cut start</label>
 			<PropNumber
@@ -137,6 +137,7 @@ $effect(() => {
 				style={`left: ${(tempEdit / playlist[$selectedItem].length) * 100}%;`}
 			></div>
 		</div>
+	{:else}
+		<p class="placeholder">No track selected</p>
 	{/if}
-	<p class="placeholder">No track selected</p>
 </div>

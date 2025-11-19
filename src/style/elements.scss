@@ -482,6 +482,10 @@
 .topbar.toolbar {
 	border-top-left-radius: var(--win-corner) !important;
 
+	.topbar-group {
+		//background-color: var(--hover);
+	}
+
 	.topbar-button.mode-switch {
 		width: auto !important;
 		display: flex;
