@@ -37,7 +37,7 @@ export async function openPlaylist(path?: string) {
 				filters: [
 					{
 						name: "Playlist",
-						extensions: ["spl"],
+						extensions: ["stagetune"],
 					},
 				],
 			});
@@ -70,6 +70,8 @@ export async function openPlaylist(path?: string) {
 		if (paths.recent.length > 10) {
 			paths.recent.pop();
 		}
+
+		//save/apply rencents
 		createNativeMenu();
 		saveSettings();
 	} catch (err) {
@@ -111,9 +113,8 @@ export async function relinkDir(pathIndex: number) {
 		});
 		if (!sel) return;
 
-		for (let i = 0; i < paths.srcFiles.length; i++) {
-			paths.srcFiles[i].path = sel;
-		}
+		paths.srcFiles[pathIndex].path = sel;
+		paths.srcFiles[pathIndex].files.forEach();
 	} catch (err) {
 		console.error(err);
 	}
@@ -183,11 +184,11 @@ export async function savePlaylist(saveAs = false) {
 		// save as
 		let sel = await save({
 			title: "save Playlist as",
-			defaultPath: "Playlist.spl",
+			defaultPath: "Playlist.stagetune",
 		});
 		if (!sel) return;
-		if (!sel.endsWith(".spl")) {
-			sel += ".spl";
+		if (!sel.endsWith(".stagetune")) {
+			sel += ".stagetune";
 		}
 		paths.playlist = sel;
 	}

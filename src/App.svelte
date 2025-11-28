@@ -41,7 +41,10 @@ import {
 	projector,
 	playlistZoom,
 	playlistZoomExact,
-	paths
+	paths,
+
+	missingFiles
+
 } from "./ts/Stores.svelte";
 import { updateProjectorList, DropHandler } from "./ts/Utils";
 import {
@@ -343,6 +346,7 @@ $effect(() => {
 	emit("editMode", { edit: $editMode });
 });
 $effect(() => {
+	if (!$showProjector) return;
 	invoke("show_projector", {
 		show: $showProjector,
 	});
@@ -501,6 +505,11 @@ $effect((() => {
 			<!--current playing-->
 			{#if showCurrent}
 				<div class="current">
+					{#each $missingFiles as mf}
+						<div style="background-color: red;" class="song">
+							<p class="missing-file">{$_("missingFile")}: {mf.name}</p>
+						</div>
+					{/each}
 					{#each playlist as e, i}
 						{#if e.type != "annotation" && e.playing && (e.timeCode ?? 0) != 0}
 							<div class="song">

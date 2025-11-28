@@ -26,6 +26,7 @@ import {
 	draggingOrigin,
 	hotkeys,
 	playlistZoom,
+	missingFiles,
 } from "../ts/Stores.svelte";
 import type { PlaylistTrack } from "@/ts/Types";
 import Hotkey from "./Hotkey.svelte";
@@ -155,7 +156,7 @@ function handleSkip(e: MouseEvent) {
 	}
 }
 
-async function load() {
+export async function load() {
 	//load file
 	const absPath = await join(track.pathSource, track.path);
 	console.log("loading track: ", absPath);
@@ -170,24 +171,23 @@ async function load() {
 		track.loaded = true;
 		track.length = track.buffer.duration;
 
+		//generate waveform
 		const svg = audioBufferToTopWaveformSVG(
 			track.buffer,
 			1200,
 			30,
 			track.edit.in,
 		);
-
-		// Convert SVG string to base64 data URL
 		const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
 		dataURL = `url("data:image/svg+xml;base64,${svgBase64}")`;
 	} else {
 		//file not found
 		console.error(convertFileSrc(absPath), "track not found");
 		track.missing = true;
-		message(`Media File is missing or moved: ${absPath}`, {
-			title: "File not found",
-			kind: "warning",
-		});
+		// message(`Media File is missing or moved: ${absPath}`, {
+		// 	title: "File not found",
+		// 	kind: "warning",
+		// });
 	}
 
 	setupAudioChain();
@@ -317,8 +317,12 @@ $effect(() => {
 });
 //load if not loaded or missing
 $effect(() => {
-	if (!track.loaded) {
-		if (!track.missing) load();
+	if (!track.missing) {
+		if (!track.loaded) {
+			load();
+		}
+	} else {
+		$missingFiles.push(track);
 	}
 });
 </script>

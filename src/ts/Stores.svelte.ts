@@ -36,6 +36,7 @@ export const projector: {
 	selectedScreen: 0,
 	mainScreenID: 0,
 });
+export const missingFiles = writable<Array<any>>([]);
 
 // context menu content
 export const contextMenu = writable<ContextMenu | null>(null);

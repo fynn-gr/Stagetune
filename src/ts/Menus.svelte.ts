@@ -6,8 +6,6 @@ import {
 	type AboutMetadata,
 } from "@tauri-apps/api/menu";
 import { Submenu } from "@tauri-apps/api/menu/submenu";
-import { get } from "svelte/store";
-import { fileNameFromPath } from "./FileUtils";
 import { paths } from "./Stores.svelte";
 
 export async function createNativeMenu() {
