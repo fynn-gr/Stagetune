@@ -4,8 +4,8 @@
 	"version": "1.0.0",
 	"identifier": "com.fynn.gr",
 	"build": {
-		"beforeBuildCommand": "npm run build",
-		"beforeDevCommand": "npm run dev",
+		"beforeBuildCommand": "bun run build",
+		"beforeDevCommand": "bun run dev",
 		"frontendDist": "../dist",
 		"devUrl": "http://localhost:1420"
 	},

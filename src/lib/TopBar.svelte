@@ -50,22 +50,19 @@ let {
 const appWindow = getCurrentWindow();
 let mainID: number = $state(0);
 
-function handleProjector(screen: number | null) {
-	if (screen) {
-		console.log(projector.screens[screen]);
-		emit("projector_set_location", { screen: projector.screens[screen] });
-	} else {
-		console.log(projector.screens[projector.selectedScreen]);
-		emit("projector_set_location", {
-			screen: projector.screens[projector.selectedScreen],
-		});
-	}
+function handleProjector() {
+	console.log(
+		"set projector location to:",
+		$state.snapshot(projector.screens[projector.selectedScreen]),
+	);
+	emit("projector_set_location", {
+		screen: projector.screens[projector.selectedScreen],
+	});
 }
 
 onMount(async () => {
 	projector.screens = await availableMonitors();
 	let main = await primaryMonitor();
-	mainID = 0;
 
 	projector.screens.forEach((e, i) => {
 		if (e.name == main?.name) mainID = i;
@@ -75,6 +72,7 @@ onMount(async () => {
 	console.log("main ID", mainID);
 
 	if (projector.screens.length < 2) {
+		// only one screen available
 		projector.selectedScreen = 0;
 	} else if (projector.screens.length - 1 > mainID) {
 		projector.selectedScreen = mainID++;
@@ -130,8 +128,16 @@ onMount(async () => {
 		{#if $uiPlatform == "win"}
 			<AppMenu name={$_("file")}>
 				<AppMenuItem id="newPlaylist" name={$_("newProject")} />
-				<AppMenuItem id="openPlaylist" name={$_("openProject")} accelerator="ctrl O" />
-				<AppMenuItem id="savePlaylist" name={$_("saveProject")} accelerator="ctrl S" />
+				<AppMenuItem
+					id="openPlaylist"
+					name={$_("openProject")}
+					accelerator="ctrl O"
+				/>
+				<AppMenuItem
+					id="savePlaylist"
+					name={$_("saveProject")}
+					accelerator="ctrl S"
+				/>
 				<AppMenuItem id="addSource" name={$_("addSource")} />
 				<div class="seperator" />
 				<AppMenuItem
@@ -165,7 +171,11 @@ onMount(async () => {
 					disabled={!$editMode}
 				/>
 				<div class="seperator"></div>
-				<AppMenuItem id="projector" name={$_("projector")} accelerator="ctrl P" />
+				<AppMenuItem
+					id="projector"
+					name={$_("projector")}
+					accelerator="ctrl P"
+				/>
 				<div class="seperator"></div>
 				<AppMenuItem id="showSplash" name={$_("splashScreen")} />
 			</AppMenu>
@@ -316,7 +326,7 @@ onMount(async () => {
 				icon="projector"
 				bind:active={$showProjector}
 				onChange={() => {
-					handleProjector(null);
+					handleProjector();
 				}}
 				activeColor="var(--hover)"
 				toolTip={$_("projector")}
@@ -330,7 +340,9 @@ onMount(async () => {
 						checked={projector.selectedScreen == i}
 						onChange={() => {
 							projector.selectedScreen = i;
-							handleProjector(i);
+							if ($showProjector) {
+								handleProjector();
+							}
 						}}
 					/>
 				{/each}

@@ -346,7 +346,7 @@ $effect(() => {
 	emit("editMode", { edit: $editMode });
 });
 $effect(() => {
-	if (!$showProjector) return;
+	//if (!$showProjector) return;
 	invoke("show_projector", {
 		show: $showProjector,
 	});
